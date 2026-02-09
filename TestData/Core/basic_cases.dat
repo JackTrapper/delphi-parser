@@ -1,0 +1,1324 @@
+﻿#name
+ParseConstSection.Basic
+#data
+unit Unit1;
+interface
+const
+   A = 1;
+	B= 2;
+   C =3;
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration anName="Unit1"
+| 		ntQualifiedIdentifier anName="Unit1"
+| 		ntInterfaceSection
+| 			ntConstants
+| 				ntConstant anName="A" anValueText="1"
+| 					ntExpression anValueText="1"
+| 		ntImplementation
+
+
+
+#name
+ParseResStringSection.Basic
+#data
+unit TestCase.ParseStringSection;
+interface
+resourcestring
+	SProduct = 'Hello world!';
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration anName="TestCase.ParseStringSection"
+| 		ntQualifiedIdentifier anName="TestCase.ParseStringSection"
+| 		ntInterfaceSection
+| 			ntResourceStrings
+| 				ntResourceString anName="SProduct" anValueText="Hello world!"
+| 					ntExpression anValueText="Hello world!"
+| 		ntImplementation
+
+
+
+#name
+ParseResStringSection.Concatenated
+#data
+unit TestCase.ParseStringSection;
+interface
+resourcestring
+	SProduct = 'Hello, '+'world!';
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration anName="TestCase.ParseStringSection"
+| 		ntQualifiedIdentifier anName="TestCase.ParseStringSection"
+| 		ntInterfaceSection
+| 			ntResourceStrings
+| 				ntResourceString anName="SProduct" anValueText="Hello, world!"
+| 					ntExpression anValueText="Hello, world!"
+| 		ntImplementation
+
+
+
+
+
+#name
+MethodInventory.ParseAndIsPossible
+#data
+unit Inventory;
+interface
+
+implementation
+end.
+#errors
+Parse methods:
+ParseProperty
+ParsePropertyDirective
+ParseStream
+ParseMethodOrProperty
+ParseFieldDecl
+ParseCore
+ParseFile
+ParseText
+ParseLibraryFile
+ParsePackageFile
+ParseProgramFile
+ParseUnitDeclaration
+ParseUsesClause
+ParseUsedUnit
+ParseImplementationDecl
+ParseQualifiedIdentifier
+ParseTerm
+ParseSimpleExpression
+ParseExpression
+ParseFinalizationSection
+ParseEnumeratedType
+ParseSubrangeType
+ParseRealType
+ParseOrdinalType
+ParseVariableReference
+ParseVisibilitySection
+ParseVisibilitySectionContent
+ParseInterfaceType
+ParseClassType
+ParseClassHelper
+ParseClassMemberList
+ParseProceduralType
+ParsePointerType
+ParseStringType
+ParseStructuredType
+ParseSimpleType
+ParseTypeDeclaration
+ParseType
+ParseTypedConstant
+ParseTypeId
+ParseConstantName
+ParseMethodHeading
+ParseVarSection
+ParseTypeSection
+ParseTypeParam
+ParseTypeParamConstraint
+ParseConstraintTypeRef
+ParseTypeParams
+ParseConstSection
+ParseConstantDecl
+ParseResStringSection
+ParseResourceStringDecl
+ParseInterfaceDeclaration
+ParseInitializationSection
+ParseImplementationSection
+ParseInterfaceSection
+ParsePortabilityDirective
+ParseIdentifierList
+ParseScriptFile
+ParseIndexSpecifier
+ParseIdentifier
+ParseAncestorList
+IsPossible methods:
+IsPossibleConstSection
+IsPossibleMethodHeading
+IsPossibleResStringSection
+IsPossibleTypeDeclaration
+IsPossibleTypeSection
+IsPossibleUsesClause
+IsPossibleVarSection
+IsPossibleVisibilitySectionContent
+IsPossibleConstantDecl
+IsPossibleResourceStringDecl
+IsPossiblePortabilityDirective
+IsPossibleProperty
+IsPossibleIdentifier
+IsPossibleImplementationDecl
+IsPossibleLabelID
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseProperty
+#data
+unit U;
+interface
+type
+  T = class
+  private
+    F: Integer;
+  public
+    property P: Integer read F write F;
+  end;
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParsePropertyDirective
+#data
+unit U;
+interface
+type
+  T = class
+  private
+    F: Integer;
+  public
+    property P: Integer read F write F;
+  end;
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseStream
+#data
+unit U;
+interface
+
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseMethodOrProperty
+#data
+unit U;
+interface
+type
+  T = class
+    procedure P;
+  end;
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseFieldDecl
+#data
+unit U;
+interface
+type
+  T = class
+    A, B: Integer;
+  end;
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseCore
+#data
+unit U;
+interface
+
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseFile
+#data
+unit U;
+interface
+
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseText
+#data
+unit U;
+interface
+
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseLibraryFile
+#data
+library L;
+begin end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntLibrary
+| 		ntIdentifier
+
+#name
+ParsePackageFile
+#data
+package P;
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnknown
+
+#name
+ParseProgramFile
+#data
+program P;
+begin end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntProgram
+| 		ntIdentifier
+
+#name
+ParseUnitDeclaration
+#data
+unit U;
+interface
+
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseUsesClause
+#data
+unit U;
+interface
+uses System.SysUtils;
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseUsedUnit
+#data
+unit U;
+interface
+uses System.SysUtils;
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseImplementationDecl
+#data
+unit U;
+interface
+implementation
+const
+  C = 1;
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseQualifiedIdentifier
+#data
+unit A.B;
+interface
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseTerm
+#data
+unit U;
+interface
+const
+  C = 1 + 2 * 3;
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseSimpleExpression
+#data
+unit U;
+interface
+const
+  C = 1 + 2 * 3;
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseExpression
+#data
+unit U;
+interface
+const
+  C = 1 + 2 * 3;
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseFinalizationSection
+#data
+unit U;
+interface
+implementation
+initialization
+finalization
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseEnumeratedType
+#data
+unit U;
+interface
+type
+  TEnum = (A, B);
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseSubrangeType
+#data
+unit U;
+interface
+type
+  TSub = 1..2;
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseRealType
+#data
+unit U;
+interface
+type
+  TReal = 1.5;
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseOrdinalType
+#data
+unit U;
+interface
+type
+  TOrd = 1;
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseVariableReference
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  A.B;
+end;
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseVisibilitySection
+#data
+unit U;
+interface
+type
+  T = class
+  private
+    F: Integer;
+  end;
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseVisibilitySectionContent
+#data
+unit U;
+interface
+type
+  T = class
+    F: Integer;
+  end;
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseInterfaceType
+#data
+unit U;
+interface
+type
+  ITest = interface
+  end;
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseClassType
+#data
+unit U;
+interface
+type
+  T = class end;
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseClassHelper
+#data
+unit U;
+interface
+type
+  TStringHelper = class helper for string
+  end;
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseClassMemberList
+#data
+unit U;
+interface
+type
+  T = record
+    F: Integer;
+  end;
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseProceduralType
+#data
+unit U;
+interface
+type
+  TProc = procedure;
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParsePointerType
+#data
+unit U;
+interface
+type
+  PInt = ^Integer;
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseStringType
+#data
+unit U;
+interface
+type
+  S10 = string[10];
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseStructuredType
+#data
+unit U;
+interface
+type
+  TInts = array of Integer;
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseSimpleType
+#data
+unit U;
+interface
+type
+  TAlias = 1;
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseTypeDeclaration
+#data
+unit U;
+interface
+type
+  T = class end;
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseType
+#data
+unit U;
+interface
+type
+  T = class end;
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseTypedConstant
+#data
+unit U;
+interface
+const
+  C: array[0..1] of Integer = (1,2);
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseTypeId
+#data
+unit U;
+interface
+type
+  TAlias = Integer;
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseConstantName
+#data
+unit U;
+interface
+const
+  C = 1;
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseMethodHeading
+#data
+unit U;
+interface
+type
+  T = class
+    procedure P;
+  end;
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseVarSection
+#data
+unit U;
+interface
+var
+  V: Integer;
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+IsPossibleConstSection
+#data
+unit U;
+interface
+const
+  C = 1;
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+IsPossibleMethodHeading
+#data
+unit U;
+interface
+type
+  T = class
+    procedure P;
+  end;
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+IsPossibleResStringSection
+#data
+unit U;
+interface
+resourcestring
+  S = 'x';
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+IsPossibleTypeDeclaration
+#data
+unit U;
+interface
+type
+  T = class end;
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+IsPossibleTypeSection
+#data
+unit U;
+interface
+type
+  T = class end;
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+IsPossibleUsesClause
+#data
+unit U;
+interface
+uses System.SysUtils;
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+IsPossibleVarSection
+#data
+unit U;
+interface
+var
+  V: Integer;
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+IsPossibleVisibilitySectionContent
+#data
+unit U;
+interface
+type
+  T = class
+    F: Integer;
+  end;
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseTypeSection
+#data
+unit U;
+interface
+type
+  T = class end;
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseTypeParam
+#data
+unit U;
+interface
+type
+  TGen<T> = class end;
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseTypeParamConstraint
+#data
+unit U;
+interface
+type
+  TGen<T: class> = class end;
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseConstraintTypeRef
+#data
+unit U;
+interface
+type
+  TGen<T: IInterface> = class end;
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseTypeParams
+#data
+unit U;
+interface
+type
+  TGen<T> = class end;
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseConstSection
+#data
+unit U;
+interface
+const
+  C = 1;
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseConstantDecl
+#data
+unit U;
+interface
+const
+  C = 1;
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+IsPossibleConstantDecl
+#data
+unit U;
+interface
+const
+  C = 1;
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseResStringSection
+#data
+unit U;
+interface
+resourcestring
+  S = 'x';
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+IsPossibleResourceStringDecl
+#data
+unit U;
+interface
+resourcestring
+  S = 'x';
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseResourceStringDecl
+#data
+unit U;
+interface
+resourcestring
+  S = 'x';
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseInterfaceDeclaration
+#data
+unit U;
+interface
+const
+  C = 1;
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseInitializationSection
+#data
+unit U;
+interface
+implementation
+initialization
+finalization
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseImplementationSection
+#data
+unit U;
+interface
+
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseInterfaceSection
+#data
+unit U;
+interface
+
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParsePortabilityDirective
+#data
+unit U platform;
+interface
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+IsPossiblePortabilityDirective
+#data
+unit U platform;
+interface
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+IsPossibleProperty
+#data
+unit U;
+interface
+type
+  T = class
+  private
+    F: Integer;
+  public
+    property P: Integer read F write F;
+  end;
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseIdentifierList
+#data
+unit U;
+interface
+type
+  T = class
+    A, B: Integer;
+  end;
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseScriptFile
+#data
+A := 1;
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnknown
+
+#name
+ParseIndexSpecifier
+#data
+unit U;
+interface
+
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseIdentifier
+#data
+unit U;
+interface
+
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+IsPossibleIdentifier
+#data
+unit U;
+interface
+
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+IsPossibleImplementationDecl
+#data
+unit U;
+interface
+implementation
+const
+  C = 1;
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+IsPossibleLabelID
+#data
+unit U;
+interface
+implementation
+procedure P;
+label L1;
+begin
+  goto L1;
+L1:
+end;
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+#name
+ParseAncestorList
+#data
+unit U;
+interface
+type
+  TChild = class(TObject, IInterface)
+  end;
+implementation
+end.
+#errors
+#document
+| ntCompilationUnit
+| 	ntUnitDeclaration
+| 		ntQualifiedIdentifier
+
+

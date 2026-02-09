@@ -1234,7 +1234,13 @@ ParseIndexSpecifier
 #data
 unit U;
 interface
-
+type
+  T = class
+  private
+    F: Integer;
+  public
+    property P: Integer index 1 read F write F;
+  end;
 implementation
 end.
 #errors

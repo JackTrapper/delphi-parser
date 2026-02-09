@@ -2094,7 +2094,6 @@ function TDelphiParser.ParseFile(FilePath: string): TSyntaxNode2;
 		LPosition: Int64;
 		LEncoding: TEncoding;
 	begin
-	// Tested by: basic_cases.dat/ParseFile
 		// Remember the current stream position so we can restore it later
 		LPosition := AStream.Position;
 
@@ -2118,6 +2117,9 @@ var
 	stm: IStream;
 	encoding: TEncoding;
 begin
+	{
+	Tested by: basic_cases.dat/ParseFile
+	}
 	fs := TFile.OpenRead(FilePath);
 	encoding := DetectEncodingFromStream(fs); // Check for BOM
 
@@ -2163,7 +2165,7 @@ Program
 	Tested by: basic_cases.dat/ParseLibraryFile
 }
 	Result := TSyntaxNode2.Create(ntLibrary);
-	Result.AddChild(EatToken(ptProgram));
+	Result.AddChild(EatToken(ptLibrary));
 	Result.AddChild(ParseIdentifier);
 
 	// program MyProgram1 (Foo, Bar);  //legacy turbo pascal
@@ -2208,7 +2210,9 @@ end;
 
 function TDelphiParser.ParsePackageFile: TSyntaxNode2;
 begin
-	// Tested by: basic_cases.dat/ParsePackageFile
+	{
+	Tested by: basic_cases.dat/ParsePackageFile
+	}
 	Result := PoisonNode;
 
 	ExpectedEx(ptPackage);
@@ -4542,7 +4546,7 @@ begin
 		if IsDebuggerPresent then
 		begin
 			OutputDebugString(PChar(s+'   '+NextFewTokens));
-			Windows.DebugBreak;
+//			Windows.DebugBreak;
 		end;
 	end;
 end;
@@ -4943,7 +4947,6 @@ var
 	var
 		n: TSyntaxNode2;
 	begin
-	// Tested by: basic_cases.dat/ParseExpression
 		n := TSyntaxNode2.Create(ntRelationalExpression);
 		n.AddChild(L);
 		n.AddChild(Op);  // keep token to preserve trivia
@@ -4987,6 +4990,8 @@ a or b
 	   │  └─ Right: ntSimpleExpression     // SE(c)
 	   ├─ Op:    OpTok('op')
 	   └─ Right: ntSimpleExpression        // SE(d)
+
+	Tested by: basic_cases.dat/ParseExpression
 }
 	Result := TSyntaxNode2.Create(ntExpression);
 
@@ -5257,7 +5262,9 @@ end;
 
 function TDelphiParser.ParseFinalizationSection: TSyntaxNode2;
 begin
-	// Tested by: basic_cases.dat/ParseFinalizationSection
+	{
+	Tested by: basic_cases.dat/ParseFinalizationSection
+	}
 	Result := TSyntaxNode2.Create(ntFinalization);
 	EatToken(ptFinalization);
 	StatementList;
@@ -5298,7 +5305,9 @@ function TDelphiParser.ParseEnumeratedType: TSyntaxNode2;
 var
 	typeNode: TSyntaxNode2;
 begin
-	// Tested by: basic_cases.dat/ParseEnumeratedType
+	{
+	Tested by: basic_cases.dat/ParseEnumeratedType
+	}
 	typeNode := TSyntaxNode2.Create(ntType);
 
    typeNode.Attributes[anName] := AttributeValueToString(atEnum);
@@ -5318,7 +5327,9 @@ end;
 
 function TDelphiParser.ParseSubrangeType: TSyntaxNode2;
 begin
-	// Tested by: basic_cases.dat/ParseSubrangeType
+	{
+	Tested by: basic_cases.dat/ParseSubrangeType
+	}
 	Result := TSyntaxNode2.Create(ntType);
 	Result.Attributes[anName] := AttributeValueToString(atSubRange);
 
@@ -5350,7 +5361,9 @@ end;
 
 function TDelphiParser.ParseRealType: TSyntaxNode2;
 begin
-	// Tested by: basic_cases.dat/ParseRealType
+	{
+	Tested by: basic_cases.dat/ParseRealType
+	}
 	Result := PoisonNode;
 
 
@@ -5434,7 +5447,9 @@ end;
 
 function TDelphiParser.ParseOrdinalType: TSyntaxNode2;
 begin
-	// Tested by: basic_cases.dat/ParseOrdinalType
+	{
+	Tested by: basic_cases.dat/ParseOrdinalType
+	}
 	Result := PoisonNode;
 
 
@@ -5468,7 +5483,9 @@ end;
 
 function TDelphiParser.ParseVariableReference: TSyntaxNode2;
 begin
-	// Tested by: basic_cases.dat/ParseVariableReference
+	{
+	Tested by: basic_cases.dat/ParseVariableReference
+	}
 	Result := PoisonNode;
 
 
@@ -5942,7 +5959,9 @@ end;
 
 function TDelphiParser.ParseClassHelper: TSyntaxNode2;
 begin
-	// Tested by: basic_cases.dat/ParseClassHelper
+	{
+	Tested by: basic_cases.dat/ParseClassHelper
+	}
 	Result := TSyntaxNode2.Create(ntHelper);
 	Result.AddChild(EatToken(ptHelper));
 
@@ -6404,7 +6423,9 @@ function TDelphiParser.ParseProceduralType: TSyntaxNode2;
 var
   TheTokenID: TptTokenKind;
 begin
-	// Tested by: basic_cases.dat/ParseProceduralType
+	{
+	Tested by: basic_cases.dat/ParseProceduralType
+	}
    Result := TSyntaxNode2.Create(ntType);
 	Result.Attributes[anName] := CurrentToken.ValueText;
      case CurrentTokenKind of
@@ -6602,7 +6623,9 @@ end;
 
 function TDelphiParser.ParseStructuredType: TSyntaxNode2;
 begin
-	// Tested by: basic_cases.dat/ParseStructuredType
+	{
+	Tested by: basic_cases.dat/ParseStructuredType
+	}
 	Result := TSyntaxNode2.Create(ntType);
 	Result.Attributes[anType] := CurrentToken.ValueText;
 
@@ -6619,7 +6642,9 @@ end;
 
 function TDelphiParser.ParseSimpleType: TSyntaxNode2;
 begin
-	// Tested by: basic_cases.dat/ParseSimpleType
+	{
+	Tested by: basic_cases.dat/ParseSimpleType
+	}
 	Result := TSyntaxNode2.Create(ntType);
 	Result.Attributes[anName] := CurrentToken.ValueText;
 
@@ -6766,7 +6791,6 @@ var
 
 	function IsPortabilityDirectiveToken(k: TptTokenKind): Boolean;
 	begin
-	// Tested by: basic_cases.dat/ParseTypeDeclaration
 		Result := k in [ptPlatform, ptDeprecated, ptLibrary, ptExperimental];
 	end;
 begin
@@ -6815,6 +6839,7 @@ ntTypeDecl(@anName="TSpecial")
 		ntUnknown('Not implemented yet')
 		ntUnknown('Not implemented yet')
 
+	Tested by: basic_cases.dat/ParseTypeDeclaration
 }
 	Result := TSyntaxNode2.Create(ntTypeDecl);					// TSpecial
 	Result.Attributes[anName] := CurrentToken.ValueText;
@@ -6972,7 +6997,9 @@ var
 	s: string;
 	tok: TSyntaxToken;
 begin
-	// Tested by: basic_cases.dat/ParseTypedConstant
+	{
+	Tested by: basic_cases.dat/ParseTypedConstant
+	}
 	Result := TSyntaxNode2.Create(ntExpression);
 	s := '';
 
@@ -6994,7 +7021,9 @@ function TDelphiParser.ParseTypeId: TSyntaxNode2;
 //	TypeName, InnerTypeName: string;
 //	i: integer;
 begin
-	// Tested by: basic_cases.dat/ParseTypeId
+	{
+	Tested by: basic_cases.dat/ParseTypeId
+	}
 	Result := PoisonNode;
 
 
@@ -7136,7 +7165,9 @@ end;
 
 function TDelphiParser.ParseConstantName: TSyntaxNode2;
 begin
-	// Tested by: basic_cases.dat/ParseConstantName
+	{
+	Tested by: basic_cases.dat/ParseConstantName
+	}
 	Result := TSyntaxNode2.Create(ntName);
 	Result[anName] := CurrentToken.ValueText;
 
@@ -7786,7 +7817,6 @@ function TDelphiParser.ParseTypeParam: TSyntaxNode2;
 var
 	typeNameNode, constraints: TSyntaxNode2;
 begin
-	// Tested by: basic_cases.dat/ParseTypeParam
 (*
 
 Returns
@@ -7821,6 +7851,8 @@ TypeParamConstraint        ::= 'class' | 'record' | 'constructor' | ConstraintTy
 ConstraintTypeRef          ::= QualifiedIdent [ '<' TypeArgList '>' ]
 QualifiedIdent             ::= identifier ('.' identifier)*
 TypeArgList                ::= ConstraintTypeRef (',' ConstraintTypeRef)*
+
+Tested by: basic_cases.dat/ParseTypeParam
 *)
 	Result := TSyntaxNode2.Create(ntTypeParam);
 
@@ -8520,7 +8552,9 @@ end;
 
 function TDelphiParser.ParseInitializationSection: TSyntaxNode2;
 begin
-	// Tested by: basic_cases.dat/ParseInitializationSection
+	{
+	Tested by: basic_cases.dat/ParseInitializationSection
+	}
 	Result := TSyntaxNode2.Create(ntInitialization);
 	EatToken(ptInitialization);
 	StatementList;
@@ -8686,7 +8720,9 @@ end;
 
 function TDelphiParser.ParseIdentifierList: TSyntaxNode2;
 begin
-	// Tested by: basic_cases.dat/ParseIdentifierList
+	{
+	Tested by: basic_cases.dat/ParseIdentifierList
+	}
 	Result := PoisonNode;
 
 	ParseIdentifier;
@@ -8737,7 +8773,9 @@ end;
 
 function TDelphiParser.ParseScriptFile: TSyntaxNode2;
 begin
-	// Tested by: basic_cases.dat/ParseScriptFile
+	{
+	Tested by: basic_cases.dat/ParseScriptFile
+	}
 	Result := PoisonNode;
 
 {
@@ -8812,7 +8850,9 @@ end;
 
 function TDelphiParser.ParseIndexSpecifier: TSyntaxNode2;
 begin
-	// Tested by: basic_cases.dat/ParseIndexSpecifier
+	{
+	Tested by: basic_cases.dat/ParseIndexSpecifier
+	}
 	Result := TSyntaxNode2.Create(ntIndex);
 	ExpectedEx(ptIndex);
 	ConstantExpression;

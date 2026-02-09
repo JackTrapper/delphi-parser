@@ -140,9 +140,15 @@ begin
 	for i := 0 to Length(lines)-1 do
 	begin
 		line := lines[i];
+		if SameText(line, '#name') then
+		begin
+			// New case boundary: finalize the previous case before reading the next name.
+			FlushCurrent;
+			section := 'name';
+			continue;
+		end;
 		if SameText(line, '#data') then
 		begin
-			FlushCurrent;
 			section := 'data';
 			continue;
 		end;
@@ -156,12 +162,6 @@ begin
 			section := 'document';
 			continue;
 		end;
-		if SameText(line, '#name') then
-		begin
-			section := 'name';
-			continue;
-		end;
-
 		payload := line;
 		if section = 'document' then
 		begin
@@ -186,12 +186,10 @@ end;
 
 procedure TDelphiParserTests.RunDatCase(const ACase: TDatParserCase);
 begin
-	CheckFalse(Trim(ACase.SourceCode) = '', 'Case "' + ACase.Name + '" is missing #data');
+	CheckFalse(Trim(ACase.SourceCode)   = '', 'Case "' + ACase.Name + '" is missing #data');
 	CheckFalse(Trim(ACase.ExpectedTree) = '', 'Case "' + ACase.Name + '" is missing #document');
 
-	Status('DAT Case: ' + ACase.Name + ' (' + ExtractFileName(ACase.FileName) + ')');
-	Status('Source'+CRLF+'------'+CRLF+ACase.SourceCode);
-	Status('ExpectedTree'+CRLF+'------------'+CRLF+ACase.ExpectedTree);
+	Status('Test name: '+ACase.Name + ' (' + ExtractFileName(ACase.FileName) + ')'+CRLF+CRLF);
 
 	CompareSource(ACase.SourceCode, ACase.ExpectedTree, ACase.Name);
 end;
@@ -221,6 +219,18 @@ begin
 
 	// and compare the trees
 	Result := CompareTrees(expected, actual);
+
+	if not Result then
+	begin
+		Status('Source code'+CRLF+
+		       '-----------'+CRLF+
+		       SourceCode+CRLF+CRLF);
+
+		Status('ExpectedTree'+CRLF+
+		       '------------'+CRLF+
+		       ExpectedTree+CRLF+CRLF);
+	end;
+
 	if CaseName = '' then
 		CheckTrue(Result, 'Trees must be equal')
 	else

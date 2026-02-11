@@ -189,7 +189,7 @@ begin
 	CheckFalse(Trim(ACase.SourceCode)   = '', 'Case "' + ACase.Name + '" is missing #data');
 	CheckFalse(Trim(ACase.ExpectedTree) = '', 'Case "' + ACase.Name + '" is missing #document');
 
-	Status('Test name: '+ACase.Name + ' (' + ExtractFileName(ACase.FileName) + ')'+CRLF+CRLF);
+//	Status('Test name: '+ACase.Name + ' (' + ExtractFileName(ACase.FileName) + ')'+CRLF+CRLF);
 
 	CompareSource(ACase.SourceCode, ACase.ExpectedTree, ACase.Name);
 end;
@@ -201,8 +201,6 @@ var
 begin
 	CheckFalse(sourceCode='');
 	CheckFalse(ExpectedTree='');
-	if CaseName <> '' then
-		Status('Case: ' + CaseName);
 
 	// Build the expected tree
 	expected := ExpectedToTree(expectedTree);
@@ -211,7 +209,6 @@ begin
 	// Tokenize the source code
 	tokens := TObjectList.Create(True); //owns objects
 	TDelphiTokenizer.Tokenize(sourceCode, tokens);
-	Status(TokensToStr(tokens));
 
 	// Parse the source tokens
 	actual := TDelphiParser.ParseText(sourceCode, '');
@@ -220,8 +217,13 @@ begin
 	// and compare the trees
 	Result := CompareTrees(expected, actual);
 
-	if not Result then
+	if Result then
 	begin
+		Status('[PASS] '+CaseName);
+	end
+	else
+	begin
+		Status('[FAIL] '+CaseName);
 		Status('Source code'+CRLF+
 		       '-----------'+CRLF+
 		       SourceCode+CRLF+CRLF);
@@ -229,12 +231,17 @@ begin
 		Status('ExpectedTree'+CRLF+
 		       '------------'+CRLF+
 		       ExpectedTree+CRLF+CRLF);
+
+		Status('Tokens'+CRLF+
+		       '------'+CRLF+
+		       TokensToStr(tokens)+CRLF+CRLF);
+
+		if CaseName = '' then
+			CheckTrue(Result, 'FAIL: Trees must be equal')
+		else
+			CheckTrue(Result, 'FAIL: Trees must be equal: ' + CaseName);
 	end;
 
-	if CaseName = '' then
-		CheckTrue(Result, 'Trees must be equal')
-	else
-		CheckTrue(Result, 'Trees must be equal: ' + CaseName);
 end;
 
 function TDelphiParserTests.CompareTrees(expected, actual: TSyntaxNode2): Boolean;
@@ -242,8 +249,8 @@ begin
 	CheckTrue(Assigned(expected), 'expected node not assigned');
 	CheckTrue(Assigned(actual), 'actual node not assigned');
 
-	Status(CRLF+CRLF+'Expected'+CRLF+'========'+CRLF+CRLF+TSyntaxNode2.DumpTree(expected));
-	Status(CRLF+CRLF+'Actual  '+CRLF+'========'+CRLF+CRLF+TSyntaxNode2.DumpTree(actual));
+//	Status(CRLF+CRLF+'Expected'+CRLF+'========'+CRLF+CRLF+TSyntaxNode2.DumpTree(expected));
+//	Status(CRLF+CRLF+'Actual  '+CRLF+'========'+CRLF+CRLF+TSyntaxNode2.DumpTree(actual));
 
 	Result := CompareNodes(expected, actual);
 end;

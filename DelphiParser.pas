@@ -544,7 +544,6 @@ type
 //		FCurrentToken: TSyntaxToken;
 
 		FCompilerDirectives: TStrings;
-		FLastProgressIndex: Integer;
 
 		FOnMessage: TMessageEvent;
 
@@ -606,14 +605,12 @@ type
 		function EatToken(ExpectedTokenKind: TptTokenKind): TSyntaxToken; overload; // emits an error message if the CurrentToken kind is not Sym.
 
 		// Assertion utility routines. Moves to next token as long as current token is specified type
-		procedure ExpectedFatal(Sym: TptTokenKind); 			// throws an exception if the CurrentToken kind is not Sym.
 		function ExpectedEx(    ExpectedTokenKind: TptTokenKind): TSyntaxToken;	// emits an error message if the CurrentToken ExID is not Sym.
 
 		// Output an error message
 		function SynError(Error: string): TSyntaxNode2;
 		function SynErrorFmt(const Error: string; const Args: array of const): TSyntaxNode2;
 
-		procedure EnsureProgress;
 
 		// ***********************************************************************
 		// Start of the production methods
@@ -716,7 +713,6 @@ type
 
 		function ConstantExpression: TSyntaxNode2;
 		function ConstantType: TSyntaxNode2;
-		procedure ConstructorHeading(ParentNode: TSyntaxNode2);
 
 		function ParseImplementationDecl: TSyntaxNode2;
 			function IsPossibleImplementationDecl: Boolean;
@@ -753,6 +749,16 @@ type
 		function ClassMethodHeading: TSyntaxNode2;
 		procedure ClassProcedureHeading(ParentNode: TSyntaxNode2);
 
+		function ParseMethodHeading: TSyntaxNode2;
+			function IsPossibleMethodHeading: Boolean;
+
+		function ParseFunctionMethodHeading: TSyntaxNode2;
+		function ParseProcedureMethodHeading: TSyntaxNode2;
+		function ParseConstructorMethodHeading: TSyntaxNode2;
+		function ParseDestructorMethodHeading: TSyntaxNode2;
+		function ParseOperatorMethodHeading: TSyntaxNode2;
+		procedure ConstructorHeading(ParentNode: TSyntaxNode2);
+
 		function ParseProperty: TSyntaxNode2;
 			function IsPossibleProperty: Boolean;
 
@@ -780,8 +786,6 @@ type
 		function ExceptionBlockElseBranch: TSyntaxNode2;
 		function ExceptionHandler: TSyntaxNode2;
 		function ExceptionVariable: TSyntaxNode2;
-		function ParseMethodHeading: TSyntaxNode2;
-			function IsPossibleMethodHeading: Boolean;
 
 		function ExportsClause: TSyntaxNode2;
 		function ExportsElement: TSyntaxNode2;
@@ -802,7 +806,7 @@ type
 		function ForStatementFrom: TSyntaxNode2;
 		function ForStatementIn: TSyntaxNode2;
 		function ForStatementTo: TSyntaxNode2;
-		procedure FunctionHeading(ParentNode: TSyntaxNode2);
+
 		function FunctionMethodName: TSyntaxNode2;
 		function ForwardDeclaration: TSyntaxNode2;
 		function FunctionMethodDeclaration: TSyntaxNode2;
@@ -911,7 +915,6 @@ type
 		function ParameterFormal: TSyntaxNode2;
 		function ParameterName: TSyntaxNode2;
 		function PointerSymbol: TSyntaxNode2;
-		procedure ProcedureHeading(ParentNode: TSyntaxNode2);
 		function ProcedureDeclarationSection: TSyntaxNode2;
 		function ProcedureProcedureName: TSyntaxNode2;
 		procedure PropertyName(ParentNode: TSyntaxNode2);
@@ -1153,13 +1156,12 @@ Property [^]
 			[':' MethodReturnType]
 			(PropertyDirective)*
 			';'
-	Tested by: basic_cases.dat/ParseProperty
 }
 	Result := TSyntaxNode2.Create(ntProperty);
 
 	if CurrentTokenKind = ptClass then
 	begin
-		Result[anClass] := 'true';
+		Result[anClass] := AttributeValueToString(atTrue);
 		Result.AddChild(EatToken(ptClass));
 	end;
 
@@ -1186,9 +1188,6 @@ PropertyDirective
 	-> STORED Expression
 	-> WRITE Expression
 	-> WRITEONLY
-
-
-	Tested by: basic_cases.dat/ParsePropertyDirective
 }
 	Result := TSyntaxNode2.Create(ntPropertySpecifiers);
 
@@ -1264,7 +1263,6 @@ var
 begin
 {
 	Assigns the source stream to the lexer, and calls the protected ParseFile method.
-	Tested by: basic_cases.dat/ParseStream
 }
 	// Tokenize the input and put the tokens into our list
 	tokens := TObjectList.Create(False);
@@ -1309,40 +1307,28 @@ begin
 	inherited Destroy;
 end;
 
-{next two check for ptNull and ExpectedFatal for an EOF Error}
+{next two helpers validate expected tokens and recover with missing tokens at EOF}
 
 function TDelphiParser.ExpectedEx(ExpectedTokenKind: TptTokenKind): TSyntaxToken;
+var
+	s: string;
 begin
 	// Expect the CurrentToken's ExID to be SymID
 	if ExpectedTokenKind <> CurrentTokenExID then
 	begin
-		if CurrentToken.TokenKind = ptEof then
-			ExpectedFatal(ExpectedTokenKind) //jdj 7/22/1999
-		else if Assigned(FOnMessage) then
-			DoMessage(Format(SExpected, ['EX:' + TokenName(ExpectedTokenKind), TokenName(CurrentTokenExID)]), CurrentToken.Line, CurrentToken.Column);
+		s := Format(SExpected, ['EX:' + TokenName(ExpectedTokenKind), TokenName(CurrentTokenExID)]);
+		DoMessage(s, CurrentToken.Line, CurrentToken.Column);
+
+		// Roslyn-style recovery: synthesize the expected token and keep EOF in place.
+		Result := TSyntaxToken.Create(ExpectedTokenKind, CurrentToken.Line, CurrentToken.Column, '');
+		Result.IsMissing := True;
+
+		if CurrentToken.TokenKind <> ptEof then
+			NextToken;
+		Exit;
 	end;
 
 	Result := CurrentToken;
-	NextToken;
-end;
-
-{Replace Token with cnEndOfFile if TokenId = ptnull}
-
-procedure TDelphiParser.ExpectedFatal(Sym: TptTokenKind);
-var
-	s: string;
-begin
-	if Sym <> CurrentToken.TokenKind then
-	begin
-		// Handle EOF special --jdj 7/22/1999
-		if CurrentTokenKind = ptEof then
-			s := SEndOfFile // '%s' expected found '%s'
-		else
-			s := CurrentToken.ToString;
-
-		raise ESyntaxError.CreatePos(Format(SExpected, [TokenKindToStr(Sym), s]), Point(CurrentToken.Line, CurrentToken.Column));
-	end;
-
 	NextToken;
 end;
 
@@ -1958,12 +1944,10 @@ http://dgrok.excastle.com/Grammar.html#MethodOrProperty
 
 
 MethodHeading
-	// ParseMethodOrProperty handles optional leading [CLASS]
-	// This method currently implements procedure/function headings.
-	-> (PROCEDURE | FUNCTION)
+	-> [CLASS] (PROCEDURE | FUNCTION | CONSTRUCTOR | DESTRUCTOR | OPERATOR)
 			QualifiedIdent
 			['(' (Parameter [';'])* ')']
-			[':' MethodReturnType]		// FUNCTION only
+			[':' MethodReturnType]		// FUNCTION required, OPERATOR optional
 			[';']
 			(Directive [';'])*
 
@@ -1974,20 +1958,15 @@ Property
 			[':' MethodReturnType]
 			(PropertyDirective)*
 			';'
-	Tested by: basic_cases.dat/ParseMethodOrProperty
 }
 	if IsPossibleMethodHeading then
 	begin
 		Result := TSyntaxNode2.Create(ntMethod);
-		if CurrentTokenKind = ptClass then
-			Result[anClass] := 'true';
 		Result.AddChild(ParseMethodHeading);
 	end
 	else if IsPossibleProperty then
 	begin
 		Result := TSyntaxNode2.Create(ntProperty);
-		if CurrentTokenKind = ptClass then
-			Result[anClass] := 'true';
 		Result.AddChild(ParseProperty);
 	end
 	else
@@ -2004,7 +1983,6 @@ http://dgrok.excastle.com/Grammar.html#FieldDecl
 
 FieldDecl
 		-> IdentList ':' Type (PortabilityDirective)* [';']
-	Tested by: basic_cases.dat/ParseFieldDecl
 }
 	Result := TSyntaxNode2.Create(ntField);
 	Result.AddChild(ParseIdentifierList);
@@ -2045,7 +2023,6 @@ begin
 	For more information about Delphi grammars take a look at:
 		http://www.stud.mw.tu-muenchen.de/~rz1/Grammar.html
 		https://archive.ph/2ytar
-	Tested by: basic_cases.dat/ParseCore
 }
 
 	// The tree is rooted on a "CompilationUnit" node.
@@ -2117,9 +2094,8 @@ var
 	stm: IStream;
 	encoding: TEncoding;
 begin
-	{
-	Tested by: basic_cases.dat/ParseFile
-	}
+{
+}
 	fs := TFile.OpenRead(FilePath);
 	encoding := DetectEncodingFromStream(fs); // Check for BOM
 
@@ -2136,7 +2112,6 @@ var
 begin
 {
 	Convert the Text to an ISequentialStream and pass it to the .Parse method.
-	Tested by: basic_cases.dat/ParseText
 }
 	s := TStringStream.Create(Text, CP_UTF16); // expose the string as UTF-16
 
@@ -2162,7 +2137,6 @@ Program
 				[UsesClause]
 				(ImplementationDecl)*
 				InitSection '.'
-	Tested by: basic_cases.dat/ParseLibraryFile
 }
 	Result := TSyntaxNode2.Create(ntLibrary);
 	Result.AddChild(EatToken(ptLibrary));
@@ -2210,9 +2184,6 @@ end;
 
 function TDelphiParser.ParsePackageFile: TSyntaxNode2;
 begin
-	{
-	Tested by: basic_cases.dat/ParsePackageFile
-	}
 	Result := PoisonNode;
 
 	ExpectedEx(ptPackage);
@@ -2247,7 +2218,6 @@ Program
 				[UsesClause]
 				(ImplementationDecl)*
 				InitSection '.'
-	Tested by: basic_cases.dat/ParseProgramFile
 }
 	Result := TSyntaxNode2.Create(ntProgram);
 	Result.AddChild(EatToken(ptProgram));
@@ -2331,7 +2301,6 @@ ntCompilationUnit
 		ptSemicolon(';')
 		ntInterfaceSection
 	ptEof
-	Tested by: basic_cases.dat/ParseUnitDeclaration
 }
 	Result := TSyntaxNode2.Create(ntUnitDeclaration);
 
@@ -2594,7 +2563,6 @@ ntUses
 		ptIdentifier('Exceptions')
 	ptComma(',')
 	ptSemicolon(";")
-	Tested by: basic_cases.dat/ParseUsesClause
 }
 	if CurrentTokenKind = ptUses then
 	begin
@@ -2657,7 +2625,6 @@ http://dgrok.excastle.com/Grammar.html#UsedUnit
 UsedUnit
 	-> Ident
 	-> Ident IN <stringliteral>
-	Tested by: basic_cases.dat/ParseUsedUnit
 }
 	Result := TSyntaxNode2.Create(ntUsedUnit);
 	unitName := ParseQualifiedIdentifier;
@@ -2759,7 +2726,6 @@ ImplementationDecl
 	-> MethodImplementation
 	-> ExportsStatement
 	-> AssemblyAttribute
-	Tested by: basic_cases.dat/ParseImplementationDecl
 }
 	case CurrentTokenKind of
 	ptLabel:				Result := LabelDeclarationSection;				//LabelDeclSection
@@ -2835,7 +2801,6 @@ Design notes
 - We also compute a convenient logical name into anName for tooling.
 - Delphi's reference-counted strings make concatenation efficient here;
 		a separate string list adds no real benefit unless we want the parts.
-	Tested by: basic_cases.dat/ParseQualifiedIdentifier
 }
 	Result := TSyntaxNode2.Create(ntQualifiedIdentifier);
 
@@ -4529,19 +4494,15 @@ begin
 	else
 	begin
 		// Create a zero-width (synthesized) token for error recovery, preserving tree shape
-		Result := TSyntaxToken.Create(ExpectedTokenKind, -1, -1, '');
+		Result := TSyntaxToken.Create(ExpectedTokenKind, CurrentToken.Line, CurrentToken.Column, '');
 		Result.IsMissing := True;
-		if CurrentToken.TokenKind = ptEof then
-			ExpectedFatal(ExpectedTokenKind)
-		else
-		begin
-			s := Format(SExpected, [TokenName(ExpectedTokenKind), TokenName(CurrentToken.TokenKind)]);
-			DoMessage(s, CurrentToken.Line, CurrentToken.Column);
-			Log(s);
-		end;
+		s := Format(SExpected, [TokenName(ExpectedTokenKind), TokenName(CurrentToken.TokenKind)]);
+		DoMessage(s, CurrentToken.Line, CurrentToken.Column);
+		Log(s);
 
-		// We advance tokens just to make progress always.
-		NextToken;
+		// Keep EOF in place; otherwise advance so parser always makes progress.
+		if CurrentToken.TokenKind <> ptEof then
+			NextToken;
 
 		if IsDebuggerPresent then
 		begin
@@ -4857,7 +4818,6 @@ http://dgrok.excastle.com/Grammar.html#Term
 
 Term
 	-> Factor (MulOp Factor)*
-	Tested by: basic_cases.dat/ParseTerm
 }
 	Result := PoisonNode;
 
@@ -4915,7 +4875,6 @@ Term - Backlinks: SimpleExpression
 	-> Factor (MulOp Factor)*
 
 
-	Tested by: basic_cases.dat/ParseSimpleExpression
 }
 	Result := TSyntaxNode2.Create(ntExpression);
 	Result.AddChild(ParseTerm);
@@ -4991,7 +4950,6 @@ a or b
 	   ├─ Op:    OpTok('op')
 	   └─ Right: ntSimpleExpression        // SE(d)
 
-	Tested by: basic_cases.dat/ParseExpression
 }
 	Result := TSyntaxNode2.Create(ntExpression);
 
@@ -5263,7 +5221,6 @@ end;
 function TDelphiParser.ParseFinalizationSection: TSyntaxNode2;
 begin
 	{
-	Tested by: basic_cases.dat/ParseFinalizationSection
 	}
 	Result := TSyntaxNode2.Create(ntFinalization);
 	EatToken(ptFinalization);
@@ -5306,7 +5263,6 @@ var
 	typeNode: TSyntaxNode2;
 begin
 	{
-	Tested by: basic_cases.dat/ParseEnumeratedType
 	}
 	typeNode := TSyntaxNode2.Create(ntType);
 
@@ -5328,7 +5284,6 @@ end;
 function TDelphiParser.ParseSubrangeType: TSyntaxNode2;
 begin
 	{
-	Tested by: basic_cases.dat/ParseSubrangeType
 	}
 	Result := TSyntaxNode2.Create(ntType);
 	Result.Attributes[anName] := AttributeValueToString(atSubRange);
@@ -5362,7 +5317,6 @@ end;
 function TDelphiParser.ParseRealType: TSyntaxNode2;
 begin
 	{
-	Tested by: basic_cases.dat/ParseRealType
 	}
 	Result := PoisonNode;
 
@@ -5448,7 +5402,6 @@ end;
 function TDelphiParser.ParseOrdinalType: TSyntaxNode2;
 begin
 	{
-	Tested by: basic_cases.dat/ParseOrdinalType
 	}
 	Result := PoisonNode;
 
@@ -5484,7 +5437,6 @@ end;
 function TDelphiParser.ParseVariableReference: TSyntaxNode2;
 begin
 	{
-	Tested by: basic_cases.dat/ParseVariableReference
 	}
 	Result := PoisonNode;
 
@@ -5554,10 +5506,10 @@ Returns: ntVisibilitySection
 	--> Property
 
 	MethodHeading
-	--> (PROCEDURE | FUNCTION)
+	--> [CLASS] (PROCEDURE | FUNCTION | CONSTRUCTOR | DESTRUCTOR | OPERATOR)
 			QualifiedIdent
 			['(' (Parameter [';'])* ')']
-			[':' MethodReturnType]		// FUNCTION only
+			[':' MethodReturnType]		// FUNCTION required, OPERATOR optional
 			[';']
 			(Directive [';'])*
 
@@ -5594,7 +5546,6 @@ Example
 				ptIdentifier("FId")
 			ntType(@anName="TGUID")
 				ptIdentifier("TGUID")
-	Tested by: basic_cases.dat/ParseVisibilitySection
 }
 	Result := TSyntaxNode2.Create(ntUnknown);
 	Result.Attributes[anName] := 'ntVisibilitySection';
@@ -5678,16 +5629,15 @@ begin
 			';'
 
 	MethodHeading
-	--> (PROCEDURE | FUNCTION)
+	--> [CLASS] (PROCEDURE | FUNCTION | CONSTRUCTOR | DESTRUCTOR | OPERATOR)
 			QualifiedIdent
 			['(' (Parameter [';'])* ')']
-			[':' MethodReturnType]		// FUNCTION only
+			[':' MethodReturnType]		// FUNCTION required, OPERATOR optional
 			[';']
 			(Directive [';'])*
 
 	FieldSection
 	--> [[CLASS] VAR] (FieldDecl)*
-	Tested by: basic_cases.dat/ParseVisibilitySectionContent
 }
 	case CurrentTokenKind of
 	ptConst: Result := ParseConstSection;
@@ -5804,7 +5754,6 @@ InterfaceType
 			['[' Expression ']']
 			(MethodOrProperty)*
 			END
-	Tested by: basic_cases.dat/ParseInterfaceType
 }
 	Result := PoisonNode;
 
@@ -5905,7 +5854,6 @@ Example
 			ntName anName="FTime"
 			ntType anName="Integer"
 
-	Tested by: basic_cases.dat/ParseClassType
 }
 	Result := TSyntaxNode2.Create(ntType);
 	Result.Attributes[anType] := AttributeValueToString(atClass);
@@ -5960,7 +5908,6 @@ end;
 function TDelphiParser.ParseClassHelper: TSyntaxNode2;
 begin
 	{
-	Tested by: basic_cases.dat/ParseClassHelper
 	}
 	Result := TSyntaxNode2.Create(ntHelper);
 	Result.AddChild(EatToken(ptHelper));
@@ -6107,7 +6054,6 @@ Visibility
 	-> PUBLISHED
 
 
-	Tested by: basic_cases.dat/ParseClassMemberList
 }
 	Result := PoisonNode; // ntClassMemberList
 
@@ -6424,7 +6370,6 @@ var
   TheTokenID: TptTokenKind;
 begin
 	{
-	Tested by: basic_cases.dat/ParseProceduralType
 	}
    Result := TSyntaxNode2.Create(ntType);
 	Result.Attributes[anName] := CurrentToken.ValueText;
@@ -6586,7 +6531,6 @@ begin
 
 	Returns
 		ntType(@anType=atPointer)
-	Tested by: basic_cases.dat/ParsePointerType
 }
 	Result := TSyntaxNode2.Create(ntType);
 	Result.Attributes[anType] := AttributeValueToString(atPointer);
@@ -6600,7 +6544,6 @@ begin
 	StringType
 		-> STRING								string
 		-> STRING '[' Expression ']'		string[67]
-	Tested by: basic_cases.dat/ParseStringType
 }
 	Result := TSyntaxNode2.Create(ntType);
 //	Result.Attributes[anType] :=
@@ -6624,7 +6567,6 @@ end;
 function TDelphiParser.ParseStructuredType: TSyntaxNode2;
 begin
 	{
-	Tested by: basic_cases.dat/ParseStructuredType
 	}
 	Result := TSyntaxNode2.Create(ntType);
 	Result.Attributes[anType] := CurrentToken.ValueText;
@@ -6643,7 +6585,6 @@ end;
 function TDelphiParser.ParseSimpleType: TSyntaxNode2;
 begin
 	{
-	Tested by: basic_cases.dat/ParseSimpleType
 	}
 	Result := TSyntaxNode2.Create(ntType);
 	Result.Attributes[anName] := CurrentToken.ValueText;
@@ -6839,7 +6780,6 @@ ntTypeDecl(@anName="TSpecial")
 		ntUnknown('Not implemented yet')
 		ntUnknown('Not implemented yet')
 
-	Tested by: basic_cases.dat/ParseTypeDeclaration
 }
 	Result := TSyntaxNode2.Create(ntTypeDecl);					// TSpecial
 	Result.Attributes[anName] := CurrentToken.ValueText;
@@ -6924,26 +6864,26 @@ var
 	packedToken: TSyntaxToken;
 begin
 {
-	<Type>
-		-> EnumeratedType					ParseEnumeratedType
-		-> ExpressionOrRange
-		-> ArrayType						ParseStructuredType
-		-> SetType							ParseStructuredType
-		-> FileType							ParseStructuredType
-		-> RecordHelperType
-		-> RecordType						ParseStructuredType
-		-> PointerType						ParsePointerType
-		-> StringType
-		-> ProcedureType
-		-> ClassHelperType
-		-> ClassOfType
-		-> ClassType
-		-> InterfaceType
-		-> PackedType
+http://dgrok.excastle.com/Grammar.html#Type
 
-	Backlinks: ArrayType, ConstantDecl, FieldDecl, PackedType, PointerType, SetType, TypeDecl, VarDecl
-	Note: Delphi assumes that a Type starting with '(' is an enum, not an expression.
-	Tested by: basic_cases.dat/ParseType
+Type
+	-> EnumeratedType					'(' (EnumeratedTypeElement [','])+ ')'
+	-> ExpressionOrRange				SimpleExpression ['..' SimpleExpression]
+	-> ArrayType						ARRAY ['[' (Type [','])+ ']'] OF Type
+	-> SetType							Term (AddOp Term)*
+	-> FileType							FILE
+	-> RecordHelperType				RECORD HELPER FOR QualifiedIdent
+	-> RecordType						RECORD
+	-> PointerType						'^' Type
+	-> StringType						STRING
+	-> ProcedureType					(PROCEDURE | FUNCTION)
+	-> ClassHelperType				CLASS HELPER
+	-> ClassOfType						CLASS OF QualifiedIdent
+	-> ClassType						CLASS
+	-> InterfaceType					(INTERFACE | DISPINTERFACE)
+	-> PackedType						PACKED Type
+
+Note: Delphi assumes that a Type starting with '(' is an enum, not an expression.
 }
 	case CurrentTokenKind of
 	ptOpenParen: Result := ParseEnumeratedType;		// ntType
@@ -6956,7 +6896,8 @@ begin
 				packedToken := EatToken(ptPacked);
 
 			Result := ParseStructuredType;
-			Result.AddChild(packedToken);
+			if packedToken <> nil then
+				Result.AddChild(packedToken);
 		end;
 	ptFunction, ptProcedure: Result := ParseProceduralType;
 	ptIdentifier:
@@ -6998,7 +6939,6 @@ var
 	tok: TSyntaxToken;
 begin
 	{
-	Tested by: basic_cases.dat/ParseTypedConstant
 	}
 	Result := TSyntaxNode2.Create(ntExpression);
 	s := '';
@@ -7022,7 +6962,6 @@ function TDelphiParser.ParseTypeId: TSyntaxNode2;
 //	i: integer;
 begin
 	{
-	Tested by: basic_cases.dat/ParseTypeId
 	}
 	Result := PoisonNode;
 
@@ -7166,7 +7105,6 @@ end;
 function TDelphiParser.ParseConstantName: TSyntaxNode2;
 begin
 	{
-	Tested by: basic_cases.dat/ParseConstantName
 	}
 	Result := TSyntaxNode2.Create(ntName);
 	Result[anName] := CurrentToken.ValueText;
@@ -7279,24 +7217,37 @@ begin
 http://dgrok.excastle.com/Grammar.html#MethodHeading
 
 MethodHeading
-		// Recognizer accepts [CLASS] and constructor/destructor/operator starts,
-		// but ParseMethodHeading currently implements procedure/function headings.
-		-> [CLASS] (PROCEDURE | FUNCTION) QualifiedIdent
-					['(' (Parameter [';'])* ')']
-					[':' MethodReturnType]		// FUNCTION only
-					[';']
-					(Directive [';'])*
-
-
-	Tested by: basic_cases.dat/ParseMethodHeading
+	-> [CLASS]
+			(PROCEDURE | FUNCTION | CONSTRUCTOR | DESTRUCTOR | OPERATOR)
+			QualifiedIdent
+			(
+			['(' (Parameter [';'])* ')']
+			[':' MethodReturnType]
+			(Directive)*
+			| '=' Ident
+			)
+			[';']
 }
-	Result := TSyntaxNode2.Create(ntMethod);
-
 	case CurrentTokenKind of
-	ptFunction: FunctionHeading(Result);
-	ptProcedure: ProcedureHeading(Result);
+	ptProcedure: Result := ParseProcedureMethodHeading;
+	ptFunction: Result := ParseFunctionMethodHeading;
+	ptConstructor: Result := ParseConstructorMethodHeading;
+	ptDestructor: Result := ParseDestructorMethodHeading;
+	ptOperator: Result := ParseOperatorMethodHeading;
+	ptClass:
+		begin
+			case PeekTokenKind of
+			ptProcedure: Result := ParseProcedureMethodHeading;
+			ptFunction: Result := ParseFunctionMethodHeading;
+			ptConstructor: Result := ParseConstructorMethodHeading;
+			ptDestructor: Result := ParseDestructorMethodHeading;
+			ptOperator: Result := ParseOperatorMethodHeading;
+			else
+				Result := SynError('Expected method type');
+			end;
+		end;
 	else
-		SynError('InvalidExportedHeading');
+		Result := SynError('Expected method type');
 	end;
 
 	if CurrentTokenKind = ptSemiColon then
@@ -7319,57 +7270,145 @@ MethodHeading
      end;
 end;
 
-procedure TDelphiParser.FunctionHeading(ParentNode: TSyntaxNode2);
+function TDelphiParser.ParseFunctionMethodHeading: TSyntaxNode2;
 begin
-   ParentNode.Attributes[anKind] := AttributeValueToString(atFunction);
+{
+FunctionMethodHeading
+	-> [CLASS] FUNCTION QualifiedIdent
+			['(' (Parameter [';'])* ')']
+			':' MethodReturnType
+}
+	Result := TSyntaxNode2.Create(ntMethod);
+	Result.Attributes[anKind] := AttributeValueToString(atFunction);
 
-  EatToken(ptFunction);
-  FunctionProcedureName;
-  if CurrentTokenKind = ptOpenParen then
-  begin
-    FormalParameterList;
-  end;
-  if CurrentTokenKind = ptColon then
-  begin
-    EatToken(ptColon);
-    ReturnType;
-  end;
+	if CurrentTokenKind = ptClass then
+	begin
+		Result.AddChild(EatToken(ptClass));
+		Result.Attributes[anClass] := AttributeValueToString(atTrue);
+	end;
+
+	Result.AddChild(EatToken(ptFunction));
+	Result.AddChild(ParseQualifiedIdentifier);
+	if CurrentTokenKind = ptOpenParen then
+		Result.AddChild(FormalParameterList);
+	Result.AddChild(EatToken(ptColon));
+	Result.AddChild(ReturnType);
 end;
 
-procedure TDelphiParser.ProcedureHeading(ParentNode: TSyntaxNode2);
+function TDelphiParser.ParseProcedureMethodHeading: TSyntaxNode2;
 begin
-	ParentNode.Attributes[anKind] := AttributeValueToString(atProcedure);
+{
+ProcedureMethodHeading
+	-> [CLASS] PROCEDURE QualifiedIdent
+			['(' (Parameter [';'])* ')']
+}
+	Result := TSyntaxNode2.Create(ntMethod);
+	Result.Attributes[anKind] := AttributeValueToString(atProcedure);
 
-	EatToken(ptProcedure);
-	FunctionProcedureName;
-	if CurrentTokenKind = ptOpenParen then
+	if CurrentTokenKind = ptClass then
 	begin
-		FormalParameterList;
+		Result.AddChild(EatToken(ptClass));
+		Result.Attributes[anClass] := AttributeValueToString(atTrue);
+	end;
+
+	Result.AddChild(EatToken(ptProcedure));
+	Result.AddChild(ParseQualifiedIdentifier);
+	if CurrentTokenKind = ptOpenParen then
+		Result.AddChild(FormalParameterList);
+end;
+
+function TDelphiParser.ParseConstructorMethodHeading: TSyntaxNode2;
+begin
+{
+ConstructorMethodHeading
+	-> [CLASS] CONSTRUCTOR QualifiedIdent
+			['(' (Parameter [';'])* ')']
+}
+	Result := TSyntaxNode2.Create(ntMethod);
+	Result.Attributes[anKind] := AttributeValueToString(atConstructor);
+
+	if CurrentTokenKind = ptClass then
+	begin
+		Result.AddChild(EatToken(ptClass));
+		Result.Attributes[anClass] := AttributeValueToString(atTrue);
+	end;
+
+	Result.AddChild(EatToken(ptConstructor));
+	Result.AddChild(ParseQualifiedIdentifier);
+	if CurrentTokenKind = ptOpenParen then
+		Result.AddChild(FormalParameterList);
+end;
+
+function TDelphiParser.ParseDestructorMethodHeading: TSyntaxNode2;
+begin
+{
+DestructorMethodHeading
+	-> [CLASS] DESTRUCTOR QualifiedIdent
+			['(' (Parameter [';'])* ')']
+}
+	Result := TSyntaxNode2.Create(ntMethod);
+	Result.Attributes[anKind] := AttributeValueToString(atDestructor);
+
+	if CurrentTokenKind = ptClass then
+	begin
+		Result.AddChild(EatToken(ptClass));
+		Result.Attributes[anClass] := AttributeValueToString(atTrue);
+	end;
+
+	Result.AddChild(EatToken(ptDestructor));
+	Result.AddChild(ParseQualifiedIdentifier);
+	if CurrentTokenKind = ptOpenParen then
+		Result.AddChild(FormalParameterList);
+end;
+
+function TDelphiParser.ParseOperatorMethodHeading: TSyntaxNode2;
+begin
+{
+OperatorMethodHeading
+	-> [CLASS] OPERATOR QualifiedIdent
+			['(' (Parameter [';'])* ')']
+			[':' MethodReturnType]
+}
+	Result := TSyntaxNode2.Create(ntMethod);
+	Result.Attributes[anKind] := 'operator';
+
+	if CurrentTokenKind = ptClass then
+	begin
+		Result.AddChild(EatToken(ptClass));
+		Result.Attributes[anClass] := AttributeValueToString(atTrue);
+	end;
+
+	if CurrentTokenKind = ptOperator then
+		Result.AddChild(EatToken(ptOperator))
+	else if (CurrentTokenKind = ptIdentifier) and (CurrentTokenExID = ptOperator) then
+		Result.AddChild(EatToken(ptIdentifier))
+	else
+		Result.AddChild(SynError('Expected operator'));
+
+	Result.AddChild(ParseQualifiedIdentifier);
+	if CurrentTokenKind = ptOpenParen then
+		Result.AddChild(FormalParameterList);
+
+	if CurrentTokenKind = ptColon then
+	begin
+		Result.AddChild(EatToken(ptColon));
+		Result.AddChild(ReturnType);
 	end;
 end;
 
 function TDelphiParser.ParseVarSection: TSyntaxNode2;
-//var
-//	varSect: TSyntaxNode2;
 begin
 {
-VarSection [^]
+http://dgrok.excastle.com/Grammar.html#VarSection
+
+VarSection
 	-> (VAR | THREADVAR) (VarDecl)+
-	Tested by: basic_cases.dat/ParseVarSection
 }
 	case CurrentTokenKind of
-	ptVar:
-		begin
-			Result := TSyntaxNode2.Create(ntVariables);
-		end;
-	ptThreadVar:
-		begin
-			Result := TSyntaxNode2.Create(ntVariables);
-
-		end;
+	ptVar:			Result := TSyntaxNode2.Create(ntVariables);
+	ptThreadVar:	Result := TSyntaxNode2.Create(ntVariables);
 	else
-		SynError('ParseVarSection');
-		Exit(nil);
+		Result := SynError('Expected var section');
 	end;
 
 
@@ -7482,19 +7521,19 @@ function TDelphiParser.IsPossibleMethodHeading: Boolean;
 begin
 {
 MethodHeading
-		// Recognizer accepts [CLASS] and constructor/destructor/operator starts,
-		// but ParseMethodHeading currently implements procedure/function headings.
-		-> [CLASS] (PROCEDURE | FUNCTION) QualifiedIdent
+		-> [CLASS] (PROCEDURE | FUNCTION | CONSTRUCTOR | DESTRUCTOR | OPERATOR) QualifiedIdent
 					['(' (Parameter [';'])* ')']
-					[':' MethodReturnType]		// FUNCTION only
+					[':' MethodReturnType]		// FUNCTION required, OPERATOR optional
 					[';']
 					(Directive [';'])*
 }
 	// Check for optional `class` prefix
 	if CurrentTokenKind = ptClass then
-		Result := PeekTokenKind in [ptProcedure, ptFunction, ptConstructor, ptDestructor, ptOperator]
+		Result := (PeekTokenKind in [ptProcedure, ptFunction, ptConstructor, ptDestructor, ptOperator]) or
+			((PeekTokenKind = ptIdentifier) and (PeekTokenExID = ptOperator))
 	else
-		Result := CurrentTokenKind in [ptProcedure, ptFunction, ptConstructor, ptDestructor, ptOperator];
+		Result := (CurrentTokenKind in [ptProcedure, ptFunction, ptConstructor, ptDestructor, ptOperator]) or
+			((CurrentTokenKind = ptIdentifier) and (CurrentTokenExID = ptOperator));
 end;
 
 function TDelphiParser.IsPossibleResStringSection: Boolean;
@@ -7671,7 +7710,13 @@ end;
 
 function TDelphiParser.IsPossibleVarSection: Boolean;
 begin
-   raise ENotImplementedException.Create('TDelphiParser.IsPossibleVarSection');
+{
+http://dgrok.excastle.com/Grammar.html#VarSection
+
+VarSection
+	-> (VAR | THREADVAR) (VarDecl)+
+}
+	Result := (CurrentTokenKind in [ptVar, ptThreadVar]);
 end;
 
 function TDelphiParser.IsPossibleVisibilitySectionContent: Boolean;
@@ -7692,10 +7737,10 @@ begin
 		--> Property
 
 			MethodHeading
-			--> (PROCEDURE | FUNCTION)
+			--> [CLASS] (PROCEDURE | FUNCTION | CONSTRUCTOR | DESTRUCTOR | OPERATOR)
 					QualifiedIdent
 					['(' (Parameter [';'])* ')']
-					[':' MethodReturnType]		// FUNCTION only
+					[':' MethodReturnType]		// FUNCTION required, OPERATOR optional
 					[';']
 					(Directive [';'])*
 
@@ -7763,7 +7808,6 @@ Examples
 
 	type
 		TSpecial
-	Tested by: basic_cases.dat/ParseTypeSection
 }
 	Result := TSyntaxNode2.Create(ntTypeSection);
 	Result.AddChild(EatToken(ptType));	// always produce a token (missing on error)
@@ -7852,7 +7896,6 @@ ConstraintTypeRef          ::= QualifiedIdent [ '<' TypeArgList '>' ]
 QualifiedIdent             ::= identifier ('.' identifier)*
 TypeArgList                ::= ConstraintTypeRef (',' ConstraintTypeRef)*
 
-Tested by: basic_cases.dat/ParseTypeParam
 *)
 	Result := TSyntaxNode2.Create(ntTypeParam);
 
@@ -7909,7 +7952,6 @@ begin
 	TSpecial<T, U: class, constructor; V: IComparable<T>>= class
    --------------------------------------^currentToken
 
-	Tested by: basic_cases.dat/ParseTypeParamConstraint
 }
 	case CurrentTokenKind of
 	ptClass:
@@ -7947,7 +7989,6 @@ Example
 		ntTypeArgs
 			ntType(@naName="T")
 		ptGreaterThan('>')
-	Tested by: basic_cases.dat/ParseConstraintTypeRef
 }
 	// Base type name (qualified identifier)
 	Result := TSyntaxNode2.Create(ntType);
@@ -8017,7 +8058,6 @@ Example
 					ntTypeArgs
 						ntType(@naName="T")
 		ptGreaterThan('>')
-	Tested by: basic_cases.dat/ParseTypeParams
 }
 	Result := TSyntaxNode2.Create(ntTypeParams);
 	Result.AddChild(EatToken(ptLessThan));
@@ -8136,7 +8176,6 @@ Parsed:
 		├─ ntExpression(@anValueText="$00993300")
 		│  └─ #ptHexIntegerLiteral("$00993300")
 		└─ #ptSemicolon(";")
-	Tested by: basic_cases.dat/ParseConstSection
 }
 	Result := TSyntaxNode2.Create(ntConstants);
 	Result.AddChild(EatToken(ptConst));
@@ -8217,7 +8256,6 @@ Parsed:
 		├─ ntExpression(@anValueText="$00993300")
 		│  └─ #ptHexIntegerLiteral("$00993300")
 		└─ #ptSemicolon(";")
-	Tested by: basic_cases.dat/ParseConstantDecl
 }
 	Result := TSyntaxNode2.Create(ntConstant);
 
@@ -8328,7 +8366,6 @@ resourcestring
 
 ntResourceStrings
 
-	Tested by: basic_cases.dat/ParseResStringSection
 }
 	Result := TSyntaxNode2.Create(ntResourceStrings);
 	Result.AddChild(EatToken(ptResourceString));
@@ -8377,7 +8414,6 @@ Examples
 	│	├─ ntExpression(@anValueText="50")
 	│	│	└─ #ptStringLiteral("Steve")
 	│	└─ #ptSemicolon(";")
-	Tested by: basic_cases.dat/ParseResourceStringDecl
 }
 	Result := TSyntaxNode2.Create(ntResourceString);
 
@@ -8425,7 +8461,6 @@ InterfaceDecl
 		-> TypeSection
 		-> VarSection
 		-> MethodHeading
-	Tested by: basic_cases.dat/ParseInterfaceDeclaration
 }
 
 	if IsPossibleConstSection then
@@ -8553,7 +8588,6 @@ end;
 function TDelphiParser.ParseInitializationSection: TSyntaxNode2;
 begin
 	{
-	Tested by: basic_cases.dat/ParseInitializationSection
 	}
 	Result := TSyntaxNode2.Create(ntInitialization);
 	EatToken(ptInitialization);
@@ -8567,7 +8601,6 @@ ImplementationSection
 	-> IMPLEMENTATION
 			[UsesClause]
 			(ImplementationDecl)*
-	Tested by: basic_cases.dat/ParseImplementationSection
 }
 	Result := TSyntaxNode2.Create(ntImplementation);
 
@@ -8626,7 +8659,6 @@ ntInterface
 			ptComma(',')
 		ptSemicolon(";")
 
-	Tested by: basic_cases.dat/ParseInterfaceSection
 }
 	Result := TSyntaxNode2.Create(ntInterfaceSection);
 	Result.AddChild(EatToken(ptInterface));
@@ -8657,7 +8689,6 @@ PortabilityDirective
 		-> deprecated
 		-> library
 		-> experimental
-	Tested by: basic_cases.dat/ParsePortabilityDirective
 }
 	Result := TSyntaxNode2.Create(ntPortabilityDirective);
 
@@ -8721,7 +8752,6 @@ end;
 function TDelphiParser.ParseIdentifierList: TSyntaxNode2;
 begin
 	{
-	Tested by: basic_cases.dat/ParseIdentifierList
 	}
 	Result := PoisonNode;
 
@@ -8774,7 +8804,6 @@ end;
 function TDelphiParser.ParseScriptFile: TSyntaxNode2;
 begin
 	{
-	Tested by: basic_cases.dat/ParseScriptFile
 	}
 	Result := PoisonNode;
 
@@ -8851,7 +8880,6 @@ end;
 function TDelphiParser.ParseIndexSpecifier: TSyntaxNode2;
 begin
 	{
-	Tested by: basic_cases.dat/ParseIndexSpecifier
 	}
 	Result := TSyntaxNode2.Create(ntIndex);
 	ExpectedEx(ptIndex);
@@ -8900,14 +8928,6 @@ begin
   ExpectedEx(ptPlatform);
 end;
 
-procedure TDelphiParser.EnsureProgress;
-begin
-	if FLastProgressIndex = FCurrent then
-		raise EParserException.Create(-1, -1, '', 'No progress');
-
-	FLastProgressIndex := FCurrent;
-end;
-
 function TDelphiParser.EnumeratedTypeItem: TSyntaxNode2;
 begin
 	Result := ParseQualifiedIdentifier;
@@ -8934,7 +8954,6 @@ Ident
 ntIdentifier(@anName:"firstName")
 
 TODO: handle semikeyword, and & prefixes
-	Tested by: basic_cases.dat/ParseIdentifier
 }
 	Result := TSyntaxNode2.Create(ntIdentifier);
 	Result.Attributes[anName] := CurrentToken.ValueText;
@@ -9040,7 +9059,6 @@ type
 		ntQualifiedIdentifier anName="IShape"
 		ntQualifiedIdentifier anName="ILogger"
 
-	Tested by: basic_cases.dat/ParseAncestorList
 }
 	Result := TSyntaxNode2.Create(ntAncestorList);
 
@@ -9498,6 +9516,8 @@ procedure TSyntaxNode2.AddChild(ChildNode: TSyntaxToken);
 var
 	node: TSyntaxNodeOrToken;
 begin
+	TConstraints.NotNull(ChildNode, 'ChildNode');
+
 	node := TSyntaxNodeOrToken.Create(ChildNode);
 	FChildNodes.Add(node);
 end;

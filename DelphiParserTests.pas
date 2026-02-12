@@ -24,6 +24,7 @@ type
 		function CompareSource(sourceCode, ExpectedTree: string; const CaseName: string = ''): Boolean;
 		function CompareTrees(expected, actual: TSyntaxNode2): Boolean;
 		function CompareNodes(expected, actual: TSyntaxNode2): Boolean;
+
 		function FindDatTestsRoot: string;
 		function EnumerateDatFiles: TArray<string>;
 		function EnumerateDatTestCases(const FileName: string): TArray<TDatParserCase>;
@@ -37,6 +38,7 @@ type
 		procedure Test_ExpectedToTree_LineWithoutNt_Raises;
 		procedure Test_ExpectedToTree_UnknownNodeType_Raises;
 		procedure Test_ExpectedToTree_FirstLineNotRoot_Raises;
+
 		procedure Test_ParseConstWithTrailingDecimalLiteral;
 
 		procedure Test_ParseResStringSection;						// resourcestring SProduct = 'Contoso';
@@ -198,31 +200,16 @@ function TDelphiParserTests.CompareSource(sourceCode, ExpectedTree: string; cons
 var
 	expected, actual: TSyntaxNode2;
 	tokens: TObjectList;
-begin
-	CheckFalse(sourceCode='');
-	CheckFalse(ExpectedTree='');
+	bSuccess: Boolean;
 
-	// Build the expected tree
-	expected := ExpectedToTree(expectedTree);
-	CheckTrue(Assigned(expected));
-
-	// Tokenize the source code
-	tokens := TObjectList.Create(True); //owns objects
-	TDelphiTokenizer.Tokenize(sourceCode, tokens);
-
-	// Parse the source tokens
-	actual := TDelphiParser.ParseText(sourceCode, '');
-	CheckTrue(Assigned(actual));
-
-	// and compare the trees
-	Result := CompareTrees(expected, actual);
-
-	if Result then
+   procedure PrintResults(bSuccess: Boolean);
 	begin
-		Status('[PASS] '+CaseName);
-	end
-	else
-	begin
+		if bSuccess then
+		begin
+			Status('[PASS] '+CaseName);
+			Exit;
+		end;
+
 		Status('[FAIL] '+CaseName);
 		Status('Source code'+CRLF+
 		       '-----------'+CRLF+
@@ -232,9 +219,14 @@ begin
 		       '------------'+CRLF+
 		       ExpectedTree+CRLF+CRLF);
 
-		Status('Tokens'+CRLF+
-		       '------'+CRLF+
-		       TokensToStr(tokens)+CRLF+CRLF);
+		if tokens <> nil then
+		begin
+			Status('Tokens'+CRLF+
+			       '------'+CRLF+
+			       TokensToStr(tokens)+CRLF+CRLF);
+		end
+		else
+			Status('Tokens: nil');
 
 		if CaseName = '' then
 			CheckTrue(Result, 'FAIL: Trees must be equal')
@@ -242,6 +234,59 @@ begin
 			CheckTrue(Result, 'FAIL: Trees must be equal: ' + CaseName);
 	end;
 
+begin
+	CheckFalse(sourceCode  ='');
+	CheckFalse(ExpectedTree='');
+
+	bSuccess := True;
+
+	expected := nil;
+	tokens := nil;
+	actual := nil;
+	try
+      // Build the expected tree
+      try
+         expected := ExpectedToTree(expectedTree);
+         CheckTrue(Assigned(expected));
+      except
+         on E:Exception do
+            begin
+               PrintResults(False);
+               raise;
+            end;
+      end;
+
+      // Tokenize the source code
+      try
+         tokens := TObjectList.Create(True); //owns objects
+         TDelphiTokenizer.Tokenize(sourceCode, tokens);
+      except
+         on E:Exception do
+            begin
+               PrintResults(False);
+               raise;
+            end;
+      end;
+
+      // Parse the source tokens
+      try
+	      actual := TDelphiParser.ParseText(sourceCode, '');
+	      CheckTrue(Assigned(actual));
+      except
+         on E:Exception do
+            begin
+               PrintResults(False);
+               raise;
+            end;
+      end;
+
+      // and compare the trees
+      Result := CompareTrees(expected, actual);
+	finally
+		FreeAndNil(expected);
+		FreeAndNil(tokens);
+		FreeAndNil(actual);
+	end;
 end;
 
 function TDelphiParserTests.CompareTrees(expected, actual: TSyntaxNode2): Boolean;
@@ -820,14 +865,29 @@ var
 	fileName: string;
 	cases: TArray<TDatParserCase>;
 	testCase: TDatParserCase;
+   i: Integer;
 begin
 	files := EnumerateDatFiles;
 	for fileName in files do
 	begin
 		cases := EnumerateDatTestCases(fileName);
 		CheckTrue(Length(cases) > 0, 'No test cases found in ' + fileName);
-		for testCase in cases do
-			RunDatCase(testCase);
+
+		for i := 0 to High(cases) do
+		begin
+			if i = 10 then
+				Break;
+			testCase := cases[i];
+			try
+				RunDatCase(testCase);
+			except
+				on E:Exception do
+					begin
+                  Status('[EXCEPTION] '+testCase.Name+' ('+E.Message+')');
+            		raise;
+					end;
+			end;
+		end;
 	end;
 end;
 

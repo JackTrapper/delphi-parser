@@ -385,6 +385,12 @@ var
 
 	function BuildUnitSource(const UnitName: string): string;
 	begin
+		{
+			unit ParserReuseFirstUnit;
+			interface
+			implementation
+			end;
+		}
 		Result :=
 			Format('unit %s;%sinterface%simplementation%send.%s',
 				[UnitName, sLineBreak, sLineBreak, sLineBreak, sLineBreak]);
@@ -399,7 +405,7 @@ begin
 		tokens1 := TObjectList.Create(False); // parser will take ownership of produced tokens
 		tokens2 := TObjectList.Create(False);
 		try
-			TDelphiTokenizer.Tokenize(BuildUnitSource(FIRST_UNIT_NAME), tokens1);
+			TDelphiTokenizer.Tokenize(BuildUnitSource(FIRST_UNIT_NAME),  tokens1);
 			TDelphiTokenizer.Tokenize(BuildUnitSource(SECOND_UNIT_NAME), tokens2);
 
 			tree := parser.Parse(tokens1);

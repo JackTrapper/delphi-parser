@@ -1940,6 +1940,10 @@ end;
 
 destructor TDelphiTokenizer.Destroy;
 begin
+	// PeekTokenKind can prefetch one token into FNextToken.
+	// If callers stop before draining, the tokenizer still owns that token.
+	FreeAndNil(FNextToken);
+	FreeAndNil(FStream);
 	FreeAndNil(FCompilerDirectives);
 
 	inherited;
@@ -3109,7 +3113,6 @@ end;
 initialization
 
 finalization
-	if not IsDebuggerPresent then
-		FreeAndNil(_eofToken); // don't clean up singletons unless we need to satify a memory leak detector
+	FreeAndNil(_eofToken);
 
 end.

@@ -66,11 +66,21 @@ Keywords are then broken down into two categories:
 - reserved words	(e.g. begin, end, case, for, if)
 - directives 		(e.g. public, strict, safecall)
 
-1. Reserved words (e.g., begin, end, case, for, if)
 
-	Reserved words are keywords that have a special meaning in the language and cannot be used as identifiers.
 
-	Examples:
+	Keyword					Example		Token.TokenKind	Token.DirectiveID   Token.GenID
+	===================	==========	================	================= 	============
+	(reserved word)		'of'			ptOf					ptUnknown (n/a)		ptOf
+	(directive)				'out'			ptIdentifier		ptOut						ptOut
+	(identifier)			'Contoso'	ptIdentifier		ptUnknown				ptIdentifier
+
+	Token.DirectiveID is only valid if TokenKind is ptIdentifier.
+	Token.GenID is a helper function that will coalesce (DirectiveID|TokenKind)
+
+
+1. Reserved words (e.g., begin, end, case, for, if, of)
+
+	Reserved words are keywords that have a special meaning in the language and cannot be used as identifiers, e.g.:
 
 		begin	==> ptBegin
 		end   ==> ptEnd
@@ -79,8 +89,9 @@ Keywords are then broken down into two categories:
 		if		==> ptIf
 
 	See the ReservedWords[] constant array for the list of reserved words.
+	Can call TDelphiTokenizer.GetReservedTokenKind('of') that will return ptOf, or ptUnknown if it isn't a reserved word
 
-2. Directives (e.g., absolute, abstract, cdecl, ...)
+2. Directives (e.g., absolute, abstract, cdecl, out, ...)
 
 	Complier directives are similar to reserved words, except they can be reused as identifiers.
 	If it is being used as an identifier, it will instead have a TokenKind of ptIdentifier.
@@ -98,10 +109,10 @@ Keywords are then broken down into two categories:
 	This context is determined by the parser, and it can change based on how the keyword is used in the code.
 
 	The tokenizer returns these directive tokens as ptIdentifier,
-	and the parser sets TSyntaxToken.ExID to a particular ptXxxx directive
+	and the parser sets TSyntaxToken.GenID to a particular ptXxxx directive
 
 	See the Directives[] constant array of the list of directives.
-
+	Call TDelphiParser.GetDirectiveTokenKind('out') to return ptOut if it is a directive, or ptUnkonwn if it isn't.
 
 
 3. Identifiers (e.g., FirstName, SaveToDatabase, TCustomer)
@@ -232,7 +243,7 @@ type
 		ptPacked,
 		ptProcedure,
 		ptProgram,
-		ptProperty,
+		ptProperty,						// [RESERVED WORD]
 		ptRaise,
 		ptRecord,
 		ptRepeat,
@@ -243,7 +254,7 @@ type
 		ptString,						// the literal "string"
 		ptThen,
 		ptThreadVar,
-		ptTo,
+		ptTo,								// reserved word
 		ptTry,
 		ptType,
 		ptUnit,
@@ -281,6 +292,7 @@ type
 
 		ptAlign,						// TMyAlignedRecord = record Field1: Byte; Field2: Integer; end align 8;
 		ptAssembler,
+		ptAssembly,
 		ptAutomated,
 		ptContains,
 		ptDefault,
@@ -386,7 +398,7 @@ type
 //		ptResourceDirect,				// '{$RESOURCE xxx}'	compiler directive
 //		ptScopedEnumsDirect,			// '{$SCOPEDENUMS xxx}' compiler directive
 
-		// Will be the ExID of a string token (I am guessing at that, that seems reasonable to me)
+		// Will be the GenID of a string token (I am guessing at that, that seems reasonable to me)
 		ptName,						// The name of an external function. e.g. procedure Foo; external 'glib.dll' name 'WabashTheMagicDragon';
 
 		// *** Identifiers ***
@@ -629,8 +641,22 @@ type
 		ErrorMessage: string;		// primary error message
 		WarningMessage: string;		// primary warning message
 
-		// "extended id": if the token is an identifier/keyword-ish thing,
-		// and it matches a known directive/keyword, store it here.
+{
+
+		Reserved words cannot be redefined or used as an identifier.
+
+The following reserved words cannot be redefined or used as identifiers.
+
+		Complier directives are similar to reserved words, except they can be reused as identifiers.
+		Hence -- although it is inadvisable to do so -- you can define an identifier that looks exactly like a directive.
+
+		In order to support both types (identifier mode vs directive mode) in one token, we have two properties:
+
+			- TokenKind:   The kind of TSyntaxToken, and will be ptIdentifier for possible identifiers (e.g. "Self")
+			- DirectiveID: When the identifier is also a Compiler Directive, contains the token type   (e.g. ptSelf)
+
+		And then you can just read the ExtendedID property, which will prefer ptSelf --> ptIdentifier
+}
 		DirectiveID: TptTokenKind;			// DirectiveID. See constant Directives[]
 		DirectiveDelimeter: TDirectiveDelimiter; // (ddBrace, ddParenStar)
 
@@ -645,7 +671,8 @@ type
 		property TrailingTriviaCount: Integer read get_TrailingTriviaCount;
 		property TrailingTrivia[n: Integer]: TSyntaxToken read get_TrailingTrivia;
 
-		/// <summary>ExID if set; otherwise TokenKind if ExID is empty</summary>
+		/// <summary>GenID if set; otherwise TokenKind if GenID is empty</summary>
+		// Prefers compiler directive over identifier (e.g. ptSelf --> ptIdentifier)
 		property GenID: TptTokenKind read get_GenID;
 
 		function ToString: string; override;
@@ -909,7 +936,7 @@ const
 
 	// Complier directives are similar to reserved words, except they can be reused as identifiers.
 	// Hence -- although it is inadvisable to do so -- you can define an identifier that looks exactly like a directive.
-	Directives: array[0..54] of record
+	Directives: array[0..55] of record
 		directive: string;
 		tokenType: TptTokenKind;
 	end = (
@@ -918,6 +945,7 @@ const
 		(directive: 'abstract';			tokenType:ptAbstract),
 		(directive: 'align';				tokenType:ptAlign),
 		(directive: 'assembler';		tokenType:ptAssembler),
+		(directive: 'assembly';			tokenType:ptAssembly),
 		(directive: 'automated';		tokenType:ptAutomated),
 		(directive: 'CDecl';				tokenType:ptCDecl),
 		(directive: 'contains';			tokenType:ptContains),
@@ -1002,6 +1030,11 @@ begin
 end;
 
 function IsReservedWord(const ATokenKind: TptTokenKind): Boolean;
+{Reserved words (e.g., begin, end, case, for, if)
+
+Reserved words are keywords that have a special meaning in the language and cannot be used as identifiers.
+}
+
 
 const
 	ReservedWordsSet: set of TptTokenKind = [
@@ -1018,7 +1051,7 @@ const
 		ptDestructor,
 		ptDispInterface,
 		ptDiv,
-		ptDo,
+		ptDo,										// for i := 1 to 10 do
 		ptDownTo,
 		ptElse,
 		ptEnd,
@@ -1060,16 +1093,16 @@ const
 		ptString,						// the literal "string"
 		ptThen,
 		ptThreadVar,
-		ptTo,
-		ptTry,
-		ptType,
-		ptUnit,
-		ptUntil,
-		ptUses,
-		ptVar,
-		ptWhile,
-		ptWith,
-		ptXor
+		ptTo,								// for i := 1 to 10 do
+		ptTry,							// try finally end;
+		ptType,							// TBirthDate = type TDate;
+		ptUnit,							// unit Grobber;
+		ptUntil,							// repeat until
+		ptUses,							// uses Windows.Winapi;
+		ptVar,							// var dt: TBirthDate;
+		ptWhile,							// while do
+		ptWith,							// with user begin end; // never use this ever
+		ptXor								// a xor b
 	];
 
 begin
@@ -3045,6 +3078,21 @@ destructor TSyntaxToken.Destroy;
 begin
 	FreeAndNil(FLeadingTrivia);
 	FreeAndNil(FTrailingTrivia);
+
+{$IFDEF DEBUG}
+	// Help debug use-after-free
+	TokenKind := High(TptTokenKind);
+	Line := -1;
+	Column := -1;
+	StartOffset := -1;
+	TokenLength := -1;
+	Text := '<destroyed>';
+	ValueText := '<destroyed>';
+	IsMissing := True;
+	HasErrors := True;
+	ErrorMessage := 'TSyntaxToken used after Destroy';
+{$ENDIF}
+
 
 	inherited;
 end;

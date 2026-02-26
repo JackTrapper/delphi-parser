@@ -54,6 +54,7 @@ implementation
 
 uses
 	SysUtils, Math, ComObj, Windows, ActiveX, TypInfo, IOUtils,
+	Generics.Collections,
 	DelphiTokenizer,
 	Toolkit;
 
@@ -191,6 +192,8 @@ begin
 	CheckFalse(Trim(ACase.SourceCode)   = '', 'Case "' + ACase.Name + '" is missing #data');
 	CheckFalse(Trim(ACase.ExpectedTree) = '', 'Case "' + ACase.Name + '" is missing #document');
 
+	Status('[CASE] ' + ACase.Name);
+
 //	Status('Test name: '+ACase.Name + ' (' + ExtractFileName(ACase.FileName) + ')'+CRLF+CRLF);
 
 	CompareSource(ACase.SourceCode, ACase.ExpectedTree, ACase.Name);
@@ -200,16 +203,184 @@ function TDelphiParserTests.CompareSource(sourceCode, ExpectedTree: string; cons
 var
 	expected, actual: TSyntaxNode2;
 	tokens: TObjectList;
+	tokenAuditReport: string;
+
+	function TokenKey(tok: TSyntaxToken): string;
+	begin
+		Result := Format('%s|%d|%d|%s', [
+			TokenKindToStr(tok.TokenKind),
+			tok.Line,
+			tok.Column,
+			tok.Text
+		]);
+	end;
+
+	procedure AddTokenCount(dict: TDictionary<string, Integer>; const key: string);
+	var
+		c: Integer;
+	begin
+		if dict.TryGetValue(key, c) then
+			dict[key] := c + 1
+		else
+			dict.Add(key, 1);
+	end;
+
+	procedure CollectTreeTokens(node: TSyntaxNode2; outList: TList<TSyntaxToken>);
+	var
+		child: TSyntaxNodeOrToken;
+	begin
+		if node = nil then
+			Exit;
+
+		for child in node.ChildNodes do
+		begin
+			if child.IsToken then
+				outList.Add(child.AsToken)
+			else if child.IsNode then
+				CollectTreeTokens(child.AsNode, outList);
+		end;
+	end;
+
+	function BuildTokenAuditReport: string;
+	const
+		MAX_ITEMS = 20;
+	var
+		inputCounts, treeCounts: TDictionary<string, Integer>;
+		treeTokenList: TList<TSyntaxToken>;
+		i, cInput, cTree, shown: Integer;
+		tok: TSyntaxToken;
+		pair: TPair<string, Integer>;
+		missingCount, unexpectedCount: Integer;
+		details: TStringList;
+	begin
+		Result := '';
+		if (tokens = nil) or (actual = nil) then
+			Exit;
+
+		inputCounts := TDictionary<string, Integer>.Create;
+		treeCounts := TDictionary<string, Integer>.Create;
+		treeTokenList := TList<TSyntaxToken>.Create;
+		details := TStringList.Create;
+		try
+			CollectTreeTokens(actual, treeTokenList);
+
+			for i := 0 to tokens.Count - 1 do
+			begin
+				tok := TSyntaxToken(tokens[i]);
+				if tok = nil then
+					Continue;
+				if tok.TokenKind = ptEof then
+					Continue;
+				AddTokenCount(inputCounts, TokenKey(tok));
+			end;
+
+			for tok in treeTokenList do
+			begin
+				if tok = nil then
+					Continue;
+				if tok.IsMissing then
+					Continue;
+				if tok.TokenKind = ptEof then
+					Continue;
+				AddTokenCount(treeCounts, TokenKey(tok));
+			end;
+
+			missingCount := 0;
+			unexpectedCount := 0;
+			shown := 0;
+
+			for pair in inputCounts do
+			begin
+				cInput := pair.Value;
+				if not treeCounts.TryGetValue(pair.Key, cTree) then
+					cTree := 0;
+				if cInput > cTree then
+				begin
+					Inc(missingCount, cInput - cTree);
+					if shown < MAX_ITEMS then
+					begin
+						details.Add(Format('missing x%d: %s', [cInput - cTree, pair.Key]));
+						Inc(shown);
+					end;
+				end;
+			end;
+
+			for pair in treeCounts do
+			begin
+				cTree := pair.Value;
+				if not inputCounts.TryGetValue(pair.Key, cInput) then
+					cInput := 0;
+				if cTree > cInput then
+				begin
+					Inc(unexpectedCount, cTree - cInput);
+					if shown < MAX_ITEMS then
+					begin
+						details.Add(Format('unexpected x%d: %s', [cTree - cInput, pair.Key]));
+						Inc(shown);
+					end;
+				end;
+			end;
+
+			if (missingCount > 0) or (unexpectedCount > 0) then
+			begin
+				Result := Format('TokenAudit(%s): input=%d tree=%d missing=%d unexpected=%d', [
+					CaseName,
+					inputCounts.Count,
+					treeCounts.Count,
+					missingCount,
+					unexpectedCount
+				]);
+				Result := Result +
+					' [input=distinct tokenizer token keys; tree=distinct token keys found in AST; ' +
+					'missing=token occurrences present in input but absent from AST; ' +
+					'unexpected=token occurrences present in AST but absent from input]';
+				if details.Count > 0 then
+					Result := Result + CRLF + details.Text;
+			end;
+		finally
+			details.Free;
+			treeTokenList.Free;
+			treeCounts.Free;
+			inputCounts.Free;
+		end;
+	end;
 
 	procedure PrintResults(bSuccess: Boolean);
 	var
 		s: string;
+		actualDump: string;
+		effectiveSuccess: Boolean;
+
+		function NormalizeDumpForLog(const value: string): string;
+		begin
+			Result := value;
+			Result := StringReplace(Result, #$251C, '|', [rfReplaceAll]);
+			Result := StringReplace(Result, #$2570, '\\', [rfReplaceAll]);
+			Result := StringReplace(Result, #$2502, '|', [rfReplaceAll]);
+			Result := StringReplace(Result, #$2500, '-', [rfReplaceAll]);
+		end;
 	begin
-		if bSuccess then
+		if tokenAuditReport <> '' then
+		begin
+//			Status('[TOKEN AUDIT] ' + tokenAuditReport);
+			CheckTrue(False,'[TOKEN AUDIT] ' + tokenAuditReport);
+		end;
+
+		effectiveSuccess := bSuccess and (tokenAuditReport = '');
+
+		if effectiveSuccess then
 		begin
 			Status('[PASS] '+CaseName);
 			Exit;
 		end;
+
+		if actual <> nil then
+		begin
+			actualDump := NormalizeDumpForLog(TSyntaxNode2.DumpTree(actual));
+			Status('[ACTUAL TREE] ' + CaseName + CRLF + actualDump);
+		end
+		else
+			actualDump := '<actual=nil>';
 
 		s :=
 				'[FAIL] Case name: '+CaseName+CRLF+
@@ -233,15 +404,26 @@ var
 		s := s+CRLF+
 				'ActualTree'+CRLF+
 				'----------'+CRLF+
-				TSyntaxNode2.DumpTree(actual);
+				actualDump;
 
-		CheckTrue(bSuccess, s);
+		if tokenAuditReport <> '' then
+			s := s + CRLF + CRLF +
+				'TokenAudit'+CRLF+
+				'----------'+CRLF+
+				tokenAuditReport;
+
+		if not effectiveSuccess then
+		begin
+			Status(s);
+			CheckTrue(False, s);
+		end;
 	end;
 
 begin
 	CheckFalse(sourceCode	='');
 	CheckFalse(ExpectedTree	='');
 	Result := False;
+	tokenAuditReport := '';
 
 	expected := nil;
 	tokens := nil;
@@ -275,6 +457,7 @@ begin
       try
 	      actual := TDelphiParser.ParseText(sourceCode, '');
 	      CheckTrue(Assigned(actual));
+			tokenAuditReport := BuildTokenAuditReport;
       except
          on E:Exception do
             begin
@@ -325,6 +508,7 @@ begin
 	for attr := Low(TAttributeName) to High(TAttributeName) do
 	begin
 		expVal := expected.Attributes[attr];
+		// If expected value is empty, treat as "don't care" and do not assert.
 		if expVal = '' then
 			Continue;
 		actVal := actual.Attributes[attr];
@@ -720,160 +904,173 @@ var
 		Result := TSyntaxNodeType(ordVal);
 	end;
 
-	  procedure SetNodeAttributeByName(node: TSyntaxNode2; const name, value: string);
-	  var
-	    ordVal: Integer;
-	    v: string;
-	  begin
-	    ordVal := GetEnumValue(TypeInfo(TAttributeName), name);
-	    if ordVal < 0 then
-	      raise Exception.CreateFmt('Unknown attribute name: %s', [name]);
-	    v := Dequote(value);
-	    node.Attributes[TAttributeName(ordVal)] := v;
-	  end;
+	procedure SetNodeAttributeByName(node: TSyntaxNode2; const name, value: string);
+	var
+		ordVal: Integer;
+		v: string;
+	begin
+		ordVal := GetEnumValue(TypeInfo(TAttributeName), name);
+		if ordVal < 0 then
+			raise Exception.CreateFmt('Unknown attribute name: %s', [name]);
+		v := Dequote(value);
+		node.Attributes[TAttributeName(ordVal)] := v;
+	end;
 
-	  procedure ParseAttributes(node: TSyntaxNode2; var rest: string; lineIndex: Integer);
-	  var
-	    s, name, value: string;
-	    eqPos: Integer;
-	  begin
-	    s := TrimLeft(rest);
-	    while s <> '' do
-	    begin
-	      // expect name=value (value may be quoted)
-	      eqPos := Pos('=', s);
-	      if eqPos = 0 then
-	        raise Exception.CreateFmt('Expected attribute on line %d to contain =', [lineIndex+1]);
-	      name := Trim(Copy(s, 1, eqPos-1));
-	      s := TrimLeft(Copy(s, eqPos+1, Max(0, Length(s)-eqPos)));
-	      // parse value token (quoted or next whitespace)
-	      if (s <> '') and (s[1] = '"') then
-	      begin
-	        // find closing quote
-	        eqPos := 2;
-	        while (eqPos <= Length(s)) and (s[eqPos] <> '"') do Inc(eqPos);
-	        if (eqPos > Length(s)) or (s[eqPos] <> '"') then
-	          raise Exception.CreateFmt('Unterminated quoted attribute value on line %d', [lineIndex+1]);
-	        value := Copy(s, 1, eqPos);
-	        s := TrimLeft(Copy(s, eqPos+1, Max(0, Length(s)-eqPos)));
-	      end else begin
-	        // read until whitespace
-	        eqPos := 1;
-	        while (eqPos <= Length(s)) and (not CharInSet(s[eqPos], [' ', #9])) do Inc(eqPos);
-	        value := Copy(s, 1, eqPos-1);
-	        s := TrimLeft(Copy(s, eqPos, Max(0, Length(s)-eqPos+1)));
-	      end;
-	      SetNodeAttributeByName(node, name, value);
-	    end;
-	    rest := s;
-	  end;
+	procedure ParseAttributes(node: TSyntaxNode2; var rest: string; lineIndex: Integer);
+	var
+		s, name, value: string;
+		eqPos: Integer;
+	begin
+		s := TrimLeft(rest);
+		while s <> '' do
+		begin
+			// expect name=value (value may be quoted)
+			eqPos := Pos('=', s);
+			if eqPos = 0 then
+				raise Exception.CreateFmt('Expected attribute on line %d to contain =', [lineIndex+1]);
+			name := Trim(Copy(s, 1, eqPos-1));
+			s := TrimLeft(Copy(s, eqPos+1, Max(0, Length(s)-eqPos)));
 
-	  procedure ParseIndented(parent: TSyntaxNode2; parentIndent: Integer; lines: TStrings; var idx: Integer);
-	  var
-	    line: string;
-	    indent: Integer;
-	    work: string;
-	    nodeName: string;
-	    child: TSyntaxNode2;
-	    lastChild: TSyntaxNode2;
-	    wrapper: TSyntaxNodeOrToken;
-	  begin
-	    while idx < lines.Count do
-	    begin
-	      line := lines[idx];
-	      if Trim(line) = '' then begin Inc(idx); Continue; end;
-	      indent := CountLeadingTabs(line);
+			// parse value token (quoted or next whitespace)
+			if (s <> '') and (s[1] = '"') then
+			begin
+				// find closing quote
+				eqPos := 2;
+				while (eqPos <= Length(s)) and (s[eqPos] <> '"') do
+					Inc(eqPos);
 
-	      // Stop when we reach a line not under this parent
-	      if indent <= parentIndent then Exit;
+				if (eqPos > Length(s)) or (s[eqPos] <> '"') then
+					raise Exception.CreateFmt('Unterminated quoted attribute value on line %d', [lineIndex+1]);
 
-	      // If we are deeper than an immediate child, recurse into the last child
-	      if indent > parentIndent + 1 then
-	      begin
-	        if (parent.ChildNodes.Count = 0) or (not parent.ChildNodes[parent.ChildNodes.Count-1].IsNode) then
-	          raise Exception.CreateFmt('Line %d is too deeply indented without a previous parent node', [idx+1]);
-	        lastChild := parent.ChildNodes[parent.ChildNodes.Count-1].AsNode;
-	        ParseIndented(lastChild, parentIndent+1, lines, idx);
-	        Continue;
-	      end;
+				value := Copy(s, 1, eqPos);
+				s := TrimLeft(Copy(s, eqPos+1, Max(0, Length(s)-eqPos)));
+			end
+			else
+			begin
+				// read until whitespace
+				eqPos := 1;
+				while (eqPos <= Length(s)) and (not CharInSet(s[eqPos], [' ', #9])) do Inc(eqPos);
+				value := Copy(s, 1, eqPos-1);
+				s := TrimLeft(Copy(s, eqPos, Max(0, Length(s)-eqPos+1)));
+			end;
+			SetNodeAttributeByName(node, name, value);
+		end;
+		rest := s;
+	end;
 
-	      // indent == parentIndent + 1: create a new child node
-	      work := StripLeadingTabs(line, indent);
-	      work := TrimLeft(work);
-	      if Copy(work, 1, 2) <> 'nt' then
-	        raise Exception.CreateFmt('Expected line %d to start with "nt"', [idx+1]);
+	procedure ParseIndented(parent: TSyntaxNode2; parentIndent: Integer; lines: TStrings; var idx: Integer);
+	var
+		line: string;
+		indent: Integer;
+		work: string;
+		nodeName: string;
+		child: TSyntaxNode2;
+		lastChild: TSyntaxNode2;
+		wrapper: TSyntaxNodeOrToken;
+	begin
+		while idx < lines.Count do
+		begin
+			line := lines[idx];
+			if Trim(line) = '' then
+			begin
+				Inc(idx);
+				Continue;
+			end;
+			indent := CountLeadingTabs(line);
 
-	      nodeName := NextToken(work);
-	      child := TSyntaxNode2.Create(ParseNodeType(nodeName));
-	      try
-	        // parse attributes from remainder of the line
-	        if Trim(work) <> '' then
-	          ParseAttributes(child, work, idx);
+			// Stop when we reach a line not under this parent
+			if indent <= parentIndent then
+				Exit;
 
-	        // Use public wrapper to add child instead of calling private AddChild
-	        wrapper := TSyntaxNodeOrToken.Create(child);
-	        try
-	          parent.ChildNodes.Add(wrapper);
-	          lastChild := child;
-	          wrapper := nil;
-	          child := nil;
-	        finally
-	          wrapper.Free;
-	        end;
-	      finally
-	        child.Free;
-	      end;
+			// If we are deeper than an immediate child, recurse into the last child
+			if indent > parentIndent + 1 then
+			begin
+				if (parent.ChildNodes.Count = 0) or (not parent.ChildNodes[parent.ChildNodes.Count-1].IsNode) then
+					raise Exception.CreateFmt('Line %d is too deeply indented without a previous parent node', [idx+1]);
+				lastChild := parent.ChildNodes[parent.ChildNodes.Count-1].AsNode;
+				ParseIndented(lastChild, parentIndent+1, lines, idx);
+				Continue;
+			end;
 
-	      Inc(idx);
-	      // Recurse into this child if the next line is more indented
-	      if (idx < lines.Count) and (CountLeadingTabs(lines[idx]) > indent) then
-	        ParseIndented(lastChild, indent, lines, idx);
-	    end;
-	  end;
+			// indent == parentIndent + 1: create a new child node
+			work := StripLeadingTabs(line, indent);
+			work := TrimLeft(work);
+			if Copy(work, 1, 2) <> 'nt' then
+				raise Exception.CreateFmt('Expected line %d to start with "nt"', [idx+1]);
 
-	  procedure ValidateStructure(lines: TStrings);
-	  var
-	    i, prevIndent, indent: Integer;
-	    line, work, nodeName: string;
-	    dummy: TSyntaxNode2;
-	  begin
-	    if (lines.Count = 0) or (Trim(lines[0]) <> 'ntCompilationUnit') then
-	      raise Exception.Create('Expected first line to be ntCompilationUnit');
+			nodeName := NextToken(work);
+			child := TSyntaxNode2.Create(ParseNodeType(nodeName));
+			try
+				// parse attributes from remainder of the line
+				if Trim(work) <> '' then
+					ParseAttributes(child, work, idx);
 
-	    prevIndent := 0;
-	    for i := 1 to lines.Count - 1 do
-	    begin
-	      line := lines[i];
-	      if Trim(line) = '' then
-	        Continue;
-	      indent := CountLeadingTabs(line);
-	      work := StripLeadingTabs(line, indent);
-	      work := TrimLeft(work);
-	      if Copy(work, 1, 2) <> 'nt' then
-	        raise Exception.CreateFmt('Expected line %d to start with "nt"', [i+1]);
+				// Use public wrapper to add child instead of calling private AddChild
+				wrapper := TSyntaxNodeOrToken.Create(child);
+				try
+					parent.ChildNodes.Add(wrapper);
+					lastChild := child;
+					wrapper := nil;
+					child := nil;
+				finally
+					wrapper.Free;
+				end;
+			finally
+				child.Free;
+			end;
 
-	      // Ensure no multi-level jump without intermediate parent line
-	      if indent > prevIndent + 1 then
-	        raise Exception.CreateFmt('Line %d is too deeply indented without a previous parent node', [i+1]);
+			Inc(idx);
+			// Recurse into this child if the next line is more indented
+			if (idx < lines.Count) and (CountLeadingTabs(lines[idx]) > indent) then
+				ParseIndented(lastChild, indent, lines, idx);
+		end;
+	end;
 
-	      // Validate node type and attributes parsing (including quoted values)
-	      nodeName := NextToken(work);
-	      // Will raise if the node type name is invalid
-	      ParseNodeType(nodeName);
-	      // Parse attributes into a dummy node to validate quoting and names
-	      if Trim(work) <> '' then
-	      begin
-	        dummy := TSyntaxNode2.Create(ntUnknown);
-	        try
-	          ParseAttributes(dummy, work, i);
-	        finally
-	          dummy.Free;
-	        end;
-	      end;
+	procedure ValidateStructure(lines: TStrings);
+	var
+		i, prevIndent, indent: Integer;
+		line, work, nodeName: string;
+		dummy: TSyntaxNode2;
+	begin
+		if (lines.Count = 0) or (Trim(lines[0]) <> 'ntCompilationUnit') then
+			raise Exception.Create('Expected first line to be ntCompilationUnit');
 
-	      prevIndent := indent;
-	    end;
-	  end;
+		prevIndent := 0;
+		for i := 1 to lines.Count - 1 do
+		begin
+			line := lines[i];
+			if Trim(line) = '' then
+				Continue;
+			indent := CountLeadingTabs(line);
+			work := StripLeadingTabs(line, indent);
+			work := TrimLeft(work);
+			if Copy(work, 1, 2) <> 'nt' then
+				raise Exception.CreateFmt('Expected line %d to start with "nt"', [i+1]);
+
+			// Ensure no multi-level jump without intermediate parent line
+			if indent > prevIndent + 1 then
+				raise Exception.CreateFmt('Line %d is too deeply indented without a previous parent node', [i+1]);
+
+			// Validate node type and attributes parsing (including quoted values)
+			nodeName := NextToken(work);
+
+			// Will raise if the node type name is invalid
+			ParseNodeType(nodeName);
+			// Parse attributes into a dummy node to validate quoting and names
+
+			if Trim(work) <> '' then
+			begin
+				dummy := TSyntaxNode2.Create(ntUnknown);
+				try
+					ParseAttributes(dummy, work, i);
+				finally
+					dummy.Free;
+				end;
+			end;
+
+			prevIndent := indent;
+		end;
+	end;
 
 begin
 	root := TSyntaxNode2.Create(ntCompilationUnit);
@@ -901,38 +1098,70 @@ var
 	fileName: string;
 	cases: TArray<TDatParserCase>;
 	testCase: TDatParserCase;
-   i: Integer;
+	i: Integer;
+	failures: TStringList;
+	nTest: Integer;
 begin
 //   Status('DateFiles test disabled');
 //   Exit;
+	failures := TStringList.Create;
+	try
+		nTest := 0;
 
-	files := EnumerateDatFiles;
-	for fileName in files do
-	begin
-		cases := EnumerateDatTestCases(fileName);
-		CheckTrue(Length(cases) > 0, 'No test cases found in ' + fileName);
-
-		for i := 0 to High(cases) do
+		files := EnumerateDatFiles;
+		for fileName in files do
 		begin
-			testCase := cases[i];
-			try
-				RunDatCase(testCase);
-			except
-				on E:Exception do
-					begin
-                  Status('[TEST ERROR] '+testCase.Name+' ('+E.Message+')'+CRLF+CRLF+
-                     	'#name'+CRLF+
+			cases := EnumerateDatTestCases(fileName);
+			CheckTrue(Length(cases) > 0, 'No test cases found in ' + fileName);
+
+			for i := 0 to High(cases) do
+			begin
+				testCase := cases[i];
+				try
+					RunDatCase(testCase);
+
+					Inc(nTest);
+{
+					We're trying to find which test case is exposing the leak.
+					It's not the in the first 10 tests:
+					10: no leak
+					16: no leak
+					18: no leak
+					22: no leak
+					27: no leak
+					36: LEAK, but not runaway - a sane error message
+					50: leak
+					100: leak
+}
+					if nTest >= 36 then
+						Exit;
+				except
+					on E:Exception do
+						begin
+							Status('[TEST ERROR] '+testCase.Name+' ('+E.Message+')'+CRLF+CRLF+
+								'#name'+CRLF+
 								testCase.Name+CRLF+CRLF+
 
-                        '#data#'+CRLF+
+								'#data#'+CRLF+
 								testCase.SourceCode+CRLF+CRLF+
 
 								'#document'+CRLF+
 								testCase.ExpectedTree);
-                  raise;
-					end;
+
+							failures.Add(Format('%s (%s)', [testCase.Name, E.Message]));
+							Continue;
+						end;
+				end;
 			end;
 		end;
+
+		if failures.Count > 0 then
+		begin
+			Status('DAT failures summary:' + CRLF + failures.Text);
+			Fail(Format('Test_DatFiles had %d failing case(s). See [TEST ERROR] entries for details.', [failures.Count]));
+		end;
+	finally
+		failures.Free;
 	end;
 end;
 

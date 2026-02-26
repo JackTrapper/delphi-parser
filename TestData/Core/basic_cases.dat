@@ -310,7 +310,8 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnknown
+| 	ntPackage
+| 		ntQualifiedIdentifier
 
 #name
 ParseProgramFile
@@ -512,6 +513,8 @@ end.
 | ntCompilationUnit
 | 	ntUnitDeclaration
 | 		ntQualifiedIdentifier
+| 		ntInterfaceSection
+| 		ntImplementation
 
 #name
 ParseVariableReference

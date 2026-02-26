@@ -3,6 +3,8 @@
 {
 Takes a set of tokens from a tokenizer, and turns them into a Syntax Tree.
 
+
+
 	var
 		root: TSyntaxNode2;
 
@@ -159,6 +161,9 @@ type
 	TSyntaxToken = DelphiTokenizer.TSyntaxToken; // import for helpfullness
 
 type
+{
+	Every syntax node has a .NodeType
+}
 	TSyntaxNodeType = (
 		ntUnknown,
 
@@ -183,7 +188,6 @@ type
 		ntAncestorList,			// TTriangle = class(TShape, IShape, ILogger);
 
 		ntAbsolute,
-		ntAdd,
 		ntAddr,
 		ntAlignmentParam,
 		ntAnd,
@@ -194,7 +198,8 @@ type
 		ntAt,
 		ntAttribute,
 		ntAttributes,
-		ntBounds,
+		ntBounds,							// an array bounds
+		ntDimension,
 		ntCall,
 		ntCase,
 		ntCaseElse,
@@ -219,7 +224,6 @@ type
 		ntContains,
 		ntDefault,
 		ntDeref,
-		ntDimension,
 		ntDiv,
 		ntDot,
 		ntDownTo,
@@ -270,7 +274,6 @@ type
 		ntNamedArgument,
 		ntNotEqual,
 		ntNot,
-		ntOr,
 		ntPackage,
 		ntParameter,
 		ntParameters,
@@ -298,7 +301,14 @@ type
 		ntStatements,
 		ntStrictPrivate,
 		ntStrictProtected,
-		ntSub,
+
+		// AddOp: + - OR XOR
+		ntAdd,			// +
+		ntSub,			// -
+		ntOr,				// OR
+		ntXor,			// XOR
+
+
 		ntSubrange,
 		ntThen,
 		ntTo,
@@ -313,7 +323,6 @@ type
 		ntValue,
 		ntVariable,
 		ntVariables,
-		ntXor,
 		ntUnaryMinus,
 		ntHintDirectives,
 		ntHintDirective,
@@ -369,28 +378,28 @@ function AttributeNameToStr(AttributeName: TAttributeName): string;
 
 type
 	TAttributeValue = (
-			atAsm,
-			atTrue,
-			atFunction,
-			atProcedure,
-			atClassOf,
-			atClass,
-			atConst,
-			atConstructor,
-			atDestructor,
-			atEnum,
-			atInterface,
-			atNil,
-			atNumeric,
-			atOut,
-			atPointer,
-			atName,
-			atString,
-			atSubRange,
-			atVar,
-			atDispInterface);
+			avAsm,
+			avTrue,
+			avFunction,
+			avProcedure,
+			avClassOf,
+			avClass,
+			avConst,
+			avConstructor,
+			avDestructor,
+			avEnum,
+			avInterface,
+			avNil,
+			avNumeric,
+			avOut,
+			avPointer,
+			avName,
+			avString,
+			avSubRange,
+			avVar,
+			avDispInterface);
 
-function AttributeValueToString(const AttributeValue: TAttributeValue): string;
+function AttributeValueToStr(const AttributeValue: TAttributeValue): string;
 
 
 type
@@ -492,19 +501,6 @@ type
 		function get_HasChildren: Boolean;
 		function get_Value: string;	// @anName
 		function get_DisplayName: string;
-	protected
-		// Not used
-		/// find a child node with the specified node type
-		function FindNode(NodeType: TSyntaxNodeType): TSyntaxNode2; overload; // Warning: can return nil
-		/// find a child node based on matching a patch of node types
-		function FindNode(const TypesPath: array of TSyntaxNodeType): TSyntaxNode2; overload;	// Warning: can return nil
-
-		function Clone: TSyntaxNode2; virtual;
-
-		procedure AssignPositionFrom(const Node: TSyntaxNode2);
-
-		procedure DeleteChild( const NodeOrToken: TSyntaxNodeOrToken);
-		procedure ExtractChild(const NodeOrToken: TSyntaxNodeOrToken);
 	public
 		constructor Create(SyntaxNodeType: TSyntaxNodeType);
 		destructor Destroy; override;
@@ -528,52 +524,30 @@ type
 
 {
 	The root class that does the parsing.
-
-	TObject
-		- SimpleParser.TDelphiParser
-			- DelphiAST.SimpleParserEx.TmwSimplePasParEx		(derived)
-				- DelphiAST.TPasSyntaxTreeBuilder				(derived)
 }
 	TDelphiParser = class
-	private type
-		TTreeBuilderMethod = function: TSyntaxNode2 of object;
 	private
 		// Infrastructure
 		FTokens: TObjectList<TSyntaxToken>; // non-owning references; syntax tree owns token lifetime
-		FCurrent: Integer; //current token index
-//		FAheadOriginalCurrentIndex: Integer; // the Current index we were at before we started parsing ahead
+		FCurrent: Integer; //current token index; starts at -1, and you have to NextToken to get to the first
 
-//		FCurrentToken: TSyntaxToken;
-
-		FCompilerDirectives: TStrings;
+		FCompilerDirectives: TStrings; // the current compiler directives. Defaults to your directives (see GetDefaultConditionalDirectives function)
+		FInterfaceOnly: Boolean;
+		FScopedEnums: Boolean;
 
 		FOnMessage: TMessageEvent;
 
-
-		FInterfaceOnly: Boolean;
-//		AheadParse: TDelphiParser;
-		FInRound: Integer; // incremented by ParseRoundOpen, decremented by ParseRoundClose
 		function ParseVariableTail: TSyntaxNode2;
-		function get_InRound: Boolean;
-		function get_UseDefines: Boolean;  // get_UseDefines
-		function get_ScopedEnums: Boolean;
-		procedure set_UseDefines(const Value: Boolean);
 		procedure set_IncludeHandler(IncludeHandler: IUnknown{IIncludeHandler});
 
 		procedure DoMessage(const Msg: string; X, Y: Integer);
 
 
 		procedure MoveMembersToVisibilityNodes(TypeNode: TSyntaxNode2);
-		procedure BuildExpressionTree(ExpressionMethod: TTreeBuilderMethod);
 
 		procedure GetDefaultConditionalDirectives(TargetList: TStrings);
 
-
-		//procedure InitAhead;			// Save current position in tokens array (so we can restore it later after parsing ahead)
-		//procedure RestoreAhead;		// Restore the current position in the tokens array (after we're done parsing ahead)
-
-		function PoisonNode: TSyntaxNode2; //special NotImplemented node
-
+		function PoisonNode(NodeType: TSyntaxNodeType=ntUnknown): TSyntaxNode2; //special NotImplemented node
 
 		// Property getters
 		function get_CurrentToken: TSyntaxToken;
@@ -590,7 +564,7 @@ type
 		function ParseClassProperty: TSyntaxNode2;
 
 
-	protected
+	private
 		procedure Log(const s: string);
 
 		// Token navigation
@@ -609,7 +583,7 @@ type
 		function EatToken(ExpectedTokenKind: TptTokenKind): TSyntaxToken; overload; // emits an error message if the CurrentToken kind is not Sym.
 
 		// Assertion utility routines. Moves to next token as long as current token is specified type
-		function ExpectedEx(    ExpectedTokenKind: TptTokenKind): TSyntaxToken;	// emits an error message if the CurrentToken ExID is not Sym.
+		function EatTokenEx(    ExpectedTokenKind: TptTokenKind): TSyntaxToken;	// emits an error message if the CurrentToken ExID is not Sym.
 
 		// Output an error message
 		function SynError(Error: string): TSyntaxNode2;
@@ -623,61 +597,71 @@ type
 		// Main parsing function.
 		function ParseCore: TSyntaxNode2; virtual; //as a nice way to split plumbing from grammer
 
+
+
+
 		// ParseCore then turns around and calls one of:
-		function ParseUnitDeclaration: TSyntaxNode2;	// e.g. unit Unit1;
-		function ParseProgramFile: TSyntaxNode2;			// e.g. program Program1;
-		function ParseLibraryFile: TSyntaxNode2;			// e.g. library Library1;
-		function ParsePackageFile: TSyntaxNode2;			// e.g. package Package1;
+		function ParseUnit: TSyntaxNode2;						// e.g. unit Unit1;
+		function ParseProgramFile: TSyntaxNode2;				// e.g. program Program1;
+		function ParseLibraryFile: TSyntaxNode2;				// e.g. library Library1;
+		function ParsePackage: TSyntaxNode2;					// e.g. package Package1;
 		function ParseScriptFile: TSyntaxNode2; 				// If the text is not one of file types, we can parse some contents
 
 
 		function ParseUsesClause: TSyntaxNode2;				// uses a,b,c;
 			function IsPossibleUsesClause: Boolean;
 
-		function ParseUsedUnitsList: TSyntaxNode2;			deprecated 'Moved to ParseUsesClause'; // a,b,c
 		function ParseUsedUnit: TSyntaxNode2;					// a
 
-		function ParseCustomAttribute: TSyntaxNode2;			// ptSquareOpen
-//		function Semicolon: TSyntaxToken;						// consumes a semicolon token, but only in places where it's valid
+		function ParseAssemblyAttribute: TSyntaxNode2;		// ptSquareOpen
 
-		function ParseQualifiedIdentifier: TSyntaxNode2;   // Contoso.Grunion;
+		function ParseQualifiedIdent: TSyntaxNode2;	// Contoso.Grunion;
 		function ParseInterfaceSection: TSyntaxNode2;
 		function ParseInterfaceDeclaration: TSyntaxNode2;
 
-		function ParsePortabilityDirective: TSyntaxNode2;  // ntPortabilityDirective
+		function ParsePortabilityDirective: TSyntaxNode2;	// ntPortabilityDirective
 			function IsPossiblePortabilityDirective: Boolean;
+
+			function ParseDirectiveDeprecated: TSyntaxNode2;
+			function ParseDirectiveLibrary: TSyntaxNode2;
+			function ParseDirectivePlatform: TSyntaxNode2;
+
+
 
 		function ParseStringType: TSyntaxNode2;				// ntType
 
 		function ParseTypeSection: TSyntaxNode2;				// ntTypeSection
 			function IsPossibleTypeSection: Boolean;
 
-		function ParseTypeDeclaration: TSyntaxNode2;			// ntTypeDecl
+		function ParseTypeDeclaration: TSyntaxNode2;			// ntTypeDecl					http://dgrok.excastle.com/Grammar.html#TypeDecl
 			function IsPossibleTypeDeclaration: Boolean; 	// peeks ahead to see if the next production is a TypeDeclaration, meaning you can call ParseTypeDeclaration()
 
-		function ParseType: TSyntaxNode2;		// ntType
+		function ParseType: TSyntaxNode2;						// ntType						http://dgrok.excastle.com/Grammar.html#Type
 
 		// ntType, TFoo = <Type>
 		function ParseEnumeratedType: TSyntaxNode2;
-		//ParseExpressionOrRange
+		function ParseExpressionOrRange: TSyntaxNode2;
 		//ParseArrayType
 		//ParseSetType
 		//ParseFileType
 		//ParseRecordHelperType
-		function ParseClassType: TSyntaxNode2;			// ntType(@anType=atClass)
-		function ParseAncestorList: TSyntaxNode2;		// TWidget = class(TShape, IShape, IWidget)
-		function ParseClassMemberList: TSyntaxNode2;	// the ancestor of a class TCustomer=class(TShape, ILog, IFoo)
+		function ParseClassType: TSyntaxNode2;					// ntType(@anType=atClass)
+		function ParseAncestorList: TSyntaxNode2;				// TWidget = class(TShape, IShape, IWidget)
+		function ParseClassMemberList: TSyntaxNode2;			// the ancestor of a class TCustomer=class(TShape, ILog, IFoo)
 		function ParseVisibilitySection: TSyntaxNode2;
+			function IsPossibleVisibilitySection: Boolean;
+
 		function ParseVisibilitySectionContent: TSyntaxNode2;
 			function IsPossibleVisibilitySectionContent: Boolean;
 
-		function ParseConstSection: TSyntaxNode2;					// ntConstants
+		function ParseConstSection: TSyntaxNode2;				// ntConstants
 			function IsPossibleConstSection: Boolean;
-		function ParseConstantDecl: TSyntaxNode2;					// ntConstant
+
+		function ParseConstantDecl: TSyntaxNode2;				// ntConstant
 			function IsPossibleConstantDecl: Boolean;
 
 
-		function ParseResStringSection: TSyntaxNode2;			// ntResourceStrings
+		function ParseResStringSection: TSyntaxNode2;		// ntResourceStrings
 			function IsPossibleResStringSection: Boolean;
 		function ParseResourceStringDecl: TSyntaxNode2;
 			function IsPossibleResourceStringDecl: Boolean;
@@ -686,17 +670,19 @@ type
 		function ParseFieldDecl: TSyntaxNode2;
 
 
-		function ParseClassHelper: TSyntaxNode2;			// ntHelper
+		function ParseClassHelperType: TSyntaxNode2;				// ntHelper
 		function ParseSimpleType: TSyntaxNode2;
 		function ParseSubrangeType: TSyntaxNode2;
 		function ParseStructuredType: TSyntaxNode2;
 		function ParseProceduralType: TSyntaxNode2;
-		function ParseSimpleExpression: TSyntaxNode2;
 		function ParseTypeId: TSyntaxNode2;
 		function ParsePointerType: TSyntaxNode2;
 
 		function ParseVarSection: TSyntaxNode2;
 			function IsPossibleVarSection: Boolean;
+
+		function ParseVarDecl: TSyntaxNode2;
+
 
 		function ParseImplementationSection: TSyntaxNode2;
 
@@ -707,9 +693,9 @@ type
 		function ParseArrayType: TSyntaxNode2;
 		function ParseBlock: TSyntaxNode2;
 		function ParseCharString: TSyntaxNode2;
-		procedure ClassMethodDirective(ParentNode: TSyntaxNode2);
+
+
 		function ParseClassMethodOrProperty: TSyntaxNode2;
-		procedure ClassOperatorHeading(ParentNode: TSyntaxNode2);
 		function ParseClassTypeEnd: TSyntaxNode2;
 		function ParseClassVisibility: TSyntaxNode2;
 		function ParseConstantColon: TSyntaxNode2;
@@ -722,23 +708,25 @@ type
 			function IsPossibleImplementationDecl: Boolean;
 
 		function ParseDesignator: TSyntaxNode2;
-		procedure DestructorHeading(ParentNode: TSyntaxNode2);
+
+		// parse directive
+		function ParseDirective: TSyntaxNode2;
+			function IsPossibleDirective: Boolean;
+
 		function ParseDirective16Bit: TSyntaxNode2;
+		function ParseDirectiveBindingMessage: TSyntaxNode2;
+		function ParseDirectiveLocal: TSyntaxNode2;
+		function ParseDirectiveVarargs: TSyntaxNode2;
 
 		// Involved in tree building
 		function ParseAccessSpecifier: TSyntaxNode2;
-		function ParseAdditiveOperator: TSyntaxNode2;
+		function ParseAddOp: TSyntaxNode2;
 		function ParseAddressOp: TSyntaxNode2;
-		function ParseAlignmentParameter: TSyntaxNode2;
 		function ParseAnonymousMethod: TSyntaxNode2;
-		function ParseArrayBounds: TSyntaxNode2;
 		function ParseArrayConstant: TSyntaxNode2;
-		function ParseArrayDimension: TSyntaxNode2;
-		function ParseAsmStatement: TSyntaxNode2;
+		function ParseAssemblerStatement: TSyntaxNode2;
 		function ParseAsOp: TSyntaxNode2;
-		function ParseAssignOp: TSyntaxNode2;
 		function ParseAtExpression: TSyntaxNode2; // raise at
-		function ParseCaseElseStatement: TSyntaxNode2;
 		function ParseCaseLabel: TSyntaxNode2;
 		function ParseCaseLabelList: TSyntaxNode2;
 		function ParseCaseSelector: TSyntaxNode2;
@@ -746,60 +734,89 @@ type
 		function ParseClassClass: TSyntaxNode2;
 		function ParseClassConstraint: TSyntaxNode2;
 		function ParseClassField: TSyntaxNode2;
-		procedure ClassForward(ParentNode: TSyntaxNode2);
-		procedure ClassFunctionHeading(ParentNode: TSyntaxNode2);
-		procedure ClassMethod(ParentNode: TSyntaxNode2);
 		function ParseClassMethodResolution: TSyntaxNode2;
 		function ParseClassMethodHeading: TSyntaxNode2;
-		procedure ClassProcedureHeading(ParentNode: TSyntaxNode2);
 
 		function ParseMethodHeading: TSyntaxNode2;
 			function IsPossibleMethodHeading: Boolean;
 
-		function ParseFunctionMethodHeading: TSyntaxNode2;
-		function ParseProcedureMethodHeading: TSyntaxNode2;
-		function ParseConstructorMethodHeading: TSyntaxNode2;
-		function ParseDestructorMethodHeading: TSyntaxNode2;
-		function ParseOperatorMethodHeading: TSyntaxNode2;
+			// Called by ParseMethodHeading to specially handle each:
+			function ParseProcedureMethodHeading: TSyntaxNode2;		// ptProcedure
+			function ParseFunctionMethodHeading: TSyntaxNode2;			// ptFunction
+			function ParseConstructorMethodHeading: TSyntaxNode2;		// ptConstructor
+			function ParseDestructorMethodHeading: TSyntaxNode2;		// ptDestructor
+			function ParseOperatorMethodHeading: TSyntaxNode2;			// ptOperator
+
+		procedure ClassProcedureHeading(ParentNode: TSyntaxNode2);
 		procedure ConstructorHeading(ParentNode: TSyntaxNode2);
+		procedure ClassFunctionHeading(ParentNode: TSyntaxNode2);
+		procedure ClassMethod(ParentNode: TSyntaxNode2);
+		procedure ConstructorName(ParentNode: TSyntaxNode2);
+		procedure DestructorName(ParentNode: TSyntaxNode2);
+		procedure DirectiveBinding(ParentNode: TSyntaxNode2);
+		procedure DirectiveCalling(ParentNode: TSyntaxNode2);
+		procedure DirectiveInline(ParentNode: TSyntaxNode2);
+		procedure ExternalDirectiveTwo(ParentNode: TSyntaxNode2);
+		procedure FunctionProcedureBlock(ParentNode: TSyntaxNode2);
+		procedure InterfaceMemberList(ParentNode: TSyntaxNode2);
+		procedure ObjectConstructorHeading(ParentNode: TSyntaxNode2);
+		procedure ObjectDestructorHeading(ParentNode: TSyntaxNode2);
+		procedure ObjectFunctionHeading(ParentNode: TSyntaxNode2);
+		procedure ObjectMemberList(ParentNode: TSyntaxNode2);
+		procedure ObjectMethodDirective(ParentNode: TSyntaxNode2);
+		procedure ObjectMethodHeading(ParentNode: TSyntaxNode2);
+		procedure ObjectProcedureHeading(ParentNode: TSyntaxNode2);
+		procedure ObjectType(ParentNode: TSyntaxNode2);
+		procedure ProceduralDirective(ParentNode: TSyntaxNode2);
+		procedure PropertyName(ParentNode: TSyntaxNode2);
+		procedure RecordAlignValue(ParentNode: TSyntaxNode2);
+		procedure RecordType(ParentNode: TSyntaxNode2);
+
+		procedure ClassMethodDirective(ParentNode: TSyntaxNode2);
+
+		procedure ClassOperatorHeading(ParentNode: TSyntaxNode2);
+		procedure DestructorHeading(ParentNode: TSyntaxNode2);
 
 		function ParseProperty: TSyntaxNode2;
 			function IsPossibleProperty: Boolean;
+//			property : Integer read FCurrent;
 
+		function ParseClassOfType: TSyntaxNode2;
+		function ParseConstParameter: TSyntaxNode2;			// ntParameter
+		function ParseVarParameter: TSyntaxNode2;
 
-		function ParseClassReferenceType: TSyntaxNode2;
-		function ParseConstParameter: TSyntaxNode2;
-		function ParseConstantDeclaration: TSyntaxNode2;
 		function ParseConstantName: TSyntaxNode2;
 
 		function ParseConstantValue: TSyntaxNode2;
 		function ParseConstantValueTyped: TSyntaxNode2;
 		function ParseConstructorConstraint: TSyntaxNode2;
-		procedure ConstructorName(ParentNode: TSyntaxNode2);
-		function ParseContainsClause: TSyntaxNode2;
-		procedure DestructorName(ParentNode: TSyntaxNode2);
-		procedure DirectiveBinding(ParentNode: TSyntaxNode2);
-		function ParseDirectiveBindingMessage: TSyntaxNode2;
-		procedure DirectiveCalling(ParentNode: TSyntaxNode2);
-		procedure DirectiveInline(ParentNode: TSyntaxNode2);
-		procedure DispInterfaceForward(ParentNode: TSyntaxNode2);
+
 		function ParseDotOp: TSyntaxNode2;
 		function ParseElseStatement: TSyntaxNode2;
 		function ParseEmptyStatement: TSyntaxNode2;
 		function ParseExceptBlock: TSyntaxNode2;
+
+		function ParseExceptionItem: TSyntaxNode2;
 		function ParseExceptionBlockElseBranch: TSyntaxNode2;
 		function ParseExceptionHandler: TSyntaxNode2;
 		function ParseExceptionVariable: TSyntaxNode2;
+		function ParseExceptionClassTypeIdentifier: TSyntaxNode2;
+		function ParseExceptionHandlerList: TSyntaxNode2;
+		function ParseExceptionIdentifier: TSyntaxNode2;
 
-		function ParseExportsClause: TSyntaxNode2;
-		function ParseExportsElement: TSyntaxNode2;
+
+		function ParseExportStatement: TSyntaxNode2;
+		function ParseExportsItem: TSyntaxNode2;
 		function ParseExportsName: TSyntaxNode2;
-		function ParseExportsNameId: TSyntaxNode2;
+
 		function ParseExpression: TSyntaxNode2;
+
+		function ParseSimpleExpression: TSyntaxNode2;
+
+
 		function ParseExpressionList: TSyntaxNode2;
 
 		function ParseExternalDirective: TSyntaxNode2; // ptExternal
-		procedure ExternalDirectiveTwo(ParentNode: TSyntaxNode2);
 		function ParseExternalDirectiveThree: TSyntaxNode2;
 
 		function ParseFieldName: TSyntaxNode2;
@@ -814,40 +831,28 @@ type
 		function ParseFunctionMethodName: TSyntaxNode2;
 		function ParseForwardDeclaration: TSyntaxNode2;
 		function ParseFunctionMethodDeclaration: TSyntaxNode2;
-		procedure FunctionProcedureBlock(ParentNode: TSyntaxNode2);
 		function ParseIdentifierList: TSyntaxNode2;
 		function ParseInlineConstSection: TSyntaxNode2;
 		function ParseInlineStatement: TSyntaxNode2;
 		function ParseInParameter: TSyntaxNode2;
 		function ParseInterfaceHeritage: TSyntaxNode2;
-		procedure InterfaceMemberList(ParentNode: TSyntaxNode2);
 		function ParseLabelDeclarationSection: TSyntaxNode2;
 		function ParseLabeledStatement: TSyntaxNode2;
 
-		function ParseMainUsedUnitExpression: TSyntaxNode2;
-		function ParseMainUsedUnitName: TSyntaxNode2;
 		function ParseFormalParameterType: TSyntaxNode2;
-		procedure ObjectConstructorHeading(ParentNode: TSyntaxNode2);
-		procedure ObjectDestructorHeading(ParentNode: TSyntaxNode2);
 		function ParseObjectField: TSyntaxNode2;
-		function ParseObjectForward: TSyntaxNode2;
-		procedure ObjectFunctionHeading(ParentNode: TSyntaxNode2);
 		function ParseObjectHeritage: TSyntaxNode2;
-		procedure ObjectMemberList(ParentNode: TSyntaxNode2);
-		procedure ObjectMethodDirective(ParentNode: TSyntaxNode2);
-		procedure ObjectMethodHeading(ParentNode: TSyntaxNode2);
+
 		function ParsePropertyDirective: TSyntaxNode2;
-		procedure ObjectProcedureHeading(ParentNode: TSyntaxNode2);
-		procedure ObjectType(ParentNode: TSyntaxNode2);
+			function IsPossiblePropertyDirective: Boolean;
+
 		function ParseObjectTypeEnd: TSyntaxNode2;
 		function ParseObjectVisibility: TSyntaxNode2;
 		function ParseOrdinalIdentifier: TSyntaxNode2;
 		function ParseOrdinalType: TSyntaxNode2;
 		function ParseParameterNameList: TSyntaxNode2;
-		procedure ProceduralDirective(ParentNode: TSyntaxNode2);
 		function ParseProceduralDirectiveOf: TSyntaxNode2;
 		function ParseProcedureMethodName: TSyntaxNode2;
-		function ParseProgramBlock: TSyntaxNode2;
 		function ParsePropertyDefault: TSyntaxNode2;
 		function ParsePropertyInterface: TSyntaxNode2;
 		function ParsePropertySpecifiers: TSyntaxNode2;
@@ -856,11 +861,12 @@ type
 		function ParseRealIdentifier: TSyntaxNode2;
 		function ParseRealType: TSyntaxNode2;
 		function ParseRecordAlign: TSyntaxNode2;
-		function ParseRecordConstant: TSyntaxNode2;
 		function ParseRecordVariant: TSyntaxNode2;
-		function ParseResolutionInterfaceName: TSyntaxNode2;
 		function ParseSetType: TSyntaxNode2;
+
 		function ParseStatement: TSyntaxNode2;
+//			function IsPossibleStatement: Boolean;
+
 		function ParseStatementOrExpression: TSyntaxNode2;
 		function ParseStatements: TSyntaxNode2;
 		function ParseStorageExpression: TSyntaxNode2;
@@ -869,17 +875,8 @@ type
 		function ParseStorageSpecifier: TSyntaxNode2;
 		function ParseStorageStored: TSyntaxNode2;
 
-		function ParseDirectiveDeprecated: TSyntaxNode2;
-		function ParseDirectiveLibrary: TSyntaxNode2;
-		function ParseDirectiveLocal: TSyntaxNode2;
-		function ParseDirectivePlatform: TSyntaxNode2;
-		function ParseDirectiveVarargs: TSyntaxNode2;
 		function ParseDispIDSpecifier: TSyntaxNode2;
-		function ParseEnumeratedTypeItem: TSyntaxNode2;
-		function ParseExceptionClassTypeIdentifier: TSyntaxNode2;
-		function ParseExceptionHandlerList: TSyntaxNode2;
-		function ParseExceptionIdentifier: TSyntaxNode2;
-		function ParseExplicitType: TSyntaxNode2;
+		function ParseEnumeratedTypeElement: TSyntaxNode2;
 		function ParseFactor: TSyntaxNode2;
 		function ParseFieldDeclaration: TSyntaxNode2;
 		function ParseFieldList: TSyntaxNode2;
@@ -890,7 +887,7 @@ type
 		function ParseGotoStatement: TSyntaxNode2;
 		function ParseIfStatement: TSyntaxNode2;
 
-		function ParseIdentifier: TSyntaxNode2;				// ntIdentifier
+		function ParseIdent: TSyntaxNode2;				// ntIdentifier
 			function IsPossibleIdentifier: Boolean;
 
 		function ParseImplementsSpecifier: TSyntaxNode2;
@@ -900,7 +897,6 @@ type
 		function ParseInheritedVariableReference: TSyntaxNode2;
 		function ParseInlineVarDeclaration: TSyntaxNode2;
 		function ParseInlineVarSection: TSyntaxNode2;
-		procedure InterfaceForward(ParentNode: TSyntaxNode2);
 		function ParseInterfaceGUID: TSyntaxNode2;
 		function ParseInterfaceType: TSyntaxNode2;
 
@@ -921,19 +917,19 @@ type
 		function ParsePointerSymbol: TSyntaxNode2;
 		function ParseProcedureDeclarationSection: TSyntaxNode2;
 		function ParseProcedureProcedureName: TSyntaxNode2;
-		procedure PropertyName(ParentNode: TSyntaxNode2);
 		function ParsePropertyParameterList: TSyntaxNode2; // not done
 		function ParseRaiseStatement: TSyntaxNode2;
-		procedure RecordAlignValue(ParentNode: TSyntaxNode2);
 		function ParseRecordConstraint: TSyntaxNode2;
 		function ParseRecordFieldConstant: TSyntaxNode2;
-		procedure RecordType(ParentNode: TSyntaxNode2);
 
 		function ParseRelativeOperator: TSyntaxNode2;
 		function ParseRepeatStatement: TSyntaxNode2;
 		function ParseResourceDeclaration: TSyntaxNode2;
 		function ParseResourceValue: TSyntaxNode2;
+
 		function ParseRequiresClause: TSyntaxNode2;
+			function IsPossibleRequiresClause: Boolean;
+
 		function ParseRequiresIdentifier: TSyntaxNode2;
 		function ParseRequiresIdentifierId: TSyntaxNode2;
 		function ParseReturnType: TSyntaxNode2;
@@ -941,7 +937,10 @@ type
 		function ParseRoundOpen: TSyntaxNode2;
 		function ParseSetConstructor: TSyntaxNode2;
 		function ParseSetElement: TSyntaxNode2;
+
 		function ParseSimpleStatement: TSyntaxNode2;
+			//function IsPossibleSimpleStatement: Boolean;
+
 		function ParseStatementList: TSyntaxNode2;
 		function ParseStorageDefault: TSyntaxNode2;
 		function ParseStringConst: TSyntaxNode2;
@@ -957,23 +956,18 @@ type
 		function ParseTagFieldTypeName: TSyntaxNode2;
 		function ParseTerm: TSyntaxNode2;
 		function ParseTypedConstant: TSyntaxNode2;
-		function ParseTypeReferenceType: TSyntaxNode2;
 		function ParseTypeSimple: TSyntaxNode2;
 
 		function ParseUnaryMinus: TSyntaxNode2;
 
-		function ParseUnitId: TSyntaxNode2;
-
 		function ParseVarAbsolute: TSyntaxNode2;
 		function ParseVarEqual: TSyntaxNode2;
-		function ParseVarDeclaration: TSyntaxNode2;
+
 		function ParseVariable: TSyntaxNode2;
 		function ParseVariableReference: TSyntaxNode2;
 		function ParseVariantIdentifier: TSyntaxNode2;
 		function ParseVariantSection: TSyntaxNode2;
-		function ParseVarParameter: TSyntaxNode2;
-		function ParseVarName: TSyntaxNode2;
-		function ParseVarNameList: TSyntaxNode2;
+		function ParseIdentList: TSyntaxNode2;
 
 		function ParseVisibilityAutomated: TSyntaxNode2;
 		function ParseVisibilityPrivate: TSyntaxNode2;
@@ -982,7 +976,6 @@ type
 		function ParseVisibilityPublished: TSyntaxNode2;
 		function ParseVisibilityStrictPrivate: TSyntaxNode2;
 		function ParseVisibilityStrictProtected: TSyntaxNode2;
-		function ParseVisibilityUnknown: TSyntaxNode2;
 		function ParseWhileStatement: TSyntaxNode2;
 		function ParseWithExpressionList: TSyntaxNode2;
 		function ParseWithStatement: TSyntaxNode2;
@@ -990,13 +983,10 @@ type
 
 		// Generics
 		function ParseTypeArgs: TSyntaxNode2;
-		function ParseHintDirectives: TSyntaxNode2;
 		function ParseTypeParams: TSyntaxNode2;
 		function ParseTypeParam: TSyntaxNode2;						// T, U: class, constructor; V: IComparable<T>>= class
 			function ParseConstraintTypeRef: TSyntaxNode2;		// IComparable<T>>= class
 			function ParseTypeParamConstraint: TSyntaxNode2;
-
-		function ParseTypeParamList: TSyntaxNode2;
 
 		function ParseConstraintList: TSyntaxNode2;
 		function ParseConstraint: TSyntaxNode2;
@@ -1008,12 +998,8 @@ type
 		// This is the syntax for custom attributes, based quite strictly on the
 		// ECMA syntax specifications for C#, but with a Delphi expression being
 		// used at the bottom as opposed to a C# expression. -JThurman 2004-03-21
-		function ParseGlobalAttributes: TSyntaxNode2;
-		function ParseGlobalAttributeSections: TSyntaxNode2;
-		function ParseGlobalAttributeSection: TSyntaxNode2;
 		function ParseGlobalAttributeTargetSpecifier: TSyntaxNode2;
 		function ParseGlobalAttributeTarget: TSyntaxNode2;
-		function ParseAttributes: TSyntaxNode2;
 		function ParseAttributeSections: TSyntaxNode2;
 		function ParseAttributeSection: TSyntaxNode2;
 		function ParseAttributeTargetSpecifier: TSyntaxNode2;
@@ -1034,17 +1020,8 @@ type
 		property CurrentTokenExID:  TptTokenKind read get_CurrentTokenExID;	// for an identifier token, contains the directive's TokenKind
 		property CurrentTokenGenID: TptTokenKind read get_CurrentTokenGenID;	// ExID, or TokenID if ExID is empty
 
-		property InRound: Boolean read get_InRound;
-
 		// Token consumption helpers for whitespace-preserving parser
-		function ConsumeToken(expectedKind: TptTokenKind; nodeType: TSyntaxNodeType=ntIdentifier): TSyntaxNode2;
-		function ConsumeIdentifier: TSyntaxNode2;
-		function ConsumeKeyword(keyword: TptTokenKind): TSyntaxNode2;
-		function ConsumeSemicolon: TSyntaxNode2;
-		
-		// Fluent parsing helpers
-		procedure AddToken(parent: TSyntaxNode2; token: TptTokenKind); //Consumes and preserves a token as a child node
-		function Add(parent: TSyntaxNode2; child: TSyntaxNode2): TSyntaxNode2; //Adds a child node to parent and returns the child
+		function ConsumeKeyword(ExpectedKind: TptTokenKind): TSyntaxNode2;
 	public
 		constructor Create;
 		destructor Destroy; override;
@@ -1057,14 +1034,58 @@ type
 		// Parse using the list of tokens. Note: the parser takes ownership of the tokens
 		function Parse(const Tokens: TList): TSyntaxNode2;
 
-		procedure InitDefinesDefinedByCompiler;
+		procedure ResetComplierDirectives;
 
 		property CompilerDirectives: TStrings read FCompilerDirectives;
 
+		// Whether parsing should skip the implementation, only parsing the interface section
 		property InterfaceOnly: Boolean read FInterfaceOnly write FInterfaceOnly;
-		property UseDefines: Boolean read get_UseDefines write set_UseDefines;
-		property ScopedEnums: Boolean read get_ScopedEnums;
+
+		//
 		property IncludeHandler: IUnknown{IIncludeHandler} write set_IncludeHandler;
+	public
+{
+		Not yet implemented; probably because they exist inside something else
+}
+//		function ParseAtom: TSyntaxNode2;					// currently part of ParseFactor, will extract to own method
+//		function ParseBareInherited: TSyntaxNode2;		// is so simple it's just in SimpleStatement
+{		function ParseClassOfType: TSyntaxNode2;
+		function ParseExportsItem: TSyntaxNode2;
+		function ParseExportsSpecifier: TSyntaxNode2;
+		function ParseExportsStatement: TSyntaxNode2;
+		function ParseExpressionOrAssignment: TSyntaxNode2;
+		function ParseExpressionOrRangeList: TSyntaxNode2;
+		function ParseExtendedIdent: TSyntaxNode2;
+		function ParseFancyBlock: TSyntaxNode2;
+		function ParseFieldSection: TSyntaxNode2;
+		function ParseIdent: TSyntaxNode2;
+		function ParseIdentList: TSyntaxNode2;
+
+		function ParseInitSection: TSyntaxNode2;
+		function ParseInterfaceDecl: TSyntaxNode2;
+		function ParseLabelDeclSection: TSyntaxNode2;
+		function ParseMethodImplementation: TSyntaxNode2;
+		function ParseMethodReturnType: TSyntaxNode2;
+		function ParseMulOp: TSyntaxNode2;
+		function ParseOpenArray: TSyntaxNode2;
+		function ParsePackedType: TSyntaxNode2;
+		function ParseParameter: TSyntaxNode2;
+		function ParseParameterExpression: TSyntaxNode2;
+		function ParseParameterType: TSyntaxNode2;
+		function ParseParenthesizedExpression: TSyntaxNode2;
+		function ParseParticle: TSyntaxNode2;
+		function ParseProcedureType: TSyntaxNode2;
+		function ParseProgram: TSyntaxNode2;
+		function ParseQualifiedIdent: TSyntaxNode2;
+		function ParseRecordHelperType: TSyntaxNode2;
+		function ParseRecordType: TSyntaxNode2;
+		function ParseRelOp: TSyntaxNode2;
+		function ParseSetLiteral: TSyntaxNode2;
+		function ParseTypeDecl: TSyntaxNode2;
+		function ParseUnaryOperator: TSyntaxNode2;
+		function ParseVarDecl: TSyntaxNode2;
+		function ParseVariantGroup: TSyntaxNode2;
+		function ParseVisibility: TSyntaxNode2;}
 	end;
 
 implementation
@@ -1110,7 +1131,7 @@ end;
 
 function TDelphiParser.ParseForwardDeclaration: TSyntaxNode2;
 var
-  forwardToken, semicolonToken: TSyntaxNode2;
+	forwardToken: TSyntaxNode2;
 begin
 {
 	Handles the forward keyword token.
@@ -1132,21 +1153,20 @@ begin
 	both the 'forward' keyword and semicolon as child nodes for whitespace preservation,
 	while also setting semantic attributes for analysis tools.
 }
-  // Create a container for the forward declaration
-  Result := TSyntaxNode2.Create(ntIdentifier); // You might want to add ntForwardDeclaration to your enum
-  
-  // Preserve the 'forward' keyword as a child node
-  forwardToken := ConsumeKeyword(ptForward);
-  if Assigned(forwardToken) then
-    Result.AddChild(forwardToken);
-  
-  // Preserve the semicolon as a child node  
-  semicolonToken := ConsumeSemicolon;
-  if Assigned(semicolonToken) then
-    Result.AddChild(semicolonToken);
+	// Create a container for the forward declaration
+	Result := TSyntaxNode2.Create(ntIdentifier); // You might want to add ntForwardDeclaration to your enum
 
-  // Set semantic attribute for analysis tools
-  Result.Attributes[anForwarded] := AttributeValueToString(atTrue);
+	// Preserve the 'forward' keyword as a child node
+	forwardToken := ConsumeKeyword(ptForward);
+	if Assigned(forwardToken) then
+		Result.AddChild(forwardToken);
+
+	// Preserve the semicolon as a child node
+	if CurrentTokenKind = ptSemicolon then
+		Result.AddChild(EatToken(ptSemicolon));
+
+	// Set semantic attribute for analysis tools
+	Result.Attributes[anForwarded] := AttributeValueToStr(avTrue);
 end;
 
 function TDelphiParser.ParseProperty: TSyntaxNode2;
@@ -1154,29 +1174,81 @@ begin
 {
 http://dgrok.excastle.com/Grammar.html#Property
 
-Property [^]
+Property
 	-> [CLASS]
 			PROPERTY Ident
 			['[' (Parameter [';'])+ ']']
 			[':' MethodReturnType]
 			(PropertyDirective)*
 			';'
+
+property : Integer read FCurrent write FCurrent;		// Delphi 12: E2029 Identifier expected but ':' found
+
 }
 	Result := TSyntaxNode2.Create(ntProperty);
 
+//	[CLASS]
 	if CurrentTokenKind = ptClass then
 	begin
-		Result[anClass] := AttributeValueToString(atTrue);
+		Result[anClass] := AttributeValueToStr(avTrue);
 		Result.AddChild(EatToken(ptClass));
 	end;
 
+//	PROPERTY Ident
 	Result.AddChild(EatToken(ptProperty));
+	Result.AddChild(ParseIdent);
 
 	// TODO: Implement the rest of this
+//	['[' (Parameter [';'])+ ']']
+	if CurrentTokenKind = ptOpenBracket then
+	begin
+		Result.AddChild(EatToken(ptOpenBracket));
+//		Result.AddChild(ParseParameter);		//todo implement this
+		while CurrentTokenKind = ptSemicolon do
+		begin
+			Result.AddChild(EatToken(ptSemicolon));
+//			Result.AddChild(ParseParameter); //todo implement this
+		end;
+	end;
 
+//	[':' MethodReturnType]
+   if CurrentTokenKind = ptColon then
+	begin
+		Result.AddChild(EatToken(ptColon));
+		Result.AddChild(ParseTypeId);
+	end;
+
+//	(PropertyDirective)*
+	while IsPossiblePropertyDirective do
+	begin
+		Result.AddChild(ParsePropertyDirective);
+	end;
+
+//	';'
+	Result.AddChild(EatToken(ptSemicolon));
 end;
 
 function TDelphiParser.ParsePropertyDirective: TSyntaxNode2;
+
+	function IsDirectiveWord(const AWord: string): Boolean;
+	var
+		tokText: string;
+	begin
+		tokText := CurrentToken.ValueText;
+		if tokText = '' then
+			tokText := CurrentToken.Text;
+		Result := SameText(tokText, AWord);
+	end;
+
+	function PeekIsDirectiveWord(const AWord: string): Boolean;
+	var
+		tokText: string;
+	begin
+		tokText := PeekToken.ValueText;
+		if tokText = '' then
+			tokText := PeekToken.Text;
+		Result := SameText(tokText, AWord);
+	end;
 begin
 {
 http://dgrok.excastle.com/Grammar.html#PropertyDirective
@@ -1196,61 +1268,78 @@ PropertyDirective
 }
 	Result := TSyntaxNode2.Create(ntPropertySpecifiers);
 
-	if (CurrentTokenKind = ptSemicolon) and (PeekTokenExID = ptDefault) then
+	if (CurrentTokenKind = ptSemicolon) and ((PeekTokenExID = ptDefault) or PeekIsDirectiveWord('default')) then
 	begin
 //		-> ';' DEFAULT
-		Result.AddChild(EatToken(ptSemiColon));
-		Result.AddChild(EatToken(ptDefault));
+		Result.AddChild(EatToken(ptSemicolon));
+		if CurrentTokenExID = ptDefault then
+			Result.AddChild(EatTokenEx(ptDefault))
+		else
+			Result.AddChild(EatToken);
 	end
-	else if (CurrentTokenKind = ptDefault) then
+	else if (CurrentTokenExID = ptDefault) or IsDirectiveWord('default') then
 	begin
 //		-> DEFAULT Expression
-		Result.AddChild(EatToken(ptDefault));
+		Result.AddChild(EatToken);
 		Result.AddChild(ParseExpression);
 	end
-	else if (CurrentTokenKind = ptDispId) then
+	else if (CurrentTokenExID = ptDispId) or IsDirectiveWord('dispid') then
 	begin
 //		-> DISPID Expression
-		Result.AddChild(EatToken(ptDispId));
+		Result.AddChild(EatToken);
 		Result.AddChild(ParseExpression);
 	end
-	else if CurrentTokenExID = ptIndex then
+	else if (CurrentTokenExID = ptIndex) or IsDirectiveWord('index') then
 	begin
 //		-> INDEX Expression
-		Result.AddChild(EatToken(ptIndex));
+		Result.AddChild(EatToken);
 		Result.AddChild(ParseExpression);
 	end
-	else if CurrentTokenExID = ptNoDefault then
+	else if (CurrentTokenExID = ptNoDefault) or IsDirectiveWord('nodefault') then
 	begin
 //		-> NODEFAULT
-		Result.AddChild(EatToken(ptNoDefault));
+		Result.AddChild(EatToken);
 	end
-	else if CurrentTokenExID = ptRead then
+	else if (CurrentTokenExID = ptRead) or IsDirectiveWord('read') then
 	begin
 //		-> READ Expression
-		Result.AddChild(EatToken(ptRead));
-		Result.AddChild(ParseExpression);
+		Result.AddChild(EatToken);
+		// Keep accessor parsing bounded so the next property directive token is not consumed.
+		Result.AddChild(ParseReadAccessIdentifier);
 	end
-	else if CurrentTokenExID = ptReadOnly then
+	else if (CurrentTokenExID = ptReadOnly) or IsDirectiveWord('readonly') then
 	begin
 //		-> READONLY
-		Result.AddChild(EatToken(ptReadonly));
+		Result.AddChild(EatToken);
 	end
-	else if CurrentTokenExID = ptStored then
+	else if (CurrentTokenExID = ptStored) or IsDirectiveWord('stored') then
 	begin
 //		-> STORED Expression
-		Result.AddChild(EatToken(ptStored));
+		Result.AddChild(EatToken);
 		Result.AddChild(ParseExpression);
 	end
-	else if CurrentTokenExID = ptWrite then
+	else if (CurrentTokenExID = ptWrite) or IsDirectiveWord('write') then
 	begin
 //		-> WRITE Expression
-		Result.AddChild(EatToken(ptWrite));
+		Result.AddChild(EatToken);
+		// Keep accessor parsing bounded so the terminating semicolon is preserved.
+		Result.AddChild(ParseWriteAccessIdentifier);
 	end
-	else if CurrentTokenExID = ptWriteOnly then
+	else if (CurrentTokenExID = ptWriteOnly) or IsDirectiveWord('writeonly') then
 	begin
 //		-> WRITEONLY
-		Result.AddChild(EatToken(ptWriteOnly));
+		Result.AddChild(EatToken);
+	end
+	else if (CurrentTokenExID = ptImplements) or IsDirectiveWord('implements') then
+	begin
+//		-> IMPLEMENTS (QualifiedIdent [','])+
+		Result.AddChild(EatToken);
+		Result.AddChild(ParseQualifiedIdent);
+		while CurrentTokenKind = ptComma do
+		begin
+			Result.AddChild(EatToken(ptComma));
+			Result.AddChild(ParseQualifiedIdent);
+		end;
 	end
 	else
 	begin
@@ -1315,7 +1404,7 @@ end;
 
 {next two helpers validate expected tokens and recover with missing tokens at EOF}
 
-function TDelphiParser.ExpectedEx(ExpectedTokenKind: TptTokenKind): TSyntaxToken;
+function TDelphiParser.EatTokenEx(ExpectedTokenKind: TptTokenKind): TSyntaxToken;
 var
 	s: string;
 begin
@@ -1336,7 +1425,7 @@ begin
 
 	Result := CurrentToken;
 	NextToken;
-end;
+ end;
 
 procedure TDelphiParser.NextToken;
 var
@@ -1378,9 +1467,8 @@ end;
 function TDelphiParser.ParseNilToken: TSyntaxNode2;
 begin
 	Result := TSyntaxNode2.Create(ntLiteral);
-	Result.Attributes[anType] := AttributeValueToString(atNil);
-
-	AddToken(Result, ptNil);  // Preserves the actual 'nil' token as child
+	Result.Attributes[anType] := AttributeValueToStr(avNil);
+	Result.AddChild(EatToken(ptNil));
 end;
 
 function TDelphiParser.NodeListToString(NamesNode: TSyntaxNode2): string;
@@ -1821,6 +1909,19 @@ begin
 
 end;
 
+procedure TDelphiParser.ResetComplierDirectives;
+begin
+{
+	We need to know what the compiler conditional defines are,
+	so we can tokenize the text correctly.
+
+	This is the default behavior, which uses the defines of your compiler
+	that compiled this code.
+}
+	FCompilerDirectives.Clear;
+	GetDefaultConditionalDirectives(FCompilerDirectives);
+end;
+
 function TDelphiParser.get_CurrentTokenExID: TptTokenKind;
 begin
 	// For an identifier token, contains the directive's TokenKind
@@ -1837,20 +1938,14 @@ begin
 	Result := CurrentToken.TokenKind;
 end;
 
-function TDelphiParser.get_UseDefines: Boolean;
-begin
-//	Result := FTokenizer.UseDefines;
-	Result := True;
-end;
-
-function TDelphiParser.get_ScopedEnums: Boolean;
-begin
-//	Result := FTokenizer.ScopedEnums;
-	Result := True;
-end;
-
 function TDelphiParser.ParseGotoStatement: TSyntaxNode2;
 begin
+{
+http://dgrok.excastle.com/Grammar.html#GotoStatement
+
+GotoStatement
+	-> GOTO LabelId
+}
 	Result := TSyntaxNode2.Create(ntGoto);
 	Result.AddChild(EatToken(ptGoto));
 	Result.AddChild(ParseLabelId);
@@ -1859,11 +1954,6 @@ end;
 function TDelphiParser.get_CurrentTokenGenID: TptTokenKind;
 begin
 	Result := CurrentToken.GenID;
-end;
-
-function TDelphiParser.get_InRound: Boolean;
-begin
-	Result := FInRound > 0;
 end;
 
 function TDelphiParser.get_NextFewTokens: string;
@@ -1928,7 +2018,6 @@ begin
 	// Put the tokens into our local token list so we can indexing functions
 	FTokens.Clear;
 	FCurrent := -1;
-	FInRound := 0;
 
 	for i := 0 to Tokens.Count-1 do
 	begin
@@ -1944,9 +2033,9 @@ begin
 {
 http://dgrok.excastle.com/Grammar.html#MethodOrProperty
 
-	MethodOrProperty
-		-> MethodHeading
-		-> Property
+MethodOrProperty
+	-> MethodHeading
+	-> Property
 
 
 MethodHeading
@@ -1987,7 +2076,9 @@ begin
 http://dgrok.excastle.com/Grammar.html#FieldDecl
 
 FieldDecl
-		-> IdentList ':' Type (PortabilityDirective)* [';']
+	-> IdentList ':' Type
+			(PortabilityDirective)*
+			[';']
 }
 	Result := TSyntaxNode2.Create(ntField);
 
@@ -2013,9 +2104,11 @@ FieldDecl
 
 	Result.AddChild(ParseType);
 
+//	(PortabilityDirective)*
 	while IsPossiblePortabilityDirective do
 		Result.AddChild(ParsePortabilityDirective);
 
+// [;]
 	if CurrentTokenKind = ptSemicolon then
 		Result.AddChild(EatToken(ptSemiColon));
 end;
@@ -2023,6 +2116,7 @@ end;
 function TDelphiParser.ParseCore: TSyntaxNode2;
 var
 	node: TSyntaxNode2;
+	trailing: TSyntaxNode2;
 begin
 {
 	Parse the tokens contained in FTokens and returns it as a syntax Tree
@@ -2064,16 +2158,27 @@ This has a few features:
 
 	// Check the file type directive
 	case CurrentToken.GenID of
-	ptUnit:		node := ParseUnitDeclaration;		// e.g. unit SimpleParser;
+	ptUnit:		node := ParseUnit;		// e.g. unit SimpleParser;
 	ptProgram:	node := ParseProgramFile;			// e.g. program SimpleParser;
-	ptPackage:	node := ParsePackageFile;			// e.g. package SimpleParser;
+	ptPackage:	node := ParsePackage;			// e.g. package SimpleParser;
 	ptLibrary:	node := ParseLibraryFile;			// e.g. library SimpleParser;
 	else
 		node := ParseScriptFile; // for arbitrary expressions
 	end;
 
 	Result.AddChild(node);
-	Result.AddChild(EatToken(ptEOF)); // Ensure we consume all tokens, even if the grammar is incomplete and we didn't get to the end of the file.	
+
+	// If parsing ended early, preserve ownership of all remaining real tokens.
+	if CurrentTokenKind <> ptEof then
+	begin
+		trailing := TSyntaxNode2.Create(ntUnknown);
+		trailing.Attributes[anName] := 'Unexpected trailing tokens';
+		while CurrentTokenKind <> ptEof do
+			trailing.AddChild(EatToken); // consume real token, attach to tree
+		Result.AddChild(trailing);
+	end;
+
+	Result.AddChild(EatToken(ptEOF)); // consume/attach real EOF token
 end;
 
 function TDelphiParser.ParseFile(FilePath: string): TSyntaxNode2;
@@ -2148,18 +2253,19 @@ http://dgrok.excastle.com/Grammar.html#Program
 
 Program
 	-> (PROGRAM | LIBRARY) Ident
-				['(' IdentList ')'] ';'
-				[UsesClause]
-				(ImplementationDecl)*
-				InitSection '.'
+			['(' IdentList ')'] ';'
+			[UsesClause]
+			(ImplementationDecl)*
+			InitSection '.'
 }
 	Result := TSyntaxNode2.Create(ntLibrary);
 	Result.AddChild(EatToken(ptLibrary));
-	Result.AddChild(ParseIdentifier);
+	Result.AddChild(ParseIdent);
 
-	// program MyProgram1 (Foo, Bar);  //legacy turbo pascal
+//	['(' IdentList ')'] ';'
 	if CurrentTokenKind = ptOpenParen then
 	begin
+		// program MyProgram1 (Foo, Bar);  //legacy turbo pascal
 		Result.AddChild(EatToken(ptOpenParen));
 		Result.AddChild(ParseIdentifierList);
 		Result.AddChild(EatToken(ptCloseParen));
@@ -2179,7 +2285,11 @@ Program
 		Result.AddChild(ParseImplementationDecl);
 
 	// InitSection '.'
-	Result.AddChild(ParseInitializationSection);
+	if CurrentTokenKind = ptBegin then
+		Result.AddChild(ParseStatements)
+	else
+		Result.AddChild(ParseInitializationSection);
+
 	Result.AddChild(EatToken(ptDot));
 end;
 
@@ -2197,25 +2307,40 @@ begin
 	Windows.OutputDebugString(PChar(s));
 end;
 
-function TDelphiParser.ParsePackageFile: TSyntaxNode2;
+function TDelphiParser.ParsePackage: TSyntaxNode2;
 begin
-	Result := PoisonNode;
-	Result.AddChild(ExpectedEx(ptPackage));
-	Result.AddChild(ParseQualifiedIdentifier);
+{
+Returns:
+	ntPackage
+
+http://dgrok.excastle.com/Grammar.html#Package
+
+Package
+	-> PACKAGE QualifiedIdent ';'
+			[RequiresClause]
+			[UsesClause]
+			(AssemblyAttribute)*
+			END '.'
+}
+	Result := TSyntaxNode2.Create(ntPackage);
+
+//	PACKAGE QualifiedIdent ';'
+	Result.AddChild(EatTokenEx(ptPackage));
+	Result.AddChild(ParseQualifiedIdent);   // ntQualifiedIdentifier
 	Result.AddChild(EatToken(ptSemicolon));
 
-	case CurrentTokenExID of
-	ptRequires: Result.AddChild(ParseRequiresClause);
-	end;
+//	[RequiresClause]
+	if IsPossibleRequiresClause then        //todo: implement IsPossibleRequireClause
+		Result.AddChild(ParseRequiresClause);
 
-	case CurrentTokenExID of
-	ptContains: Result.AddChild(ParseContainsClause);
-	end;
+//	[UsesClause]
+	if IsPossibleUsesClause then
+		Result.AddChild(ParseUsesClause);
 
-	while CurrentToken.TokenKind = ptOpenBracket do
-	begin
-		Result.AddChild(ParseCustomAttribute);
-	end;
+	// TODO: Find the parse methods that handle this, and rename them.
+//	(AssemblyAttribute)*
+//	while IsPossibleAssemblyAttribute do
+//		Result.AddChild(ParseAssemblyAttribute);
 
 	Result.AddChild(EatToken(ptEnd));
 	Result.AddChild(EatToken(ptDot));
@@ -2228,14 +2353,14 @@ http://dgrok.excastle.com/Grammar.html#Program
 
 Program
 	-> (PROGRAM | LIBRARY) Ident
-				['(' IdentList ')'] ';'
-				[UsesClause]
-				(ImplementationDecl)*
-				InitSection '.'
+			['(' IdentList ')'] ';'
+			[UsesClause]
+			(ImplementationDecl)*
+			InitSection '.'
 }
 	Result := TSyntaxNode2.Create(ntProgram);
 	Result.AddChild(EatToken(ptProgram));
-	Result.AddChild(ParseIdentifier);
+	Result.AddChild(ParseIdent);
 
 	// program MyProgram1 (Foo, Bar);  //legacy turbo pascal
 	if CurrentTokenKind = ptOpenParen then
@@ -2259,7 +2384,11 @@ Program
 		Result.AddChild(ParseImplementationDecl);
 
 	// InitSection '.'
-	Result.AddChild(ParseInitializationSection);
+	if CurrentTokenKind = ptBegin then
+		Result.AddChild(ParseStatements)
+	else
+		Result.AddChild(ParseInitializationSection);
+
 	Result.AddChild(EatToken(ptDot));
 end;
 
@@ -2269,19 +2398,19 @@ begin
 	Result.AddChild(EatToken(ptMinus));
 end;
 
-function TDelphiParser.ParseUnitDeclaration: TSyntaxNode2;
+function TDelphiParser.ParseUnit: TSyntaxNode2;
 var
 	unitName: TSyntaxNode2;
 	portabilityDirective: TSyntaxNode2;
 begin
 {
-DGrok: http://dgrok.excastle.com/Grammar.html#Unit
+http://dgrok.excastle.com/Grammar.html#Unit
 
 Unit
 	-> UNIT QualifiedIdentifier (PortabilityDirective)* ';'
-				InterfaceSection
-				ImplementationSection
-				InitSection '.'
+			InterfaceSection
+			ImplementationSection
+			InitSection '.'
 
 Example
 -------
@@ -2322,7 +2451,7 @@ ntCompilationUnit
 	Result.AddChild(EatToken(ptUnit));	// EatToken moves next,
 
 	// Get the unit's full name (e.g. "System.Classes")
-	unitName := ParseQualifiedIdentifier;
+	unitName := ParseQualifiedIdent;
 	Result.Attributes[anName] := unitName.Attributes[anName];	// get the unit name
 	Result.AddChild(unitName);
 
@@ -2357,24 +2486,11 @@ ntCompilationUnit
 				Result.AddChild(ParseFinalizationSection);
 			Result.AddChild(EatToken(ptEnd));
 		end;
-	ptBegin: Result.AddChild(ParseStatements);
-	ptEnd: Result.AddChild(EatToken(ptEnd));
+	ptBegin:	Result.AddChild(ParseStatements);
+	ptEnd:	Result.AddChild(EatToken(ptEnd));
 	end;
 
 	Result.AddChild(EatToken(ptDot));
-end;
-
-function TDelphiParser.ParseProgramBlock: TSyntaxNode2;
-begin
-	Result := PoisonNode;
-
-
-	if CurrentTokenKind = ptUses then
-	begin
-		Result.AddChild(ParseMainUsesClause);
-	end;
-
-	Result.AddChild(ParseBlock);
 end;
 
 function TDelphiParser.ParseMainUsesClause: TSyntaxNode2;
@@ -2483,11 +2599,8 @@ end;
 
 
 function TDelphiParser.ParseMainUsedUnitStatement: TSyntaxNode2;
-//var
-//	nameNode, pathNode, pathLiteralNode, temp: TSyntaxNode2;
 begin
 	Result := PoisonNode;
-
 
 {
 	TODO: Convert this to the node and token are first class citizens, nodes are returned model.
@@ -2527,20 +2640,6 @@ begin
 		FStack.Pop;
 	end;
 }
-end;
-
-function TDelphiParser.ParseMainUsedUnitName: TSyntaxNode2;
-begin
-	Result := PoisonNode;
-
-
-	Result.AddChild(ParseUsedUnit);
-end;
-
-function TDelphiParser.ParseMainUsedUnitExpression: TSyntaxNode2;
-begin
-	Result := PoisonNode;
-	Result.AddChild(ParseConstantExpression);
 end;
 
 function TDelphiParser.ParseUsesClause: TSyntaxNode2;
@@ -2612,23 +2711,6 @@ ntUses
 	Result.AddChild(EatToken(ptSemiColon));
 end;
 
-function TDelphiParser.ParseUsedUnitsList: TSyntaxNode2;
-begin
-{
-	uses
-		Toolkit, winapi.msxml, Avatar.Exceptions;
-
-
-}
-
-	Result := ParseUsedUnit;
-	while CurrentTokenKind = ptComma do
-	begin
-		Result.AddChild(EatToken);
-		Result.AddChild(ParseUsedUnit);
-	end;
-end;
-
 function TDelphiParser.ParseUsedUnit: TSyntaxNode2;
 var
 	unitName: TSyntaxNode2;
@@ -2641,7 +2723,8 @@ UsedUnit
 	-> Ident IN <stringliteral>
 }
 	Result := TSyntaxNode2.Create(ntUsedUnit);
-	unitName := ParseQualifiedIdentifier;
+
+	unitName := ParseQualifiedIdent;
 	Result.AddChild(unitName);
 	Result.Attributes[anName] := unitName.Attributes[anName];
 
@@ -2656,11 +2739,11 @@ end;
 function TDelphiParser.ParseBlock: TSyntaxNode2;
 begin
 {
-http://dgrok.excastle.com/Grammar.html#ParseBlock
+http://dgrok.excastle.com/Grammar.html#Block
 
-ParseBlock
--> BEGIN [ParseStatementList] END
--> AssemblerStatement
+Block
+	-> BEGIN [StatementList] END
+	-> AssemblerStatement
 
 AssemblerStatement
 	-> ASM
@@ -2676,55 +2759,10 @@ AssemblerStatement
 	end
 	else if CurrentTokenKind = ptAsm then
 	begin
-		Result := ParseAsmStatement;
+		Result := ParseAssemblerStatement;
 	end
 	else
 		Result := SynError('xxxxx Expected block');
-end;
-
-procedure TDelphiParser.BuildExpressionTree(ExpressionMethod: TTreeBuilderMethod);
-var
-	rawExprNode: TSyntaxNode2;
-	exprNode: TSyntaxNode2;
-
-	nodeList: TList<TSyntaxNode2>;
-	node: TSyntaxNodeOrToken;
-	col, line: Integer;
-	fileName: string;
-begin
-	line := CurrentToken.Line;
-	col := CurrentToken.Column;
-	fileName := 'FCurrentToken.FileName'; // TODO: Fix this
-
-	rawExprNode := TSyntaxNode2.Create(ntExpression);
-	try
-	//	FStack.Push(rawExprNode);  todo: figure out what this is trying to do
-		try
-			ExpressionMethod;
-		finally
-//			FStack.Pop;
-		end;
-
-		if rawExprNode.HasChildren then
-		begin
-			exprNode := TSyntaxNode2.Create(ntExpression);
-			exprNode.FCurrentLine := line;
-			exprNode.FCurrentColumn := col;
-			exprNode.FFileName := fileName;
-
-         nodeList := TList<TSyntaxNode2>.Create;
-         try
-            for node in rawExprNode.ChildNodes do
-               nodeList.Add(node.AsNode);
-//					TExpressionTools.RawNodeListToTree(RawExprNode, NodeList, ExprNode); TODO: Fix this
-         finally
-            nodeList.Free;
-         end;
-         rawExprNode.AddChild(exprNode);
-		end;
-	finally
-		rawExprNode.Free;
-	end;
 end;
 
 function TDelphiParser.ParseImplementationDecl: TSyntaxNode2;
@@ -2735,20 +2773,26 @@ http://dgrok.excastle.com/Grammar.html#ImplementationDecl
 ImplementationDecl
 	-> LabelDeclSection
 	-> ConstSection
+	-> ResourceString				; added this over DGrok because the rules are slightly different
 	-> TypeSection
-	-> VarSection
+	-> VarSection  (and ThreadVar)
+
 	-> MethodImplementation
+
 	-> ExportsStatement
 	-> AssemblyAttribute
 }
 	case CurrentTokenKind of
-	ptLabel:				Result := ParseLabelDeclarationSection;				//LabelDeclSection
-	ptConst:				Result := ParseConstSection;
+	ptLabel:				Result := ParseLabelDeclarationSection;				// ntLabel
+	ptConst:				Result := ParseConstSection;                       // ntConstants
 	ptResourceString:	Result := ParseResStringSection;
 	ptType:				Result := ParseTypeSection;
+
+   // Var is both Var and ThreadVar
 	ptVar:				Result := ParseVarSection;
 	ptThreadVar:		Result := ParseVarSection;
 
+	// [class] procedure, function, constructor, destructor, operator
 	ptClass:				Result := ParseProcedureDeclarationSection;
 	ptProcedure:		Result := ParseProcedureDeclarationSection;
 	ptFunction:			Result := ParseProcedureDeclarationSection;
@@ -2756,8 +2800,8 @@ ImplementationDecl
 	ptDestructor:		Result := ParseProcedureDeclarationSection;
 	ptOperator:			Result := ParseProcedureDeclarationSection;
 
-	ptExports:			Result := ParseExportsClause;
-	ptOpenbracket:		Result := ParseCustomAttribute; // [assembly: Expression ]
+	ptExports:			Result := ParseExportStatement;
+	ptOpenbracket:		Result := ParseAssemblyAttribute; // [assembly: Expression ]
 	else
 {
 		implementation
@@ -2770,19 +2814,8 @@ ImplementationDecl
 	end;
 end;
 
-function TDelphiParser.ParseUnitId: TSyntaxNode2;
-begin
-{
-
-}
-	Result := TSyntaxNode2.Create(ntUnknown);
-	Result.Attributes[anName] := CurrentToken.ValueText;
-	Result.AddChild(EatToken(ptIdentifier));
-end;
-
-function TDelphiParser.ParseQualifiedIdentifier: TSyntaxNode2;
+function TDelphiParser.ParseQualifiedIdent: TSyntaxNode2;
 var
-//	node: TSyntaxNode2;
 	identTok, dotTok: TSyntaxToken;
 	fullName: string;
 begin
@@ -2958,7 +2991,7 @@ begin
 	Result := TSyntaxNode2.Create(ntDefault);
 //FStack.Push(ntDefault);
 
-	Result.AddChild(ExpectedEx(ptDefault));
+	Result.AddChild(EatTokenEx(ptDefault));
 	Result.AddChild(ParseStorageExpression);
 end;
 
@@ -2966,14 +2999,14 @@ function TDelphiParser.ParseStorageNoDefault: TSyntaxNode2;
 begin
 	Result := PoisonNode;
 
-	Result.AddChild(ExpectedEx(ptNoDefault));
+	Result.AddChild(EatTokenEx(ptNoDefault));
 end;
 
 function TDelphiParser.ParseStorageStored: TSyntaxNode2;
 begin
 	Result := PoisonNode;
 
-	Result.AddChild(ExpectedEx(ptStored));
+	Result.AddChild(EatTokenEx(ptStored));
 	case CurrentTokenKind of
 	ptIdentifier:			Result.AddChild(ParseStorageIdentifier);
 	else
@@ -3091,7 +3124,7 @@ end;
 
 procedure TDelphiParser.ClassFunctionHeading(ParentNode: TSyntaxNode2);
 begin
-	ParentNode.Attributes[anKind] := AttributeValueToString(atFunction);
+	ParentNode.Attributes[anKind] := AttributeValueToStr(avFunction);
 
 	ParentNode.AddChild(EatToken(ptFunction));
 	ParentNode.AddChild(ParseFunctionProcedureName);
@@ -3119,7 +3152,7 @@ end;
 
 procedure TDelphiParser.ClassProcedureHeading(ParentNode: TSyntaxNode2);
 begin
-  ParentNode.Attributes[anKind] := AttributeValueToString(atProcedure);
+  ParentNode.Attributes[anKind] := AttributeValueToStr(avProcedure);
 
 	ParentNode.AddChild(EatToken(ptProcedure));
 	ParentNode.AddChild(ParseFunctionProcedureName);
@@ -3170,7 +3203,7 @@ end;
 
 procedure TDelphiParser.ClassOperatorHeading(ParentNode: TSyntaxNode2);
 begin
-	ParentNode.AddChild(ExpectedEx(ptOperator));
+	ParentNode.AddChild(EatTokenEx(ptOperator));
 	ParentNode.AddChild(ParseFunctionProcedureName);
 	if CurrentTokenKind = ptOpenParen then
 	begin
@@ -3188,12 +3221,6 @@ begin
 
 	if CurrentTokenExID in ClassMethodDirectiveEnum then
 		ClassMethodDirective(ParentNode);
-end;
-
-function TDelphiParser.ParseResolutionInterfaceName: TSyntaxNode2;
-begin
-	Result := PoisonNode;
-	Result.AddChild(EatToken(ptIdentifier));
 end;
 
 function TDelphiParser.ParseConstraint: TSyntaxNode2;
@@ -3248,7 +3275,7 @@ end;
 
 procedure TDelphiParser.ConstructorName(ParentNode: TSyntaxNode2);
 begin
-	ParentNode.Attributes[anKind] := AttributeValueToString(atConstructor);
+	ParentNode.Attributes[anKind] := AttributeValueToStr(avConstructor);
 	ParentNode.Attributes[anName] := CurrentToken.ValueText;
 
 	ParentNode.AddChild(EatToken(ptIdentifier));
@@ -3268,7 +3295,7 @@ end;
 
 procedure TDelphiParser.DestructorName(ParentNode: TSyntaxNode2);
 begin
-	ParentNode.Attributes[anKind] := AttributeValueToString(atDestructor);
+	ParentNode.Attributes[anKind] := AttributeValueToStr(avDestructor);
 	ParentNode.Attributes[anName] := CurrentToken.ValueText;
 
 	ParentNode.AddChild(EatToken(ptIdentifier));
@@ -3276,7 +3303,7 @@ end;
 
 procedure TDelphiParser.ClassMethod(ParentNode: TSyntaxNode2);
 begin
-	ParentNode.Attributes[anClass] := AttributeValueToString(atTrue);
+	ParentNode.Attributes[anClass] := AttributeValueToStr(avTrue);
 	ParentNode.AddChild(EatToken(ptClass));
 end;
 
@@ -3376,6 +3403,77 @@ begin
 	end;
 end;
 
+function TDelphiParser.ParseDirective: TSyntaxNode2;
+begin
+{
+http://dgrok.excastle.com/Grammar.html#Directive
+
+Directive
+			Backlinks: MethodHeading, ProcedureType
+	-> [';'] ABSTRACT
+	-> [';'] ASSEMBLER
+	-> [';'] CDECL
+	-> [';'] DISPID Expression
+	-> [';'] DYNAMIC
+	-> [';'] EXPORT
+	-> [';'] EXTERNAL [Expression (ExportsSpecifier)*]
+	-> [';'] FAR
+	-> [';'] FINAL
+	-> [';'] FORWARD
+	-> [';'] INLINE
+	-> [';'] LOCAL
+	-> [';'] MESSAGE Expression
+	-> [';'] NEAR
+	-> [';'] OVERLOAD
+	-> [';'] OVERRIDE
+	-> [';'] PASCAL
+	-> [';'] REGISTER
+	-> [';'] REINTRODUCE
+	-> [';'] SAFECALL
+	-> [';'] STATIC
+	-> [';'] STDCALL
+	-> [';'] VARARGS
+	-> [';'] VIRTUAL
+	-> [';'] PortabilityDirective
+}
+	Result := TSyntaxNode2.Create(ntHintDirective);
+
+	// the leading semicolon is optional
+	if CurrentTokenKind = ptSemicolon then
+		Result.AddChild(EatToken(ptSemicolon));
+
+	case CurrentTokenExID of
+	ptAbstract,			//		-> [';'] ABSTRACT
+	ptAssembler,		//		-> [';'] ASSEMBLER
+	ptCDecl,				//		-> [';'] CDECL
+	ptDispid,			//		-> [';'] DISPID Expression
+	ptDynamic,			//		-> [';'] DYNAMIC
+	ptExport, 			//		-> [';'] EXPORT
+	ptExternal, 		//		-> [';'] EXTERNAL [Expression (ExportsSpecifier)*]
+	ptFar,				//		-> [';'] FAR
+	ptFinal,				//		-> [';'] FINAL
+	ptForward,			//		-> [';'] FORWARD
+	ptInline,			//		-> [';'] INLINE
+	ptLocal,				//		-> [';'] LOCAL
+	ptMessage,			//		-> [';'] MESSAGE Expression
+	ptNear,				//		-> [';'] NEAR
+	ptOverload,			//		-> [';'] OVERLOAD
+	ptOverride,			//		-> [';'] OVERRIDE
+	ptPascal,			//		-> [';'] PASCAL
+	ptRegister,			//		-> [';'] REGISTER
+	ptReintroduce,		//		-> [';'] REINTRODUCE
+	ptSafecall,			//		-> [';'] SAFECALL
+	ptStatic,			//		-> [';'] STATIC
+	ptStdcall,			//		-> [';'] STDCALL
+	ptVarargs,			//		-> [';'] VARARGS
+	ptVirtual:			//		-> [';'] VIRTUAL
+		Result.AddChild(EatToken(CurrentTokenExID));
+	else
+//		-> [';'] PortabilityDirective
+		Result.AddChild(ParsePortabilityDirective);
+	end;
+end;
+
 function TDelphiParser.ParseDirective16Bit: TSyntaxNode2;
 begin
 	Result := PoisonNode;
@@ -3401,11 +3499,11 @@ begin
 
 	// Other directives
 	else if SameText(token, 'reintroduce') then
-		ParentNode.Attributes[anReintroduce] := AttributeValueToString(atTrue)
+		ParentNode.Attributes[anReintroduce] := AttributeValueToStr(avTrue)
 	else if SameText(token, 'overload') then
-		ParentNode.Attributes[anOverload] := AttributeValueToString(atTrue)
+		ParentNode.Attributes[anOverload] := AttributeValueToStr(avTrue)
 	else if SameText(token, 'abstract') then
-		ParentNode.Attributes[anAbstract] := AttributeValueToString(atTrue);
+		ParentNode.Attributes[anAbstract] := AttributeValueToStr(avTrue);
 
 	case CurrentTokenExID of
 	ptAbstract:		ParentNode.AddChild(EatToken);
@@ -3432,8 +3530,8 @@ begin
 	Result := TSyntaxNode2.Create(ntReturnType);
 //	FStack.Push(ntReturnType);
 
-	while CurrentTokenKind = ptOpenBracket do
-		Result.AddChild(ParseCustomAttribute);
+//	while CurrentTokenKind = ptOpenBracket do
+//		Result.AddChild(ParseCustomAttribute);
 
 	Result.AddChild(ParseTypeId);
 end;
@@ -3442,7 +3540,6 @@ function TDelphiParser.ParseRoundClose: TSyntaxNode2;
 begin
 	Result := TSyntaxNode2.Create(ntRoundClose);
 	Result.AddChild(EatToken(ptCloseParen));
-	Dec(FInRound);
 end;
 
 function TDelphiParser.ParseRoundOpen: TSyntaxNode2;
@@ -3450,7 +3547,6 @@ begin
 	Result := TSyntaxNode2.Create(ntRoundOpen);
 
 	Result.AddChild(EatToken(ptOpenParen));
-	Inc(FInRound);
 end;
 
 function TDelphiParser.ParseFormalParameterList: TSyntaxNode2;
@@ -3474,8 +3570,8 @@ begin
 	Result := PoisonNode;
 
 
-  while CurrentTokenKind = ptOpenBracket do
-		Result.AddChild(ParseCustomAttribute);
+//	while CurrentTokenKind = ptOpenBracket do
+//		Result.AddChild(ParseCustomAttribute);
 
 	case CurrentTokenKind of
 	ptConst: Result.AddChild(ParseConstParameter);
@@ -3493,7 +3589,7 @@ end;
 function TDelphiParser.ParseConstParameter: TSyntaxNode2;
 begin
 	Result := TSyntaxNode2.Create(ntParameter);
-	Result.Attributes[anKind] := AttributeValueToString(atConst);
+	Result.Attributes[anKind] := AttributeValueToStr(avConst);
 
 	Result.AddChild(EatToken(ptConst));
 	Result.AddChild(ParseParameterNameList);
@@ -3514,7 +3610,7 @@ end;
 function TDelphiParser.ParseVarParameter: TSyntaxNode2;
 begin
 	Result := TSyntaxNode2.Create(ntParameters);
-	Result.Attributes[anKind] := AttributeValueToString(atVar);
+	Result.Attributes[anKind] := AttributeValueToStr(avVar);
 
 	Result.AddChild(EatToken(ptVar));
 	Result.AddChild(ParseParameterNameList);
@@ -3530,8 +3626,8 @@ end;
 function TDelphiParser.ParseOutParameter: TSyntaxNode2;
 begin
 	Result := TSyntaxNode2.Create(ntParameters);
-	Result.Attributes[anKind] := AttributeValueToString(atOut);
-	Result.AddChild(ExpectedEx(ptOut));
+	Result.Attributes[anKind] := AttributeValueToStr(avOut);
+	Result.AddChild(EatTokenEx(ptOut));
 	Result.AddChild(ParseParameterNameList);
 	case CurrentTokenKind of
 	ptColon:
@@ -3567,8 +3663,8 @@ begin
 	Result := PoisonNode;
 
 
-	while CurrentTokenKind = ptOpenBracket do
-		Result.AddChild(ParseCustomAttribute);
+//	while CurrentTokenKind = ptOpenBracket do
+//		Result.AddChild(ParseCustomAttribute);
 
 	Result.AddChild(ParseParameterName);
 
@@ -3576,8 +3672,8 @@ begin
 	begin
 		Result.AddChild(EatToken);
 
-		while CurrentTokenKind = ptOpenBracket do
-			Result.AddChild(ParseCustomAttribute);
+//		while CurrentTokenKind = ptOpenBracket do
+//			Result.AddChild(ParseCustomAttribute);
 		Result.AddChild(ParseParameterName);
 	end;
 end;
@@ -3640,9 +3736,7 @@ begin
 	Result.AddChild(ParseFunctionProcedureName);
 
 	if CurrentTokenKind = ptOpenParen then
-	begin
 		Result.AddChild(ParseFormalParameterList);
-	end;
 
 	FunctionProcedureBlock(Result);
 end;
@@ -3654,7 +3748,6 @@ function TDelphiParser.ParseFunctionProcedureName: TSyntaxNode2;
 begin
 	Result := TSyntaxNode2.Create(ntName);
 (*
-	TODO: figure out what this does, and update it
   NameNode := FStack.Peek;
 	  Result.AddChild(ParseObjectNameOfMethod);
     for ChildNode in NameNode.ChildNodes do
@@ -3750,7 +3843,7 @@ begin
     case CurrentTokenKind of
       ptAsm:
         begin
-          ParentNode.AddChild(ParseAsmStatement);
+          ParentNode.AddChild(ParseAssemblerStatement);
         end;
     else
       begin
@@ -3784,7 +3877,7 @@ begin
 	function SomeFunc: Integer; stdcall; external 'legacy.dll' name 'LegacyEntry' index 5;
 }
 	Result := TSyntaxNode2.Create(ntExternal);
-	Result.AddChild(ExpectedEx(ptExternal)); // expect ptExternal, and move to next token
+	Result.AddChild(EatTokenEx(ptExternal)); // expect ptExternal, and move to next token
 
 	case CurrentTokenKind of
 	ptSemiColon: Result.AddChild(EatToken(ptSemicolon));
@@ -3834,6 +3927,13 @@ end;
 
 function TDelphiParser.ParseForStatement: TSyntaxNode2;
 begin
+{
+http://dgrok.excastle.com/Grammar.html#ForStatement
+
+ForStatement
+	-> FOR Ident ':=' Expression (TO | DOWNTO) Expression DO [Statement]
+	-> FOR Ident IN Expression DO [Statement]
+}
 	Result := TSyntaxNode2.Create(ntFor);
 	Result.AddChild(EatToken(ptFor));
 	if CurrentTokenKind = ptVar then
@@ -3842,7 +3942,7 @@ begin
 		Result.AddChild(ParseInlineVarDeclaration);
 	end
 	else
-		Result.AddChild(ParseQualifiedIdentifier);
+		Result.AddChild(ParseQualifiedIdent);
 
 	if CurrentToken.TokenKind = ptAssign then
 	begin
@@ -3893,6 +3993,12 @@ end;
 
 function TDelphiParser.ParseWhileStatement: TSyntaxNode2;
 begin
+{
+http://dgrok.excastle.com/Grammar.html#WhileStatement
+
+WhileStatement
+	-> WHILE Expression DO [Statement]
+}
 	Result := TSyntaxNode2.Create(ntWhile);
 //  FStack.Push(ntWhile);
 	  Result.AddChild(EatToken(ptWhile));
@@ -3903,6 +4009,12 @@ end;
 
 function TDelphiParser.ParseRepeatStatement: TSyntaxNode2;
 begin
+{
+http://dgrok.excastle.com/Grammar.html#RepeatStatement
+
+RepeatStatement
+	-> REPEAT [StatementList] UNTIL Expression
+}
 	Result := TSyntaxNode2.Create(ntRepeat);
 //  FStack.Push(ntRepeat);
 	  Result.AddChild(EatToken(ptRepeat));
@@ -3913,46 +4025,141 @@ end;
 
 function TDelphiParser.ParseCaseStatement: TSyntaxNode2;
 begin
+{
+http://dgrok.excastle.com/Grammar.html#CaseStatement
+
+CaseStatement
+	-> CASE Expression OF
+			CaseSelector (';' CaseSelector)* [';']
+			[ELSE StatementList]
+			END
+
+CaseSelector
+	-> (ExpressionOrRange (',' ExpressionOrRange)*) ':' [Statement]
+}
 	Result := TSyntaxNode2.Create(ntCase);
-//	FStack.Push(ntCase);
-		Result.AddChild(EatToken(ptCase));
-		Result.AddChild(ParseExpression);
-		Result.AddChild(EatToken(ptOf));
-		Result.AddChild(ParseCaseSelector);
-		while CurrentTokenKind = ptSemiColon do
+
+//	CASE Expression OF
+	Result.AddChild(EatToken(ptCase));
+	Result.AddChild(ParseExpression);
+	Result.AddChild(EatToken(ptOf));
+
+//	CaseSelector (';' CaseSelector)* [';']
+
+	// First the mandatory selector
+	Result.AddChild(ParseCaseSelector);
+
+	// Now: zero or more (';' CaseSelector) and an optional trailing ';'
+	while CurrentTokenKind = ptSemicolon do
+	begin
+		Result.AddChild(EatToken(ptSemicolon));
+
+		// If the semicolon is trailing, stop (it's the [';'] before ELSE/END)
+		if (CurrentTokenKind = ptElse) or (CurrentTokenKind = ptEnd) then
+			Break;
+
+		// If we see another semicolon, it's an empty CaseSelector: recover.
+		while CurrentTokenKind = ptSemicolon do
 		begin
+			// Error: Missing case selector before semicolon
+			Result.AddChild(SynErrorFmt('Missing case selelctor before semicolon', []));
 			Result.AddChild(EatToken(ptSemicolon));
-			case CurrentTokenKind of
-			ptElse, ptEnd: ;
-			else
-				Result.AddChild(ParseCaseSelector);
-			end;
+
+			if (CurrentTokenKind = ptElse) or (CurrentTokenKind = ptEnd) then
+				Break;
 		end;
-		if CurrentTokenKind = ptElse then
-			Result.AddChild(ParseCaseElseStatement);
-		Result.AddChild(EatToken(ptEnd));
+
+		Result.AddChild(ParseCaseSelector);
+	end;
+
+
+//	[ELSE StatementList]
+	if (CurrentTokenKind = ptElse) and (PeekTokenKind <> ptEnd) then
+	begin
+		Result.AddChild(EatToken(ptElse));
+		Result.AddChild(ParseStatementList);
+	end;
+
+//	END
+	Result.AddChild(EatToken(ptEnd));
 end;
 
 function TDelphiParser.ParseCaseSelector: TSyntaxNode2;
 begin
+(*
+http://dgrok.excastle.com/Grammar.html#CaseSelector
+
+CaseSelector
+	-> (ExpressionOrRange [','])+
+			':' [Statement] [';']
+
+CaseStatement
+	-> CASE Expression OF
+			(CaseSelector)+
+			[ELSE [StatementList]]
+			END
+
+Or combined:
+
+CaseSelector
+	-> (ExpressionOrRange [','])+ ':' [Statement] [';']
+
+CaseStatement
+	-> CASE Expression OF
+			( (ExpressionOrRange [','])+ ':' [Statement] [';'] )+
+			[ELSE [StatementList]]
+			END
+
+Is there any situation where the ; is allowed at the end of case?
+
+	case foo of
+   vrOne: {nop};
+	vrTwo: {nop}
+	vrThree: {nop};
+	end;
+
+You break out of the CaseSelector by being an ptElse or a ptEnd
+
+*)
 	Result := TSyntaxNode2.Create(ntCaseSelector);
-//	FStack.Push(ntCaseSelector);
-		Result.AddChild(ParseCaseLabelList);
-		Result.AddChild(EatToken(ptColon));
-		case CurrentTokenKind of
-		ptSemiColon: Result.AddChild(ParseEmptyStatement);
-		else
-			Result.AddChild(ParseStatement);
-		end;
+
+//	(ExpressionOrRange [','])+
+	Result.AddChild(ParseCaseLabelList);
+	while (CurrentTokenKind = ptComma) do
+	begin
+		Result.AddChild(EatToken(ptComma));
+		Result.AddChild(ParseExpressionOrRange);
+	end;
+
+//	':' [Statement] [';']
+	Result.AddChild(EatToken(ptColon));
+
+//	if IsPossibleStatement then  lets use a different way to do this one
+		Result.AddChild(ParseStatement);
+
+	if CurrentTokenKind = ptSemicolon then
+		Result.AddChild(EatToken(ptSemicolon));
 end;
 
-function TDelphiParser.ParseCaseElseStatement: TSyntaxNode2;
+function TDelphiParser.ParseExpressionOrRange: TSyntaxNode2;
 begin
-	Result := TSyntaxNode2.Create(ntCaseElse);
-//	FStack.Push(ntCaseElse);
-		Result.AddChild(EatToken(ptElse));
-		Result.AddChild(ParseStatementList);
-		Result.AddChild(EatToken(ptSemicolon));
+{
+http://dgrok.excastle.com/Grammar.html#ExpressionOrRange
+
+ExpressionOrRange
+	-> SimpleExpression ['..' SimpleExpression]
+}
+	Result := TSyntaxNode2.Create(ntExpression);
+
+//	SimpleExpression
+	Result.AddChild(ParseSimpleExpression);	// ntExpression
+
+//	['..' SimpleExpression]
+	if CurrentTokenKind = ptDotDot then
+	begin
+		Result.AddChild(EatToken(ptDotDot));
+		Result.AddChild(ParseSimpleExpression);
+	end;
 end;
 
 function TDelphiParser.ParseCaseLabel: TSyntaxNode2;
@@ -3969,6 +4176,13 @@ end;
 
 function TDelphiParser.ParseIfStatement: TSyntaxNode2;
 begin
+{
+http://dgrok.excastle.com/Grammar.html#IfStatement
+
+IfStatement
+	-> IF Expression THEN [Statement]
+			[ELSE [Statement]]
+}
 	Result := TSyntaxNode2.Create(ntIf);
 //  FStack.Push(ntIf);
 	  Result.AddChild(EatToken(ptIf));
@@ -3976,6 +4190,69 @@ begin
 	  Result.AddChild(ParseThenStatement);
 	  if CurrentTokenKind = ptElse then
 	    Result.AddChild(ParseElseStatement);
+end;
+
+function TDelphiParser.ParseExceptionItem: TSyntaxNode2;
+begin
+{
+http://dgrok.excastle.com/Grammar.html#ExceptionItem
+
+ExceptionItem
+	-> ON
+			[Ident ':']
+			QualifiedIdent DO
+			[Statement]
+			[';']
+
+Backlinks: TryStatement
+
+	try except on   exception do; end;
+	try except on E:exception do  end;
+	try except on E:exception do; end;
+	           \________________/
+
+}
+	Result := TSyntaxNode2.Create(ntExceptionHandler);
+	Result.AddChild(EatToken(ptOn));
+
+{
+	TODO: This needs to change. since a qualified identifier is just a bunch of identifiers separated by dots.
+
+   There's 3 syntaxes above:
+
+      on       QualifiedIdent do
+      on Ident:QualifiedIdent do
+
+   But what is a QualifiedIdent but
+         Ident
+         Ident.Ident
+			Ident.Ident.Ident
+			...
+
+   So in order to peek we are really looking for:
+
+		- ident:ident.ident do
+		- ident:ident do
+		- ident.ident do
+		- ident do
+}
+	if (CurrentTokenKind = ptIdentifier) and (PeekTokenKind = ptColon) then
+	begin
+		Result.AddChild(ParseIdent);
+		Result.AddChild(EatToken(ptColon));
+	end;
+
+//	QualifiedIdent DO
+	Result.AddChild(ParseQualifiedIdent);
+	Result.AddChild(EatToken(ptDo));
+
+//	[Statement]
+	if CurrentTokenKind in [ptSemicolon, ptEnd] then
+		Result.AddChild(ParseStatement);
+
+//	[';']
+	if CurrentTokenKind = ptSemicolon then
+		Result.AddChild(EatToken(ptSemicolon));
 end;
 
 function TDelphiParser.ParseExceptBlock: TSyntaxNode2;
@@ -4009,7 +4286,7 @@ function TDelphiParser.ParseExceptionHandler: TSyntaxNode2;
 begin
 	Result := TSyntaxNode2.Create(ntExceptionHandler);
 //  FStack.Push(ntExceptionHandler);
-	  Result.AddChild(ExpectedEx(ptOn));
+	  Result.AddChild(EatTokenEx(ptOn));
 	  Result.AddChild(ParseExceptionIdentifier);
 	  Result.AddChild(EatToken(ptDo));
 	  Result.AddChild(ParseStatement);
@@ -4073,7 +4350,7 @@ begin
 	ptConst:
 		begin
 			Result.AddChild(EatToken);
-			Result.AddChild(ParseConstantDeclaration);
+			Result.AddChild(ParseConstantDecl);
 		end;
 	else
 		Result.AddChild(SynError('InvalidConstSection'));
@@ -4148,7 +4425,7 @@ function TDelphiParser.ParseInlineVarDeclaration: TSyntaxNode2;
 begin
 	Result := TSyntaxNode2.Create(ntVariables);
 
-	Result.AddChild(ParseVarNameList);
+	Result.AddChild(ParseIdentList);
 	if CurrentTokenKind = ptColon then
 	begin
 		Result.AddChild(EatToken);
@@ -4177,49 +4454,32 @@ begin
 	end;
 end;
 
-function TDelphiParser.ParseAsmStatement: TSyntaxNode2;
+function TDelphiParser.ParseAssemblerStatement: TSyntaxNode2;
 begin
-	Result := TSyntaxNode2.Create(ntStatements);
-	Result[anType] := AttributeValueToString(atAsm);
 {
-		Lexer.AsmCode  := True;
-		Result.AddChild(EatToken(ptAsm));
-		// should be replaced with a Assembler lexer
-		while TokenID <> ptEnd do
-			case FCurrentToken.TokenKind of
-			ptAddressOp:
-				begin
-					Result.AddChild(EatToken);
-					Result.AddChild(EatToken);
-				end;
-			ptDoubleAddressOp:
-				begin
-					Result.AddChild(EatToken);
-					Result.AddChild(EatToken);
-				end;
-			ptNull:
-				begin
-					Result.AddChild(EatToken(ptEnd));
-					Exit;
-				end;
-			else
-				Result.AddChild(EatToken);
-		end;
-		Lexer.AsmCode := False;
+AssemblerStatement
+	-> ASM
+			<assemblylanguage>
+			END
 }
-		Result.AddChild(EatToken(ptEnd));
+	Result := TSyntaxNode2.Create(ntStatements);
+	Result[anType] := AttributeValueToStr(avAsm);
+	Result.AddChild(EatToken(ptAsm));
+
+	// should be replaced with a Assembler lexer
+	while (CurrentTokenKind <> ptEnd) and (CurrentTokenKind <> ptEOF) do
+	begin
+		Result.AddChild(EatToken);
+	end;
+
+// END
+	Result.AddChild(EatToken(ptEnd));
 end;
 
 function TDelphiParser.ParseAsOp: TSyntaxNode2;
 begin
 	Result := TSyntaxNode2.Create(ntAs);
 	Result.AddChild(EatToken(ptAs));
-end;
-
-function TDelphiParser.ParseAssignOp: TSyntaxNode2;
-begin
-	Result := TSyntaxNode2.Create(ntAssign);
-	Result.AddChild(EatToken(ptAssign));
 end;
 
 function TDelphiParser.ParseAtExpression: TSyntaxNode2;
@@ -4230,12 +4490,18 @@ begin
 	Read more at https://stackoverflow.com/a/8951057/12597
 }
 	Result := TSyntaxNode2.Create(ntAt);
-		Result.AddChild(ExpectedEx(ptAt));
+		Result.AddChild(EatTokenEx(ptAt));
 		Result.AddChild(ParseExpression);
 end;
 
 function TDelphiParser.ParseRaiseStatement: TSyntaxNode2;
 begin
+{
+http://dgrok.excastle.com/Grammar.html#RaiseStatement
+
+RaiseStatement
+	-> RAISE [Expression [AT Expression]]
+}
 	Result := TSyntaxNode2.Create(ntRaise);
      Result.AddChild(EatToken(ptRaise));
      case CurrentTokenKind of
@@ -4250,6 +4516,19 @@ end;
 
 function TDelphiParser.ParseTryStatement: TSyntaxNode2;
 begin
+{
+http://dgrok.excastle.com/Grammar.html#TryStatement
+
+TryStatement
+	-> TRY
+			[StatementList]
+			( FINALLY [StatementList]
+			| EXCEPT (
+			[StatementList] |
+			(ExceptionItem)* [ELSE [StatementList]]
+			)
+			END
+}
 	Result := TSyntaxNode2.Create(ntTry);
 
 	Result.AddChild(EatToken(ptTry));
@@ -4275,6 +4554,12 @@ end;
 
 function TDelphiParser.ParseWithStatement: TSyntaxNode2;
 begin
+{
+http://dgrok.excastle.com/Grammar.html#WithStatement
+
+WithStatement
+	-> WITH ExpressionList DO [Statement]
+}
 	Result := TSyntaxNode2.Create(ntWith);
 	  Result.AddChild(EatToken(ptWith));
 	  Result.AddChild(ParseWithExpressionList);
@@ -4296,6 +4581,12 @@ end;
 
 function TDelphiParser.ParseStatementList: TSyntaxNode2;
 begin
+{
+http://dgrok.excastle.com/Grammar.html#StatementList
+
+StatementList
+	-> ([Statement] [';'])+
+}
 	Result := TSyntaxNode2.Create(ntStatements);
 	Result.AddChild(ParseStatements);
 end;
@@ -4334,111 +4625,186 @@ begin {removed ptIntegerConst jdj-Put back in for labels}
 end;
 
 function TDelphiParser.ParseSimpleStatement: TSyntaxNode2;
-//var
-//	Temp: TSyntaxNode2;
-//	Node: TSyntaxNodeOrToken;
-//	LHS, RHS: TSyntaxNode2;
-//	NodeList: TList<TSyntaxNode2>;
-//	I, AssignIdx: Integer;
-//	Position: TPoint;
-//	FileName: string;
 begin
-//	TODO: Fix this
-
-//	Position := Lexer.PosXY;
-//	FileName := Lexer.FileName;
-
-	Result := TSyntaxNode2.Create(ntStatement);
-   case CurrentTokenKind of
-   ptAddressOp, ptDoubleAddressOp, ptIdentifier, ptOpenParen, ptString:
-      begin
-         Result.AddChild(ParseDesignator);
-         if CurrentTokenKind = ptAssign then
-         begin
-            Result.AddChild(ParseAssignOp);
-            Result.AddChild(ParseExpression);
-         end;
-      end;
-   ptGoTo: Result.AddChild(ParseGotoStatement);
-   end;
-
-   if not Result.HasChildren then
-      Exit;
-
 {
-		if RawStatement.FindNode(ntAssign) <> nil then
-		begin
-			Temp := FStack.Push(ntAssign);
-			try
-				Temp.FCurrentColumn := Position.X;
-				Temp.FCurrentLine := Position.Y;
-				Temp.FFileName := FileName;
+http://dgrok.excastle.com/Grammar.html#SimpleStatement
 
-				NodeList := TList<TSyntaxNode2>.Create;
-				try
-					AssignIdx := -1;
-					for I := 0 to RawStatement.ChildNodes.Count-1 do
-					begin
-						if RawStatement.ChildNodes[I].AsNode.NodeType = ntAssign then
-						begin
-							AssignIdx := I;
-							Break;
-						end;
-						NodeList.Add(RawStatement.ChildNodes[I].AsNode);
-					end;
-
-					if NodeList.Count = 0 then
-						raise EParserException.Create(Position.Y, Position.X, 'FTokenizer.FileName', 'Illegal expression');
-
-					LHS := FStack.AddChild(ntLHS);
-					LHS.AssignPositionFrom(NodeList[0]);
-
-//					TExpressionTools.RawNodeListToTree(RawStatement, NodeList, LHS); TODO: Fix this
-
-					NodeList.Clear;
-
-					for I := AssignIdx + 1 to RawStatement.ChildNodes.Count-1 do
-						NodeList.Add(RawStatement.ChildNodes[I].AsNode);
-
-					if NodeList.Count = 0 then
-						raise EParserException.Create(Position.Y, Position.X, 'FTokenizer.FileName', 'Illegal expression');
-
-					RHS := FStack.AddChild(ntRHS);
-					RHS.AssignPositionFrom(NodeList[0]);
-
-//					TExpressionTools.RawNodeListToTree(RawStatement, NodeList, RHS); TODO: Fix this
-				finally
-					NodeList.Free;
-				end;
-			finally
-				FStack.Pop;
-			end;
-		end
-		else
-		begin
-			Temp := TSyntaxNode2.Create(ntCall);
-				// TODO: fix this
-				Temp.FCurrentColumn := Position.X;
-				Temp.FCurrentLine := Position.Y;
-
-				NodeList := TList<TSyntaxNode2>.Create;
-				try
-					for Node in RawStatement.ChildNodes do
-						NodeList.Add(Node.AsNode);
-//					TExpressionTools.RawNodeListToTree(RawStatement, NodeList, FStack.Peek); TODO: fix this
-				finally
-					NodeList.Free;
-				end;
-		end;
+SimpleStatement
+	-> BareInherited								-> INHERITED
+	-> ExpressionOrAssignment					-> Expression
+														-> Expression ':=' Expression
+	-> GotoStatement								-> GOTO LabelId
+	-> Block											-> BEGIN [StatementList] END
+														-> AssemblerStatement
+	-> IfStatement									-> IF Expression THEN [Statement] (Completed)    [ELSE [Statement]]
+	-> CaseStatement								-> CASE Expression OF (CaseSelector)+ [ELSE [StatementList]] END
+	-> RepeatStatement							-> REPEAT [StatementList] UNTIL Expression
+	-> WhileStatement								-> WHILE Expression DO [Statement]
+	-> ForStatement								-> FOR Ident ':=' Expression (TO | DOWNTO) Expression DO [Statement]
+														-> FOR Ident IN Expression DO [Statement]
+	-> WithStatement								-> WITH ExpressionList DO [Statement]
+	-> TryStatement								-> TRY (Completed) [StatementList] ...
+	-> RaiseStatement								-> RAISE [Expression [AT Expression]]
 }
+	Result := TSyntaxNode2.Create(ntStatement);
+
+	case CurrentTokenKind of
+//	-> BareInherited								-> INHERITED
+	ptInherited: Result.AddChild(EatToken(ptInherited));
+
+// ExpressionOrAssignment
+
+
+//	-> GotoStatement								-> GOTO LabelId
+	ptGoto,
+
+//	-> Block											-> BEGIN [StatementList] END
+//														-> AssemblerStatement
+	ptBegin, ptAsm, {Block}
+
+//	-> IfStatement									-> IF Expression THEN [Statement] (Completed)    [ELSE [Statement]]
+	ptIf,
+
+//	-> CaseStatement								-> CASE Expression OF (CaseSelector)+ [ELSE [StatementList]] END
+	ptCase,
+
+
+//	-> RepeatStatement							-> REPEAT [StatementList] UNTIL Expression
+	ptRepeat,
+
+//	-> WhileStatement								-> WHILE Expression DO [Statement]
+	ptWhile,
+
+//	-> ForStatement								-> FOR Ident ':=' Expression (TO | DOWNTO) Expression DO [Statement]
+//														-> FOR Ident IN Expression DO [Statement]
+	ptFor,
+
+//	-> WithStatement								-> WITH ExpressionList DO [Statement]
+	ptWith,
+
+
+//	-> TryStatement								-> TRY (Completed) [StatementList] ...
+	ptTry,
+
+//	-> RaiseStatement								-> RAISE [Expression [AT Expression]]
+	ptRaise: Result := TSyntaxNode2.Create(ntStatement);
+	else
+		Result := SynError('Expected Simple Statement');
+	end;
+
+	case CurrentTokenKind of
+	ptInherited,
+// ExpressionOrAssignment
+	ptGoto,
+	ptBegin, ptAsm, {Block}
+	ptIf,
+	ptCase,
+	ptRepeat,
+	ptWhile,
+	ptFor,
+	ptWith,
+	ptTry,
+	ptRaise: Result := TSyntaxNode2.Create(ntGoto);
+	else
+		Result := SynError('Expected Simple Statement');
+	end;
 end;
+
+(*
+function TDelphiParser.IsPossibleSimpleStatement: Boolean;
+begin
+{
+SimpleStatement
+	-> BareInherited
+	-> ExpressionOrAssignment
+	-> GotoStatement
+	-> Block
+	-> IfStatement
+	-> CaseStatement
+	-> RepeatStatement
+	-> WhileStatement
+	-> ForStatement
+	-> WithStatement
+	-> TryStatement
+	-> RaiseStatement
+}
+
+//	BareInherited
+//		-> INHERITED
+	if CurrentTokenKind = ptInherited then
+		Result := True
+//	ExpressionOrAssignment
+//		-> Expression
+//		-> Expression ':=' Expression
+	else if IsPossibleExpression then
+		Result := True
+//	GotoStatement
+//		-> GOTO LabelId
+	else if CurrentTokenKind = ptGoto then
+		Result := True
+//	Block
+//		-> BEGIN [StatementList] END
+//		-> AssemblerStatement
+	else if (CurrentTokenKind = ptBegin) or (CurrentTokenKind = ptAsm) then
+		Result := True
+//	IfStatement
+//		-> IF Expression THEN [Statement]
+//				[ELSE [Statement]]
+	else if CurrentTokenKind = ptIf then
+		Result := True
+//	CaseStatement [^]
+//		-> CASE Expression OF
+//				(CaseSelector)+
+//				[ELSE [StatementList]]
+//				END
+	else if CurrentTokenKind = ptCase then
+		Result := True
+//	RepeatStatement
+//		-> REPEAT [StatementList] UNTIL Expression
+	else if CurrentTokenKind = ptRepeat then
+		Result := True
+//	WhileStatement [^]
+//		-> WHILE Expression DO [Statement]
+	else if CurrentTokenKind = ptWhile then
+		Result := True
+//	TryStatement
+//		-> TRY
+//				[StatementList]
+//				( FINALLY [StatementList]
+//				| EXCEPT (
+//				[StatementList] |
+//				(ExceptionItem)* [ELSE [StatementList]]
+//				)
+//				END
+	else if CurrentTokenKind = ptTry then
+		Result := True
+//	RaiseStatement
+//		-> RAISE [Expression [AT Expression]]
+	else if CurrentTokenKind = ptRaise then
+		Result := True
+	else
+		Result := False;
+end; *)
 
 function TDelphiParser.ParseStatement: TSyntaxNode2;
 begin
+{
+http://dgrok.excastle.com/Grammar.html#Statement
+
+Statement
+	-> LabelId ':' [SimpleStatement]
+	-> SimpleStatement
+
+LabelId
+	-> <number>
+	-> Ident
+
+
+}
 	Result := PoisonNode;
 
 	case CurrentTokenKind of
-	ptAsm:	Result := ParseAsmStatement;
+	ptAsm:	Result := ParseAssemblerStatement;
 	ptBegin:	Result := ParseStatements;
 	ptCase:	Result := ParseCaseStatement;
 	ptConst:	Result := ParseInlineConstSection;
@@ -4476,6 +4842,19 @@ begin
 	end;
 end;
 
+(*function TDelphiParser.IsPossibleStatement: Boolean;
+begin
+{
+http://dgrok.excastle.com/Grammar.html#Statement
+
+Statement
+	-> LabelId ':' [SimpleStatement]
+	-> SimpleStatement
+}
+	Result := IsPossibleLabelID
+			or IsPossibleSimpleStatement;
+end; *)
+
 function TDelphiParser.EatToken(ExpectedTokenKind: TptTokenKind): TSyntaxToken;
 var
 	t: TSyntaxToken;
@@ -4498,9 +4877,8 @@ begin
 		DoMessage(s, CurrentToken.Line, CurrentToken.Column);
 		Log(s);
 
-		// Keep EOF in place; otherwise advance so parser always makes progress.
-		if CurrentToken.TokenKind <> ptEof then
-			NextToken;
+		// Do not consume unexpected real tokens here.
+		// Keeping CurrentToken allows surrounding productions to recover without dropping source tokens.
 
 		if IsDebuggerPresent then
 		begin
@@ -4565,9 +4943,14 @@ begin
 end;
 
 function TDelphiParser.ParseStringStatement: TSyntaxNode2;
+var
+	str: TSyntaxToken;
 begin
 	Result := TSyntaxNode2.Create(ntType);
-	Result.Attributes[anName] := CurrentToken.ValueText;
+
+	str := EatToken(ptStringLiteral);
+	Result.Attributes[anName] := str.ValueText;
+	Result.Attributes[anType ] := AttributeValueToStr(avString);
 
 	Result.AddChild(EatToken(ptString));
 end;
@@ -4609,7 +4992,7 @@ function TDelphiParser.ParseNumber: TSyntaxNode2;
 begin
 	Result := TSyntaxNode2.Create(ntLiteral);
 	Result.Attributes[anName] := CurrentToken.ValueText;
-	Result.Attributes[anType] := AttributeValueToString(atNumeric);
+	Result.Attributes[anType] := AttributeValueToStr(avNumeric);
 
 	case CurrentTokenKind of
 	ptFloat: Result.AddChild(EatToken(ptFloat));
@@ -4622,6 +5005,12 @@ end;
 
 function TDelphiParser.ParseExpressionList: TSyntaxNode2;
 begin
+{
+http://dgrok.excastle.com/Grammar.html#ExpressionList
+
+ExpressionList
+	-> (Expression [','])+
+}
 	Result := TSyntaxNode2.Create(ntExpressions);
 
 		Result.AddChild(ParseExpression);
@@ -4679,11 +5068,11 @@ end;
 function TDelphiParser.ParseFactor: TSyntaxNode2;
 begin
 {
-http://dgrok.excastle.com/Grammar.html#ParseFactor
+http://dgrok.excastle.com/Grammar.html#Factor
 
-ParseFactor
+Factor
 	-> Atom
-	-> UnaryOperator ParseFactor
+	-> UnaryOperator Factor
 
 Atom
 	-> Particle
@@ -4712,6 +5101,7 @@ UnaryOperator
 	-> INHERITED
 
 }
+	//TODO: Implement ParseFactor correctly.
 	Result := PoisonNode;
 
 	case CurrentTokenKind of
@@ -4723,8 +5113,11 @@ UnaryOperator
 			Result.AddChild(ParseExpressionList);
 			Result.AddChild(ParseRoundClose);
 		end;
-	ptIntegerConst, ptFloat: Result.AddChild(ParseNumber);
-	ptNil: Result.AddChild(ParseNilToken);
+
+// Atom -> Particle -> <number>
+	ptIntegerConst, ptFloat:	Result.AddChild(ParseNumber);					// ntLiteral anType=atNumeric
+	ptString:						Result.AddChild(ParseStringStatement);
+	ptNil:							Result.AddChild(ParseNilToken);
 	ptMinus:
 		begin
 			Result.AddChild(ParseUnaryMinus);
@@ -4741,7 +5134,6 @@ UnaryOperator
 			Result.AddChild(ParseFactor);
 		end;
 	ptOpenBracket: Result.AddChild(ParseSetConstructor);
-	ptString: Result.AddChild(ParseStringStatement);
 	ptFunction, ptProcedure: Result.AddChild(ParseAnonymousMethod);
 	end;
 
@@ -4761,7 +5153,7 @@ UnaryOperator
 	end;
 end;
 
-function TDelphiParser.ParseAdditiveOperator: TSyntaxNode2;
+function TDelphiParser.ParseAddOp: TSyntaxNode2;
 begin
 {
 http://dgrok.excastle.com/Grammar.html#AddOp
@@ -4771,13 +5163,11 @@ AddOp
 	-> '-'
 	-> OR
 	-> XOR
-
-todo: rename to ParseAddOp
 }
 	case CurrentTokenKind of
+	ptPlus:	Result := TSyntaxNode2.Create(ntAdd);
 	ptMinus:	Result := TSyntaxNode2.Create(ntSub);
 	ptOr:		Result := TSyntaxNode2.Create(ntOr);
-	ptPlus:	Result := TSyntaxNode2.Create(ntAdd);
 	ptXor:	Result := TSyntaxNode2.Create(ntXor);
 	else
 		Result := SynError('Unknown ParseAdditiveOperator token kind');
@@ -4793,19 +5183,13 @@ begin
 	Result.AddChild(EatToken(ptAddressOp));
 end;
 
-function TDelphiParser.ParseAlignmentParameter: TSyntaxNode2;
-begin
-	Result := TSyntaxNode2.Create(ntAlignmentParam);
-	Result.AddChild(ParseSimpleExpression);
-end;
-
 function TDelphiParser.ParseTerm: TSyntaxNode2;
 begin
 {
 http://dgrok.excastle.com/Grammar.html#Term
 
 Term
-	-> ParseFactor (MulOp ParseFactor)*
+	-> Factor (MulOp Factor)*
 }
 	Result := PoisonNode;
 
@@ -4856,29 +5240,22 @@ begin
 {
 http://dgrok.excastle.com/Grammar.html#SimpleExpression
 
-SimpleExpression - Backlinks: Expression, ExpressionOrRange
+SimpleExpression
 	-> Term (AddOp Term)*
 
-Term - Backlinks: SimpleExpression
-	-> ParseFactor (MulOp ParseFactor)*
-
-
+AddOp
+	-> '+'
+	-> '-'
+	-> OR
+	-> XOR
 }
 	Result := TSyntaxNode2.Create(ntExpression);
 	Result.AddChild(ParseTerm);
 
-	while CurrentTokenKind in [ptMinus, ptOr, ptPlus, ptXor] do
+	while CurrentTokenKind in [ptPlus, ptMinus, ptOr, ptXor] do
 	begin
-		Result.AddChild(ParseAdditiveOperator);
+		Result.AddChild(ParseAddOp);
 		Result.AddChild(ParseTerm);
-	end;
-
-	case CurrentTokenKind of
-	ptAs:
-		begin
-			Result.AddChild(ParseAsOp);
-			Result.AddChild(ParseTypeId);
-		end;
 	end;
 end;
 
@@ -4952,10 +5329,11 @@ a or b
 		expr  := MakeRel(expr, opTok, right); // ntRelationalExpression(Child: left, op, right)
 	end;
 
+	// Always attach the parsed expression subtree so consumed tokens are preserved.
 	Result.AddChild(expr);
 end;
 
-function TDelphiParser.ParseVarDeclaration: TSyntaxNode2;
+function TDelphiParser.ParseVarDecl: TSyntaxNode2;
 begin
 {
 http://dgrok.excastle.com/Grammar.html#VarDecl
@@ -4971,12 +5349,12 @@ VarDecl
 	Result := TSyntaxNode2.Create(ntVariables);
 
 	// IdentList ':' Type
-	Result.AddChild(ParseVarNameList);
+	Result.AddChild(ParseIdentList);
 	Result.AddChild(EatToken(ptColon));
 	Result.AddChild(ParseType);
 
 	// (PortabilityDirective)*
-	Result.AddChild(ParseHintDirectives);		// ntHintDirectives
+	Result.AddChild(ParsePortabilityDirective);		// ntHintDirectives
 
 	case CurrentToken.GenID of
 	ptAbsolute: Result.AddChild(ParseVarAbsolute);			// ABSOLUTE t1
@@ -4984,7 +5362,7 @@ VarDecl
 	end;
 
 	// (PortabilityDirective)*
-	Result.AddChild(ParseHintDirectives);		// ntHintDiretives
+	Result.AddChild(ParsePortabilityDirective);		// ntHintDiretives
 end;
 
 function TDelphiParser.ParseVarAbsolute: TSyntaxNode2;
@@ -5000,7 +5378,7 @@ VarDecl
 			';'
 }
 	Result := TSyntaxNode2.Create(ntAbsolute);
-	Result.AddChild(ExpectedEx(ptAbsolute));	//Expect the token's ExID to be ptAbsolute
+	Result.AddChild(EatTokenEx(ptAbsolute));	//Expect the token's ExID to be ptAbsolute
 	Result.AddChild(ParseExpression);
 end;
 
@@ -5021,24 +5399,22 @@ VarDecl
    Result.AddChild(ParseConstantValueTyped); //todo: rename to ParseTypedConstant
 end;
 
-function TDelphiParser.ParseVarNameList: TSyntaxNode2;
+function TDelphiParser.ParseIdentList: TSyntaxNode2;
 begin
-	Result := PoisonNode;
+{
+http://dgrok.excastle.com/Grammar.html#IdentList
 
-  Result.AddChild(ParseVarName);
-  while CurrentTokenKind = ptComma do
-    begin
-	  Result.AddChild(EatToken(ptComma));
-      Result.AddChild(ParseVarName);
-    end;
-end;
+IdentList
+	-> ( Ident [','] )+
+}
+	Result := TSyntaxNode2.Create(ntIdentifier);
 
-function TDelphiParser.ParseVarName: TSyntaxNode2;
-begin
-	Result := TSyntaxNode2.Create(ntName);
-	Result[anName] := CurrentToken.ValueText;
-
-	Result.AddChild(EatToken(ptIdentifier));
+	Result.AddChild(ParseIdent);
+	while CurrentTokenKind = ptComma do
+	begin
+		Result.AddChild(EatToken(ptComma));
+		Result.AddChild(ParseIdent);
+	end;
 end;
 
 procedure TDelphiParser.DirectiveCalling(ParentNode: TSyntaxNode2);
@@ -5078,6 +5454,13 @@ end;
 
 function TDelphiParser.ParseVariantSection: TSyntaxNode2;
 begin
+{
+http://dgrok.excastle.com/Grammar.html#VariantSection
+
+VariantSection
+	-> CASE [Ident ':'] QualifiedIdent OF
+			(VariantGroup)+
+}
 	Result := PoisonNode;
 
   Result.AddChild(EatToken(ptCase));
@@ -5127,12 +5510,12 @@ function TDelphiParser.ParseFieldDeclaration: TSyntaxNode2;
 begin
 	Result := PoisonNode;
 
-	if CurrentTokenKind = ptOpenBracket then
-		Result.AddChild(ParseCustomAttribute);
+//	if CurrentTokenKind = ptOpenBracket then
+//		Result.AddChild(ParseCustomAttribute);
 	Result.AddChild(ParseFieldNameList);
 	Result.AddChild(EatToken(ptColon));
 	Result.AddChild(ParseType);
-	Result.AddChild(ParseHintDirectives);
+	Result.AddChild(ParsePortabilityDirective);
 end;
 
 function TDelphiParser.ParseFieldList: TSyntaxNode2;
@@ -5174,7 +5557,7 @@ begin
 		Exit;
 
 	if CurrentTokenExID = ptHelper then
-		ParentNode.AddChild(ParseClassHelper);
+		ParentNode.AddChild(ParseClassHelperType);
 
 	if CurrentTokenKind = ptOpenParen then
 	begin
@@ -5195,6 +5578,13 @@ end;
 
 function TDelphiParser.ParseFileType: TSyntaxNode2;
 begin
+{
+http://dgrok.excastle.com/Grammar.html#FileType
+
+FileType
+	-> FILE
+	-> FILE OF QualifiedIdent
+}
 	Result := PoisonNode;
 
 
@@ -5223,6 +5613,12 @@ end;
 
 function TDelphiParser.ParseSetType: TSyntaxNode2;
 begin
+{
+http://dgrok.excastle.com/Grammar.html#SetType
+
+SetType
+	-> SET OF Type
+}
 	Result := PoisonNode;
 
 	Result.AddChild(EatToken(ptSet));
@@ -5230,42 +5626,72 @@ begin
 	Result.AddChild(ParseOrdinalType);
 end;
 
-procedure TDelphiParser.set_UseDefines(const Value: Boolean);
-begin
-//  FLexer.UseDefines := Value;
-end;
-
 function TDelphiParser.ParseArrayType: TSyntaxNode2;
 begin
-	Result := PoisonNode;
+{
+http://dgrok.excastle.com/Grammar.html#ArrayType
 
+ArrayType
+	-> ARRAY ['[' (ExpressionOrRange [','])+ ']'] OF Type
 
+	Where ExpressionOrRange already exists in DGrok and matches Delphi's bounds shape:
+		1..10
+		Low(TEnum)..High(TEnum)
+		(and other const-expression-ish forms)
+}
+	Result := TSyntaxNode2.Create(ntType);
+	Result[anType] := 'array';
+
+	// ARRAY
 	Result.AddChild(EatToken(ptArray));
-	Result.AddChild(ParseArrayBounds);
+
+	// Optional: '[' (ExpressionOrRange [','])+ ']'
+	if CurrentTokenKind = ptOpenBracket then
+	begin
+		Result.AddChild(EatToken(ptOpenBracket));
+		Result.AddChild(ParseExpressionOrRange);
+		while CurrentTokenKind = ptComma do
+		begin
+			Result.AddChild(EatToken(ptComma));
+			Result.AddChild(ParseExpressionOrRange);
+		end;
+
+		Result.AddChild(EatToken(ptCloseBracket));
+	end;
+
+	// OF Type
 	Result.AddChild(EatToken(ptOf));
 	Result.AddChild(ParseType);
 end;
 
 function TDelphiParser.ParseEnumeratedType: TSyntaxNode2;
-var
-	typeNode: TSyntaxNode2;
 begin
-	{
-	}
-	typeNode := TSyntaxNode2.Create(ntType);
-	Result := typeNode;
+{
+http://dgrok.excastle.com/Grammar.html#EnumeratedType
 
-   typeNode.Attributes[anName] := AttributeValueToString(atEnum);
-   if ScopedEnums then
-      typeNode.Attributes[anVisibility] := 'scoped';
+EnumeratedType
+			Backlinks: Type
+	-> '(' (EnumeratedTypeElement [','])+ ')'
+
+Returns
+-------
+
+ntType anName="atEnum"
+}
+	Result := TSyntaxNode2.Create(ntType);
+	Result.Attributes[anName] := AttributeValueToStr(avEnum);
+
+	if FScopedEnums then
+		Result.Attributes[anVisibility] := 'scoped';
+
 	Result.AddChild(EatToken(ptOpenParen));
-   Result.AddChild(ParseEnumeratedTypeItem);
-   while CurrentTokenKind = ptComma do
-   begin
-	   Result.AddChild(EatToken(ptComma));
-      Result.AddChild(ParseEnumeratedTypeItem);
-   end;
-   Result.AddChild(EatToken(ptCloseParen));
+	Result.AddChild(ParseEnumeratedTypeElement);
+	while CurrentTokenKind = ptComma do
+	begin
+		Result.AddChild(EatToken(ptComma));
+		Result.AddChild(ParseEnumeratedTypeElement);
+	end;
+	Result.AddChild(EatToken(ptCloseParen));
 end;
 
 function TDelphiParser.ParseSubrangeType: TSyntaxNode2;
@@ -5273,14 +5699,11 @@ begin
 	{
 	}
 	Result := TSyntaxNode2.Create(ntType);
-	Result.Attributes[anName] := AttributeValueToString(atSubRange);
+	Result.Attributes[anName] := AttributeValueToStr(avSubRange);
 
 	Result.AddChild(ParseConstantExpression);
-	if CurrentTokenKind = ptDotDot then
-	begin
-		Result.AddChild(EatToken(ptDotDot));
-		Result.AddChild(ParseConstantExpression);
-	end;
+	Result.AddChild(EatToken(ptDotDot));
+	Result.AddChild(ParseConstantExpression);
 end;
 
 function TDelphiParser.ParseRealIdentifier: TSyntaxNode2;
@@ -5305,7 +5728,7 @@ function TDelphiParser.ParseRealType: TSyntaxNode2;
 begin
 	{
 	}
-	Result := PoisonNode;
+	Result := TSyntaxNode2.Create(ntType);
 
 
 	case CurrentTokenKind of
@@ -5390,7 +5813,7 @@ function TDelphiParser.ParseOrdinalType: TSyntaxNode2;
 begin
 	{
 	}
-	Result := PoisonNode;
+	Result := TSyntaxNode2.Create(ntType);
 
 
 	case CurrentTokenKind of
@@ -5464,55 +5887,56 @@ begin
 {
 http://dgrok.excastle.com/Grammar.html#VisibilitySection
 
-Returns: ntVisibilitySection
-
-
-	VisibilitySection
-	--> [Visibility]
+VisibilitySection
+	-> [Visibility]
 			(VisibilitySectionContent)*
 
-	Visibility
-	--> STRICT PRIVATE
-	--> STRICT PROTECTED
-	--> PRIVATE
-	--> PROTECTED
-	--> PUBLIC
-	--> PUBLISHED
+Returns:
+	ntVisibilitySection
 
-	VisibilitySectionContent
-	--> FieldSection
-	--> MethodOrProperty
-	--> ConstSection
-	--> TypeSection
 
-	FieldSection
-	--> [[CLASS] VAR] (FieldDecl)*
+Visibility
+	-> STRICT PRIVATE
+	-> STRICT PROTECTED
+	-> PRIVATE
+	-> PROTECTED
+	-> PUBLIC
+	-> PUBLISHED
 
-	MethodOrProperty
-	--> MethodHeading
-	--> Property
+VisibilitySectionContent
+	-> FieldSection
+	-> MethodOrProperty
+	-> ConstSection
+	-> TypeSection
 
-	MethodHeading
-	--> [CLASS] (PROCEDURE | FUNCTION | CONSTRUCTOR | DESTRUCTOR | OPERATOR)
+FieldSection
+	-> [[CLASS] VAR] (FieldDecl)*
+
+MethodOrProperty
+	-> MethodHeading
+	-> Property
+
+MethodHeading
+	-> [CLASS] (PROCEDURE | FUNCTION | CONSTRUCTOR | DESTRUCTOR | OPERATOR)
 			QualifiedIdent
 			['(' (Parameter [';'])* ')']
 			[':' MethodReturnType]		// FUNCTION required, OPERATOR optional
 			[';']
 			(Directive [';'])*
 
-	Property
-	--> [CLASS]
+Property
+	-> [CLASS]
 			PROPERTY Ident
 			['[' (Parameter [';'])+ ']']
 			[':' MethodReturnType]
 			(PropertyDirective)*
 			';'
 
-	ConstSection
-	--> (CONST|RESOURCESTRING) (ConstantDecl)+
+ConstSection
+	-> (CONST|RESOURCESTRING) (ConstantDecl)+
 
-	TypeSection
-	--> TYPE (TypeDecl)+
+TypeSection
+	-> TYPE (TypeDecl)+
 
 Example
 =======
@@ -5538,34 +5962,34 @@ Example
 		if CurrentTokenExID = ptPrivate then
 		begin
 			Result := TSyntaxNode2.Create(ntPrivate);
-			Result.AddChild(ExpectedEx(ptPrivate));
+			Result.AddChild(EatTokenEx(ptPrivate));
 		end
 		else if CurrentTokenExID = ptProtected then
 		begin
 			Result := TSyntaxNode2.Create(ntProtected);
-			Result.AddChild(ExpectedEx(ptProtected));
+			Result.AddChild(EatTokenEx(ptProtected));
 		end
 		else if CurrentTokenExID = ptPublic then
 		begin
 			Result := TSyntaxNode2.Create(ntPublic);
-			Result.AddChild(ExpectedEx(ptPublic));
+			Result.AddChild(EatTokenEx(ptPublic));
 		end
 		else if CurrentTokenExID = ptPublished then
 		begin
 			Result := TSyntaxNode2.Create(ntPublished);
-			Result.AddChild(ExpectedEx(ptPublished));
+			Result.AddChild(EatTokenEx(ptPublished));
 		end
 		else if (CurrenttokenExID = ptStrict) and (PeekTokenExID = ptPrivate) then
 		begin
 			Result := TSyntaxNode2.Create(ntStrictPrivate);
-			Result.AddChild(ExpectedEx(ptStrict));
-			Result.AddChild(ExpectedEx(ptPrivate));
+			Result.AddChild(EatTokenEx(ptStrict));
+			Result.AddChild(EatTokenEx(ptPrivate));
 		end
 		else if (CurrenttokenExID = ptStrict) and (PeekTokenExID = ptProtected) then
 		begin
 			Result := TSyntaxNode2.Create(ntStrictProtected);
-			Result.AddChild(ExpectedEx(ptStrict));
-			Result.AddChild(ExpectedEx(ptProtected));
+			Result.AddChild(EatTokenEx(ptStrict));
+			Result.AddChild(EatTokenEx(ptProtected));
 		end
 		else
 		begin
@@ -5590,40 +6014,42 @@ end;
 function TDelphiParser.ParseVisibilitySectionContent: TSyntaxNode2;
 begin
 {
-	VisibilitySectionContent
-	--> FieldSection
-	--> MethodOrProperty
-	--> ConstSection
-	--> TypeSection
+http://dgrok.excastle.com/Grammar.html#VisibilitySectionContent
 
-	ConstSection
-	--> (CONST|RESOURCESTRING) (ConstantDecl)+
+VisibilitySectionContent
+	-> FieldSection
+	-> MethodOrProperty
+	-> ConstSection
+	-> TypeSection
 
-	TypeSection
-	--> TYPE (TypeDecl)+
+ConstSection
+	-> (CONST|RESOURCESTRING) (ConstantDecl)+
 
-	MethodOrProperty
-	--> MethodHeading
-	--> Property
+TypeSection
+	-> TYPE (TypeDecl)+
 
-	Property
-	--> [CLASS]
+MethodOrProperty
+	-> MethodHeading
+	-> Property
+
+Property
+	-> [CLASS]
 			PROPERTY Ident
 			['[' (Parameter [';'])+ ']']
 			[':' MethodReturnType]
 			(PropertyDirective)*
 			';'
 
-	MethodHeading
-	--> [CLASS] (PROCEDURE | FUNCTION | CONSTRUCTOR | DESTRUCTOR | OPERATOR)
+MethodHeading
+	-> [CLASS] (PROCEDURE | FUNCTION | CONSTRUCTOR | DESTRUCTOR | OPERATOR)
 			QualifiedIdent
 			['(' (Parameter [';'])* ')']
 			[':' MethodReturnType]		// FUNCTION required, OPERATOR optional
 			[';']
 			(Directive [';'])*
 
-	FieldSection
-	--> [[CLASS] VAR] (FieldDecl)*
+FieldSection
+	-> [[CLASS] VAR] (FieldDecl)*
 }
 	case CurrentTokenKind of
 	ptConst: Result := ParseConstSection;
@@ -5672,7 +6098,7 @@ begin
 //	Attention: could also came from proc_call !!
 	Result := PoisonNode;
 
-	Result.AddChild(ParseQualifiedIdentifier);
+	Result.AddChild(ParseQualifiedIdent);
 	Result.AddChild(ParseVariableTail);
 end;
 
@@ -5745,12 +6171,12 @@ InterfaceType
 	ptInterface:
 		begin
 			Result := TSyntaxNode2.Create(ntType);
-			Result.Attributes[anType] := AttributeValueToString(atInterface);
+			Result.Attributes[anType] := AttributeValueToStr(avInterface);
 		end;
 	ptDispInterface:
 		begin
 			Result := TSyntaxNode2.Create(ntType);
-			Result.Attributes[anType] := AttributeValueToString(atDispInterface);
+			Result.Attributes[anType] := AttributeValueToStr(avDispInterface);
 		end;
 	end;
 
@@ -5797,8 +6223,8 @@ procedure TDelphiParser.InterfaceMemberList(ParentNode: TSyntaxNode2);
 begin
 	while CurrentTokenKind in [ptOpenBracket, ptFunction, ptProcedure, ptProperty] do
 	begin
-		while CurrentTokenKind = ptOpenBracket do
-			ParentNode.AddChild(ParseCustomAttribute);
+//		while CurrentTokenKind = ptOpenBracket do
+//			ParentNode.AddChild(ParseCustomAttribute);
 
 		ParentNode.AddChild(ParseClassMethodOrProperty);
 	end;
@@ -5807,18 +6233,9 @@ end;
 function TDelphiParser.ParseClassType: TSyntaxNode2;
 var
 	startIndex: Integer;
-	function IsVisibilitySectionHeader: Boolean;
-	begin
-		Result := (CurrentTokenExID in [ptPrivate, ptProtected, ptPublic, ptPublished])
-			or ((CurrentTokenExID = ptStrict) and (PeekTokenExID in [ptPrivate, ptProtected]));
-	end;
 begin
 {
-Returns
-	ntType(@anType = atClass)
-
-Grammer
-========
+http://dgrok.excastle.com/Grammar.html#ClassType
 
 ClassType
 	-> CLASS
@@ -5834,7 +6251,7 @@ ClassType
 
 VisibilitySection
 	-> [Visibility]
-				(VisibilitySectionContent)*
+			(VisibilitySectionContent)*
 
 Visibility
 	-> STRICT PRIVATE
@@ -5844,6 +6261,9 @@ Visibility
 	-> PUBLIC
 	-> PUBLISHED
 
+
+Returns
+	ntType(@anType = atClass)
 
 Example
 =======
@@ -5860,7 +6280,7 @@ Example
 
 }
 	Result := TSyntaxNode2.Create(ntType);
-	Result.Attributes[anType] := AttributeValueToString(atClass);
+	Result.Attributes[anType] := AttributeValueToStr(avClass);
 	Result.AddChild(EatToken(ptClass));
 
 	// Read optional modifieers
@@ -5897,7 +6317,7 @@ Example
 		// If no progress is made, advance one token to avoid infinite loops and keep recovery moving.
 		startIndex := FCurrent;
 
-		if IsVisibilitySectionHeader then
+		if IsPossibleVisibilitySection then
 			Result.AddChild(ParseVisibilitySection)
 		else if IsPossibleVisibilitySectionContent then
 			Result.AddChild(ParseVisibilitySectionContent)
@@ -5916,21 +6336,46 @@ Example
 	MoveMembersToVisibilityNodes(Result);
 end;
 
-function TDelphiParser.ParseClassHelper: TSyntaxNode2;
+function TDelphiParser.ParseClassHelperType: TSyntaxNode2;
 begin
-	{
-	}
+{
+http://dgrok.excastle.com/Grammar.html#ClassHelperType
+
+ClassHelperType									Backlinks: Type
+	-> CLASS HELPER
+			['(' QualifiedIdent ')']
+			FOR QualifiedIdent
+			(VisibilitySection)*
+			END
+
+Visibility												Backlinks: VisibilitySection
+	-> STRICT PRIVATE
+	-> STRICT PROTECTED
+	-> PRIVATE
+	-> PROTECTED
+	-> PUBLIC
+	-> PUBLISHED
+}
 	Result := TSyntaxNode2.Create(ntHelper);
 	Result.AddChild(EatToken(ptHelper));
 
+//	['(' QualifiedIdent ')']
 	if CurrentTokenKind = ptOpenParen then
 	begin
 		Result.AddChild(EatToken(ptOpenParen));
 		Result.AddChild(ParseAncestorList); // ntAncestorList
 		Result.AddChild(EatToken(ptCloseParen));
 	end;
+
+//	FOR QualifiedIdent
 	Result.AddChild(EatToken(ptFor));
 	Result.AddChild(ParseTypeId);
+
+//	(VisibilitySection)*
+	while IsPossibleVisibilitySection do
+		Result.AddChild(ParseVisibilitySection);
+
+	Result.AddChild(EatToken(ptEnd));
 end;
 
 function TDelphiParser.ParseClassVisibility: TSyntaxNode2;
@@ -5942,7 +6387,7 @@ begin
 
 	isStrict := (CurrentTokenExID = ptStrict);
 	if isStrict then
-		Result.AddChild(ExpectedEx(ptStrict));
+		Result.AddChild(EatTokenEx(ptStrict));
 
 	while CurrentTokenExID in [ptAutomated, ptPrivate, ptProtected, ptPublic, ptPublished] do
 	begin
@@ -5950,7 +6395,7 @@ begin
 		// otherwise this loop never advances and the parser hangs.
 		if PeekToken(1).DirectiveID in [ptColon, ptComma] then
 		begin
-			Result.AddChild(ExpectedEx(CurrentTokenExID));
+			Result.AddChild(EatTokenEx(CurrentTokenExID));
 			if CurrentTokenKind in [ptColon, ptComma] then
 				Result.AddChild(EatToken);
 			Exit;
@@ -5992,30 +6437,30 @@ begin
 	Result := PoisonNode;
 
 
-	Result.AddChild(ExpectedEx(ptAutomated));
+	Result.AddChild(EatTokenEx(ptAutomated));
 end;
 
 function TDelphiParser.ParseVisibilityStrictPrivate: TSyntaxNode2;
 begin
 	Result := TSyntaxNode2.Create(ntStrictPrivate);
-	Result.Attributes[anVisibility] := AttributeValueToString(atTrue);
+	Result.Attributes[anVisibility] := AttributeValueToStr(avTrue);
 
-	Result.AddChild(ExpectedEx(ptPrivate));
+	Result.AddChild(EatTokenEx(ptPrivate));
 end;
 
 function TDelphiParser.ParseVisibilityPrivate: TSyntaxNode2;
 begin
 	Result := TSyntaxNode2.Create(ntPrivate);
-	Result.Attributes[anVisibility] :=  AttributeValueToString(atTrue);
-	Result.AddChild(ExpectedEx(ptPrivate));
+	Result.Attributes[anVisibility] :=  AttributeValueToStr(avTrue);
+	Result.AddChild(EatTokenEx(ptPrivate));
 end;
 
 function TDelphiParser.ParseVisibilityStrictProtected: TSyntaxNode2;
 begin
 	Result := TSyntaxNode2.Create(ntStrictProtected);
-	Result.Attributes[anVisibility] :=  AttributeValueToString(atTrue);
+	Result.Attributes[anVisibility] :=  AttributeValueToStr(avTrue);
 
-	Result.AddChild(ExpectedEx(ptProtected));
+	Result.AddChild(EatTokenEx(ptProtected));
 end;
 
 function TDelphiParser.ParseVisibilityProtected: TSyntaxNode2;
@@ -6023,31 +6468,24 @@ function TDelphiParser.ParseVisibilityProtected: TSyntaxNode2;
 //	Temp: TSyntaxNode2;
 begin
 	Result := TSyntaxNode2.Create(ntProtected);
-	Result.Attributes[anVisibility] := AttributeValueToString(atTrue);
-	Result.AddChild(ExpectedEx(ptProtected));
+	Result.Attributes[anVisibility] := AttributeValueToStr(avTrue);
+	Result.AddChild(EatTokenEx(ptProtected));
 end;
 
 function TDelphiParser.ParseVisibilityPublic: TSyntaxNode2;
 begin
 	Result := TSyntaxNode2.Create(ntPublic);
-	Result.Attributes[anVisibility] := AttributeValueToString(atTrue);
+	Result.Attributes[anVisibility] := AttributeValueToStr(avTrue);
 
-	Result.AddChild(ExpectedEx(ptPublic));
+	Result.AddChild(EatTokenEx(ptPublic));
 end;
 
 function TDelphiParser.ParseVisibilityPublished: TSyntaxNode2;
 begin
 	Result := TSyntaxNode2.Create(ntPublished);
-	Result.Attributes[anVisibility] := AttributeValueToString(atTrue);
+	Result.Attributes[anVisibility] := AttributeValueToStr(avTrue);
 
-	Result.AddChild(ExpectedEx(ptPublished));
-end;
-
-function TDelphiParser.ParseVisibilityUnknown: TSyntaxNode2;
-begin
-	Result := PoisonNode;
-
-
+	Result.AddChild(EatTokenEx(ptPublished));
 end;
 
 function TDelphiParser.ParseClassMemberList: TSyntaxNode2;
@@ -6073,14 +6511,14 @@ Visibility
 	begin
 		Result.AddChild(ParseClassVisibility);
 
-		if CurrentTokenKind = ptOpenBracket then
-			Result.AddChild(ParseCustomAttribute);
+//		if CurrentTokenKind = ptOpenBracket then
+//			Result.AddChild(ParseCustomAttribute);
 
 		if (CurrentTokenKind = ptIdentifier) and
 				not (CurrentTokenExID in [ptPrivate, ptProtected, ptPublished, ptPublic, ptStrict]) then
 		begin
 			if PeekTokenKind = ptEquals then
-				Result.AddChild(ParseConstantDeclaration)
+				Result.AddChild(ParseConstantDecl)
 			else
 			begin
 				Result.AddChild(ParseClassField);
@@ -6143,7 +6581,7 @@ begin
 		Result.AddChild(EatToken);
         while (CurrentTokenKind = ptIdentifier) and (CurrentTokenExID = ptUnknown) do
         begin
-          Result.AddChild(ParseConstantDeclaration);
+          Result.AddChild(ParseConstantDecl);
           Result.AddChild(EatToken(ptSemicolon));
         end;
       end;
@@ -6343,16 +6781,23 @@ begin
   Result.AddChild(ParseIdentifierList);
   Result.AddChild(EatToken(ptColon));
   Result.AddChild(ParseType);
-  Result.AddChild(ParseHintDirectives);
+  Result.AddChild(ParsePortabilityDirective);
 end;
 
-function TDelphiParser.ParseClassReferenceType: TSyntaxNode2;
+function TDelphiParser.ParseClassOfType: TSyntaxNode2;
 begin
+{
+http://dgrok.excastle.com/Grammar.html#ClassOfType
+
+ClassOfType
+	-> CLASS OF QualifiedIdent
+}
 	Result := TSyntaxNode2.Create(ntType);
-	Result.Attributes[anType] := AttributeValueToString(atClassof);
-	  Result.AddChild(EatToken(ptClass));
-	  Result.AddChild(EatToken(ptOf));
-	  Result.AddChild(ParseTypeId);
+	Result.Attributes[anType] := AttributeValueToStr(avClassOf);
+
+	Result.AddChild(EatToken(ptClass));
+	Result.AddChild(EatToken(ptOf));
+	Result.AddChild(ParseQualifiedIdent);
 end;
 
 function TDelphiParser.ParseVariantIdentifier: TSyntaxNode2;
@@ -6384,55 +6829,52 @@ begin
 	}
    Result := TSyntaxNode2.Create(ntType);
 	Result.Attributes[anName] := CurrentToken.ValueText;
-     case CurrentTokenKind of
-       ptFunction:
-         begin
-		   Result.AddChild(EatToken(ptFunction));
-           if CurrentTokenKind = ptOpenParen then
-           begin
-             Result.AddChild(ParseFormalParameterList);
-           end;
-           Result.AddChild(EatToken(ptColon));
-           Result.AddChild(ParseReturnType);
-         end;
-       ptProcedure:
-         begin
-		   Result.AddChild(EatToken(ptProcedure));
-           if CurrentTokenKind = ptOpenParen then
-           begin
-             Result.AddChild(ParseFormalParameterList);
-           end;
-         end;
-     else
-       begin
+	case CurrentTokenKind of
+	ptFunction:
+		begin
+			Result.AddChild(EatToken(ptFunction));
+			if CurrentTokenKind = ptOpenParen then
+				Result.AddChild(ParseFormalParameterList);
+
+			Result.AddChild(EatToken(ptColon));
+			Result.AddChild(ParseReturnType);
+		end;
+	ptProcedure:
+		begin
+			Result.AddChild(EatToken(ptProcedure));
+			if CurrentTokenKind = ptOpenParen then
+				Result.AddChild(ParseFormalParameterList);
+		end;
+	else
 		   Result.AddChild(SynError('InvalidProceduralType'));
-       end;
-     end;
-     if CurrentTokenKind = ptOf then
-       Result.AddChild(ParseProceduralDirectiveOf);
+	end;
 
-     case CurrentTokenKind of
-       ptSemiColon: TheTokenID := PeekToken(1).DirectiveID;
-     else
-       TheTokenID := CurrentTokenExID;
-     end;
-     while TheTokenID in [ptAbstract, ptCdecl, ptDynamic, ptExport, ptExternal, ptFar,
-       ptMessage, ptNear, ptOverload, ptOverride, ptPascal, ptRegister,
-       ptReintroduce, ptSafeCall, ptStdCall, ptVirtual, ptStatic, ptInline, ptVarargs] do
-     // DR 2001-11-14 no checking for deprecated etc. since it's captured by the typedecl
-     begin
-       if CurrentTokenKind = ptSemiColon then
+	if CurrentTokenKind = ptOf then
+		Result.AddChild(ParseProceduralDirectiveOf);
+
+	case CurrentTokenKind of
+	ptSemiColon: TheTokenID := PeekToken(1).DirectiveID;
+	else
+		TheTokenID := CurrentTokenExID;
+	end;
+
+	// DR 2001-11-14 no checking for deprecated etc. since it's captured by the typedecl
+	while TheTokenID in [ptAbstract, ptCdecl, ptDynamic, ptExport, ptExternal, ptFar,
+			ptMessage, ptNear, ptOverload, ptOverride, ptPascal, ptRegister,
+			ptReintroduce, ptSafeCall, ptStdCall, ptVirtual, ptStatic, ptInline, ptVarargs] do
+	begin
+		if CurrentTokenKind = ptSemiColon then
 			Result.AddChild(EatToken(ptSemicolon));
-       ProceduralDirective(Result);
-       case CurrentTokenKind of
-         ptSemiColon: TheTokenID := PeekToken(1).DirectiveID;
-       else
-         TheTokenID := CurrentTokenExID;
-       end;
-     end;
+		ProceduralDirective(Result);
+		case CurrentTokenKind of
+		ptSemiColon: TheTokenID := PeekToken(1).DirectiveID;
+		else
+			TheTokenID := CurrentTokenExID;
+		end;
+	end;
 
-     if CurrentTokenKind = ptOf then
-       Result.AddChild(ParseProceduralDirectiveOf);
+	if CurrentTokenKind = ptOf then
+		Result.AddChild(ParseProceduralDirectiveOf);
 end;
 
 function TDelphiParser.ParseStringConst: TSyntaxNode2;
@@ -6536,16 +6978,16 @@ end;
 function TDelphiParser.ParsePointerType: TSyntaxNode2;
 begin
 {
-	PointerType
+Returns
+	ntType anType=atPointer
+
+http://dgrok.excastle.com/Grammar.html#PointerType
+
+PointerType
 	-> '^' Type
-
-	Backlinks: Type
-
-	Returns
-		ntType(@anType=atPointer)
 }
 	Result := TSyntaxNode2.Create(ntType);
-	Result.Attributes[anType] := AttributeValueToString(atPointer);
+	Result.Attributes[anType] := AttributeValueToStr(avPointer);
 	Result.AddChild(EatToken(ptPointerSymbol));
 	Result.AddChild(ParseType); // was ParseTypeId in the old code
 end;
@@ -6553,9 +6995,14 @@ end;
 function TDelphiParser.ParseStringType: TSyntaxNode2;
 begin
 {
-	ParseStringType
-		-> STRING								string
-		-> STRING '[' Expression ']'		string[67]
+Returns:
+	ntType anType="string"
+
+http://dgrok.excastle.com/Grammar.html#StringType
+
+StringType
+	-> STRING
+	-> STRING '[' Expression ']'
 }
 	Result := TSyntaxNode2.Create(ntType);
 //	Result.Attributes[anType] :=
@@ -6569,11 +7016,60 @@ begin
 	end;
 end;
 
-function TDelphiParser.PoisonNode: TSyntaxNode2;
+function TDelphiParser.PoisonNode(NodeType: TSyntaxNodeType=ntUnknown): TSyntaxNode2;
+const
+	SyncTokens: set of TptTokenKind = [ptSemicolon];
 begin
-	Result := TSyntaxNode2.Create(ntUnknown);
-	Result.AddChild(EatToken);
+{
+We are creating a poison node; which means the node isn't implmented yet.
+
+But can we think of it instead as a syntax error, and try to recover?
+Can we just eat tokens until we get to an `end`? Nearly every grammer uses an end.
+
+For example
+-----------
+
+Lets say we are parsing a property:
+
+Property
+	-> [CLASS]
+			PROPERTY Ident
+			['[' (Parameter [';'])+ ']']
+			[':' MethodReturnType]
+			(PropertyDirective)*
+			';'
+
+with the example:
+
+	property : string getName write setName;		//E2029 Identifier expected but ':' found
+
+Lets say we've read the ptProperty reserved word token.
+Next we are expecting an Ident. But : is not a valid identifier.
+
+So we know we're broken. But lets eat up unil the semicolon.
+And for many productions, they do end with semi-colon.
+
+So keep adding trivia until we've consumed a semi-colon (or gotten and eof)
+
+We are being called in a loop looking for Methods or Properties. If we say
+we're a property, and even though we're jumbled inside, we got to our end; the semicolon.
+
+This where you can now call PoisonNode with a NodeType and a set of sync points [ptSemicolon, ptEnd]
+
+}
+	Result := TSyntaxNode2.Create(NodeType);
+	Result.Attributes[anMissing] := AttributeValueToStr(avTrue);
 	Result[anName] := 'Not implemented yet';
+
+	// keep eating until we get to our semicolon (or eof)
+	while (not (CurrentTokenKind in SyncTokens)) do
+	begin
+		// Eat the trailing semicolon. Don't eat the Eof. Let that bubble up
+		if CurrentTokenKind = ptEOF then
+			Break;
+
+		Result.AddChild(EatToken);				// CurrentTokenKind
+	end;
 end;
 
 function TDelphiParser.ParseStructuredType: TSyntaxNode2;
@@ -6645,26 +7141,11 @@ function TDelphiParser.ParseRecordFieldConstant: TSyntaxNode2;
 begin
 	Result := TSyntaxNode2.Create(ntField);
 	Result[anName] := CurrentToken.ValueText;
-	Result.Attributes[anType] := AttributeValueToString(atName);
+	Result.Attributes[anType] := AttributeValueToStr(avName);
 
 	Result.AddChild(EatToken(ptIdentifier));
 	Result.AddChild(EatToken(ptColon));
 	Result.AddChild(ParseTypedConstant);
-end;
-
-function TDelphiParser.ParseRecordConstant: TSyntaxNode2;
-begin
-	Result := PoisonNode;
-
-  Result.AddChild(EatToken(ptOpenParen));
-  Result.AddChild(ParseRecordFieldConstant);
-  while (CurrentTokenKind = ptSemiColon) do
-  begin
-    Result.AddChild(EatToken(ptSemicolon));
-    if CurrentTokenKind <> ptCloseParen then
-      Result.AddChild(ParseRecordFieldConstant);
-  end;
-  Result.AddChild(EatToken(ptCloseParen));
 end;
 
 function TDelphiParser.ParseRecordConstraint: TSyntaxNode2;
@@ -6677,63 +7158,33 @@ function TDelphiParser.ParseArrayConstant: TSyntaxNode2;
 begin
 	Result := TSyntaxNode2.Create(ntExpressions);
 
-		Result.AddChild(EatToken(ptOpenParen));
+	Result.AddChild(EatToken(ptOpenParen));
 
+	Result.AddChild(ParseTypedConstant);
+	if CurrentTokenKind = ptDotDot then
+	begin
+		Result.AddChild(EatToken(ptDotDot));
+		Result.AddChild(ParseTypedConstant);
+	end;
+
+	while (CurrentTokenKind = ptComma) do
+	begin
+		Result.AddChild(EatToken(ptComma));
 		Result.AddChild(ParseTypedConstant);
 		if CurrentTokenKind = ptDotDot then
 		begin
 			Result.AddChild(EatToken(ptDotDot));
 			Result.AddChild(ParseTypedConstant);
 		end;
+	end;
 
-		while (CurrentTokenKind = ptComma) do
-		begin
-			Result.AddChild(EatToken(ptComma));
-			Result.AddChild(ParseTypedConstant);
-			if CurrentTokenKind = ptDotDot then
-			begin
-				Result.AddChild(EatToken(ptDotDot));
-				Result.AddChild(ParseTypedConstant);
-			end;
-		end;
-		Result.AddChild(EatToken(ptCloseParen));
-end;
-
-function TDelphiParser.ParseArrayDimension: TSyntaxNode2;
-begin
-	Result := TSyntaxNode2.Create(ntDimension);
-	Result.AddChild(ParseOrdinalType);
-end;
-
-procedure TDelphiParser.ClassForward(ParentNode: TSyntaxNode2);
-begin
-  ParentNode.Attributes[anForwarded] := AttributeValueToString(atTrue);
-  ParentNode.AddChild(EatToken(ptClass));
-end;
-
-procedure TDelphiParser.DispInterfaceForward(ParentNode: TSyntaxNode2);
-begin
-	ParentNode.Attributes[anForwarded] := AttributeValueToString(atTrue);
-	ParentNode.AddChild(EatToken(ptDispInterface));
+	Result.AddChild(EatToken(ptCloseParen));
 end;
 
 function TDelphiParser.ParseDotOp: TSyntaxNode2;
 begin
    Result := TSyntaxNode2.Create(ntDot);
    Result.AddChild(EatToken(ptDot));
-end;
-
-procedure TDelphiParser.InterfaceForward(ParentNode: TSyntaxNode2);
-begin
-	ParentNode.Attributes[anForwarded] := AttributeValueToString(atTrue);
-	ParentNode.AddChild(EatToken(ptInterface));
-end;
-
-function TDelphiParser.ParseObjectForward: TSyntaxNode2;
-begin
-	Result := PoisonNode;
-
-  Result.AddChild(EatToken(ptObject));
 end;
 
 function TDelphiParser.ParseTypeDeclaration: TSyntaxNode2;
@@ -6863,13 +7314,6 @@ ntTypeDecl(@anName="TSpecial")
 	Result.AddChild(EatToken(ptSemicolon));
 end;
 
-function TDelphiParser.ParseExplicitType: TSyntaxNode2;
-begin
-	Result := PoisonNode;
-
-	Result.AddChild(EatToken(ptType));
-end;
-
 function TDelphiParser.ParseType: TSyntaxNode2;
 var
 	packedToken: TSyntaxToken;
@@ -6880,13 +7324,13 @@ http://dgrok.excastle.com/Grammar.html#Type
 Type
 	-> EnumeratedType					'(' (EnumeratedTypeElement [','])+ ')'
 	-> ExpressionOrRange				SimpleExpression ['..' SimpleExpression]
-	-> ParseArrayType						ARRAY ['[' (Type [','])+ ']'] OF Type
-	-> ParseSetType							Term (AddOp Term)*
-	-> ParseFileType							FILE
+	-> ParseArrayType					ARRAY ['[' (Type [','])+ ']'] OF Type
+	-> ParseSetType					Term (AddOp Term)*
+	-> ParseFileType					FILE
 	-> RecordHelperType				RECORD HELPER FOR QualifiedIdent
 	-> RecordType						RECORD
 	-> PointerType						'^' Type
-	-> ParseStringType						STRING
+	-> ParseStringType				STRING
 	-> ProcedureType					(PROCEDURE | FUNCTION)
 	-> ClassHelperType				CLASS HELPER
 	-> ClassOfType						CLASS OF QualifiedIdent
@@ -6920,7 +7364,11 @@ Note: Delphi assumes that a Type starting with '(' is an enum, not an expression
 		end;
 	ptPointerSymbol: Result := ParsePointerType;          // ^Type
 	ptString: Result := ParseStringType;
-	ptClass: Result := ParseClassType;
+	ptClass:
+		if PeekTokenKind = ptOf then
+			Result := ParseClassOfType
+		else
+			Result := ParseClassType;
 	else
 		// E2029 %s expected but %s found
 		Result := SynErrorFmt(SE2029, ['Type', CurrentToken.Text]);
@@ -7054,13 +7502,9 @@ begin
 end;
 
 function TDelphiParser.ParseConstantExpression: TSyntaxNode2;
-var
-	expressionMethod: TTreeBuilderMethod;
 begin
-	Result := PoisonNode;
-
-	expressionMethod := ParseSimpleExpression;
-	BuildExpressionTree(expressionMethod);
+	Result := TSyntaxNode2.Create(ntExpression);
+	Result.AddChild(ParseSimpleExpression);
 end;
 
 function TDelphiParser.ParseResourceDeclaration: TSyntaxNode2;
@@ -7072,7 +7516,7 @@ begin
 
 	Result.AddChild(ParseResourceValue);
 
-	Result.AddChild(ParseHintDirectives);
+	Result.AddChild(ParsePortabilityDirective);
 end;
 
 function TDelphiParser.ParseResourceValue: TSyntaxNode2;
@@ -7086,20 +7530,100 @@ begin
 	  end;
 end;
 
-function TDelphiParser.ParseConstantDeclaration: TSyntaxNode2;
+function TDelphiParser.ParseConstantDecl: TSyntaxNode2;
+var
+	identNode: TSyntaxNode2;
+	valueNode: TSyntaxNode2;
 begin
+{
+http://dgrok.excastle.com/Grammar.html#ConstantDecl
+
+ConstantDecl
+	-> Ident
+			[':' Type]
+			'=' TypedConstant
+			(PortabilityDirective)*
+			';'
+
+Ident
+	-> <identifier>
+	-> <semikeyword>
+	-> '&' <identifier>
+	-> '&' <semikeyword>
+	-> '&' <keyword>
+
+Example
+-------
+
+	const
+		LEN_FirstName = 50;
+		MAX_BUFFER = 1024*16; //16 KB
+		clMainInstruction: TColor = $00993300;
+
+Parsed:
+
+;	const
+	ntConstants
+	├─ #ptConstKeyword("const")
+
+;	LEN_FirstName = 50;
+	├─ ntConstant(@anName="LEN_FirstName", @anValueText="50")
+	│	├─ #ptIdentifier("LEN_FirstName")
+	│	├─ #ptEquals("=")
+	│	├─ ntExpression(@anValueText="50")
+	│	│	└─ #ptIntegerLiteral("50")
+	│	└─ #ptSemicolon(";")
+
+;	MAX_BUFFER = 1024*16; //16 KB
+	├─ ntConstant(@anName="MAX_BUFFER", @anValueText="1024*16")
+	│	├─ #ptIdentifier("MAX_BUFFER")
+	│	├─ #ptEquals("=")
+	│	├─ ntExpression(@anValueText="1024*16")
+	│	│	├─ #ptIntegerLiteral("1024")
+	│	│	├─ #ptAsterisk("*")
+	│	│	└─ #ptIntegerLiteral("16")
+	│	├─ #ptSemicolon(";")
+	│	└─ #ptLineComment("//16 KB")
+
+;	clMainInstruction: TColor = $00993300;
+	└─ ntConstant(@anName="clMainInstruction", @anType="TColor", @anValueText="$00993300")
+		├─ #ptIdentifier("clMainInstruction")
+		├─ #ptColon(":")
+		├─ ntType(@anType="TColor")
+		│  └─ #ptIdentifier("TColor")
+		├─ #ptEquals("=")
+		├─ ntExpression(@anValueText="$00993300")
+		│  └─ #ptHexIntegerLiteral("$00993300")
+		└─ #ptSemicolon(";")
+}
 	Result := TSyntaxNode2.Create(ntConstant);
 
-	Result.AddChild(ParseConstantName);
+//	-> Ident
+	identNode := ParseIdent;
+	Result.AddChild(identNode);
+	Result.Attributes[anName] := identNode.Value;
 
-	case CurrentTokenKind of
-	ptEquals: Result.AddChild(ParseConstantEqual);
-	ptColon:  Result.AddChild(ParseConstantColon);
-	else
-		Result.AddChild(SynError('InvalidConstantDeclaration'));
+//	-> [':' Type]
+	if CurrentTokenKind = ptColon then
+	begin
+		Result.AddChild(EatToken(ptColon));
+		Result.AddChild(ParseType);
 	end;
 
-	Result.AddChild(ParseHintDirectives);
+//	'=' TypedConstant
+	Result.AddChild(EatToken(ptEquals));
+	valueNode := ParseTypedConstant;
+	Result.AddChild(valueNode);
+	Result.Attributes[anValueText] := valueNode.Attributes[anValueText];
+
+//	(PortabilityDirective)*
+	// A constant declaration can optionally end with things like `deprecated;`
+	while IsPossiblePortabilityDirective do
+	begin
+		Result.AddChild(ParsePortabilityDirective);
+	end;
+
+	Result.AddChild(EatToken(ptSemiColon));
 end;
 
 function TDelphiParser.ParseConstantColon: TSyntaxNode2;
@@ -7152,9 +7676,9 @@ end;
 function TDelphiParser.ParseLabelId: TSyntaxNode2;
 begin
 {
-http://dgrok.excastle.com/Grammar.html#ParseLabelId
+http://dgrok.excastle.com/Grammar.html#LabelId
 
-ParseLabelId
+LabelId
 	-> <number>
 	-> Ident
 }
@@ -7171,6 +7695,21 @@ end;
 
 function TDelphiParser.ParseProcedureDeclarationSection: TSyntaxNode2;
 begin
+{
+http://dgrok.excastle.com/Grammar.html#MethodHeading
+
+MethodHeading
+	-> [CLASS]
+			(PROCEDURE | FUNCTION | CONSTRUCTOR | DESTRUCTOR | OPERATOR)
+			QualifiedIdent
+			(
+			['(' (Parameter [';'])* ')']
+			[':' MethodReturnType]
+			(Directive)*
+			| '=' Ident
+
+				[';']
+}
 	Result := TSyntaxNode2.Create(ntMethod);
 
    if CurrentTokenKind = ptClass then
@@ -7221,6 +7760,7 @@ end;
 
 procedure TDelphiParser.ProceduralDirective(ParentNode: TSyntaxNode2);
 begin
+
 	case CurrentToken.GenID of
 	ptAbstract:						DirectiveBinding(ParentNode);
 	ptCdecl, ptPascal, ptRegister, ptSafeCall, ptStdCall: DirectiveCalling(ParentNode);
@@ -7261,11 +7801,11 @@ MethodHeading
 			[';']
 }
 	case CurrentTokenKind of
-	ptProcedure: Result := ParseProcedureMethodHeading;
-	ptFunction: Result := ParseFunctionMethodHeading;
-	ptConstructor: Result := ParseConstructorMethodHeading;
-	ptDestructor: Result := ParseDestructorMethodHeading;
-	ptOperator: Result := ParseOperatorMethodHeading;
+	ptProcedure:		Result := ParseProcedureMethodHeading;
+	ptFunction:			Result := ParseFunctionMethodHeading;
+	ptConstructor:		Result := ParseConstructorMethodHeading;
+	ptDestructor:		Result := ParseDestructorMethodHeading;
+	ptOperator:			Result := ParseOperatorMethodHeading;
 	ptIdentifier:
 		begin
 			if CurrentTokenExID = ptOperator then
@@ -7276,11 +7816,11 @@ MethodHeading
 	ptClass:
 		begin
 			case PeekTokenKind of
-			ptProcedure: Result := ParseProcedureMethodHeading;
-			ptFunction: Result := ParseFunctionMethodHeading;
-			ptConstructor: Result := ParseConstructorMethodHeading;
-			ptDestructor: Result := ParseDestructorMethodHeading;
-			ptOperator: Result := ParseOperatorMethodHeading;
+			ptProcedure: 		Result := ParseProcedureMethodHeading;
+			ptFunction: 		Result := ParseFunctionMethodHeading;
+			ptConstructor: 	Result := ParseConstructorMethodHeading;
+			ptDestructor:		Result := ParseDestructorMethodHeading;
+			ptOperator:			Result := ParseOperatorMethodHeading;
 			ptIdentifier:
 				begin
 					if PeekTokenExID = ptOperator then
@@ -7299,22 +7839,11 @@ MethodHeading
 	if CurrentTokenKind = ptSemiColon then
 		Result.AddChild(EatToken(ptSemicolon));
 
-     //TODO: Add FINAL
-     while CurrentTokenExID in [ptAbstract, ptCdecl, ptDynamic, ptExport, ptExternal, ptFar,
-       ptMessage, ptNear, ptOverload, ptOverride, ptPascal, ptRegister,
-       ptReintroduce, ptSafeCall, ptStdCall, ptVirtual,
-       ptDeprecated, ptLibrary, ptPlatform, ptLocal, ptVarargs,
-       ptStatic, ptInline, ptAssembler, ptForward, ptDelayed] do
-     begin
-       case CurrentTokenExID of
-		 ptAssembler: Result.AddChild(EatToken(ptAssembler));
-         ptForward: Result.AddChild(ParseForwardDeclaration);
-       else
-         ProceduralDirective(Result);
-       end;
-       if CurrentTokenKind = ptSemiColon then
-			Result.AddChild(EatToken(ptSemicolon));
-     end;
+	//TODO: Add FINAL
+	while IsPossibleDirective do
+	begin
+		Result.AddChild(ParseDirective);
+	end;
 end;
 
 function TDelphiParser.ParseFunctionMethodHeading: TSyntaxNode2;
@@ -7326,16 +7855,16 @@ FunctionMethodHeading
 			':' MethodReturnType
 }
 	Result := TSyntaxNode2.Create(ntMethod);
-	Result.Attributes[anKind] := AttributeValueToString(atFunction);
+	Result.Attributes[anKind] := AttributeValueToStr(avFunction);
 
 	if CurrentTokenKind = ptClass then
 	begin
 		Result.AddChild(EatToken(ptClass));
-		Result.Attributes[anClass] := AttributeValueToString(atTrue);
+		Result.Attributes[anClass] := AttributeValueToStr(avTrue);
 	end;
 
 	Result.AddChild(EatToken(ptFunction));
-	Result.AddChild(ParseQualifiedIdentifier);
+	Result.AddChild(ParseQualifiedIdent);
 	if CurrentTokenKind = ptOpenParen then
 		Result.AddChild(ParseFormalParameterList);
 	Result.AddChild(EatToken(ptColon));
@@ -7347,19 +7876,22 @@ begin
 {
 ProcedureMethodHeading
 	-> [CLASS] PROCEDURE QualifiedIdent
-			['(' (Parameter [';'])* ')']
+				['(' (Parameter [';'])* ')']
 }
 	Result := TSyntaxNode2.Create(ntMethod);
-	Result.Attributes[anKind] := AttributeValueToString(atProcedure);
+	Result.Attributes[anKind] := AttributeValueToStr(avProcedure);
 
+// [CLASS] PROCEDURE QualifiedIdent
 	if CurrentTokenKind = ptClass then
 	begin
 		Result.AddChild(EatToken(ptClass));
-		Result.Attributes[anClass] := AttributeValueToString(atTrue);
+		Result.Attributes[anClass] := AttributeValueToStr(avTrue);
 	end;
 
 	Result.AddChild(EatToken(ptProcedure));
-	Result.AddChild(ParseQualifiedIdentifier);
+	Result.AddChild(ParseQualifiedIdent);
+
+//	['(' (Parameter [';'])* ')']
 	if CurrentTokenKind = ptOpenParen then
 		Result.AddChild(ParseFormalParameterList);
 end;
@@ -7372,16 +7904,16 @@ ConstructorMethodHeading
 			['(' (Parameter [';'])* ')']
 }
 	Result := TSyntaxNode2.Create(ntMethod);
-	Result.Attributes[anKind] := AttributeValueToString(atConstructor);
+	Result.Attributes[anKind] := AttributeValueToStr(avConstructor);
 
 	if CurrentTokenKind = ptClass then
 	begin
 		Result.AddChild(EatToken(ptClass));
-		Result.Attributes[anClass] := AttributeValueToString(atTrue);
+		Result.Attributes[anClass] := AttributeValueToStr(avTrue);
 	end;
 
 	Result.AddChild(EatToken(ptConstructor));
-	Result.AddChild(ParseQualifiedIdentifier);
+	Result.AddChild(ParseQualifiedIdent);
 	if CurrentTokenKind = ptOpenParen then
 		Result.AddChild(ParseFormalParameterList);
 end;
@@ -7394,16 +7926,16 @@ DestructorMethodHeading
 			['(' (Parameter [';'])* ')']
 }
 	Result := TSyntaxNode2.Create(ntMethod);
-	Result.Attributes[anKind] := AttributeValueToString(atDestructor);
+	Result.Attributes[anKind] := AttributeValueToStr(avDestructor);
 
 	if CurrentTokenKind = ptClass then
 	begin
 		Result.AddChild(EatToken(ptClass));
-		Result.Attributes[anClass] := AttributeValueToString(atTrue);
+		Result.Attributes[anClass] := AttributeValueToStr(avTrue);
 	end;
 
 	Result.AddChild(EatToken(ptDestructor));
-	Result.AddChild(ParseQualifiedIdentifier);
+	Result.AddChild(ParseQualifiedIdent);
 	if CurrentTokenKind = ptOpenParen then
 		Result.AddChild(ParseFormalParameterList);
 end;
@@ -7422,7 +7954,7 @@ OperatorMethodHeading
 	if CurrentTokenKind = ptClass then
 	begin
 		Result.AddChild(EatToken(ptClass));
-		Result.Attributes[anClass] := AttributeValueToString(atTrue);
+		Result.Attributes[anClass] := AttributeValueToStr(avTrue);
 	end;
 
 	if CurrentTokenKind = ptOperator then
@@ -7432,7 +7964,7 @@ OperatorMethodHeading
 	else
 		Result.AddChild(SynError('Expected operator'));
 
-	Result.AddChild(ParseQualifiedIdentifier);
+	Result.AddChild(ParseQualifiedIdent);
 	if CurrentTokenKind = ptOpenParen then
 		Result.AddChild(ParseFormalParameterList);
 
@@ -7458,41 +7990,12 @@ VarSection
 		Result := SynError('Expected var section');
 	end;
 
+//	(VarDecl)+
+	Result.AddChild(ParseVarDecl);
 
-{
-	varSect := TSyntaxNode2.Create(ntUnknown);
-	try
-		FStack.Push(ntVariables);
-
-		FStack.Push(varSect);
-		try
-			case CurrentTokenKind of
-			ptThreadVar: NextToken;
-			ptVar:       NextToken;
-			else
-				SynError('InvalidVarSection');
-			end;
-
-			while CurrentTokenKind in [ptIdentifier, ptOpenBracket] do
-			begin
-				if CurrentTokenKind = ptOpenBracket then
-					ParseCustomAttribute
-				else
-				begin
-					Result.AddChild(ParseVarDeclaration);
-					Semicolon;
-				end;
-			end;
-		finally
-			FStack.Pop;
-		end;
-
-		RearrangeVarSection(varSect);
-		FStack.Pop;
-	finally
-		varSect.Free;
-	end;
-}
+	// and keep looping until the next token isn't an identifier
+	while IsPossibleIdentifier do
+		Result.AddChild(ParseVarDecl);
 end;
 
 function TDelphiParser.IsPossibleConstSection: Boolean;
@@ -7501,14 +8004,14 @@ begin
 http://dgrok.excastle.com/Grammar.html#ConstSection
 
 ConstSection
-		-> CONST (ConstantDecl)+
+	-> CONST (ConstantDecl)+
 
 ConstantDecl
 	-> Ident
-		[':' Type]
-		'=' TypedConstant
-		(PortabilityDirective)*
-		';'
+			[':' Type]
+			'=' TypedConstant
+			(PortabilityDirective)*
+			';'
 
 Ident
 	-> <identifier>
@@ -7564,15 +8067,90 @@ Parsed:
 	Result := (CurrentTokenKind = ptConst);
 end;
 
+function TDelphiParser.IsPossibleDirective: Boolean;
+var
+	directiveType: TptTokenKind;
+begin
+{
+http://dgrok.excastle.com/Grammar.html#Directive
+
+Directive
+			Backlinks: MethodHeading, ProcedureType
+	-> [';'] ABSTRACT
+	-> [';'] ASSEMBLER
+	-> [';'] CDECL
+	-> [';'] DISPID Expression
+	-> [';'] DYNAMIC
+	-> [';'] EXPORT
+	-> [';'] EXTERNAL [Expression (ExportsSpecifier)*]
+	-> [';'] FAR
+	-> [';'] FINAL
+	-> [';'] FORWARD
+	-> [';'] INLINE
+	-> [';'] LOCAL
+	-> [';'] MESSAGE Expression
+	-> [';'] NEAR
+	-> [';'] OVERLOAD
+	-> [';'] OVERRIDE
+	-> [';'] PASCAL
+	-> [';'] REGISTER
+	-> [';'] REINTRODUCE
+	-> [';'] SAFECALL
+	-> [';'] STATIC
+	-> [';'] STDCALL
+	-> [';'] VARARGS
+	-> [';'] VIRTUAL
+	-> [';'] PortabilityDirective
+}
+	Result := False;
+
+	directiveType := CurrentTokenKind;
+
+	// the leading semicolon is optional
+	if CurrentTokenKind = ptSemicolon then
+		directiveType := PeekTokenKind;
+
+	case directiveType of
+	ptAbstract,			//		-> [';'] ABSTRACT
+	ptAssembler,		//		-> [';'] ASSEMBLER
+	ptCDecl,				//		-> [';'] CDECL
+	ptDispid,			//		-> [';'] DISPID Expression
+	ptDynamic,			//		-> [';'] DYNAMIC
+	ptExport, 			//		-> [';'] EXPORT
+	ptExternal, 		//		-> [';'] EXTERNAL [Expression (ExportsSpecifier)*]
+	ptFar,				//		-> [';'] FAR
+	ptFinal,				//		-> [';'] FINAL
+	ptForward,			//		-> [';'] FORWARD
+	ptInline,			//		-> [';'] INLINE
+	ptLocal,				//		-> [';'] LOCAL
+	ptMessage,			//		-> [';'] MESSAGE Expression
+	ptNear,				//		-> [';'] NEAR
+	ptOverload,			//		-> [';'] OVERLOAD
+	ptOverride,			//		-> [';'] OVERRIDE
+	ptPascal,			//		-> [';'] PASCAL
+	ptRegister,			//		-> [';'] REGISTER
+	ptReintroduce,		//		-> [';'] REINTRODUCE
+	ptSafecall,			//		-> [';'] SAFECALL
+	ptStatic,			//		-> [';'] STATIC
+	ptStdcall,			//		-> [';'] STDCALL
+	ptVarargs,			//		-> [';'] VARARGS
+	ptVirtual:			//		-> [';'] VIRTUAL
+		Result := True;
+	else
+//		-> [';'] PortabilityDirective
+		Result := IsPossiblePortabilityDirective;
+	end;
+end;
+
 function TDelphiParser.IsPossibleMethodHeading: Boolean;
 begin
 {
 MethodHeading
-		-> [CLASS] (PROCEDURE | FUNCTION | CONSTRUCTOR | DESTRUCTOR | OPERATOR) QualifiedIdent
-					['(' (Parameter [';'])* ')']
-					[':' MethodReturnType]		// FUNCTION required, OPERATOR optional
-					[';']
-					(Directive [';'])*
+	-> [CLASS] (PROCEDURE | FUNCTION | CONSTRUCTOR | DESTRUCTOR | OPERATOR) QualifiedIdent
+			['(' (Parameter [';'])* ')']
+			[':' MethodReturnType]		// FUNCTION required, OPERATOR optional
+			[';']
+			(Directive [';'])*
 }
 	// Check for optional `class` prefix
 	if CurrentTokenKind = ptClass then
@@ -7587,7 +8165,7 @@ function TDelphiParser.IsPossibleResStringSection: Boolean;
 begin
 {
 ResStringSection
-		-> RESOURCESTRING
+	-> RESOURCESTRING
 			(ConstantDecl)+
 }
 	case CurrentTokenKind of
@@ -7766,6 +8344,17 @@ VarSection
 	Result := (CurrentTokenKind in [ptVar, ptThreadVar]);
 end;
 
+function TDelphiParser.IsPossibleVisibilitySection: Boolean;
+begin
+	Result :=
+			(CurrentTokenExID in [ptPrivate, ptProtected, ptPublic, ptPublished])
+			or (
+				(CurrentTokenExID = ptStrict)
+				and
+				(PeekTokenExID in [ptPrivate, ptProtected])
+			);
+end;
+
 function TDelphiParser.IsPossibleVisibilitySectionContent: Boolean;
 begin
 {
@@ -7838,14 +8427,14 @@ http://dgrok.excastle.com/Grammar.html#TypeSection
 Grammer
 =======
 
-	TypeSection
-		-> TYPE (TypeDecl)+
+TypeSection
+	-> TYPE (TypeDecl)+
 
-	TypeDecl
-		-> Ident '=' [TYPE] Type (PortabilityDirective)* ';'
-		-> Ident '=' CLASS ';'
-		-> Ident '=' DISPINTERFACE ';'
-		-> Ident '=' INTERFACE ';'
+TypeDecl
+	-> Ident '=' [TYPE] Type (PortabilityDirective)* ';'
+	-> Ident '=' CLASS ';'
+	-> Ident '=' DISPINTERFACE ';'
+	-> Ident '=' INTERFACE ';'
 
 
 Returns: ntTypeSection
@@ -8039,29 +8628,13 @@ Example
 }
 	// Base type name (qualified identifier)
 	Result := TSyntaxNode2.Create(ntType);
-	Result.AddChild(ParseQualifiedIdentifier); // ntQualifiedIdentifier("IComparable")
+	Result.AddChild(ParseQualifiedIdent); // ntQualifiedIdentifier("IComparable")
 
 	// Optional generic type arguments: '<' Type {',' Type} '>'
 	if CurrentTokenKind = ptLessThan then
 	begin
 		Result.AddChild(ParseTypeParams); //!!RECURSIVE!!
 	end;
-end;
-
-function TDelphiParser.ParseTypeParamList: TSyntaxNode2;
-begin
-	Result := PoisonNode;
-
-  if CurrentTokenKind = ptOpenBracket then
-    Result.AddChild(ParseAttributeSection);
-  Result.AddChild(ParseTypeSimple);
-  while CurrentTokenKind = ptComma do
-  begin
-	Result.AddChild(EatToken(ptComma));
-    if CurrentTokenKind = ptOpenBracket then
-      Result.AddChild(ParseAttributeSection);
-    Result.AddChild(ParseTypeSimple);
-  end;
 end;
 
 function TDelphiParser.ParseTypeParams: TSyntaxNode2;
@@ -8147,31 +8720,20 @@ Example
 
 end;
 
-
-function TDelphiParser.ParseTypeReferenceType: TSyntaxNode2;
-begin
-	Result := PoisonNode;
-
-
-	Result.AddChild(EatToken(ptType));
-	Result.AddChild(EatToken(ptOf));
-	Result.AddChild(ParseTypeId);
-end;
-
 function TDelphiParser.ParseConstSection: TSyntaxNode2;
 begin
 {
 http://dgrok.excastle.com/Grammar.html#ConstSection
 
 ConstSection
-		-> CONST (ConstantDecl)+
+	-> CONST (ConstantDecl)+
 
 ConstantDecl
 	-> Ident
-		[':' Type]
-		'=' TypedConstant
-		(PortabilityDirective)*
-		';'
+			[':' Type]
+			'=' TypedConstant
+			(PortabilityDirective)*
+			';'
 
 Ident
 	-> <identifier>
@@ -8229,110 +8791,13 @@ Parsed:
 
 {
 ConstSection
-		-> CONST (ConstantDecl)+
+	-> CONST (ConstantDecl)+
 }
 	Result.AddChild(ParseConstantDecl);
 	while IsPossibleConstantDecl do
 	begin
 		Result.AddChild(ParseConstantDecl);
 	end;
-end;
-
-function TDelphiParser.ParseConstantDecl: TSyntaxNode2;
-var
-	tok: TSyntaxToken;
-	valueNode: TSyntaxNode2;
-begin
-{
-http://dgrok.excastle.com/Grammar.html#ConstantDecl
-
-ConstantDecl
-	-> Ident
-		[':' Type]
-		'=' TypedConstant
-		(PortabilityDirective)*
-		';'
-
-Ident
-	-> <identifier>
-	-> <semikeyword>
-	-> '&' <identifier>
-	-> '&' <semikeyword>
-	-> '&' <keyword>
-
-Example
--------
-
-	const
-		LEN_FirstName = 50;
-		MAX_BUFFER = 1024*16; //16 KB
-		clMainInstruction: TColor = $00993300;
-
-Parsed:
-
-;	const
-	ntConstants
-	├─ #ptConstKeyword("const")
-
-;	LEN_FirstName = 50;
-	├─ ntConstant(@anName="LEN_FirstName", @anValueText="50")
-	│	├─ #ptIdentifier("LEN_FirstName")
-	│	├─ #ptEquals("=")
-	│	├─ ntExpression(@anValueText="50")
-	│	│	└─ #ptIntegerLiteral("50")
-	│	└─ #ptSemicolon(";")
-
-;	MAX_BUFFER = 1024*16; //16 KB
-	├─ ntConstant(@anName="MAX_BUFFER", @anValueText="1024*16")
-	│	├─ #ptIdentifier("MAX_BUFFER")
-	│	├─ #ptEquals("=")
-	│	├─ ntExpression(@anValueText="1024*16")
-	│	│	├─ #ptIntegerLiteral("1024")
-	│	│	├─ #ptAsterisk("*")
-	│	│	└─ #ptIntegerLiteral("16")
-	│	├─ #ptSemicolon(";")
-	│	└─ #ptLineComment("//16 KB")
-
-;	clMainInstruction: TColor = $00993300;
-	└─ ntConstant(@anName="clMainInstruction", @anType="TColor", @anValueText="$00993300")
-		├─ #ptIdentifier("clMainInstruction")
-		├─ #ptColon(":")
-		├─ ntType(@anType="TColor")
-		│  └─ #ptIdentifier("TColor")
-		├─ #ptEquals("=")
-		├─ ntExpression(@anValueText="$00993300")
-		│  └─ #ptHexIntegerLiteral("$00993300")
-		└─ #ptSemicolon(";")
-}
-	Result := TSyntaxNode2.Create(ntConstant);
-
-	// Get the constant name
-	// @anName = "clMainInstruction"
-	tok := EatToken(ptIdentifier);
-	Result.AddChild(tok);
-	Result[anName] := tok.ValueText;
-
-	// Read optional type [':' Type]
-	if CurrentTokenKind = ptColon then
-	begin
-		Result.AddChild(EatToken(ptColon));
-		Result.AddChild(ParseType);
-	end;
-
-	// '=' TypedConstant
-
-	Result.AddChild(EatToken(ptEquals));
-	valueNode := ParseTypedConstant;
-	Result.AddChild(valueNode);
-	Result[anValueText] := valueNode[anValueText];
-
-	// (PortabilityDirective)*
-	while IsPossiblePortabilityDirective do
-	begin
-		Result.AddChild(ParsePortabilityDirective);
-	end;
-
-	Result.AddChild(EatToken(ptSemiColon));
 end;
 
 function TDelphiParser.IsPossibleConstantDecl: Boolean;
@@ -8342,10 +8807,10 @@ http://dgrok.excastle.com/Grammar.html#ConstSection
 
 ConstantDecl
 	-> Ident
-		[':' Type]
-		'=' TypedConstant
-		(PortabilityDirective)*
-		';'
+			[':' Type]
+			'=' TypedConstant
+			(PortabilityDirective)*
+			';'
 
 Ident
 	-> <identifier>
@@ -8400,7 +8865,7 @@ begin
 http://dgrok.excastle.com/Grammar.html#InterfaceDecl
 
 ResStringSection
-	-> RESOURCESTRING ( ResourceStringDecl ';' )*
+	-> RESOURCESTRING ( ResourceStringDecl )*
 
 ResourceStringDecl
 	-> Ident '=' ConstExpr ';'
@@ -8445,7 +8910,7 @@ var
 begin
 {
 ResourceStringDecl
-	-> Ident '=' ConstExpr
+	-> Ident '=' ConstExpr ';'
 
 ConstExpr
 	-> ?An expression which evaluates to a constant at compilation time?
@@ -8505,11 +8970,11 @@ begin
 http://dgrok.excastle.com/Grammar.html#InterfaceDecl
 
 InterfaceDecl
-		-> ConstSection			==> ntConstants
-		-> ResStringSection		==> ntResourceString
-		-> TypeSection
-		-> VarSection
-		-> MethodHeading
+	-> ConstSection			==> ntConstants
+	-> ResStringSection		==> ntResourceString
+	-> TypeSection
+	-> VarSection
+	-> MethodHeading
 }
 
 	if IsPossibleConstSection then
@@ -8526,76 +8991,93 @@ InterfaceDecl
 		Result := SynError('InvalidInterfaceDeclaration');
 end;
 
-function TDelphiParser.ParseExportsElement: TSyntaxNode2;
+function TDelphiParser.ParseExportsItem: TSyntaxNode2;
 begin
+{
+http://dgrok.excastle.com/Grammar.html#ExportsItem
+
+ExportsItem
+	-> Ident (ExportsSpecifier)*
+
+Backlinks: ExportsStatement
+
+ExportsSpecifier [^]
+	-> (INDEX | NAME) Expression
+}
 	Result := TSyntaxNode2.Create(ntElement);
-     Result.AddChild(ParseExportsName);
-     if CurrentTokenKind = ptOpenParen then
-     begin
-       Result.AddChild(ParseFormalParameterList);
-     end;
+	Result.AddChild(ParseIdent);
 
-     if CurrentTokenExID = ptIndex then
-     begin
-	   Result.AddChild(EatToken(ptIndex));
-       Result.AddChild(EatToken(ptIntegerConst));
-     end;
-     if CurrentTokenExID = ptName then
-     begin
-	   Result.AddChild(EatToken(ptName));
-       Result.AddChild(ParseSimpleExpression);
-     end;
-     if CurrentTokenExID = ptResident then
-     begin
-	   Result.AddChild(EatToken(ptResident));
-     end;
+//	(ExportsSpecifier)*
+	while CurrentTokenKind in [ptIndex, ptName] do
+	begin
+		Result.AddChild(EatToken());
+		Result.AddChild(ParseExpression);
+	end;
 end;
 
-function TDelphiParser.ParseExportsClause: TSyntaxNode2;
+function TDelphiParser.ParseExportStatement: TSyntaxNode2;
 begin
+{
+http://dgrok.excastle.com/Grammar.html#ExportsStatement
+
+ExportsStatement
+			Backlinks: ImplementationDecl
+	-> EXPORTS (ExportsItem [','])+ ';'
+}
 	Result := TSyntaxNode2.Create(ntExports);
-		Result.AddChild(EatToken(ptExports));
-		Result.AddChild(ParseExportsElement);
-		while CurrentTokenKind = ptComma do
-		begin
-			Result.AddChild(EatToken(ptComma));
-			Result.AddChild(ParseExportsElement);
-		end;
-		Result.AddChild(EatToken(ptSemicolon));
+	Result.AddChild(EatToken(ptExports));
+
+   // Test: with and without any export items; just "exports;"  Is that valid?
+
+	Result.AddChild(ParseExportsItem);
+	while CurrentTokenKind = ptComma do
+	begin
+		Result.AddChild(EatToken(ptComma));
+		Result.AddChild(ParseExportsItem);
+	end;
+	Result.AddChild(EatToken(ptSemicolon));
 end;
 
-function TDelphiParser.ParseContainsClause: TSyntaxNode2;
+function TDelphiParser.IsPossibleRequiresClause: Boolean;
 begin
-	Result := TSyntaxNode2.Create(ntContains);
-	 Result.AddChild(ExpectedEx(ptContains));
-     Result.AddChild(ParseMainUsedUnitStatement);
-     while CurrentTokenKind = ptComma do
-     begin
-	   Result.AddChild(EatToken(ptComma));
-       Result.AddChild(ParseMainUsedUnitStatement);
-     end;
-     Result.AddChild(EatToken(ptSemicolon));
+{
+http://dgrok.excastle.com/Grammar.html#RequiresClause
+
+RequiresClause
+	-> REQUIRES (QualifiedIdent [','])+ ';'
+
+
+ntRequires
+	ntQualifiedIdentifier
+}
+	Result := (CurrentTokenKind = ptRequires);
 end;
 
 function TDelphiParser.ParseRequiresClause: TSyntaxNode2;
 begin
 {
-   ntRequires]
-		[ptRequires]
-      ParseRequiresIdentifier
-      if comma
-			ParseRequiresIdentifier
-      [ptSemicolon]
+Returns:
+	ntRequires
+		ntQualifiedIdentifier
+
+http://dgrok.excastle.com/Grammar.html#RequiresClause
+
+RequiresClause
+	-> REQUIRES (QualifiedIdent [','])+ ';'
 }
 	Result := TSyntaxNode2.Create(ntRequires);
-	  Result.AddChild(ExpectedEx(ptRequires));
-	  Result.AddChild(ParseRequiresIdentifier);
-	  while CurrentTokenKind = ptComma do
-	  begin
-		 Result.AddChild(EatToken(ptComma));
-	    Result.AddChild(ParseRequiresIdentifier);
-	  end;
-	  Result.AddChild(EatToken(ptSemicolon));
+
+//	REQUIRES
+	Result.AddChild(EatTokenEx(ptRequires));
+
+//	(QualifiedIdent [','])+ ';'
+	Result.AddChild(ParseQualifiedIdent);
+	while CurrentTokenKind = ptComma do
+	begin
+		Result.AddChild(EatToken(ptComma));
+		Result.AddChild(ParseQualifiedIdent);
+	end;
+	Result.AddChild(EatToken(ptSemicolon));
 end;
 
 function TDelphiParser.ParseRequiresIdentifier: TSyntaxNode2;
@@ -8646,6 +9128,8 @@ end;
 function TDelphiParser.ParseImplementationSection: TSyntaxNode2;
 begin
 {
+http://dgrok.excastle.com/Grammar.html#ImplementationSection
+
 ImplementationSection
 	-> IMPLEMENTATION
 			[UsesClause]
@@ -8669,6 +9153,9 @@ end;
 function TDelphiParser.ParseInterfaceSection: TSyntaxNode2;
 begin
 {
+Returns:
+	ntInterface
+
 http://dgrok.excastle.com/Grammar.html#InterfaceSection
 
 InterfaceSection
@@ -8676,7 +9163,6 @@ InterfaceSection
 			[UsesClause]
 			(InterfaceDecl)*
 
-Returns: ntInterface
 
 Example
 =======
@@ -8733,42 +9219,80 @@ var
 	s: string;
 begin
 {
+http://dgrok.excastle.com/Grammar.html#PortabilityDirective
+
 PortabilityDirective
-		-> platform
-		-> deprecated
-		-> library
-		-> experimental
+	-> platform
+	-> deprecated [ <stringliteral> ]
+	-> library
+	-> experimental
+
+Returns
+	ntPortabilityDirective
+
+DGrok Bug: Added <stringliteral> after deprecated
+
+
+Declarations and ParseStatements (Delphi)
+https://docwiki.embarcadero.com/RADStudio/Sydney/en/Declarations_and_Statements_(Delphi)#Hinting_Directives
+=========================================
+
+Hinting Directives
+------------------
+
+The 'hint' directives `platform`, `deprecated`, and `library` may be appended to
+any declaration. These directives will produce warnings at compile time.
+
+Hint directives can be applied to type declarations, variable declarations, class,
+interface, and structure declarations, field declarations within classes or
+records, procedure, function, and method declarations, and unit declarations.
+
+When a hint directive appears in a unit declaration, it means that the hint
+applies to everything in the unit. For example, the Windows 3.1 style
+OleAuto.pas unit on Windows is completely deprecated. Any reference to that unit
+or any symbol in that unit produces a deprecation message.
+
+The platform hinting directive on a symbol or unit indicates that it may not
+exist or that the implementation may vary considerably on different platforms.
+The library hinting directive on a symbol or unit indicates that the code may
+not exist or the implementation may vary considerably on different library
+architectures.
+
+The platform and library directives do not specify which platform or library.
+If your goal is writing platform-independent code, you do not need to know which
+platform a symbol is specific to; it is sufficient that the symbol be marked as
+specific to some platform to let you know it may cause problems for your goal of
+portability.
+
+In the case of a procedure or function declaration, the hint directive should be
+separated from the rest of the declaration with a semicolon.
+
 }
+	if not (CurrentToken.GenID in [ptPlatform, ptDeprecated, ptLibrary, ptExperimental]) then
+	begin
+		Result := SynErrorFmt('Expected %s but was %s', ['PortabilityDirective', CurrentToken.ValueText]);
+		Exit;
+	end;
+
 	Result := TSyntaxNode2.Create(ntPortabilityDirective);
 
-	while CurrentToken.GenID in [ptPlatform, ptLibrary, ptDeprecated, ptExperimental] do
-	begin
-		case CurrentToken.GenID of
-		ptPlatform:			Result.Attributes[anPlatform]     := 'true';
-		ptLibrary:			Result.Attributes[anLibrary]      := 'true';
-		ptDeprecated:
-			begin
-				Result.Attributes[anDeprecated]   := 'true';
-
-				// Check for deprecated 'use this other unit'
-				// [ptDeprecated] [ptStringConst]
-				if PeekTokenKind = ptStringLiteral then
-				begin
-					Result.AddChild(EatToken);
-					s := CurrentToken.ValueText;
-					if s <> '' then
-						Result.Attributes[anDeprecated] := s;
-					Result.AddChild(EatToken(ptStringLiteral)); // add the reason for the deprecation
-				end;
-			end;
-		ptExperimental: Result.Attributes[anExperimental] := 'true';
-		else
+	case CurrentToken.GenID of
+	ptPlatform:			Result.Attributes[anPlatform]			:= AttributeValueToStr(avTrue);
+	ptLibrary:			Result.Attributes[anLibrary]			:= AttributeValueToStr(avTrue);
+	ptExperimental:	Result.Attributes[anExperimental]	:= AttributeValueToStr(avTrue);
+	ptDeprecated:
 		begin
-			Result.AddChild(SynError('Invalid identifier '+CurrentToken.ValueText));
-			Continue;
+			Result.Attributes[anDeprecated]		:= AttributeValueToStr(avTrue);
+
+			// Check for deprecated 'use this other unit'
+			// [ptDeprecated] [ptStringLiteral]
+			if PeekTokenKind = ptStringLiteral then
+			begin
+				s := CurrentToken.ValueText;
+				Result.AddChild(EatToken(ptStringLiteral)); // the reason for the deprecation
+				Result.Attributes[anDeprecated] := s;
+			end;
 		end;
-		end;
-		Result.AddChild(EatToken);
 	end;
 end;
 
@@ -8776,10 +9300,10 @@ function TDelphiParser.IsPossiblePortabilityDirective: Boolean;
 begin
 {
 PortabilityDirective
-		-> platform
-		-> deprecated
-		-> library
-		-> experimental
+	-> platform
+	-> deprecated
+	-> library
+	-> experimental
 }
 	Result := (CurrentTokenGenID in [ptPlatform, ptDeprecated, ptLibrary, ptExperimental]);
 end;
@@ -8801,18 +9325,86 @@ Property [^]
 			or ((CurrentTokenKind = ptClass) and (PeekTokenKind = ptProperty));
 end;
 
+function TDelphiParser.IsPossiblePropertyDirective: Boolean;
+	function IsDirectiveWord(const AWord: string): Boolean;
+	var
+		tokText: string;
+	begin
+		tokText := CurrentToken.ValueText;
+		if tokText = '' then
+			tokText := CurrentToken.Text;
+		Result := SameText(tokText, AWord);
+	end;
+
+	function PeekIsDirectiveWord(const AWord: string): Boolean;
+	var
+		tokText: string;
+	begin
+		tokText := PeekToken.ValueText;
+		if tokText = '' then
+			tokText := PeekToken.Text;
+		Result := SameText(tokText, AWord);
+	end;
+begin
+{
+http://dgrok.excastle.com/Grammar.html#PropertyDirective
+
+PropertyDirective
+	-> ';' DEFAULT
+	-> DEFAULT Expression
+	-> DISPID Expression
+	-> IMPLEMENTS (QualifiedIdent [','])+
+	-> INDEX Expression
+	-> NODEFAULT
+	-> READ Expression
+	-> READONLY
+	-> STORED Expression
+	-> WRITE Expression
+	-> WRITEONLY
+}
+	if CurrentTokenKind = ptSemicolon then
+	begin
+		Result := (PeekTokenExID = ptDefault) or PeekIsDirectiveWord('default');
+		Exit;
+	end;
+
+	case CurrentTokenExID of
+	ptDefault,
+	ptDispid,
+	ptImplements,
+	ptIndex,
+	ptNodefault,
+	ptRead,
+	ptReadonly,
+	ptStored,
+	ptWrite,
+	ptWriteonly: Result := True
+	else
+		Result := IsDirectiveWord('default')
+			or IsDirectiveWord('dispid')
+			or IsDirectiveWord('implements')
+			or IsDirectiveWord('index')
+			or IsDirectiveWord('nodefault')
+			or IsDirectiveWord('read')
+			or IsDirectiveWord('readonly')
+			or IsDirectiveWord('stored')
+			or IsDirectiveWord('write')
+			or IsDirectiveWord('writeonly');
+	end;
+end;
+
 function TDelphiParser.ParseIdentifierList: TSyntaxNode2;
 begin
 	{
 	}
 	Result := PoisonNode;
 
-	Result.AddChild(ParseIdentifier);
+	Result.AddChild(ParseIdent);
 
 	while CurrentTokenKind = ptComma do
 	begin
 		Result.AddChild(EatToken(ptComma));
-		Result.AddChild(ParseIdentifier);
+		Result.AddChild(ParseIdent);
 	end;
 end;
 
@@ -8869,7 +9461,7 @@ begin
 		ptConst:				Result.AddChild(ParseConstSection);
 		ptConstructor:		Result.AddChild(ParseProcedureDeclarationSection);
 		ptDestructor:		Result.AddChild(ParseProcedureDeclarationSection);
-		ptExports:			Result.AddChild(ParseExportsClause);
+		ptExports:			Result.AddChild(ParseExportStatement);
 		ptFunction:			Result.AddChild(ParseProcedureDeclarationSection);
 		ptIdentifier:		Result.AddChild(ParseStatements);
 		ptLabel:				Result.AddChild(ParseLabelDeclarationSection);
@@ -8904,14 +9496,14 @@ function TDelphiParser.ParsePropertyDefault: TSyntaxNode2;
 begin
 	Result := PoisonNode;
 
-	Result.AddChild(ExpectedEx(ptDefault));
+	Result.AddChild(EatTokenEx(ptDefault));
 end;
 
 function TDelphiParser.ParseDispIDSpecifier: TSyntaxNode2;
 begin
 	Result := PoisonNode;
 
-	Result.AddChild(ExpectedEx(ptDispid));
+	Result.AddChild(EatTokenEx(ptDispid));
   Result.AddChild(ParseConstantExpression);
 end;
 
@@ -8934,7 +9526,7 @@ begin
 	{
 	}
 	Result := TSyntaxNode2.Create(ntIndex);
-	Result.AddChild(ExpectedEx(ptIndex));
+	Result.AddChild(EatTokenEx(ptIndex));
 	Result.AddChild(ParseConstantExpression);
 end;
 
@@ -8955,16 +9547,22 @@ end;
 
 function TDelphiParser.ParseDirectiveDeprecated: TSyntaxNode2;
 begin
-	Result := TSyntaxNode2.Create(ntHintDirective);
+{
+	DEPRICATED [ string ]
 
-	Result.AddChild(ExpectedEx(ptDeprecated));
+ntHintDiretive
+}
+	Result := TSyntaxNode2.Create(ntHintDirective);
+	Result.AddChild(EatTokenEx(ptDeprecated));
+	Result.Attributes[anPlatform] := AttributeValueToStr(avTrue);
+
 	if CurrentTokenKind = ptStringLiteral then
 		Result.AddChild(EatToken);
 end;
 
 procedure TDelphiParser.DirectiveInline(ParentNode: TSyntaxNode2);
 begin
-	ParentNode.Attributes[anInline] := AttributeValueToString(atTrue);
+	ParentNode.Attributes[anInline] := AttributeValueToStr(avTrue);
 	ParentNode.AddChild(EatToken(ptInline));
 end;
 
@@ -8977,12 +9575,19 @@ end;
 function TDelphiParser.ParseDirectivePlatform: TSyntaxNode2;
 begin
 	Result := PoisonNode;
-	Result.AddChild(ExpectedEx(ptPlatform));
+	Result.AddChild(EatTokenEx(ptPlatform));
 end;
 
-function TDelphiParser.ParseEnumeratedTypeItem: TSyntaxNode2;
+function TDelphiParser.ParseEnumeratedTypeElement: TSyntaxNode2;
 begin
-	Result := ParseQualifiedIdentifier;
+{
+http://dgrok.excastle.com/Grammar.html#EnumeratedTypeElement
+
+EnumeratedTypeElement
+			Backlinks: EnumeratedType
+	-> Ident [ '=' Expression ]
+}
+	Result := ParseIdent;
 
 	if CurrentTokenKind = ptEquals then
 	begin
@@ -8991,7 +9596,9 @@ begin
 	end;
 end;
 
-function TDelphiParser.ParseIdentifier: TSyntaxNode2;
+function TDelphiParser.ParseIdent: TSyntaxNode2;
+var
+	iden: TSyntaxToken;
 begin
 {
 http://dgrok.excastle.com/Grammar.html#Ident
@@ -9003,13 +9610,26 @@ Ident
 	-> '&' <semikeyword>
 	-> '&' <keyword>
 
-ntIdentifier(@anName:"firstName")
-
-TODO: handle semikeyword, and & prefixes
+ntIdentifier anName:"firstName"
 }
 	Result := TSyntaxNode2.Create(ntIdentifier);
-	Result.Attributes[anName] := CurrentToken.ValueText;
-	Result.AddChild(EatToken(ptIdentifier));
+
+	if CurrentTokenKind = ptAmpersand then
+	begin
+		// When prefixed (&) you can use keywords as an identifier.
+		// Please never do this.
+		Result.AddChild(EatToken(ptAmpersand));
+
+		if IsReservedWord(CurrentTokenKind) then
+			iden := EatToken
+		else
+			iden := EatToken(ptIdentifier);
+	end
+	else
+		iden := EatToken(ptIdentifier);
+
+	Result.AddChild(iden);
+	Result.Attributes[anName] := iden.ValueText;
 end;
 
 function TDelphiParser.IsPossibleIdentifier: Boolean;
@@ -9017,12 +9637,12 @@ begin
 {
 	http://dgrok.excastle.com/Grammar.html#Ident
 
-	Ident
-			-> <identifier>
-			-> <semikeyword>
-			-> '&' <identifier>
-			-> '&' <semikeyword>
-			-> '&' <keyword>
+Ident
+	-> <identifier>
+	-> <semikeyword>
+	-> '&' <identifier>
+	-> '&' <semikeyword>
+	-> '&' <keyword>
 
 	ntIdentifier(@anName:"firstName")
 
@@ -9071,13 +9691,13 @@ function TDelphiParser.ParseDirectiveLocal: TSyntaxNode2;
 begin
 	Result := PoisonNode;
 
-	Result.AddChild(ExpectedEx(ptLocal));
+	Result.AddChild(EatTokenEx(ptLocal));
 end;
 
 function TDelphiParser.ParseDirectiveVarargs: TSyntaxNode2;
 begin
 	Result := PoisonNode;
-	Result.AddChild(ExpectedEx(ptVarargs));
+	Result.AddChild(EatTokenEx(ptVarargs));
 end;
 
 function TDelphiParser.ParseAncestorList: TSyntaxNode2;
@@ -9114,12 +9734,12 @@ type
 }
 	Result := TSyntaxNode2.Create(ntAncestorList);
 
-	Result.AddChild(ParseQualifiedIdentifier);
+	Result.AddChild(ParseQualifiedIdent);
 
 	while (CurrentTokenKind = ptComma) do
 	begin
 		Result.AddChild(EatToken(ptComma));
-		Result.AddChild(ParseQualifiedIdentifier);
+		Result.AddChild(ParseQualifiedIdent);
 	end;
 end;
 
@@ -9149,7 +9769,7 @@ function TDelphiParser.ParseAnonymousMethodType: TSyntaxNode2;
 begin
 	Result := PoisonNode;
 
-	Result.AddChild(ExpectedEx(ptReference));
+	Result.AddChild(EatTokenEx(ptReference));
 	Result.AddChild(EatToken(ptTo));
 	case CurrentTokenKind of
 	ptProcedure:
@@ -9167,14 +9787,6 @@ begin
 			Result.AddChild(ParseReturnType);
 		end;
 	end;
-end;
-
-function TDelphiParser.ParseExportsNameId: TSyntaxNode2;
-begin
-	Result := TSyntaxNode2.Create(ntUnknown);
-	Result.Attributes[anName] :=CurrentToken.ValueText;
-
-	Result.AddChild(EatToken(ptIdentifier));
 end;
 
 function TDelphiParser.ParseExportsName: TSyntaxNode2;
@@ -9209,7 +9821,7 @@ end;
 function TDelphiParser.ParseImplementsSpecifier: TSyntaxNode2;
 begin
 	Result := TSyntaxNode2.Create(ntImplements);
-	Result.AddChild(ExpectedEx(ptImplements));
+	Result.AddChild(EatTokenEx(ptImplements));
 
      Result.AddChild(ParseTypeId);
      while (CurrentTokenKind = ptComma) do
@@ -9239,80 +9851,12 @@ begin
 	end;
 end;
 
-function TDelphiParser.ParseArrayBounds: TSyntaxNode2;
-begin
-	Result := TSyntaxNode2.Create(ntBounds);
-
-	if CurrentTokenKind = ptOpenBracket then
-	begin
-		Result.AddChild(EatToken);
-		Result.AddChild(ParseArrayDimension);
-		while CurrentTokenKind = ptComma do
-		begin
-			Result.AddChild(EatToken);
-			Result.AddChild(ParseArrayDimension);
-		end;
-		Result.AddChild(EatToken(ptCloseBracket));
-	end;
-end;
-
 function TDelphiParser.ParseProceduralDirectiveOf: TSyntaxNode2;
 begin
 	Result := PoisonNode;
 
 	Result.AddChild(EatToken(ptOf));
-  Result.AddChild(EatToken(ptObject));
-end;
-
-function TDelphiParser.ParseHintDirectives: TSyntaxNode2;
-begin
-{
-
-Declarations and ParseStatements (Delphi)
-https://docwiki.embarcadero.com/RADStudio/Sydney/en/Declarations_and_Statements_(Delphi)#Hinting_Directives
-
-
-Hinting Directives
-------------------
-
-The 'hint' directives `platform`, `deprecated`, and `library` may be appended to
-any declaration. These directives will produce warnings at compile time.
-
-Hint directives can be applied to type declarations, variable declarations, class,
-interface, and structure declarations, field declarations within classes or
-records, procedure, function, and method declarations, and unit declarations.
-
-When a hint directive appears in a unit declaration, it means that the hint
-applies to everything in the unit. For example, the Windows 3.1 style
-OleAuto.pas unit on Windows is completely deprecated. Any reference to that unit
-or any symbol in that unit produces a deprecation message.
-
-The platform hinting directive on a symbol or unit indicates that it may not
-exist or that the implementation may vary considerably on different platforms.
-The library hinting directive on a symbol or unit indicates that the code may
-not exist or the implementation may vary considerably on different library
-architectures.
-
-The platform and library directives do not specify which platform or library.
-If your goal is writing platform-independent code, you do not need to know which
-platform a symbol is specific to; it is sufficient that the symbol be marked as
-specific to some platform to let you know it may cause problems for your goal of
-portability.
-
-In the case of a procedure or function declaration, the hint directive should be
-separated from the rest of the declaration with a semicolon.
-}
-	Result := TSyntaxNode2.Create(ntHintDirectives);
-
-	while CurrentToken.GenID in [ptDeprecated, ptLibrary, ptPlatform, ptExperimental] do
-	begin
-		case CurrentToken.GenID of
-		ptDeprecated:   Result.AddChild(ParseDirectiveDeprecated);
-		ptLibrary:      Result.AddChild(ParseDirectiveLibrary);
-		ptPlatform:     Result.AddChild(ParseDirectivePlatform);
-		ptExperimental: Result.AddChild(EatToken);
-		end;
-	end;
+	Result.AddChild(EatToken(ptObject));
 end;
 
 function TDelphiParser.ParseInheritedVariableReference: TSyntaxNode2;
@@ -9322,61 +9866,6 @@ begin
 	Result.AddChild(EatToken(ptInherited));
 	if CurrentToken.TokenKind = ptIdentifier then
 		Result.AddChild(ParseVariableReference);
-end;
-
-{procedure TDelphiParser.InitAhead;
-begin
-	// InitAhead means to memorize our current position in the token array,
-	// as we are about to parse ahead, and we want to return where we were.
-//	FAheadOriginalCurrentIndex := FCurrent;
-end;}
-
-{procedure TDelphiParser.RestoreAhead;
-begin
-//	FCurrent := FAheadOriginalCurrentIndex;
-end;}
-
-procedure TDelphiParser.InitDefinesDefinedByCompiler;
-begin
-{
-	We need to know what the compiler conditional defines are,
-	so we can tokenize the text correctly.
-
-	This is the default behavior, which uses the defines of your compiler
-	that compiled this code.
-}
-
-	FCompilerDirectives.Clear;
-	GetDefaultConditionalDirectives(FCompilerDirectives);
-end;
-
-function TDelphiParser.ParseGlobalAttributes: TSyntaxNode2;
-begin
-	Result := ParseGlobalAttributeSections;
-end;
-
-function TDelphiParser.ParseGlobalAttributeSections: TSyntaxNode2;
-begin
-	Result := TSyntaxNode2.Create(ntAttributes);
-
-	while CurrentToken.TokenKind = ptOpenBracket do
-		Result.AddChild(ParseGlobalAttributeSection);
-end;
-
-function TDelphiParser.ParseGlobalAttributeSection: TSyntaxNode2;
-begin
-   Result := TSyntaxNode2.Create(ntAttributes);
-
-	Result.AddChild(EatToken(ptOpenBracket));
-	Result.AddChild(ParseGlobalAttributeTargetSpecifier);
-	Result.AddChild(ParseAttributeList);
-	while CurrentToken.TokenKind = ptComma do
-	begin
-		Result.AddChild(EatToken(ptComma));
-		Result.AddChild(ParseGlobalAttributeTargetSpecifier);
-		Result.AddChild(ParseAttributeList);
-	end;
-	Result.AddChild(EatToken(ptCloseBracket));
 end;
 
 function TDelphiParser.ParseGlobalAttributeTargetSpecifier: TSyntaxNode2;
@@ -9389,11 +9878,6 @@ function TDelphiParser.ParseGlobalAttributeTarget: TSyntaxNode2;
 begin
 	Result := TSyntaxNode2.Create(ntAttribute); // todo: ntAttribute?
 	Result.AddChild(EatToken(ptIdentifier));
-end;
-
-function TDelphiParser.ParseAttributes: TSyntaxNode2;
-begin
-	Result := ParseAttributeSections;
 end;
 
 function TDelphiParser.ParseAttributeSections: TSyntaxNode2;
@@ -9546,10 +10030,22 @@ begin
 		Result := FTokens[FCurrent] as TSyntaxToken;
 end;
 
-function TDelphiParser.ParseCustomAttribute: TSyntaxNode2;
+function TDelphiParser.ParseAssemblyAttribute: TSyntaxNode2;
 begin
-	//TODO: Global vs. Local attributes
-	Result := ParseAttributeSections;
+{
+http://dgrok.excastle.com/Grammar.html#AssemblyAttribute
+
+AssemblyAttribute
+	-> '[' ASSEMBLY ':' Expression ']'
+}
+	Result := TSyntaxNode2.Create(ntAttribute);
+
+//	'[' ASSEMBLY ':' Expression ']'
+	Result.AddChild(EatToken(ptOpenBracket));
+	Result.AddChild(EatTokenEx(ptAssembly));
+	Result.AddChild(EatToken(ptColon));
+	Result.AddChild(ParseExpression);
+	Result.AddChild(EatToken(ptCloseBracket));
 end;
 
 { TSyntaxNode2 }
@@ -9574,30 +10070,6 @@ begin
 	FChildNodes.Add(node);
 end;
 
-procedure TSyntaxNode2.AssignPositionFrom(const Node: TSyntaxNode2);
-begin
-	raise ENotImplemented.Create('TSyntaxNode2.AssignPositionFrom');
-end;
-
-function TSyntaxNode2.Clone: TSyntaxNode2;
-//var
-//  i: Integer;
-begin
-	raise ENotImplemented.Create('TSyntaxNode.Clone');
-{  Result := TSyntaxNodeClass(Self.ClassType).Create(FTyp);
-
-  SetLength(Result.FChildNodes, Length(FChildNodes));
-  for i := 0 to High(FChildNodes) do
-  begin
-    Result.FChildNodes[i] := FChildNodes[i].Clone;
-    Result.FChildNodes[i].FParentNode := Result;
-  end;
-
-  Result.FAttributes := Copy(FAttributes);
-  Result.AssignPositionFrom(Self);
-}
-end;
-
 constructor TSyntaxNode2.Create(SyntaxNodeType: TSyntaxNodeType);
 begin
 	inherited Create;
@@ -9605,11 +10077,6 @@ begin
 	FNodeType := SyntaxNodeType;
 	FAttributes := TDictionary<TAttributeName, string>.Create;
 	FChildNodes := TObjectList<TSyntaxNodeOrToken>.Create(True);
-end;
-
-procedure TSyntaxNode2.DeleteChild(const NodeOrToken: TSyntaxNodeOrToken);
-begin
-	FChildNodes.Extract(NodeOrToken);
 end;
 
 destructor TSyntaxNode2.Destroy;
@@ -9694,16 +10161,6 @@ begin
 	Result := DumpNode(Node, '');
 end;
 
-procedure TSyntaxNode2.ExtractChild(const NodeOrToken: TSyntaxNodeOrToken);
-begin
-	FChildNodes.Extract(NodeOrToken);
-end;
-
-function TSyntaxNode2.FindNode(const TypesPath: array of TSyntaxNodeType): TSyntaxNode2;
-begin
-	raise ENotImplemented.Create('TSyntaxNode.FindNode');
-end;
-
 function TSyntaxNode2.get_HasChildren: Boolean;
 begin
 	Result := (FChildNodes.Count > 0);
@@ -9764,11 +10221,6 @@ begin
          Self.Value]);
 end;
 
-function TSyntaxNode2.FindNode(NodeType: TSyntaxNodeType): TSyntaxNode2;
-begin
-	raise ENotImplemented.Create('TSyntaxNode.FindNode');
-end;
-
 { EParserException }
 
 constructor EParserException.Create(X, Y: Integer; Filename, Msg: string);
@@ -9781,11 +10233,6 @@ end;
 
 { TDelphiParser - Fluent parsing helpers }
 
-procedure TDelphiParser.AddToken(parent: TSyntaxNode2; token: TptTokenKind);
-begin
-	parent.AddChild(EatToken(token));
-end;
-
 function TDelphiParser.PeekToken: TSyntaxToken;
 begin
 	// So much nicer to have "PeekToken" without the parans everywhere. I know, i know.
@@ -9797,6 +10244,8 @@ var
 	index: Integer;
 begin
 	index := FCurrent+n;
+	if index < 0 then
+		index := 0;
 
 	if index >= FTokens.Count then
 		index := FTokens.Count-1; //keep returning final eof token
@@ -9804,51 +10253,23 @@ begin
 	Result := FTokens[index];
 end;
 
-function TDelphiParser.Add(parent: TSyntaxNode2; child: TSyntaxNode2): TSyntaxNode2;
-begin
-  Result := child;
-  if Assigned(parent) and Assigned(child) then
-    parent.AddChild(child);
-end;
-
-{ TDelphiParser - Token consumption helpers }
-
-function TDelphiParser.ConsumeToken(expectedKind: TptTokenKind; nodeType: TSyntaxNodeType): TSyntaxNode2;
+function TDelphiParser.ConsumeKeyword(ExpectedKind: TptTokenKind): TSyntaxNode2;
 var
 	consumedToken: TSyntaxToken;
 begin
-  if CurrentToken.TokenKind <> expectedKind then
-    DoMessage(Format(SExpected, [TokenName(expectedKind), TokenName(CurrentToken.TokenKind)]), CurrentToken.Line, CurrentToken.Column);
+//	Result := ConsumeToken(keyword, ntIdentifier); // or ntKeyword if you prefer
+
+	if CurrentToken.TokenKind = expectedKind then
+		Result := TSyntaxNode2.Create(ntIdentifier)
+	else
+		Result := SynErrorFmt(SExpected, [TokenName(expectedKind), TokenName(CurrentToken.TokenKind)]);
 
 	consumedToken := EatToken(expectedKind);
-
-  Result := TSyntaxNode2.Create(nodeType);
 	Result.AddChild(consumedToken);
 	Result[anName] := consumedToken.ValueText;
 	Result.FCurrentLine := consumedToken.Line;
 	Result.FCurrentColumn := consumedToken.Column;
 //	Result.FFilename := CurrentToken.Filename;   wishful thinking
-end;
-
-function TDelphiParser.ConsumeIdentifier: TSyntaxNode2;
-begin
-  Result := ConsumeToken(ptIdentifier, ntIdentifier);
-end;
-
-function TDelphiParser.ConsumeKeyword(keyword: TptTokenKind): TSyntaxNode2;
-begin
-  Result := ConsumeToken(keyword, ntIdentifier); // or ntKeyword if you prefer
-end;
-
-function TDelphiParser.ConsumeSemicolon: TSyntaxNode2;
-begin
-  // Handle the special semicolon logic from your original Semicolon procedure
-  case CurrentToken.TokenKind of
-    ptElse, ptEnd, ptExcept, ptfinally, ptFinalization, ptCloseParen, ptUntil: 
-      Result := nil; // No semicolon to consume
-  else
-    Result := ConsumeToken(ptSemicolon, ntIdentifier); // preserve the semicolon token
-  end;
 end;
 
 {---------------------------------------------------------------------------
@@ -10053,8 +10474,8 @@ begin
 	Result := TypInfo.GetEnumName(TypeInfo(TAttributeName), Ord(AttributeName));
 end;
 
-function AttributeValueToString(const AttributeValue: TAttributeValue): string;
-const
+function AttributeValueToStr(const AttributeValue: TAttributeValue): string;
+{const
 	SAttributeValue: array[TAttributeValue] of string = (
 			'atAsm',
 			'atTrue',
@@ -10075,7 +10496,7 @@ const
 			'atString',
 			'atSubRange',
 			'atVar',
-			'atDispInterface');
+			'atDispInterface');}
 begin
 	Result := TypInfo.GetEnumName(TypeInfo(TAttributeValue), Ord(AttributeValue));
 end;

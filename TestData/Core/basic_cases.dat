@@ -17,8 +17,15 @@ end.
 | 		ntInterfaceSection
 | 			ntConstants
 | 				ntConstant anName="A" anValueText="1"
+| 					ntIdentifier anName="A"
 | 					ntExpression anValueText="1"
-| 		ntImplementation
+| 				ntConstant anName="B" anValueText="2"
+| 					ntIdentifier anName="B"
+| 					ntExpression anValueText="2"
+| 				ntConstant anName="C" anValueText="3"
+| 					ntIdentifier anName="C"
+| 					ntExpression anValueText="3"
+|		ntImplementation
 
 
 
@@ -67,7 +74,6 @@ end.
 
 
 
-
 #name
 MethodInventory.ParseAndIsPossible
 #data
@@ -76,90 +82,12 @@ interface
 
 implementation
 end.
-#errors
-Parse methods:
-ParseProperty
-ParsePropertyDirective
-ParseStream
-ParseMethodOrProperty
-ParseFieldDecl
-ParseCore
-ParseFile
-ParseText
-ParseLibraryFile
-ParsePackageFile
-ParseProgramFile
-ParseUnitDeclaration
-ParseUsesClause
-ParseUsedUnit
-ParseImplementationDecl
-ParseQualifiedIdentifier
-ParseTerm
-ParseSimpleExpression
-ParseExpression
-ParseFinalizationSection
-ParseEnumeratedType
-ParseSubrangeType
-ParseRealType
-ParseOrdinalType
-ParseVariableReference
-ParseVisibilitySection
-ParseVisibilitySectionContent
-ParseInterfaceType
-ParseClassType
-ParseClassHelper
-ParseClassMemberList
-ParseProceduralType
-ParsePointerType
-ParseStringType
-ParseStructuredType
-ParseSimpleType
-ParseTypeDeclaration
-ParseType
-ParseTypedConstant
-ParseTypeId
-ParseConstantName
-ParseMethodHeading
-ParseVarSection
-ParseTypeSection
-ParseTypeParam
-ParseTypeParamConstraint
-ParseConstraintTypeRef
-ParseTypeParams
-ParseConstSection
-ParseConstantDecl
-ParseResStringSection
-ParseResourceStringDecl
-ParseInterfaceDeclaration
-ParseInitializationSection
-ParseImplementationSection
-ParseInterfaceSection
-ParsePortabilityDirective
-ParseIdentifierList
-ParseScriptFile
-ParseIndexSpecifier
-ParseIdentifier
-ParseAncestorList
-IsPossible methods:
-IsPossibleConstSection
-IsPossibleMethodHeading
-IsPossibleResStringSection
-IsPossibleTypeDeclaration
-IsPossibleTypeSection
-IsPossibleUsesClause
-IsPossibleVarSection
-IsPossibleVisibilitySectionContent
-IsPossibleConstantDecl
-IsPossibleResourceStringDecl
-IsPossiblePortabilityDirective
-IsPossibleProperty
-IsPossibleIdentifier
-IsPossibleImplementationDecl
-IsPossibleLabelID
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
+| 	ntUnitDeclaration anName="Inventory"
 | 		ntQualifiedIdentifier
+| 		ntInterfaceSection
+| 		ntImplementation
 
 #name
 ParseProperty
@@ -178,8 +106,27 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntTypeSection
+| 				ntTypeDecl anName="T"
+| 					ntType anType="avClass"
+| 						ntPrivate
+| 							ntField
+| 								ntName anName="F"
+| 								ntType anName="Integer"
+| 						ntPublic
+| 							ntProperty
+| 								ntProperty
+| 									ntIdentifier anName="P"
+| 									ntType anName="Integer"
+| 									ntPropertySpecifiers
+| 										ntUnknown anName="Not implemented yet" anMissing="avTrue"
+| 											ntUnknown anName="Not implemented yet" anMissing="avTrue"
+| 												ntQualifiedIdentifier
+| 												ntUnknown anName="Not implemented yet" anMissing="avTrue"
+| 		ntImplementation
 
 #name
 ParsePropertyDirective
@@ -198,8 +145,27 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntTypeSection
+| 				ntTypeDecl anName="T"
+| 					ntType anType="avClass"
+| 						ntPrivate
+| 							ntField
+| 								ntName anName="F"
+| 								ntType anName="Integer"
+| 						ntPublic
+| 							ntProperty
+| 								ntProperty
+| 									ntIdentifier anName="P"
+| 									ntType anName="Integer"
+| 									ntPropertySpecifiers
+| 										ntUnknown anName="Not implemented yet" anMissing="avTrue"
+| 											ntUnknown anName="Not implemented yet" anMissing="avTrue"
+| 												ntQualifiedIdentifier
+| 												ntUnknown anName="Not implemented yet" anMissing="avTrue"
+| 		ntImplementation
 
 #name
 ParseStream
@@ -212,8 +178,10 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 		ntImplementation
 
 #name
 ParseMethodOrProperty
@@ -229,8 +197,16 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntTypeSection
+| 				ntTypeDecl anName="T"
+| 					ntType anType="avClass"
+| 						ntMethod
+| 							ntMethod anKind="avProcedure"
+| 								ntQualifiedIdentifier anName="P"
+| 		ntImplementation
 
 #name
 ParseFieldDecl
@@ -246,8 +222,17 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntTypeSection
+| 				ntTypeDecl anName="T"
+| 					ntType anType="avClass"
+| 						ntField
+| 							ntName anName="A"
+| 							ntName anName="B"
+| 							ntType anName="Integer"
+| 		ntImplementation
 
 #name
 ParseCore
@@ -260,8 +245,10 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 		ntImplementation
 
 #name
 ParseFile
@@ -274,8 +261,10 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 		ntImplementation
 
 #name
 ParseText
@@ -288,8 +277,10 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 		ntImplementation
 
 #name
 ParseLibraryFile
@@ -300,7 +291,8 @@ begin end.
 #document
 | ntCompilationUnit
 | 	ntLibrary
-| 		ntIdentifier
+| 		ntIdentifier anName="L"
+| 		ntUnknown anName="Not implemented yet" anMissing="avTrue"
 
 #name
 ParsePackageFile
@@ -322,7 +314,8 @@ begin end.
 #document
 | ntCompilationUnit
 | 	ntProgram
-| 		ntIdentifier
+| 		ntIdentifier anName="P"
+| 		ntUnknown anName="Not implemented yet" anMissing="avTrue"
 
 #name
 ParseUnitDeclaration
@@ -335,8 +328,10 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 		ntImplementation
 
 #name
 ParseUsesClause
@@ -349,8 +344,13 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntUses
+| 				ntUsedUnit anName="System.SysUtils"
+| 					ntQualifiedIdentifier anName="System.SysUtils"
+| 		ntImplementation
 
 #name
 ParseUsedUnit
@@ -363,8 +363,13 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntUses
+| 				ntUsedUnit anName="System.SysUtils"
+| 					ntQualifiedIdentifier anName="System.SysUtils"
+| 		ntImplementation
 
 #name
 ParseImplementationDecl
@@ -378,8 +383,14 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 		ntImplementation
+| 			ntConstants
+| 				ntConstant anName="C" anValueText="1"
+| 					ntIdentifier anName="C"
+| 					ntExpression anValueText="1"
 
 #name
 ParseQualifiedIdentifier
@@ -391,8 +402,10 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="A.B"
+| 		ntQualifiedIdentifier anName="A.B"
+| 		ntInterfaceSection
+| 		ntImplementation
 
 #name
 ParseTerm
@@ -406,8 +419,14 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntConstants
+| 				ntConstant anName="C" anValueText="1+2*3"
+| 					ntIdentifier anName="C"
+| 					ntExpression anValueText="1+2*3"
+| 		ntImplementation
 
 #name
 ParseSimpleExpression
@@ -421,8 +440,14 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntConstants
+| 				ntConstant anName="C" anValueText="1+2*3"
+| 					ntIdentifier anName="C"
+| 					ntExpression anValueText="1+2*3"
+| 		ntImplementation
 
 #name
 ParseExpression
@@ -436,8 +461,14 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntConstants
+| 				ntConstant anName="C" anValueText="1+2*3"
+| 					ntIdentifier anName="C"
+| 					ntExpression anValueText="1+2*3"
+| 		ntImplementation
 
 #name
 ParseFinalizationSection
@@ -451,8 +482,13 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 		ntImplementation
+| 		ntInitialization
+| 			ntStatements
+| 				ntUnknown anName="Not implemented yet" anMissing="avTrue"
 
 #name
 ParseEnumeratedType
@@ -466,8 +502,15 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntTypeSection
+| 				ntTypeDecl anName="TEnum"
+| 					ntType anName="avEnum"
+| 						ntIdentifier anName="A"
+| 						ntIdentifier anName="B"
+| 		ntImplementation
 
 #name
 ParseSubrangeType
@@ -481,8 +524,18 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntTypeSection
+| 				ntTypeDecl anName="TSub"
+| 					ntType anName="1"
+| 						ntType
+| 							ntExpression
+| 								ntExpression
+| 									ntUnknown anName="Not implemented yet" anMissing="avTrue"
+| 										ntUnknown anName="Not implemented yet" anMissing="avTrue"
+| 		ntImplementation
 
 #name
 ParseRealType
@@ -496,8 +549,14 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntTypeSection
+| 				ntTypeDecl anName="TReal"
+| 					ntType anName="1.5"
+| 						ntType
+| 		ntImplementation
 
 #name
 ParseOrdinalType
@@ -511,9 +570,17 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
 | 		ntInterfaceSection
+| 			ntTypeSection
+| 				ntTypeDecl anName="TOrd"
+| 					ntType anName="1"
+| 						ntType
+| 							ntExpression
+| 								ntExpression
+| 									ntUnknown anName="Not implemented yet" anMissing="avTrue"
+| 										ntUnknown anName="Not implemented yet" anMissing="avTrue"
 | 		ntImplementation
 
 #name
@@ -530,8 +597,18 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 		ntImplementation
+| 			ntMethod
+| 				ntName anName="procedure"
+| 					ntUnknown anName="Not implemented yet" anMissing="avTrue"
+| 						ntUnknown anName="E2123 PROCEDURE, FUNCTION, PROPERTY, or VAR expected" anMissing="true"
+| 					ntName
+| 					ntStatements
+| 						ntUnknown anName="Not implemented yet" anMissing="avTrue"
+| 							ntEmptyStatement
 
 #name
 ParseVisibilitySection
@@ -548,8 +625,17 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntTypeSection
+| 				ntTypeDecl anName="T"
+| 					ntType anType="avClass"
+| 						ntPrivate
+| 							ntField
+| 								ntName anName="F"
+| 								ntType anName="Integer"
+| 		ntImplementation
 
 #name
 ParseVisibilitySectionContent
@@ -565,8 +651,16 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntTypeSection
+| 				ntTypeDecl anName="T"
+| 					ntType anType="avClass"
+| 						ntField
+| 							ntName anName="F"
+| 							ntType anName="Integer"
+| 		ntImplementation
 
 #name
 ParseInterfaceType
@@ -581,8 +675,14 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntTypeSection
+| 				ntTypeDecl anName="ITest"
+| 					ntUnknown anName="E2029 Type expected but interface found" anMissing="true"
+| 		ntImplementation
+| 	ntUnknown anName="Unexpected trailing tokens"
 
 #name
 ParseClassType
@@ -596,8 +696,13 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntTypeSection
+| 				ntTypeDecl anName="T"
+| 					ntType anType="avClass"
+| 		ntImplementation
 
 #name
 ParseClassHelper
@@ -612,8 +717,16 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntTypeSection
+| 				ntTypeDecl anName="TStringHelper"
+| 					ntType anType="avClass"
+| 						ntUnknown anName="Skipping token to recover inside class body: helper" anMissing="true"
+| 						ntUnknown anName="Skipping token to recover inside class body: for" anMissing="true"
+| 						ntUnknown anName="Skipping token to recover inside class body: string" anMissing="true"
+| 		ntImplementation
 
 #name
 ParseClassMemberList
@@ -629,8 +742,17 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntTypeSection
+| 				ntTypeDecl anName="T"
+| 					ntType anType="record"
+| 						ntUnknown anName="Not implemented yet" anMissing="avTrue"
+| 						ntUnknown anName="Not implemented yet" anMissing="avTrue"
+| 						ntUnknown anName="Not implemented yet" anMissing="avTrue"
+| 		ntImplementation
+| 	ntUnknown anName="Unexpected trailing tokens"
 
 #name
 ParseProceduralType
@@ -644,8 +766,13 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntTypeSection
+| 				ntTypeDecl anName="TProc"
+| 					ntType anName="procedure"
+| 		ntImplementation
 
 #name
 ParsePointerType
@@ -659,8 +786,14 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntTypeSection
+| 				ntTypeDecl anName="PInt"
+| 					ntUnknown anName="E2029 Type expected but ^ found" anMissing="true"
+| 		ntImplementation
+| 	ntUnknown anName="Unexpected trailing tokens"
 
 #name
 ParseStringType
@@ -674,8 +807,15 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntTypeSection
+| 				ntTypeDecl anName="S10"
+| 					ntType
+| 			ntUnknown anName="InvalidInterfaceDeclaration" anMissing="true"
+| 		ntImplementation
+| 	ntUnknown anName="Unexpected trailing tokens"
 
 #name
 ParseStructuredType
@@ -689,8 +829,15 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntTypeSection
+| 				ntTypeDecl anName="TInts"
+| 					ntType anType="array"
+| 						ntType anType="array"
+| 							ntType anName="Integer"
+| 		ntImplementation
 
 #name
 ParseSimpleType
@@ -704,8 +851,18 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntTypeSection
+| 				ntTypeDecl anName="TAlias"
+| 					ntType anName="1"
+| 						ntType
+| 							ntExpression
+| 								ntExpression
+| 									ntUnknown anName="Not implemented yet" anMissing="avTrue"
+| 										ntUnknown anName="Not implemented yet" anMissing="avTrue"
+| 		ntImplementation
 
 #name
 ParseTypeDeclaration
@@ -719,8 +876,13 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntTypeSection
+| 				ntTypeDecl anName="T"
+| 					ntType anType="avClass"
+| 		ntImplementation
 
 #name
 ParseType
@@ -734,8 +896,13 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntTypeSection
+| 				ntTypeDecl anName="T"
+| 					ntType anType="avClass"
+| 		ntImplementation
 
 #name
 ParseTypedConstant
@@ -749,8 +916,21 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntConstants
+| 				ntConstant anName="C" anValueText="implementationend."
+| 					ntIdentifier anName="C"
+| 					ntType anType="array"
+| 						ntType anType="array"
+| 							ntExpression
+| 								ntExpression
+| 									ntUnknown anName="Not implemented yet" anMissing="avTrue"
+| 										ntUnknown anName="Not implemented yet" anMissing="avTrue"
+| 							ntUnknown anName="E2029 Type expected but ; found" anMissing="true"
+| 					ntExpression anValueText="implementationend."
+| 		ntImplementation
 
 #name
 ParseTypeId
@@ -764,8 +944,13 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntTypeSection
+| 				ntTypeDecl anName="TAlias"
+| 					ntType anName="Integer"
+| 		ntImplementation
 
 #name
 ParseConstantName
@@ -779,8 +964,14 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntConstants
+| 				ntConstant anName="C" anValueText="1"
+| 					ntIdentifier anName="C"
+| 					ntExpression anValueText="1"
+| 		ntImplementation
 
 #name
 ParseMethodHeading
@@ -796,8 +987,16 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntTypeSection
+| 				ntTypeDecl anName="T"
+| 					ntType anType="avClass"
+| 						ntMethod
+| 							ntMethod anKind="avProcedure"
+| 								ntQualifiedIdentifier anName="P"
+| 		ntImplementation
 
 #name
 ParseVarSection
@@ -811,8 +1010,23 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntVariables
+| 				ntVariables
+| 					ntIdentifier
+| 						ntIdentifier
+| 					ntUnknown anName="E2029 Type expected but var found" anMissing="true"
+| 					ntUnknown anName="Expected PortabilityDirective but was V" anMissing="true"
+| 					ntUnknown anName="Expected PortabilityDirective but was :" anMissing="true"
+| 				ntVariables
+| 					ntIdentifier
+| 						ntIdentifier anName="Integer"
+| 					ntUnknown anName="E2029 Type expected but ; found" anMissing="true"
+| 					ntUnknown anName="Expected PortabilityDirective but was implementation" anMissing="true"
+| 					ntUnknown anName="Expected PortabilityDirective but was end" anMissing="true"
+| 		ntImplementation
 
 #name
 IsPossibleConstSection
@@ -826,8 +1040,14 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntConstants
+| 				ntConstant anName="C" anValueText="1"
+| 					ntIdentifier anName="C"
+| 					ntExpression anValueText="1"
+| 		ntImplementation
 
 #name
 IsPossibleMethodHeading
@@ -843,8 +1063,16 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntTypeSection
+| 				ntTypeDecl anName="T"
+| 					ntType anType="avClass"
+| 						ntMethod
+| 							ntMethod anKind="avProcedure"
+| 								ntQualifiedIdentifier anName="P"
+| 		ntImplementation
 
 #name
 IsPossibleResStringSection
@@ -858,8 +1086,13 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntResourceStrings
+| 				ntResourceString anName="S" anValueText="x"
+| 					ntExpression anValueText="x"
+| 		ntImplementation
 
 #name
 IsPossibleTypeDeclaration
@@ -873,8 +1106,13 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntTypeSection
+| 				ntTypeDecl anName="T"
+| 					ntType anType="avClass"
+| 		ntImplementation
 
 #name
 IsPossibleTypeSection
@@ -888,8 +1126,13 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntTypeSection
+| 				ntTypeDecl anName="T"
+| 					ntType anType="avClass"
+| 		ntImplementation
 
 #name
 IsPossibleUsesClause
@@ -902,8 +1145,13 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntUses
+| 				ntUsedUnit anName="System.SysUtils"
+| 					ntQualifiedIdentifier anName="System.SysUtils"
+| 		ntImplementation
 
 #name
 IsPossibleVarSection
@@ -917,8 +1165,23 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntVariables
+| 				ntVariables
+| 					ntIdentifier
+| 						ntIdentifier
+| 					ntUnknown anName="E2029 Type expected but var found" anMissing="true"
+| 					ntUnknown anName="Expected PortabilityDirective but was V" anMissing="true"
+| 					ntUnknown anName="Expected PortabilityDirective but was :" anMissing="true"
+| 				ntVariables
+| 					ntIdentifier
+| 						ntIdentifier anName="Integer"
+| 					ntUnknown anName="E2029 Type expected but ; found" anMissing="true"
+| 					ntUnknown anName="Expected PortabilityDirective but was implementation" anMissing="true"
+| 					ntUnknown anName="Expected PortabilityDirective but was end" anMissing="true"
+| 		ntImplementation
 
 #name
 IsPossibleVisibilitySectionContent
@@ -934,8 +1197,16 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntTypeSection
+| 				ntTypeDecl anName="T"
+| 					ntType anType="avClass"
+| 						ntField
+| 							ntName anName="F"
+| 							ntType anName="Integer"
+| 		ntImplementation
 
 #name
 ParseTypeSection
@@ -949,8 +1220,13 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntTypeSection
+| 				ntTypeDecl anName="T"
+| 					ntType anType="avClass"
+| 		ntImplementation
 
 #name
 ParseTypeParam
@@ -964,8 +1240,16 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntTypeSection
+| 				ntTypeDecl anName="TGen"
+| 					ntTypeParams
+| 						ntTypeParam
+| 							ntType anName="T"
+| 					ntType anType="avClass"
+| 		ntImplementation
 
 #name
 ParseTypeParamConstraint
@@ -979,8 +1263,18 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntTypeSection
+| 				ntTypeDecl anName="TGen"
+| 					ntTypeParams
+| 						ntTypeParam
+| 							ntType anName="T"
+| 							ntConstraints
+| 								ntClassConstraint
+| 					ntType anType="avClass"
+| 		ntImplementation
 
 #name
 ParseConstraintTypeRef
@@ -994,8 +1288,19 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntTypeSection
+| 				ntTypeDecl anName="TGen"
+| 					ntTypeParams
+| 						ntTypeParam
+| 							ntType anName="T"
+| 							ntConstraints
+| 								ntType
+| 									ntQualifiedIdentifier anName="IInterface"
+| 					ntType anType="avClass"
+| 		ntImplementation
 
 #name
 ParseTypeParams
@@ -1009,8 +1314,16 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntTypeSection
+| 				ntTypeDecl anName="TGen"
+| 					ntTypeParams
+| 						ntTypeParam
+| 							ntType anName="T"
+| 					ntType anType="avClass"
+| 		ntImplementation
 
 #name
 ParseConstSection
@@ -1024,8 +1337,14 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntConstants
+| 				ntConstant anName="C" anValueText="1"
+| 					ntIdentifier anName="C"
+| 					ntExpression anValueText="1"
+| 		ntImplementation
 
 #name
 ParseConstantDecl
@@ -1039,8 +1358,14 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntConstants
+| 				ntConstant anName="C" anValueText="1"
+| 					ntIdentifier anName="C"
+| 					ntExpression anValueText="1"
+| 		ntImplementation
 
 #name
 IsPossibleConstantDecl
@@ -1054,8 +1379,14 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntConstants
+| 				ntConstant anName="C" anValueText="1"
+| 					ntIdentifier anName="C"
+| 					ntExpression anValueText="1"
+| 		ntImplementation
 
 #name
 ParseResStringSection
@@ -1069,8 +1400,13 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntResourceStrings
+| 				ntResourceString anName="S" anValueText="x"
+| 					ntExpression anValueText="x"
+| 		ntImplementation
 
 #name
 IsPossibleResourceStringDecl
@@ -1084,8 +1420,13 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntResourceStrings
+| 				ntResourceString anName="S" anValueText="x"
+| 					ntExpression anValueText="x"
+| 		ntImplementation
 
 #name
 ParseResourceStringDecl
@@ -1099,8 +1440,13 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntResourceStrings
+| 				ntResourceString anName="S" anValueText="x"
+| 					ntExpression anValueText="x"
+| 		ntImplementation
 
 #name
 ParseInterfaceDeclaration
@@ -1114,8 +1460,14 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntConstants
+| 				ntConstant anName="C" anValueText="1"
+| 					ntIdentifier anName="C"
+| 					ntExpression anValueText="1"
+| 		ntImplementation
 
 #name
 ParseInitializationSection
@@ -1129,8 +1481,13 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 		ntImplementation
+| 		ntInitialization
+| 			ntStatements
+| 				ntUnknown anName="Not implemented yet" anMissing="avTrue"
 
 #name
 ParseImplementationSection
@@ -1143,8 +1500,10 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 		ntImplementation
 
 #name
 ParseInterfaceSection
@@ -1157,8 +1516,10 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 		ntImplementation
 
 #name
 ParsePortabilityDirective
@@ -1170,8 +1531,12 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U" anPlatform="avTrue" anExperimental="avTrue"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntPortabilityDirective anPlatform="avTrue"
+| 		ntInterfaceSection
+| 		ntImplementation
+| 	ntUnknown anName="Unexpected trailing tokens"
 
 #name
 IsPossiblePortabilityDirective
@@ -1183,8 +1548,12 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U" anPlatform="avTrue" anExperimental="avTrue"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntPortabilityDirective anPlatform="avTrue"
+| 		ntInterfaceSection
+| 		ntImplementation
+| 	ntUnknown anName="Unexpected trailing tokens"
 
 #name
 IsPossibleProperty
@@ -1203,8 +1572,27 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntTypeSection
+| 				ntTypeDecl anName="T"
+| 					ntType anType="avClass"
+| 						ntPrivate
+| 							ntField
+| 								ntName anName="F"
+| 								ntType anName="Integer"
+| 						ntPublic
+| 							ntProperty
+| 								ntProperty
+| 									ntIdentifier anName="P"
+| 									ntType anName="Integer"
+| 									ntPropertySpecifiers
+| 										ntUnknown anName="Not implemented yet" anMissing="avTrue"
+| 											ntUnknown anName="Not implemented yet" anMissing="avTrue"
+| 												ntQualifiedIdentifier
+| 												ntUnknown anName="Not implemented yet" anMissing="avTrue"
+| 		ntImplementation
 
 #name
 ParseIdentifierList
@@ -1220,8 +1608,17 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntTypeSection
+| 				ntTypeDecl anName="T"
+| 					ntType anType="avClass"
+| 						ntField
+| 							ntName anName="A"
+| 							ntName anName="B"
+| 							ntType anName="Integer"
+| 		ntImplementation
 
 #name
 ParseScriptFile
@@ -1230,7 +1627,8 @@ A := 1;
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnknown
+| 	ntUnknown anName="Not implemented yet" anMissing="avTrue"
+| 		ntUnknown anName="E2029 Top-level declaration expected but ; found" anMissing="true"
 
 #name
 ParseIndexSpecifier
@@ -1249,8 +1647,27 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntTypeSection
+| 				ntTypeDecl anName="T"
+| 					ntType anType="avClass"
+| 						ntPrivate
+| 							ntField
+| 								ntName anName="F"
+| 								ntType anName="Integer"
+| 						ntPublic
+| 							ntProperty
+| 								ntProperty
+| 									ntIdentifier anName="P"
+| 									ntType anName="Integer"
+| 									ntPropertySpecifiers
+| 										ntExpression
+| 											ntExpression
+| 												ntUnknown anName="Not implemented yet" anMissing="avTrue"
+| 													ntUnknown anName="Not implemented yet" anMissing="avTrue"
+| 		ntImplementation
 
 #name
 ParseIdentifier
@@ -1263,8 +1680,10 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 		ntImplementation
 
 #name
 IsPossibleIdentifier
@@ -1277,8 +1696,10 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 		ntImplementation
 
 #name
 IsPossibleImplementationDecl
@@ -1292,8 +1713,14 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 		ntImplementation
+| 			ntConstants
+| 				ntConstant anName="C" anValueText="1"
+| 					ntIdentifier anName="C"
+| 					ntExpression anValueText="1"
 
 #name
 IsPossibleLabelID
@@ -1311,8 +1738,17 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 		ntImplementation
+| 			ntMethod
+| 				ntName anName="procedure"
+| 					ntUnknown anName="Not implemented yet" anMissing="avTrue"
+| 						ntUnknown anName="E2123 PROCEDURE, FUNCTION, PROPERTY, or VAR expected" anMissing="true"
+| 					ntName
+| 					ntUnknown anName="xxxxx Expected block" anMissing="true"
+| 	ntUnknown anName="Unexpected trailing tokens"
 
 #name
 ParseAncestorList
@@ -1327,7 +1763,15 @@ end.
 #errors
 #document
 | ntCompilationUnit
-| 	ntUnitDeclaration
-| 		ntQualifiedIdentifier
+| 	ntUnitDeclaration anName="U"
+| 		ntQualifiedIdentifier anName="U"
+| 		ntInterfaceSection
+| 			ntTypeSection
+| 				ntTypeDecl anName="TChild"
+| 					ntType anType="avClass"
+| 						ntAncestorList
+| 							ntQualifiedIdentifier anName="TObject"
+| 							ntQualifiedIdentifier anName="IInterface"
+| 		ntImplementation
 
 

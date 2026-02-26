@@ -850,15 +850,16 @@ begin
 			// Check if this is one of our expected tokens
 			if (token.Text = 'unit') then
 			begin
-				CheckEquals(0, token.StartOffset, 'unit token StartOffset');
+				CheckEquals(4, token.Width, 'unit token Width');
+				CheckEquals(4, token.FullWidth, 'unit token FullWidth');
 			end
 			else if (token.Text = 'Test') then
 			begin
-				CheckEquals(5, token.StartOffset, 'Test token StartOffset');
+				CheckEquals(5, token.Width, 'Test token StartOffset');
 			end
 			else if (token.Text = ';') then
 			begin
-				CheckEquals(9, token.StartOffset, '; token StartOffset');
+				CheckEquals(9, token.Width, '; token StartOffset');
 			end;
 		end;
 	finally
@@ -916,28 +917,28 @@ begin
       // Check multi-character operators
       if (token.Text = ':=') then
       begin
-         CheckEquals(1, token.StartOffset, ':= token StartOffset');
-         CheckEquals(2, token.TokenLength, ':= token TokenLength');
+         CheckEquals(2, token.Width,		':= token StartOffset');
+         CheckEquals(2, token.FullWidth,	':= token TokenLength');
       end
       else if (token.Text = '<=') then
       begin
-         CheckEquals(12, token.StartOffset, '<= token StartOffset');
-         CheckEquals(2, token.TokenLength, '<= token TokenLength');
+         CheckEquals(2, token.Width,		'<= token StartOffset');
+         CheckEquals(2, token.FullWidth,	'<= token TokenLength');
       end
       else if (token.Text = '>=') then
       begin
-         CheckEquals(22, token.StartOffset, '>= token StartOffset');
-         CheckEquals(2, token.TokenLength, '>= token TokenLength');
+         CheckEquals(2, token.Width,		'>= token StartOffset');
+         CheckEquals(2, token.FullWidth,	'>= token TokenLength');
       end
       else if (token.Text = '<>') then
       begin
-         CheckEquals(29, token.StartOffset, '<> token StartOffset');
-         CheckEquals(2, token.TokenLength, '<> token TokenLength');
+         CheckEquals(2, token.Width,		'<> token StartOffset');
+         CheckEquals(2, token.FullWidth,	'<> token TokenLength');
       end
       else if (token.Text = '..') then
       begin
-         CheckEquals(32, token.StartOffset, '.. token StartOffset');
-         CheckEquals(2, token.TokenLength, '.. token TokenLength');
+         CheckEquals(2, token.Width,		'.. token StartOffset');
+         CheckEquals(2, token.FullWidth,	'.. token TokenLength');
       end;
    end;
 end;

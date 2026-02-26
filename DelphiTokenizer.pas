@@ -626,10 +626,13 @@ type
 		function get_TrailingTrivia(I: Integer): TSyntaxToken;
 	public
 		TokenKind: TptTokenKind;	// base kind: identifier, string, symbol, comment, directive, etc.
-		Line: Integer;
-		Column: Integer;
-		StartOffset: Integer;		// absolute byte/char offset in the file (0-based)
-		TokenLength: Integer;		// token length in source units
+//		Line: Integer;
+//		Column: Integer;
+//		StartOffset: Integer;		// absolute byte/char offset in the file (0-based)
+
+		FullWidth: Integer;			// Includes leading + trailing trivia
+		Width: Integer;				// Full width minus trivia (just the token/node text)
+
 		Text: string;					// exact slice, e.g. `'Waiting for server...'` or `{$IFDEF DEBUG}`
 		ValueText: string;			// unwrapped/unescaped where purely lexical (strings, comments)
 
@@ -663,7 +666,7 @@ The following reserved words cannot be redefined or used as identifiers.
 		// optional directive payload (only for TokenKind = ptDirective)
 //		Directive: PDirectiveData; // nil unless a directive
 
-		constructor Create(ATokenKind: TptTokenKind; const Line, Column: Integer; const Text: string);
+		constructor Create(ATokenKind: TptTokenKind; const Width, FullWidth: Integer; const Text: string);
 		destructor Destroy; override;
 
 		property LeadingTriviaCount: Integer read get_LeadingTriviaCount;
@@ -2727,9 +2730,6 @@ begin
 	if AToken = nil then
 		raise EParserError.Create('No token was returned');
 
-	AToken.Line   := tokenStartLine;
-	AToken.Column := tokenStartColumn;
-
 	Result := True;
 end;
 
@@ -3052,7 +3052,7 @@ end;
 
 { TSyntaxToken }
 
-constructor TSyntaxToken.Create(ATokenKind: TptTokenKind; const Line, Column: Integer; const Text: string);
+constructor TSyntaxToken.Create(ATokenKind: TptTokenKind; const Width, FullWidth: Integer; const Text: string);
 begin
 	inherited Create;
 
@@ -3060,8 +3060,8 @@ begin
 	FTrailingTrivia := TObjectList<TSyntaxToken>.Create(True);
 
 	Self.TokenKind := ATokenKind;
-	Self.Line := Line;
-	Self.Column := Column;
+	Self.Width := Width;
+	Self.FullWidth := FullWidth;
 	Self.Text := Text;
 	Self.ValueText := Text;
 	
@@ -3082,10 +3082,8 @@ begin
 {$IFDEF DEBUG}
 	// Help debug use-after-free
 	TokenKind := High(TptTokenKind);
-	Line := -1;
-	Column := -1;
-	StartOffset := -1;
-	TokenLength := -1;
+	Width := 0;
+	FullWidth := 0;
 	Text := '<destroyed>';
 	ValueText := '<destroyed>';
 	IsMissing := True;
@@ -3155,7 +3153,7 @@ begin
 	if IsMissing then
 		statusInfo := statusInfo + ' [MISSING]';
 		
-	Result := Format('Token: %s (%d, %d) "%s"%s', [TokenKindToStr(TokenKind), Line, Column, Text, statusInfo]);
+	Result := Format('Token: %s "%s"%s', [TokenKindToStr(TokenKind), Text, statusInfo]);
 end;
 
 initialization

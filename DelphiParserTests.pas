@@ -28,7 +28,7 @@ type
 		function FindDatTestsRoot: string;
 		function EnumerateDatFiles: TArray<string>;
 		function EnumerateDatTestCases(const FileName: string): TArray<TDatParserCase>;
-		procedure RunDatCase(const ACase: TDatParserCase);
+		procedure RunDatCase(const ACase: TDatParserCase; Progress, Total: Integer);
 	published
 		procedure Test_ExpectedToTree_SiblingsAtSameIndent;
 		procedure Test_ExpectedToTree_AttributesParsing;
@@ -187,12 +187,12 @@ begin
 	FlushCurrent;
 end;
 
-procedure TDelphiParserTests.RunDatCase(const ACase: TDatParserCase);
+procedure TDelphiParserTests.RunDatCase(const ACase: TDatParserCase; Progress, Total: Integer);
 begin
 	CheckFalse(Trim(ACase.SourceCode)   = '', 'Case "' + ACase.Name + '" is missing #data');
 	CheckFalse(Trim(ACase.ExpectedTree) = '', 'Case "' + ACase.Name + '" is missing #document');
 
-	Status('[CASE] ' + ACase.Name);
+	Status(Format('[CASE %d/%d] %s', [Progress, Total, ACase.Name]));
 
 //	Status('Test name: '+ACase.Name + ' (' + ExtractFileName(ACase.FileName) + ')'+CRLF+CRLF);
 
@@ -209,8 +209,8 @@ var
 	begin
 		Result := Format('%s|%d|%d|%s', [
 			TokenKindToStr(tok.TokenKind),
-			tok.Line,
-			tok.Column,
+			tok.Width,
+			tok.FullWidth,
 			tok.Text
 		]);
 	end;
@@ -345,63 +345,32 @@ var
 		end;
 	end;
 
-	procedure PrintResults(bSuccess: Boolean);
+	procedure PrintResults(bSuccess: Boolean; const ErrorMsg: string = '');
 	var
 		s: string;
 		actualDump: string;
 		effectiveSuccess: Boolean;
-
-		function NormalizeDumpForLog(const value: string): string;
-		begin
-			Result := value;
-			Result := StringReplace(Result, #$251C, '|', [rfReplaceAll]);
-			Result := StringReplace(Result, #$2570, '\\', [rfReplaceAll]);
-			Result := StringReplace(Result, #$2502, '|', [rfReplaceAll]);
-			Result := StringReplace(Result, #$2500, '-', [rfReplaceAll]);
-		end;
 	begin
-		if tokenAuditReport <> '' then
-		begin
-//			Status('[TOKEN AUDIT] ' + tokenAuditReport);
-			CheckTrue(False,'[TOKEN AUDIT] ' + tokenAuditReport);
-		end;
-
 		effectiveSuccess := bSuccess and (tokenAuditReport = '');
 
 		if effectiveSuccess then
 		begin
-			Status('[PASS] '+CaseName);
+			Status('             '+CaseName+' [PASS]');
 			Exit;
 		end;
 
 		if actual <> nil then
-		begin
-			actualDump := NormalizeDumpForLog(TSyntaxNode2.DumpTree(actual));
-			Status('[ACTUAL TREE] ' + CaseName + CRLF + actualDump);
-		end
+			actualDump := TSyntaxNode2.DumpTree(actual)
 		else
 			actualDump := '<actual=nil>';
 
-		s :=
-				'[FAIL] Case name: '+CaseName+CRLF+
-				'-----------'+CRLF+
-				SourceCode+CRLF+CRLF;
-
-		if tokens <> nil then
-		begin
-				s := s+'Tokens'+CRLF+
-						 '------'+CRLF+
-						TokensToStr(tokens)+CRLF+CRLF;
-		end
-		else
-			s := s+'Tokens:nil'+CRLF;
-
-		s := s+CRLF+
+		s := CRLF +
+				'Code'+CRLF+
+				'----'+CRLF+
+				sourceCode+CRLF+CRLF+
 				'ExpectedTree'+CRLF+
 				'------------'+CRLF+
-				ExpectedTree+CRLF;
-
-		s := s+CRLF+
+				ExpectedTree+CRLF+CRLF+
 				'ActualTree'+CRLF+
 				'----------'+CRLF+
 				actualDump;
@@ -412,11 +381,14 @@ var
 				'----------'+CRLF+
 				tokenAuditReport;
 
-		if not effectiveSuccess then
-		begin
-			Status(s);
-			CheckTrue(False, s);
-		end;
+		Status(s);
+		
+		if tokenAuditReport <> '' then
+			Fail('[TOKEN AUDIT REPORT] ' + tokenAuditReport)
+		else if ErrorMsg <> '' then
+			Fail(ErrorMsg)
+		else
+			Fail('Mismatched syntax trees');
 	end;
 
 begin
@@ -436,43 +408,41 @@ begin
 		except
 			on E:Exception do
 				begin
-					PrintResults(False);
-					raise;
+					PrintResults(False, E.Message);
 				end;
 		end;
 
-      // Tokenize the source code
-      try
-         tokens := TObjectList.Create(True); //owns objects
-         TDelphiTokenizer.Tokenize(sourceCode, tokens);
-      except
-         on E:Exception do
-            begin
-               PrintResults(False);
-               raise;
-            end;
-      end;
+		// Tokenize the source code
+		try
+			tokens := TObjectList.Create(True); //owns objects
+			TDelphiTokenizer.Tokenize(sourceCode, tokens);
+		except
+			on E:Exception do
+				begin
+					PrintResults(False, E.Message);
+				end;
+		end;
 
-      // Parse the source tokens
-      try
-	      actual := TDelphiParser.ParseText(sourceCode, '');
-	      CheckTrue(Assigned(actual));
+		// Parse the source tokens
+		try
+			actual := TDelphiParser.ParseText(sourceCode, '');
+			CheckTrue(Assigned(actual));
 			tokenAuditReport := BuildTokenAuditReport;
-      except
-         on E:Exception do
-            begin
-               PrintResults(False);
-               raise;
-            end;
-      end;
+		except
+			on E:Exception do
+				begin
+					PrintResults(False, E.Message);
+				end;
+		end;
 
-      // and compare the trees
+		// and compare the trees
 		try
 			Result := CompareTrees(expected, actual);
 			PrintResults(Result);
 		except
+			on E:Exception do
 			begin
-				PrintResults(False);
+				PrintResults(False, E.Message);
 			end;
 		end;
 	finally
@@ -485,7 +455,7 @@ end;
 function TDelphiParserTests.CompareTrees(expected, actual: TSyntaxNode2): Boolean;
 begin
 	CheckTrue(Assigned(expected), 'expected node not assigned');
-	CheckTrue(Assigned(actual), 'actual node not assigned');
+	CheckTrue(Assigned(actual),	'actual node not assigned');
 
 //	Status(CRLF+CRLF+'Expected'+CRLF+'========'+CRLF+CRLF+TSyntaxNode2.DumpTree(expected));
 //	Status(CRLF+CRLF+'Actual  '+CRLF+'========'+CRLF+CRLF+TSyntaxNode2.DumpTree(actual));
@@ -499,10 +469,19 @@ var
 	i, j: Integer;
 	attr: TAttributeName;
 	expVal, actVal: string;
-	expHasNodeChildren, actHasNodeChildren: Boolean;
+	expNodeCount, actNodeCount: Integer;
+	nodeName: string;
 begin
-	CheckTrue(Assigned(expected), 'expected node not assigned');
-	CheckTrue(Assigned(actual), 'actual node not assigned');
+	CheckTrue(Assigned(expected),	'expected node not assigned');
+	CheckTrue(Assigned(actual),	'actual node not assigned');
+
+	nodeName := GetEnumName(TypeInfo(TSyntaxNodeType), Ord(expected.NodeType));
+
+	// Compare node types
+	CheckEquals(
+		GetEnumName(TypeInfo(TSyntaxNodeType), Ord(expected.NodeType)),
+		GetEnumName(TypeInfo(TSyntaxNodeType), Ord(actual.NodeType)),
+		'NodeType mismatch');
 
 	// Compare attributes
 	for attr := Low(TAttributeName) to High(TAttributeName) do
@@ -512,53 +491,39 @@ begin
 		if expVal = '' then
 			Continue;
 		actVal := actual.Attributes[attr];
-		CheckEqualsString(expVal, actVal, 'Attribute '+AttributeNameToStr(attr));
+		CheckEqualsString(expVal, actVal, nodeName+': Attribute '+AttributeNameToStr(attr));
 	end;
 
-	// Check children
-	expHasNodeChildren := False;
-	for i := 0 to expected.ChildNodes.Count-1 do
-		if expected.ChildNodes[i].IsNode then
-		begin
-			expHasNodeChildren := True;
-			Break;
-		end;
-	actHasNodeChildren := False;
+	// Count node-only children on both sides
+	// Expected tree never contains tokens, so count is just ChildNodes.Count
+	expNodeCount := expected.ChildNodes.Count;
+
+	actNodeCount := 0;
 	for i := 0 to actual.ChildNodes.Count-1 do
 		if actual.ChildNodes[i].IsNode then
-		begin
-			actHasNodeChildren := True;
-			Break;
-		end;
-	CheckEquals(expHasNodeChildren, actHasNodeChildren, 'HasChildren');
+			Inc(actNodeCount);
 
-	// We can't compare child counts, as the actual tree contains tokens.
-	// We are only comparing nodes
-//	CheckEquals(expected.ChildNodes.Count,	actual.ChildNodes.Count);
+	CheckEquals(expNodeCount, actNodeCount,
+		nodeName + ': child node count');
 
-
-	j := 0; // j walks the actual child nodes in parallel with the for loop through the expected nodes
+	// Walk expected children, skipping tokens in actual
+	j := 0;
 	for i := 0 to expected.ChildNodes.Count-1 do
 	begin
 		child1 := expected.ChildNodes[i];
 
-		// the actual tree will contain token nodes. We need to skip over those.
-		child2 := actual.ChildNodes[j];
-		while child2.IsToken do
-		begin
+		// Skip token children in actual
+		while (j < actual.ChildNodes.Count) and actual.ChildNodes[j].IsToken do
 			Inc(j);
-			CheckTrue(j <= actual.ChildNodes.Count-1, 'actual.ChildNodes index out of bounds');
-			child2 := actual.ChildNodes[j];
-		end;
 
-		// j runs parallel to the for loop, so we have to be sure to Inc it manually before the loop continues
+		// Safety check (should never hit this if counts matched above)
+		CheckTrue(j < actual.ChildNodes.Count,
+			nodeName + ': ran out of actual child nodes at expected child ' + IntToStr(i));
+
+		child2 := actual.ChildNodes[j];
 		Inc(j);
 
-		CheckEquals(child1.IsNode,  child2.IsNode,  'IsNode');
-		CheckEquals(child1.IsToken, child2.IsToken, 'IsToken'); // it's either Node or Token. Not both. And one is the inverse of the other. So this test should easiliy and always pass
-
-		// For now the expected tree will not contain tokens
-		// If they do arrive, we will ignore them. Perhaps adding a compare is a future thing?
+		// Expected tree only has nodes, so this should always be true
 		if child1.IsToken then
 			Continue;
 
@@ -1102,8 +1067,9 @@ var
 	failures: TStringList;
 	nTest: Integer;
 begin
-//   Status('DateFiles test disabled');
-//   Exit;
+//	Status('DateFiles test disabled');
+//	Exit;
+
 	failures := TStringList.Create;
 	try
 		nTest := 0;
@@ -1118,7 +1084,7 @@ begin
 			begin
 				testCase := cases[i];
 				try
-					RunDatCase(testCase);
+					RunDatCase(testCase, i+1, Length(cases));
 
 					Inc(nTest);
 {
@@ -1129,24 +1095,18 @@ begin
 					18: no leak
 					22: no leak
 					27: no leak
-					36: LEAK, but not runaway - a sane error message
-					50: leak
-					100: leak
+					36: no leak
+					37: no leak
+					50: success
+					75: fail
+					100: error
 }
-					if nTest >= 36 then
+					if nTest >= 299 then
 						Exit;
 				except
 					on E:Exception do
 						begin
-							Status('[TEST ERROR] '+testCase.Name+' ('+E.Message+')'+CRLF+CRLF+
-								'#name'+CRLF+
-								testCase.Name+CRLF+CRLF+
-
-								'#data#'+CRLF+
-								testCase.SourceCode+CRLF+CRLF+
-
-								'#document'+CRLF+
-								testCase.ExpectedTree);
+							Status('[TEST ERROR] '+testCase.Name+' ('+E.Message+')');
 
 							failures.Add(Format('%s (%s)', [testCase.Name, E.Message]));
 							Continue;
@@ -1169,11 +1129,6 @@ procedure TDelphiParserTests.Test_ParseConstSection;
 var
 	sourceCode: string;
 	expectedTree: string;
-const
-   A = 1;
-	B= 2;
-	C =3;
-   d = a+b;
 begin
 	sourceCode := '''
 unit Unit1;
@@ -1193,7 +1148,14 @@ ntCompilationUnit
 		ntInterfaceSection
 			ntConstants
 				ntConstant anName="A" anValueText="1"
+					ntIdentifier anName="A"
 					ntExpression anValueText="1"
+				ntConstant anName="B" anValueText="2"
+					ntIdentifier anName="B"
+					ntExpression anValueText="2"
+				ntConstant anName="C" anValueText="3"
+					ntIdentifier anName="C"
+					ntExpression anValueText="3"
 		ntImplementation
 ''';
 
@@ -1284,7 +1246,7 @@ ntCompilationUnit
 		ntInterfaceSection
 			ntTypeSection
 				ntTypeDecl anName="TSpecial"
-					ntType anType="atClass"
+					ntType anType="avClass"
 						ntField
 							ntName anName="FTime"
 							ntType anName="Integer"
@@ -1412,7 +1374,7 @@ begin
 	expected :=
 		'ntCompilationUnit' + CRLF +
 		#9'ntTypeDecl anName="TSpecial' + CRLF + // missing closing quote
-		#9#9'ntType anType="atClass"';
+		#9#9'ntType anType="avClass"';
 
 	ok := TryExpectedToTree(expected, root, hr, msg);
 	if Assigned(root) then root.Free;
@@ -1490,7 +1452,7 @@ begin
 	expected :=
 		'ntCompilationUnit' + CRLF +
 		#9'ntTypeDecl anName="TSpecial"' + CRLF +
-		#9#9'ntType anType="atClass"';
+		#9#9'ntType anType="avClass"';
 
 	root := nil;
 	try
@@ -1504,7 +1466,7 @@ begin
 		CheckEquals(1, typeDecl.ChildNodes.Count, 'TypeDecl should have one child');
 		typeNode := typeDecl.ChildNodes[0].AsNode;
 		CheckEquals(Ord(ntType), Ord(typeNode.NodeType));
-		CheckEqualsString('atClass', typeNode.Attributes[anType], 'anType should be atClass as text');
+		CheckEqualsString('avClass', typeNode.Attributes[anType], 'anType should be avClass as text');
 	finally
 		root.Free;
 	end;

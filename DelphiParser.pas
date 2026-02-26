@@ -489,9 +489,13 @@ type
 		FNodeType: TSyntaxNodeType;
 		FChildNodes: TObjectList<TSyntaxNodeOrToken>;
 		FAttributes: TDictionary<TAttributeName, string>;
-		FCurrentColumn: Integer;
-		FCurrentLine: Integer;
 		FFilename: string;
+
+		FWidth: Integer;
+		FFullWidth: Integer;
+
+		//FCurrentLine: Integer;
+		//FCurrentColumn: Integer;
 
 		procedure AddChild(ChildNode: TSyntaxNode2); overload;
 		procedure AddChild(ChildNode: TSyntaxToken); overload;
@@ -518,8 +522,10 @@ type
 
 		property DisplayName: string read get_DisplayName;
 		property HasChildren: Boolean read get_HasChildren; // if ChildNodes contains items
-		property Line: Integer read FCurrentLine;
-		property Column: Integer read FCurrentColumn;
+
+
+		property Width: Integer read FWidth;			// Full width minus trivia (just the token/node text)
+		property FullWidth: Integer read FFullWidth;	// Includes leading + trailing trivia
 	end;
 
 {
@@ -1412,14 +1418,15 @@ begin
 	if CurrentTokenExID <> ExpectedTokenKind then
 	begin
 		s := Format(SExpected, ['EX:' + TokenName(ExpectedTokenKind), TokenName(CurrentTokenExID)]);
-		DoMessage(s, CurrentToken.Line, CurrentToken.Column);
+		DoMessage(s, CurrentToken.Width, CurrentToken.FullWidth);
 
 		// Roslyn-style recovery: synthesize the expected token and keep EOF in place.
-		Result := TSyntaxToken.Create(ExpectedTokenKind, CurrentToken.Line, CurrentToken.Column, '');
+		Result := TSyntaxToken.Create(ExpectedTokenKind, CurrentToken.Width, CurrentToken.FullWidth, '');
 		Result.IsMissing := True;
 
 		if CurrentToken.TokenKind <> ptEof then
 			NextToken;
+
 		Exit;
 	end;
 
@@ -2003,7 +2010,7 @@ begin
 	errToken := CurrentToken;
 	Result.AddChild(EatToken);
 
-	DoMessage(Error, errToken.Line, errToken.Column);
+	DoMessage(Error, errToken.Width, errToken.FullWidth);
 end;
 
 function TDelphiParser.Parse(const Tokens: TList): TSyntaxNode2;
@@ -4801,7 +4808,6 @@ LabelId
 
 
 }
-	Result := PoisonNode;
 
 	case CurrentTokenKind of
 	ptAsm:	Result := ParseAssemblerStatement;
@@ -4825,9 +4831,7 @@ LabelId
 			case PeekTokenKind of
 			ptColon: Result := ParseLabeledStatement;
 			else
-				begin
-					Result.AddChild(SynError('InvalidLabeledStatement'));
-				end;
+				Result.AddChild(SynError('InvalidLabeledStatement'));
 			end;
 		end;
 	ptRepeat:		Result := ParseRepeatStatement;
@@ -4871,10 +4875,10 @@ begin
 	else
 	begin
 		// Create a zero-width (synthesized) token for error recovery, preserving tree shape
-		Result := TSyntaxToken.Create(ExpectedTokenKind, CurrentToken.Line, CurrentToken.Column, '');
+		Result := TSyntaxToken.Create(ExpectedTokenKind, CurrentToken.Width, CurrentToken.FullWidth, '');
 		Result.IsMissing := True;
 		s := Format(SExpected, [TokenName(ExpectedTokenKind), TokenName(CurrentToken.TokenKind)]);
-		DoMessage(s, CurrentToken.Line, CurrentToken.Column);
+		DoMessage(s, CurrentToken.Width, CurrentToken.FullWidth);
 		Log(s);
 
 		// Do not consume unexpected real tokens here.
@@ -8786,18 +8790,14 @@ Parsed:
 		│  └─ #ptHexIntegerLiteral("$00993300")
 		└─ #ptSemicolon(";")
 }
+
+//	-> CONST (ConstantDecl)+
 	Result := TSyntaxNode2.Create(ntConstants);
 	Result.AddChild(EatToken(ptConst));
 
-{
-ConstSection
-	-> CONST (ConstantDecl)+
-}
 	Result.AddChild(ParseConstantDecl);
 	while IsPossibleConstantDecl do
-	begin
 		Result.AddChild(ParseConstantDecl);
-	end;
 end;
 
 function TDelphiParser.IsPossibleConstantDecl: Boolean;
@@ -10084,8 +10084,8 @@ begin
 	FNodeType := ntUnknown;
 	FreeAndNil(FAttributes);
 	FreeAndNil(FChildNodes);
-	FCurrentColumn := -1;
-	FCurrentLine := -1;
+	FWidth := 0;
+	FFullWidth := 0;
 	FFilename := '';
 
 	inherited;
@@ -10109,9 +10109,9 @@ const
 //		nestedPrefix: string = #$2502'   ';            // '|    '
 
 		// Unicode
-		middlePrefix: string = #$251C#$2500' '; // '|- '
-		finalPrefix:  string = #$2570#$2500' '; // '\- '
-		nestedPrefix: string = #$2502'  ';      // '|  '
+		middlePrefix: string = '	'; //#$251C#$2500' '; // '|- '
+		finalPrefix:  string = '	'; //#$2570#$2500' '; // '\- '
+		nestedPrefix: string = '	'; //#$2502'  ';      // '|  '
 	begin
 		if (Node = nil) then
 		begin
@@ -10197,7 +10197,7 @@ function TSyntaxNode2.get_DisplayName: string;
 	end;
 
 begin
-	Result := SyntaxNodeTypeToStr(Self.NodeType)+'('+SyntaxNodeAttributesToStr(Self)+')';
+	Result := SyntaxNodeTypeToStr(Self.NodeType)+' '+SyntaxNodeAttributesToStr(Self);
 end;
 
 function TSyntaxNode2.get_Attributes(Attribute: TAttributeName): string;
@@ -10267,8 +10267,8 @@ begin
 	consumedToken := EatToken(expectedKind);
 	Result.AddChild(consumedToken);
 	Result[anName] := consumedToken.ValueText;
-	Result.FCurrentLine := consumedToken.Line;
-	Result.FCurrentColumn := consumedToken.Column;
+	Result.FWidth := consumedToken.Width;
+	Result.FFullWidth := consumedToken.FullWidth;
 //	Result.FFilename := CurrentToken.Filename;   wishful thinking
 end;
 

@@ -343,7 +343,7 @@ begin
 
 		CheckEquals(1, tokens.Count, 'Token stream should end with a dedicated EOF token');
 		lastToken := tokens[tokens.Count - 1] as TSyntaxToken;
-		CheckEquals(Ord(ptEof), Ord(lastToken.TokenKind), 'Final token kind should be ptEof');
+		CheckEquals(Ord(ptEof), Ord(lastToken.Kind), 'Final token kind should be ptEof');
 	finally
 		tokens.Free;
 	end;
@@ -468,7 +468,7 @@ begin
 		for i := 0 to tokens.Count - 1 do
 		begin
 			token := tokens[i] as TSyntaxToken;
-			if (token.TokenKind = ptIntegerConst) and (Pos('_', token.Text) > 0) then
+			if (token.Kind = ptIntegerConst) and (Pos('_', token.Text) > 0) then
 				Inc(countWithUnderscore);
 		end;
 
@@ -497,7 +497,7 @@ begin
 		for i := 0 to tokens.Count - 1 do
 		begin
 			token := tokens[i] as TSyntaxToken;
-			if (token.TokenKind = ptIntegerConst) and (Pos('$', token.Text) = 1) and (Pos('_', token.Text) > 0) then
+			if (token.Kind = ptIntegerConst) and (Pos('$', token.Text) = 1) and (Pos('_', token.Text) > 0) then
 				Inc(countWithUnderscore);
 		end;
 
@@ -536,7 +536,7 @@ Of course, you can use the digit separators for binary literals.
 		CheckEquals(2, tokens.Count);  // [IntegerConst][eof]
 		token := tokens[0] as TSyntaxToken;
 		CheckTrue(Assigned(token));
-		CheckEquals(TokenKindToStr(ptIntegerConst), TokenKindToStr(token.TokenKind), 'TokenKind');
+		CheckEquals(TokenKindToStr(ptIntegerConst), TokenKindToStr(token.Kind), 'TokenKind');
 	finally
 		tokens.Free;
 	end;
@@ -566,11 +566,11 @@ begin
 		for i := 0 to tokens.Count - 1 do
 		begin
 			token := tokens[i] as TSyntaxToken;
-			if not TokenKindIsTrivia(token.TokenKind) then
+			if not TokenKindIsTrivia(token.Kind) then
 			begin
 				SetLength(nonTriviaKinds, n + 1);
 				SetLength(nonTriviaTexts, n + 1);
-				nonTriviaKinds[n] := token.TokenKind;
+				nonTriviaKinds[n] := token.Kind;
 				nonTriviaTexts[n] := token.Text;
 				Inc(n);
 			end;
@@ -623,7 +623,7 @@ begin
 			for j := 0 to token.LeadingTriviaCount - 1 do
 			begin
 				trivia := token.LeadingTrivia[j];
-				if trivia.TokenKind = ptAnsiComment then
+				if trivia.Kind = ptAnsiComment then
 				begin
 					foundComment := True;
 					if trivia.HasErrors or (Pos('Unterminated', trivia.ErrorMessage) > 0) or trivia.IsMissing then
@@ -664,7 +664,7 @@ begin
 			for j := 0 to token.LeadingTriviaCount - 1 do
 			begin
 				trivia := token.LeadingTrivia[j];
-				if trivia.TokenKind = ptBorComment then
+				if trivia.Kind = ptBorComment then
 				begin
 					foundComment := True;
 					if trivia.HasErrors or (Pos('Unterminated', trivia.ErrorMessage) > 0) or trivia.IsMissing then
@@ -706,12 +706,12 @@ begin
 		for i := 0 to tokens.Count - 1 do
 		begin
 			token := tokens[i] as TSyntaxToken;
-			if token.TokenKind = ptVar then foundVar := True
-			else if token.TokenKind = ptBegin then foundBegin_ := True
-			else if token.TokenKind = ptEnd then foundEnd_ := True
-			else if (token.TokenKind = ptIdentifier) and ((token.Text = '&for') or (token.Text = 'for')) then
+			if token.Kind = ptVar then foundVar := True
+			else if token.Kind = ptBegin then foundBegin_ := True
+			else if token.Kind = ptEnd then foundEnd_ := True
+			else if (token.Kind = ptIdentifier) and ((token.Text = '&for') or (token.Text = 'for')) then
 				foundEscapedForAsIdentifier := True
-			else if token.TokenKind = ptFor then
+			else if token.Kind = ptFor then
 			begin
 				// If the tokenizer returned keyword 'for' despite ampersand, that's incorrect
 				CheckTrue(False, 'Ampersand-escaped keyword should not be tokenized as ptFor');
@@ -750,7 +750,7 @@ begin
    begin
       token := tokens[i] as TSyntaxToken;
       debugOutput := debugOutput + Format('Token %d: %s = "%s"'#13#10,
-         [i, TokenKindToStr(token.TokenKind), token.Text]);
+         [i, TokenKindToStr(token.Kind), token.Text]);
    end;
 
    // First, just check that we got some tokens at all
@@ -763,7 +763,7 @@ begin
    for i := 0 to tokens.Count - 1 do
    begin
       token := tokens[i] as TSyntaxToken;
-      if token.TokenKind = ptIdentifier then
+      if token.Kind = ptIdentifier then
       begin
          if token.Text = 'café' then
             foundCafeIdentifier := True;
@@ -881,10 +881,10 @@ begin
 
 		CheckEquals(1, tokens.Count, 'Token stream should end with a dedicated EOF token');
 		lastToken := tokens[tokens.Count-1] as TSyntaxToken;
-		CheckEquals(Ord(ptEof), Ord(lastToken.TokenKind), 'Final token kind should be ptEof');
+		CheckEquals(Ord(ptEof), Ord(lastToken.Kind), 'Final token kind should be ptEof');
 
 		CheckEquals(1, lastToken.LeadingTriviaCount, 'LeadingTriviaCount');
-		CheckTrue(lastToken.LeadingTrivia[0].TokenKind = ptSlashesComment, 'leading trivia kind not ptSlashesComment');
+		CheckTrue(lastToken.LeadingTrivia[0].Kind = ptSlashesComment, 'leading trivia kind not ptSlashesComment');
 	finally
 		tokens.Free;
 	end;
@@ -905,42 +905,42 @@ begin
 	tokens := TObjectList.Create(True);
 	using(tokens);
 
-   TDelphiTokenizer.Tokenize(sourceCode, tokens);
+	TDelphiTokenizer.Tokenize(sourceCode, tokens);
 
-   CheckTrue(tokens.Count > 10, Format('Expected many tokens, got %d', [tokens.Count]));
+	CheckTrue(tokens.Count > 10, Format('Expected many tokens, got %d', [tokens.Count]));
 
-   // Verify position tracking for multi-character operators
-   for i := 0 to tokens.Count - 1 do
-   begin
-      token := tokens[i] as TSyntaxToken;
+	// Verify position tracking for multi-character operators
+	for i := 0 to tokens.Count-1 do
+	begin
+		token := tokens[i] as TSyntaxToken;
 
-      // Check multi-character operators
-      if (token.Text = ':=') then
-      begin
-         CheckEquals(2, token.Width,		':= token StartOffset');
-         CheckEquals(2, token.FullWidth,	':= token TokenLength');
-      end
-      else if (token.Text = '<=') then
-      begin
-         CheckEquals(2, token.Width,		'<= token StartOffset');
-         CheckEquals(2, token.FullWidth,	'<= token TokenLength');
-      end
-      else if (token.Text = '>=') then
-      begin
-         CheckEquals(2, token.Width,		'>= token StartOffset');
-         CheckEquals(2, token.FullWidth,	'>= token TokenLength');
-      end
-      else if (token.Text = '<>') then
-      begin
-         CheckEquals(2, token.Width,		'<> token StartOffset');
-         CheckEquals(2, token.FullWidth,	'<> token TokenLength');
-      end
-      else if (token.Text = '..') then
-      begin
-         CheckEquals(2, token.Width,		'.. token StartOffset');
-         CheckEquals(2, token.FullWidth,	'.. token TokenLength');
-      end;
-   end;
+		// Check multi-character operators
+		if (token.Text = ':=') then
+		begin
+			CheckEquals(2, token.Width,		':= token StartOffset');
+			CheckEquals(2, token.FullWidth,	':= token TokenLength');
+		end
+		else if (token.Text = '<=') then
+		begin
+			CheckEquals(2, token.Width,		'<= token StartOffset');
+			CheckEquals(2, token.FullWidth,	'<= token TokenLength');
+		end
+		else if (token.Text = '>=') then
+		begin
+			CheckEquals(2, token.Width,		'>= token StartOffset');
+			CheckEquals(2, token.FullWidth,	'>= token TokenLength');
+		end
+		else if (token.Text = '<>') then
+		begin
+			CheckEquals(2, token.Width,		'<> token StartOffset');
+			CheckEquals(2, token.FullWidth,	'<> token TokenLength');
+		end
+		else if (token.Text = '..') then
+		begin
+			CheckEquals(2, token.Width,		'.. token StartOffset');
+			CheckEquals(2, token.FullWidth,	'.. token TokenLength');
+		end;
+	end;
 end;
 
 procedure TDelphiTokenizerTests.TestUnterminatedCompilerDirective;
@@ -966,7 +966,7 @@ begin
 		begin
 			token := tokens[i] as TSyntaxToken;
 			debugOutput := debugOutput + Format('Token %d: %s = "%s"'#13#10, 
-				[i, TokenKindToStr(token.TokenKind), token.Text]);
+				[i, TokenKindToStr(token.Kind), token.Text]);
 		end;
 		
 		// Verify we got some tokens (not stuck in infinite loop)
@@ -978,7 +978,7 @@ begin
 		for i := 0 to tokens.Count - 1 do
 		begin
 			token := tokens[i] as TSyntaxToken;
-			if token.TokenKind = ptCompilerDirective then
+			if token.Kind = ptCompilerDirective then
 			begin
 				foundDirective := True;
 				// Verify the directive contains what we expect (opening brace but no closing)
@@ -1016,8 +1016,7 @@ https://docwiki.embarcadero.com/RADStudio/Sydney/en/Fundamental_Syntactic_Elemen
 		TDelphiTokenizer.Tokenize(sourceCode, tokens);
 		CheckEquals(2, tokens.Count, 'tokens.Count');  // directive+eof
 		token := tokens[0] as TSyntaxToken;
-		CheckEquals(TokenKindToStr(ptCompilerDirective), TokenKindToStr(token.TokenKind));
-		CheckTrue(token.DirectiveDelimeter = ddBrace, 'DirectiveDelimiter');
+		CheckEquals(TokenKindToStr(ptCompilerDirective), TokenKindToStr(token.Kind));
 
 		tokens.Clear;
 
@@ -1025,8 +1024,7 @@ https://docwiki.embarcadero.com/RADStudio/Sydney/en/Fundamental_Syntactic_Elemen
 		TDelphiTokenizer.Tokenize(sourceCode, tokens);
 		CheckEquals(2, tokens.Count, 'tokens.Count');  // directive+eof
 		token := tokens[0] as TSyntaxToken;
-		CheckEquals(TokenKindToStr(ptCompilerDirective), TokenKindToStr(token.TokenKind));
-		CheckTrue(token.DirectiveDelimeter = ddParenStar, 'DirectiveDelimiter');
+		CheckEquals(TokenKindToStr(ptCompilerDirective), TokenKindToStr(token.Kind));
 	finally
 		tokens.Free; // TObjectList automatically frees owned objects
 	end;
@@ -1055,10 +1053,10 @@ begin
 			token := tokens[i] as TSyntaxToken;
 			if token.HasErrors then
 				debugOutput := debugOutput + Format('Token %d: %s = "%s", HasErrors=True'#13#10,
-					[i, TokenKindToStr(token.TokenKind), token.Text])
+					[i, TokenKindToStr(token.Kind), token.Text])
 			else
 				debugOutput := debugOutput + Format('Token %d: %s = "%s", HasErrors=False'#13#10,
-					[i, TokenKindToStr(token.TokenKind), token.Text]);
+					[i, TokenKindToStr(token.Kind), token.Text]);
 		end;
 
 		// Verify we got tokens without infinite loop
@@ -1070,7 +1068,7 @@ begin
 		for i := 0 to tokens.Count - 1 do
 		begin
 			token := tokens[i] as TSyntaxToken;
-			if token.TokenKind = ptCompilerDirective then
+			if token.Kind = ptCompilerDirective then
 			begin
 				foundDirective := True;
 
@@ -1125,10 +1123,10 @@ begin
 			token := tokens[i] as TSyntaxToken;
 			if token.HasErrors then
 				debugOutput := debugOutput + Format('Token %d: %s = "%s", HasErrors=True'#13#10, 
-					[i, TokenKindToStr(token.TokenKind), token.Text])
+					[i, TokenKindToStr(token.Kind), token.Text])
 			else
 				debugOutput := debugOutput + Format('Token %d: %s = "%s", HasErrors=False'#13#10, 
-					[i, TokenKindToStr(token.TokenKind), token.Text]);
+					[i, TokenKindToStr(token.Kind), token.Text]);
 		end;
 		
 		// Verify we got tokens
@@ -1140,7 +1138,7 @@ begin
 		for i := 0 to tokens.Count - 1 do
 		begin
 			token := tokens[i] as TSyntaxToken;
-			if token.TokenKind = ptCompilerDirective then
+			if token.Kind = ptCompilerDirective then
 			begin
 				foundDirective := True;
 				
@@ -1197,10 +1195,10 @@ begin
 		for i := 0 to tokens.Count - 1 do
 		begin
 			token := tokens[i] as TSyntaxToken;
-			if token.TokenKind = ptBegin then foundBegin := True
-			else if token.TokenKind = ptEnd then foundEnd := True
-			else if token.TokenKind = ptIf then foundIf := True
-			else if token.TokenKind = ptThen then foundThen := True;
+			if token.Kind = ptBegin then foundBegin := True
+			else if token.Kind = ptEnd then foundEnd := True
+			else if token.Kind = ptIf then foundIf := True
+			else if token.Kind = ptThen then foundThen := True;
 		end;
 		
 		CheckTrue(foundBegin, 'Should recognize "begin" as reserved word');
@@ -1230,7 +1228,7 @@ begin
 		for i := 0 to tokens.Count - 1 do
 		begin
 			token := tokens[i] as TSyntaxToken;
-			if token.TokenKind = ptStringLiteral then
+			if token.Kind = ptStringLiteral then
 			begin
 				foundString := True;
 				CheckEquals('''Hello World''', token.Text, 'String literal text should match');
@@ -1262,7 +1260,7 @@ begin
 		for i := 0 to tokens.Count - 1 do
 		begin
 			token := tokens[i] as TSyntaxToken;
-			if token.TokenKind = ptStringLiteral then
+			if token.Kind = ptStringLiteral then
 			begin
 				foundString := True;
 				CheckTrue(token.HasErrors, 'Unterminated string should have error flag');
@@ -1296,7 +1294,7 @@ begin
 		for i := 0 to tokens.Count - 1 do
 		begin
 			token := tokens[i] as TSyntaxToken;
-			if token.TokenKind = ptStringLiteral then
+			if token.Kind = ptStringLiteral then
 			begin
 				foundString := True;
 				CheckTrue(token.HasErrors, 'Unterminated string should have error flag');
@@ -1330,7 +1328,7 @@ begin
 		for i := 0 to tokens.Count-1 do
 		begin
 			token := tokens[i] as TSyntaxToken;
-			if token.TokenKind = ptStringLiteral then
+			if token.Kind = ptStringLiteral then
 			begin
 				foundString := True;
 				CheckTrue(token.HasErrors, 'Unterminated string should have error flag');
@@ -1364,7 +1362,7 @@ begin
 		for i := 0 to tokens.Count - 1 do
 		begin
 			token := tokens[i] as TSyntaxToken;
-			if (token.TokenKind = ptIntegerConst) and (Pos('$', token.Text) = 1) then
+			if (token.Kind = ptIntegerConst) and (Pos('$', token.Text) = 1) then
 			begin
 				foundHex := True;
 				Break;
@@ -1420,7 +1418,7 @@ Of course, you can use the digit separators for binary literals.
 		for i := 0 to tokens.Count - 1 do
 		begin
 			token := tokens[i] as TSyntaxToken;
-			if (token.TokenKind = ptIntegerConst) and (Pos('%', token.Text) = 1) then
+			if (token.Kind = ptIntegerConst) and (Pos('%', token.Text) = 1) then
 			begin
 				foundBinary := True;
 				Break;
@@ -1450,7 +1448,7 @@ begin
 		token := tokens[0] as TSyntaxToken;
 		CheckNotNull(token, 'token');
 
-		CheckEquals(TokenKindToStr(ptFloat), TokenKindToStr(token.TokenKind), 'TokenKind');
+		CheckEquals(TokenKindToStr(ptFloat), TokenKindToStr(token.Kind), 'TokenKind');
 	finally
 		tokens.Free; // TObjectList automatically frees owned objects
 	end;
@@ -1474,7 +1472,7 @@ begin
 		for i := 0 to tokens.Count - 1 do
 		begin
 			token := tokens[i] as TSyntaxToken;
-			if token.TokenKind = ptFloat then
+			if token.Kind = ptFloat then
 			begin
 				foundFloat := True;
 				Break;
@@ -1504,7 +1502,7 @@ begin
 		token := tokens[0] as TSyntaxToken;
 		CheckNotNull(token, 'token');
 
-		CheckEquals(TokenKindToStr(ptFloat), TokenKindToStr(token.TokenKind), 'TokenKind');
+		CheckEquals(TokenKindToStr(ptFloat), TokenKindToStr(token.Kind), 'TokenKind');
 	finally
 		tokens.Free; // TObjectList automatically frees owned objects
 	end;
@@ -1533,12 +1531,12 @@ procedure TDelphiTokenizerTests.TestNumberExponentLowercase;
 				token := tokens[i] as TSyntaxToken;
 				if (token.Text = '1e10') then
 				begin
-					CheckTrue(token.TokenKind = ptFloat, '1e10 should be a float literal');
+					CheckTrue(token.Kind = ptFloat, '1e10 should be a float literal');
 					found1e10 := True;
 				end
 				else if (token.Text = '2E5') then
 				begin
-					CheckTrue(token.TokenKind = ptFloat, '2E5 should be a float literal');
+					CheckTrue(token.Kind = ptFloat, '2E5 should be a float literal');
 					found2E5 := True;
 				end;
 			end;
@@ -1591,7 +1589,7 @@ It seem like the exponent number is being replaced with E
 			for i := 0 to tokens.Count - 1 do
 			begin
 				token := tokens[i] as TSyntaxToken;
-				if token.TokenKind = ptFloat then
+				if token.Kind = ptFloat then
 				begin
 					Inc(countFloats);
 					if token.Text = expected[0] then seen[0] := True
@@ -1634,13 +1632,13 @@ It seem like the exponent number is being replaced with E
 			for i := 0 to tokens.Count - 1 do
 			begin
 				token := tokens[i] as TSyntaxToken;
-				if token.TokenKind = ptFloat then Inc(countFloats)
-				else if token.TokenKind = ptIntegerConst then Inc(countInts)
-				else if (token.TokenKind = ptIdentifier) and (token.Text = 'e') then foundIdLowerE := True
-				else if (token.TokenKind = ptIdentifier) and (token.Text = 'E') then foundIdUpperE := True
-				else if (token.TokenKind = ptIdentifier) and (token.Text = 'eX') then foundId_eX := True
-				else if token.TokenKind = ptPlus then foundPlus := True
-				else if token.TokenKind = ptMinus then foundMinus := True;
+				if token.Kind = ptFloat then Inc(countFloats)
+				else if token.Kind = ptIntegerConst then Inc(countInts)
+				else if (token.Kind = ptIdentifier) and (token.Text = 'e') then foundIdLowerE := True
+				else if (token.Kind = ptIdentifier) and (token.Text = 'E') then foundIdUpperE := True
+				else if (token.Kind = ptIdentifier) and (token.Text = 'eX') then foundId_eX := True
+				else if token.Kind = ptPlus then foundPlus := True
+				else if token.Kind = ptMinus then foundMinus := True;
 			end;
 
 			CheckEquals(0, countFloats, 'None of these forms should be recognized as float');
@@ -1679,11 +1677,11 @@ It seem like the exponent number is being replaced with E
 			for i := 0 to tokens.Count - 1 do
 			begin
 				token := tokens[i] as TSyntaxToken;
-				if not TokenKindIsTrivia(token.TokenKind) then
+				if not TokenKindIsTrivia(token.Kind) then
 				begin
 					SetLength(seqKinds, nonTriviaCount+1);
 					SetLength(seqTexts, nonTriviaCount+1);
-					seqKinds[nonTriviaCount] := token.TokenKind;
+					seqKinds[nonTriviaCount] := token.Kind;
 					seqTexts[nonTriviaCount] := token.Text;
 					Inc(nonTriviaCount);
 				end;
@@ -1722,7 +1720,7 @@ begin
 		for i := 0 to tokens.Count - 1 do
 		begin
 			token := tokens[i] as TSyntaxToken;
-			if token.TokenKind = ptAsciiChar then
+			if token.Kind = ptAsciiChar then
 			begin
 				foundAscii := True;
 				Break;
@@ -1762,7 +1760,7 @@ begin
 			for j := 0 to token.LeadingTriviaCount - 1 do
 			begin
 				triviaToken := token.LeadingTrivia[j];
-				if triviaToken.TokenKind = ptAnsiComment then
+				if triviaToken.Kind = ptAnsiComment then
 				begin
 					foundComment := True;
 					CheckTrue(Pos('(*', triviaToken.Text) = 1, 'ANSI comment should start with (*');
@@ -1805,7 +1803,7 @@ begin
 			for j := 0 to token.LeadingTriviaCount - 1 do
 			begin
 				triviaToken := token.LeadingTrivia[j];
-				if triviaToken.TokenKind = ptBorComment then
+				if triviaToken.Kind = ptBorComment then
 				begin
 					foundComment := True;
 					CheckTrue(Pos('{', triviaToken.Text) = 1, 'Bor comment should start with {');
@@ -1848,7 +1846,7 @@ begin
 			for j := 0 to token.LeadingTriviaCount - 1 do
 			begin
 				triviaToken := token.LeadingTrivia[j];
-				if triviaToken.TokenKind = ptSlashesComment then
+				if triviaToken.Kind = ptSlashesComment then
 				begin
 					foundComment := True;
 					CheckTrue(Pos('//', triviaToken.Text) = 1, 'Slash comment should start with //');
@@ -1888,12 +1886,12 @@ begin
 		for i := 0 to tokens.Count - 1 do
 		begin
 			token := tokens[i] as TSyntaxToken;
-			if token.TokenKind = ptAssign then foundAssign := True
-			else if token.TokenKind = ptLessThanEquals then foundLessEquals := True
-			else if token.TokenKind = ptGreaterThanEquals then foundGreaterEquals := True
-			else if token.TokenKind = ptNotEqual then foundNotEqual := True
-			else if token.TokenKind = ptDotDot then foundDotDot := True
-			else if token.TokenKind = ptDoubleAddressOp then foundDoubleAt := True;
+			if token.Kind = ptAssign then foundAssign := True
+			else if token.Kind = ptLessThanEquals then foundLessEquals := True
+			else if token.Kind = ptGreaterThanEquals then foundGreaterEquals := True
+			else if token.Kind = ptNotEqual then foundNotEqual := True
+			else if token.Kind = ptDotDot then foundDotDot := True
+			else if token.Kind = ptDoubleAddressOp then foundDoubleAt := True;
 		end;
 		
 		CheckTrue(foundAssign, 'Should recognize := operator');
@@ -1932,7 +1930,7 @@ begin
 		for i := 0 to tokens.Count-1 do
 		begin
 			token := tokens[i] as TSyntaxToken;
-			if token.TokenKind = ptMultilineStringLiteral then
+			if token.Kind = ptMultilineStringLiteral then
 			begin
 				foundMultilineString := True;
 				CheckTrue(Pos(T3, token.Text) = 1, 'Multiline string should start with triple quotes');
@@ -1965,7 +1963,7 @@ begin
 		for i := 0 to tokens.Count - 1 do
 		begin
 			token := tokens[i] as TSyntaxToken;
-			if token.TokenKind = ptMultilineStringLiteral then
+			if token.Kind = ptMultilineStringLiteral then
 			begin
 				foundMultilineString := True;
 				CheckFalse(token.HasErrors, 'HTML multiline string should not have errors');
@@ -2003,7 +2001,7 @@ begin
 		for i := 0 to tokens.Count - 1 do
 		begin
 			token := tokens[i] as TSyntaxToken;
-			if token.TokenKind = ptMultilineStringLiteral then
+			if token.Kind = ptMultilineStringLiteral then
 			begin
 				foundMultilineString := True;
 				CheckFalse(token.HasErrors, 'JSON multiline string should not have errors');
@@ -2038,7 +2036,7 @@ begin
 		for i := 0 to tokens.Count - 1 do
 		begin
 			token := tokens[i] as TSyntaxToken;
-			if token.TokenKind = ptMultilineStringLiteral then
+			if token.Kind = ptMultilineStringLiteral then
 			begin
 				foundMultilineString := True;
 				CheckFalse(token.HasErrors, 'SQL multiline string should not have errors');
@@ -2085,7 +2083,7 @@ A multiline string treats a leading white space this way:
 		for i := 0 to tokens.Count - 1 do
 		begin
 			token := tokens[i] as TSyntaxToken;
-			if token.TokenKind = ptMultilineStringLiteral then
+			if token.Kind = ptMultilineStringLiteral then
 			begin
 				foundMultilineString := True;
 				CheckTrue(Pos(T5, token.Text) = 1, 'Multiline string should start with 5 quotes');
@@ -2133,7 +2131,7 @@ begin
 		for i := 0 to tokens.Count-1 do
 		begin
 			token := tokens[i] as TSyntaxToken;
-			if token.TokenKind <> ptMultilineStringLiteral then
+			if token.Kind <> ptMultilineStringLiteral then
 				Continue;
 
 			foundMultilineString := True;
@@ -2181,7 +2179,7 @@ begin
 		for i := 0 to tokens.Count-1 do
 		begin
 			token := tokens[i] as TSyntaxToken;
-			if token.TokenKind <> ptMultilineStringLiteral then
+			if token.Kind <> ptMultilineStringLiteral then
 				Continue;
 
 			foundMultilineString := True;
@@ -2227,7 +2225,7 @@ begin
 		for i := 0 to tokens.Count - 1 do
 		begin
 			token := tokens[i] as TSyntaxToken;
-			if token.TokenKind = ptMultilineStringLiteral then
+			if token.Kind = ptMultilineStringLiteral then
 			begin
 				foundMultilineString := True;
 				CheckTrue(Pos(T3, token.Text) = 1, 'Multiline string should start with triple quotes');
@@ -2256,7 +2254,7 @@ begin
 		for i := 0 to tokens.Count - 1 do
 		begin
 			token := tokens[i] as TSyntaxToken;
-			if token.TokenKind = ptMultilineStringLiteral then
+			if token.Kind = ptMultilineStringLiteral then
 			begin
 				foundMultilineString := True;
 				CheckTrue(Pos(T3, token.Text) = 1, 'Multiline string should start with triple quotes');
@@ -2287,7 +2285,7 @@ begin
 		for i := 0 to tokens.Count-1 do
 		begin
 			token := tokens[i] as TSyntaxToken;
-			if token.TokenKind = ptMultilineStringLiteral then
+			if token.Kind = ptMultilineStringLiteral then
 			begin
 				foundMultilineString := True;
 				CheckTrue(Pos(T3, token.Text) = 1, 'Multiline string should start with triple quotes');
@@ -2341,7 +2339,7 @@ Hello world'''
 		begin
 			token := tokens[i] as TSyntaxToken;
 			TConstraints.NotNull(token);
-			if token.TokenKind <> ptMultilineStringLiteral then
+			if token.Kind <> ptMultilineStringLiteral then
 				Continue;
 
 			CheckTrue(token.HasErrors, 							'Multiline literal should have an error');
@@ -2379,11 +2377,11 @@ begin
 		for i := 0 to tokens.Count - 1 do
 		begin
 			token := tokens[i] as TSyntaxToken;
-			if token.TokenKind = ptPlus then foundPlus := True
-			else if token.TokenKind = ptMinus then foundMinus := True
-			else if token.TokenKind = ptAsterisk then foundAsterisk := True
-			else if token.TokenKind = ptSlash then foundSlash := True
-			else if token.TokenKind = ptEquals then foundEquals := True;
+			if token.Kind = ptPlus then foundPlus := True
+			else if token.Kind = ptMinus then foundMinus := True
+			else if token.Kind = ptAsterisk then foundAsterisk := True
+			else if token.Kind = ptSlash then foundSlash := True
+			else if token.Kind = ptEquals then foundEquals := True;
 		end;
 		
 		CheckTrue(foundPlus, 'Should recognize + operator');
@@ -2422,14 +2420,14 @@ begin
 			for j := 0 to token.LeadingTriviaCount - 1 do
 			begin
 				triviaToken := token.LeadingTrivia[j];
-				if (triviaToken.TokenKind = ptWhitespace) or (triviaToken.TokenKind = ptCRLF) then
+				if (triviaToken.Kind = ptWhitespace) or (triviaToken.Kind = ptCRLF) then
 					foundWhitespace := True;
 			end;
 			
 			for j := 0 to token.TrailingTriviaCount - 1 do
 			begin
 				triviaToken := token.TrailingTrivia[j];
-				if (triviaToken.TokenKind = ptWhitespace) or (triviaToken.TokenKind = ptCRLF) then
+				if (triviaToken.Kind = ptWhitespace) or (triviaToken.Kind = ptCRLF) then
 					foundWhitespace := True;
 			end;
 		end;
@@ -2460,7 +2458,7 @@ begin
 		for i := 0 to tokens.Count - 1 do
 		begin
 			token := tokens[i] as TSyntaxToken;
-			if token.TokenKind = ptStringLiteral then
+			if token.Kind = ptStringLiteral then
 			begin
 				foundString := True;
 				// The tokenizer processes escapes during parsing, so both Text and ValueText
@@ -2503,7 +2501,7 @@ begin
 		for i := 0 to tokens.Count - 1 do
 		begin
 			token := tokens[i] as TSyntaxToken;
-			if token.TokenKind = ptStringLiteral then
+			if token.Kind = ptStringLiteral then
 			begin
 				foundString := True;
 				// Valid surrogate pair should NOT generate warning
@@ -2542,7 +2540,7 @@ begin
 		for i := 0 to tokens.Count - 1 do
 		begin
 			token := tokens[i] as TSyntaxToken;
-			if token.TokenKind = ptStringLiteral then
+			if token.Kind = ptStringLiteral then
 			begin
 				foundString := True;
 				// Invalid surrogate pair should generate warning
@@ -2578,7 +2576,7 @@ begin
 		for i := 0 to tokens.Count - 1 do
 		begin
 			token := tokens[i] as TSyntaxToken;
-			if token.TokenKind = ptStringLiteral then
+			if token.Kind = ptStringLiteral then
 			begin
 				foundString := True;
 				// Null character should not generate any warnings or errors
@@ -2630,7 +2628,7 @@ begin
 		for i := 0 to tokens.Count - 1 do
 		begin
 			token := tokens[i] as TSyntaxToken;
-			if token.TokenKind = ptStringLiteral then
+			if token.Kind = ptStringLiteral then
 			begin
 				foundString := True;
 				// Long string should generate warning
@@ -2666,7 +2664,7 @@ begin
 		for i := 0 to tokens.Count - 1 do
 		begin
 			token := tokens[i] as TSyntaxToken;
-			if token.TokenKind = ptStringLiteral then
+			if token.Kind = ptStringLiteral then
 			begin
 				foundString := True;
 				// Tab character should be allowed without warning
@@ -2693,7 +2691,7 @@ begin
 	for i := 0 to tokens.Count - 1 do
 	begin
 		token := tokens[i] as TSyntaxToken;
-		if TokenKindIsTrivia(token.TokenKind) then
+		if TokenKindIsTrivia(token.Kind) then
 		begin
 			Result := True;
 			Exit;

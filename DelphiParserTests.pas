@@ -39,13 +39,18 @@ type
 		procedure Test_ExpectedToTree_UnknownNodeType_Raises;
 		procedure Test_ExpectedToTree_FirstLineNotRoot_Raises;
 
+		procedure Test_UnitPortabilityDirectives;
+
 		procedure Test_ParseConstWithTrailingDecimalLiteral;
 
 		procedure Test_ParseResStringSection;						// resourcestring SProduct = 'Contoso';
 		procedure Test_ParseResStringSection_Concatenated;		// resourcestring SProduct = 'A' + 'B';
 		procedure Test_ParseConstSection;
 
+		procedure Test_ParseFieldSection;
+
 		procedure Test_ParseClassType;
+		procedure Test_ParseConstructorMethodHeading;
 
 		procedure Test_DatFiles;
 	end;
@@ -208,7 +213,7 @@ var
 	function TokenKey(tok: TSyntaxToken): string;
 	begin
 		Result := Format('%s|%d|%d|%s', [
-			TokenKindToStr(tok.TokenKind),
+			TokenKindToStr(tok.Kind),
 			tok.Width,
 			tok.FullWidth,
 			tok.Text
@@ -269,7 +274,7 @@ var
 				tok := TSyntaxToken(tokens[i]);
 				if tok = nil then
 					Continue;
-				if tok.TokenKind = ptEof then
+				if tok.Kind = ptEof then
 					Continue;
 				AddTokenCount(inputCounts, TokenKey(tok));
 			end;
@@ -280,7 +285,7 @@ var
 					Continue;
 				if tok.IsMissing then
 					Continue;
-				if tok.TokenKind = ptEof then
+				if tok.Kind = ptEof then
 					Continue;
 				AddTokenCount(treeCounts, TokenKey(tok));
 			end;
@@ -1066,7 +1071,25 @@ var
 	i: Integer;
 	failures: TStringList;
 	nTest: Integer;
+const
+{
+	We're trying to find which test case is exposing the leak.
+	It's not the in the first 10 tests:
+	10: no leak
+	16: no leak
+	18: no leak
+	22: no leak
+	27: no leak
+	36: no leak
+	37: no leak
+	50: success
+	75: fail
+	100: error
+}
+	MAX_TESTS = 0;
 begin
+
+
 //	Status('DateFiles test disabled');
 //	Exit;
 
@@ -1082,27 +1105,13 @@ begin
 
 			for i := 0 to High(cases) do
 			begin
+				if (MAX_TESTS > 0) and (nTest >= MAX_TESTS) then
+					Exit;
+
 				testCase := cases[i];
 				try
-					RunDatCase(testCase, i+1, Length(cases));
-
 					Inc(nTest);
-{
-					We're trying to find which test case is exposing the leak.
-					It's not the in the first 10 tests:
-					10: no leak
-					16: no leak
-					18: no leak
-					22: no leak
-					27: no leak
-					36: no leak
-					37: no leak
-					50: success
-					75: fail
-					100: error
-}
-					if nTest >= 299 then
-						Exit;
+					RunDatCase(testCase, i+1, Length(cases));
 				except
 					on E:Exception do
 						begin
@@ -1194,9 +1203,6 @@ procedure TDelphiParserTests.Test_ParseResStringSection_Concatenated;
 var
 	sourceCode: string;
 	expectedTree: string;
-resourcestring
-	S1 = 'a'+'b';
-//2 = S1 + 'b';   E2026 Constant expression expected	S3 = S1 + S2;
 begin
 	sourceCode := '''
 unit Unit1;
@@ -1219,6 +1225,218 @@ ntCompilationUnit
 ''';
 //ERRORS
 //	E2026 Constant expression required
+
+	CompareSource(sourceCode, expectedTree);
+end;
+
+procedure TDelphiParserTests.Test_ParseFieldSection;
+var
+	sourceCode: string;
+	expectedTree: string;
+begin
+{
+{
+http://dgrok.excastle.com/Grammar.html#FieldSection
+
+FieldSection			Backlinks: VisibilitySectionContent
+	-> CLASS VAR (FieldDecl)+			; class var requires at least one field
+	-> VAR (FieldDecl)+					; var requires at least one field
+	-> FieldDecl							; bare field (no prefix), exactly one at a time
+
+This is a little-known syntax:
+
+	TCustomer = class
+
+	// the syntax we all know
+	private
+		A: Integer;
+	protected
+		B: Integer;
+	public
+		C: Integer;
+	published
+		D: Integer;
+
+	// var is allowed too
+	private
+		var
+			E: Integer;
+	protected
+		var
+			F: Integer;
+	public
+		var
+			G: Integer;
+	published
+		var
+			H: Integer;
+
+	// a bare var is assumed to be public
+	var
+		I: Integer;
+
+	// const is also allowed in addition to var
+	private
+		const
+			J = 7;
+			K: Integer = 8;
+	protected
+		const
+			L = 9;
+			M: Integer = 10;
+	public
+		var
+			N = 11;
+			O: Integer = 12;
+	published
+		var
+			P = 13;
+			Q: Integer = 14;]
+	end;
+
+See also: https://docwiki.embarcadero.com/RADStudio/Athens/en/Fields_%28Delphi%29
+}
+	sourceCode := '''
+unit Unit1;
+interface
+type
+TCustomer = class
+	// the syntax we all know
+	private
+		A: Integer;
+	protected
+		B: Integer;
+	public
+		C: Integer;
+	published
+		D: Integer;
+
+	// var is allowed too
+	private
+		var
+			E: Integer;
+	protected
+		var
+			F: Integer;
+	public
+		var
+			G: Integer;
+	published
+		var
+			H: Integer;
+
+	// a bare var is assumed to be public
+	var
+		I: Integer;
+
+	// const is also allowed in addition to var
+	private
+		const
+			J = 7;
+			K: Integer = 8;
+	protected
+		const
+			L = 9;
+			M: Integer = 10;
+	public
+		var
+			N = 11;
+			O: Integer = 12;
+	published
+		var
+			P = 13;
+			Q: Integer = 14;
+	end;
+implementation
+end.
+''';
+
+	expectedTree := '''
+ntCompilationUnit
+	ntUnitDeclaration anName="Unit1"
+		ntQualifiedIdentifier anName="Unit1"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="TCustomer"
+					ntType anType="avClass"
+						ntVisibilitySection anVisibility="private"
+							ntField
+								ntName anName="A"
+								ntType anName="Integer"
+						ntVisibilitySection anVisibility="protected"
+							ntField
+								ntName anName="B"
+								ntType anName="Integer"
+						ntVisibilitySection anVisibility="public"
+							ntField
+								ntName anName="C"
+								ntType anName="Integer"
+						ntVisibilitySection anVisibility="published"
+							ntField
+								ntName anName="D"
+								ntType anName="Integer"
+						ntVisibilitySection anVisibility="private"
+							ntFieldSection
+								ntField
+									ntName anName="E"
+									ntType anName="Integer"
+						ntVisibilitySection anVisibility="protected"
+							ntFieldSection
+								ntField
+									ntName anName="F"
+									ntType anName="Integer"
+						ntVisibilitySection anVisibility="public"
+							ntFieldSection
+								ntField
+									ntName anName="G"
+									ntType anName="Integer"
+						ntVisibilitySection anVisibility="published"
+							ntFieldSection
+								ntField
+									ntName anName="H"
+									ntType anName="Integer"
+						ntFieldSection
+							ntField
+								ntName anName="I"
+								ntType anName="Integer"
+						ntVisibilitySection anVisibility="private"
+							ntConstants
+								ntConstant anName="J" anValueText="7"
+									ntIdentifier anName="J"
+									ntExpression anValueText="7"
+								ntConstant anName="K" anValueText="8"
+									ntIdentifier anName="K"
+									ntType anName="Integer"
+									ntExpression anValueText="8"
+						ntVisibilitySection anVisibility="protected"
+							ntConstants
+								ntConstant anName="L" anValueText="9"
+									ntIdentifier anName="L"
+									ntExpression anValueText="9"
+								ntConstant anName="M" anValueText="10"
+									ntIdentifier anName="M"
+									ntType anName="Integer"
+									ntExpression anValueText="10"
+						ntVisibilitySection anVisibility="public"
+							ntFieldSection
+								ntConstant anName="N" anValueText="11"
+									ntIdentifier anName="N"
+									ntExpression anValueText="11"
+								ntField
+									ntName anName="O"
+									ntType anName="Integer"
+									ntExpression anValueText="12"
+						ntVisibilitySection anVisibility="published"
+							ntFieldSection
+								ntConstant anName="P" anValueText="13"
+									ntIdentifier anName="P"
+									ntExpression anValueText="13"
+								ntField
+									ntName anName="Q"
+									ntType anName="Integer"
+									ntExpression anValueText="14"
+		ntImplementation
+''';
 
 	CompareSource(sourceCode, expectedTree);
 end;
@@ -1256,6 +1474,38 @@ ntCompilationUnit
 	CompareSource(sourceCode, expectedTree);
 end;
 
+procedure TDelphiParserTests.Test_ParseConstructorMethodHeading;
+var
+	sourceCode: string;
+	expectedTree: string;
+begin
+	sourceCode := '''
+unit U;
+interface
+type
+	T = class
+		constructor Create;
+	end;
+implementation
+end.
+''';
+
+	expectedTree := '''
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntMethod anKind="avConstructor"
+							ntQualifiedIdentifier anName="Create"
+		ntImplementation
+''';
+
+	CompareSource(sourceCode, expectedTree);
+end;
+
 procedure TDelphiParserTests.Test_ParseConstWithTrailingDecimalLiteral;
 const
 	Source: string =
@@ -1281,7 +1531,7 @@ begin
 		for i := 0 to tokens.Count - 1 do
 		begin
 			token := tokens[i] as TSyntaxToken;
-			if (token.TokenKind = ptFloat) and SameText(token.Text, '1.') then
+			if (token.Kind = ptFloat) and SameText(token.Text, '1.') then
 			begin
 				floatFound := True;
 				Break;
@@ -1507,6 +1757,34 @@ begin
 	finally
 		root.Free;
 	end;
+end;
+
+procedure TDelphiParserTests.Test_UnitPortabilityDirectives;
+var
+	sourceCode: string;
+	expectedTree: string;
+begin
+	sourceCode := '''
+unit A library platform deprecated 'use Fabrikam.SpecialCharactersDemo' experimental;
+interface
+implementation
+end.
+''';
+
+	expectedTree := '''
+ntCompilationUnit
+	ntUnitDeclaration anName="A"
+		ntQualifiedIdentifier anName="A"
+		ntPortabilityDirective anLibrary="avTrue"
+		ntPortabilityDirective anPlatform="avTrue"
+		ntPortabilityDirective anDeprecated="use Fabrikam.SpecialCharactersDemo"
+		ntPortabilityDirective anExperimental="avTrue"
+		ntInterfaceSection
+		ntImplementation
+
+''';
+
+	CompareSource(sourceCode, expectedTree);
 end;
 
 initialization

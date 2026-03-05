@@ -68,14 +68,13 @@ Keywords are then broken down into two categories:
 
 
 
-	Keyword					Example		Token.TokenKind	Token.DirectiveID   Token.GenID
-	===================	==========	================	================= 	============
-	(reserved word)		'of'			ptOf					ptUnknown (n/a)		ptOf
-	(directive)				'out'			ptIdentifier		ptOut						ptOut
-	(identifier)			'Contoso'	ptIdentifier		ptUnknown				ptIdentifier
+	Keyword					Example		Token.Kind			Token.ContextualKind
+	===================	==========	================	====================
+	(reserved word)		'of'			ptOf					ptOf
+	(directive)				'out'			ptIdentifier		ptOut
+	(identifier)			'Contoso'	ptIdentifier		ptIdentifier
 
-	Token.DirectiveID is only valid if TokenKind is ptIdentifier.
-	Token.GenID is a helper function that will coalesce (DirectiveID|TokenKind)
+	Token.ContextualKind is a helper function that will coalesce (DirectiveID|Kind)
 
 
 1. Reserved words (e.g., begin, end, case, for, if, of)
@@ -109,7 +108,7 @@ Keywords are then broken down into two categories:
 	This context is determined by the parser, and it can change based on how the keyword is used in the code.
 
 	The tokenizer returns these directive tokens as ptIdentifier,
-	and the parser sets TSyntaxToken.GenID to a particular ptXxxx directive
+	and the parser sets TSyntaxToken.ContextualKind to a particular ptXxxx directive
 
 	See the Directives[] constant array of the list of directives.
 	Call TDelphiParser.GetDirectiveTokenKind('out') to return ptOut if it is a directive, or ptUnkonwn if it isn't.
@@ -398,7 +397,7 @@ type
 //		ptResourceDirect,				// '{$RESOURCE xxx}'	compiler directive
 //		ptScopedEnumsDirect,			// '{$SCOPEDENUMS xxx}' compiler directive
 
-		// Will be the GenID of a string token (I am guessing at that, that seems reasonable to me)
+		// Will be the ContextualKindGenID of a string token (I am guessing at that, that seems reasonable to me)
 		ptName,						// The name of an external function. e.g. procedure Foo; external 'glib.dll' name 'WabashTheMagicDragon';
 
 		// *** Identifiers ***
@@ -617,15 +616,40 @@ type
 }
 	TSyntaxToken = class
 	private
+		FKind: TptTokenKind;	// base kind: identifier, string, symbol, comment, directive, etc.
+
 		FLeadingTrivia: TList<TSyntaxToken>;
 		FTrailingTrivia: TList<TSyntaxToken>;
-		function get_GenID: TptTokenKind;
+
+{
+
+		Reserved words cannot be redefined or used as an identifier.
+
+The following reserved words cannot be redefined or used as identifiers.
+
+		Complier directives are similar to reserved words, except they can be reused as identifiers.
+		Hence -- although it is inadvisable to do so -- you can define an identifier that looks exactly like a directive.
+
+		In order to support both types (identifier mode vs directive mode) in one token, we have two properties:
+
+			- TokenKind:   The kind of TSyntaxToken, and will be ptIdentifier for possible identifiers (e.g. "Self")
+			- DirectiveID: When the identifier is also a Compiler Directive, contains the token type   (e.g. ptSelf)
+
+		And then you can just read the ExtendedID property, which will prefer ptSelf --> ptIdentifier
+}
+		FDirectiveID: TptTokenKind;			// DirectiveID. See constant Directives[]
+		DirectiveDelimeter: TDirectiveDelimiter; // (ddBrace, ddParenStar)
+
+		// optional directive payload (only for TokenKind = ptDirective)
+//		Directive: PDirectiveData; // nil unless a directive
+
+
+		function get_ContextualKind: TptTokenKind;
 		function get_LeadingTriviaCount: Integer;
 		function get_LeadingTrivia(I: Integer): TSyntaxToken;
 		function get_TrailingTriviaCount: Integer;
 		function get_TrailingTrivia(I: Integer): TSyntaxToken;
 	public
-		TokenKind: TptTokenKind;	// base kind: identifier, string, symbol, comment, directive, etc.
 //		Line: Integer;
 //		Column: Integer;
 //		StartOffset: Integer;		// absolute byte/char offset in the file (0-based)
@@ -644,39 +668,19 @@ type
 		ErrorMessage: string;		// primary error message
 		WarningMessage: string;		// primary warning message
 
-{
-
-		Reserved words cannot be redefined or used as an identifier.
-
-The following reserved words cannot be redefined or used as identifiers.
-
-		Complier directives are similar to reserved words, except they can be reused as identifiers.
-		Hence -- although it is inadvisable to do so -- you can define an identifier that looks exactly like a directive.
-
-		In order to support both types (identifier mode vs directive mode) in one token, we have two properties:
-
-			- TokenKind:   The kind of TSyntaxToken, and will be ptIdentifier for possible identifiers (e.g. "Self")
-			- DirectiveID: When the identifier is also a Compiler Directive, contains the token type   (e.g. ptSelf)
-
-		And then you can just read the ExtendedID property, which will prefer ptSelf --> ptIdentifier
-}
-		DirectiveID: TptTokenKind;			// DirectiveID. See constant Directives[]
-		DirectiveDelimeter: TDirectiveDelimiter; // (ddBrace, ddParenStar)
-
-		// optional directive payload (only for TokenKind = ptDirective)
-//		Directive: PDirectiveData; // nil unless a directive
-
 		constructor Create(ATokenKind: TptTokenKind; const Width, FullWidth: Integer; const Text: string);
 		destructor Destroy; override;
+
+		property Kind: TptTokenKind read FKind;
+		/// <summary>If Kind is an identifier that can also be a directive, will return a TokenKind that represents that directive (e.g. ptAbsolute)</summary>
+		property ContextualKind: TptTokenKind read get_ContextualKind;
+
 
 		property LeadingTriviaCount: Integer read get_LeadingTriviaCount;
 		property LeadingTrivia[n: Integer]: TSyntaxToken read get_LeadingTrivia;
 		property TrailingTriviaCount: Integer read get_TrailingTriviaCount;
 		property TrailingTrivia[n: Integer]: TSyntaxToken read get_TrailingTrivia;
 
-		/// <summary>GenID if set; otherwise TokenKind if GenID is empty</summary>
-		// Prefers compiler directive over identifier (e.g. ptSelf --> ptIdentifier)
-		property GenID: TptTokenKind read get_GenID;
 
 		function ToString: string; override;
 
@@ -2414,7 +2418,7 @@ begin
 
 	// Populate the directive TokenKind if the identifier has the same name as a directive
 	if tokenKind = ptIdentifier then
-		Result.DirectiveID := GetDirectiveTokenKind(s);
+		Result.FDirectiveID := GetDirectiveTokenKind(s);
 end;
 
 function TDelphiTokenizer.DoCloseParen(const ch: WideChar): TSyntaxToken;
@@ -2568,7 +2572,7 @@ begin
 	begin
 		AToken := FNextToken;
 		FNextToken := nil;
-		if AToken.TokenKind = ptEof then
+		if AToken.Kind = ptEof then
 			FEofEmitted := True;
 		Result := True;
 		Exit;
@@ -2765,7 +2769,7 @@ begin
 	// If we already have a buffered token, return it.
 	if FNextToken <> nil then
 	begin
-		Result := FNextToken.TokenKind;
+		Result := FNextToken.Kind;
 		Exit;
 	end;
 
@@ -2775,7 +2779,7 @@ begin
 		if GetNextToken({out}tok) then
 		begin
 			FNextToken := tok; // buffer it for future consumption
-			Result := FNextToken.TokenKind;
+			Result := FNextToken.Kind;
 			Exit;
 		end;
 	finally
@@ -3059,7 +3063,7 @@ begin
 	FLeadingTrivia  := TObjectList<TSyntaxToken>.Create(True);
 	FTrailingTrivia := TObjectList<TSyntaxToken>.Create(True);
 
-	Self.TokenKind := ATokenKind;
+	FKind := ATokenKind;
 	Self.Width := Width;
 	Self.FullWidth := FullWidth;
 	Self.Text := Text;
@@ -3071,7 +3075,7 @@ begin
 	Self.ErrorMessage := '';
 	Self.WarningMessage := '';
 	Self.IsMissing := False;
-	Self.DirectiveID := ptUnknown;
+	FDirectiveID := ptUnknown;
 end;
 
 destructor TSyntaxToken.Destroy;
@@ -3081,7 +3085,7 @@ begin
 
 {$IFDEF DEBUG}
 	// Help debug use-after-free
-	TokenKind := High(TptTokenKind);
+	FKind := High(TptTokenKind);
 	Width := 0;
 	FullWidth := 0;
 	Text := '<destroyed>';
@@ -3112,18 +3116,20 @@ begin
 	Result := FLeadingTrivia.Count;
 end;
 
-function TSyntaxToken.get_GenID: TptTokenKind;
+function TSyntaxToken.get_ContextualKind: TptTokenKind;
 begin
 {
 	If the identifier could also be a directive,
 	then GenID returns the directive TokenKind.
 
 	Otherwise it just returns identifier.
+
+	https://docwiki.embarcadero.com/RADStudio/Sydney/en/Fundamental_Syntactic_Elements_(Delphi)
 }
-	Result := Self.TokenKind;
-	if Result = ptIdentifier then
-		if DirectiveID <> ptUnknown then
-			Result := DirectiveID;
+	if (Kind = ptIdentifier) and (FDirectiveID <> ptUnknown) then
+		Result := FDirectiveID
+	else
+		Result := Self.Kind;
 end;
 
 function TSyntaxToken.get_LeadingTrivia(I: Integer): TSyntaxToken;
@@ -3153,7 +3159,7 @@ begin
 	if IsMissing then
 		statusInfo := statusInfo + ' [MISSING]';
 		
-	Result := Format('Token: %s "%s"%s', [TokenKindToStr(TokenKind), Text, statusInfo]);
+	Result := Format('Token: %s "%s"%s', [TokenKindToStr(Kind), Text, statusInfo]);
 end;
 
 initialization

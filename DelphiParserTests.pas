@@ -1,4 +1,4 @@
-﻿unit DelphiParserTests;
+unit DelphiParserTests;
 
 interface
 
@@ -1069,69 +1069,47 @@ var
 	cases: TArray<TDatParserCase>;
 	testCase: TDatParserCase;
 	i: Integer;
-	failures: TStringList;
+//	failures: TStringList;
 	nTest: Integer;
+	nFailures: Integer;
 const
-{
-	We're trying to find which test case is exposing the leak.
-	It's not the in the first 10 tests:
-	10: no leak
-	16: no leak
-	18: no leak
-	22: no leak
-	27: no leak
-	36: no leak
-	37: no leak
-	50: success
-	75: fail
-	100: error
-}
-	MAX_TESTS = 0;
+	// We're trying to find which test case is exposing the leak.
+	MAX_TESTS: Integer = 0;
 begin
-
-
 //	Status('DateFiles test disabled');
 //	Exit;
 
-	failures := TStringList.Create;
-	try
-		nTest := 0;
+	nTest := 0;
+	nFailures := 0;
 
-		files := EnumerateDatFiles;
-		for fileName in files do
+	files := EnumerateDatFiles;
+	for fileName in files do
+	begin
+		cases := EnumerateDatTestCases(fileName);
+		CheckTrue(Length(cases) > 0, 'No test cases found in ' + fileName);
+
+		for i := 0 to High(cases) do
 		begin
-			cases := EnumerateDatTestCases(fileName);
-			CheckTrue(Length(cases) > 0, 'No test cases found in ' + fileName);
+			if (MAX_TESTS > 0) and (nTest >= MAX_TESTS) then
+				Exit;
 
-			for i := 0 to High(cases) do
-			begin
-				if (MAX_TESTS > 0) and (nTest >= MAX_TESTS) then
-					Exit;
-
-				testCase := cases[i];
-				try
-					Inc(nTest);
-					RunDatCase(testCase, i+1, Length(cases));
-				except
-					on E:Exception do
-						begin
-							Status('[TEST ERROR] '+testCase.Name+' ('+E.Message+')');
-
-							failures.Add(Format('%s (%s)', [testCase.Name, E.Message]));
-							Continue;
-						end;
-				end;
+			testCase := cases[i];
+			try
+				//Inc(nTest);
+				RunDatCase(testCase, i+1, Length(cases));
+			except
+				on E:Exception do
+					begin
+						Inc(nFailures);
+						Fail('[TEST ERROR] '+testCase.Name+' ('+E.Message+')');
+						Continue;
+					end;
 			end;
 		end;
-
-		if failures.Count > 0 then
-		begin
-			Status('DAT failures summary:' + CRLF + failures.Text);
-			Fail(Format('Test_DatFiles had %d failing case(s). See [TEST ERROR] entries for details.', [failures.Count]));
-		end;
-	finally
-		failures.Free;
 	end;
+
+	if nFailures > 0 then
+		Fail(Format('Test_DatFiles had %d failing case(s). See [TEST ERROR] entries for details.', [nFailures]));
 end;
 
 procedure TDelphiParserTests.Test_ParseConstSection;

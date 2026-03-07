@@ -374,7 +374,6 @@ type
 		ptMultilineStringLiteral,	// Multi-line string literal, that thing that is wraped in triple quotes '''...'''
 //		ptStringDQLiteral,			// Double-quoted string constant
 		ptAsciiChar,					// ASCII character constant e.g. #149, #$4E
-		ptPointerSymbol,				// '^' symbol (e.g. ^M)
 		ptFloat,							// Floating-point constant	(e.g. 1234567890.987654321)
 		ptIntegerConst,				// Integer constant			(e.g. 123456789087654321)
 
@@ -672,6 +671,7 @@ The following reserved words cannot be redefined or used as identifiers.
 		destructor Destroy; override;
 
 		property Kind: TptTokenKind read FKind;
+
 		/// <summary>If Kind is an identifier that can also be a directive, will return a TokenKind that represents that directive (e.g. ptAbsolute)</summary>
 		property ContextualKind: TptTokenKind read get_ContextualKind;
 
@@ -683,8 +683,6 @@ The following reserved words cannot be redefined or used as identifiers.
 
 
 		function ToString: string; override;
-
-		class function Eof: TSyntaxToken; //singleton
 	end;
 
 	TDelphiTokenizer = class
@@ -3099,18 +3097,6 @@ begin
 	inherited;
 end;
 
-var
-	_eofToken: TSyntaxToken = nil;
-
-class function TSyntaxToken.Eof: TSyntaxToken;
-begin
-	// singleton eof token
-	if _eofToken = nil then
-		_eofToken := TSyntaxToken.Create(ptEof, -1, -1, '');
-
-	Result := _eofToken;
-end;
-
 function TSyntaxToken.get_LeadingTriviaCount: Integer;
 begin
 	Result := FLeadingTrivia.Count;
@@ -3161,10 +3147,5 @@ begin
 		
 	Result := Format('Token: %s "%s"%s', [TokenKindToStr(Kind), Text, statusInfo]);
 end;
-
-initialization
-
-finalization
-	FreeAndNil(_eofToken);
 
 end.

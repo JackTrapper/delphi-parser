@@ -21,11 +21,12 @@ type
 		function ExpectedToTree(ExpectedTree: string): TSyntaxNode2;
 		function TryExpectedToTree(const ExpectedTree: string; out Node: TSyntaxNode2; out ErrorCode: HRESULT; out ErrorMessage: string): Boolean;
 
-		function CompareSource(sourceCode, ExpectedTree: string; const CaseName: string = ''): Boolean;
+		function CompareSource(sourceCode, ExpectedTree: string; const CaseName: string): Boolean;
 		function CompareTrees(expected, actual: TSyntaxNode2): Boolean;
 		function CompareNodes(expected, actual: TSyntaxNode2): Boolean;
 
 		function FindDatTestsRoot: string;
+
 		function EnumerateDatFiles: TArray<string>;
 		function EnumerateDatTestCases(const FileName: string): TArray<TDatParserCase>;
 		procedure RunDatCase(const ACase: TDatParserCase; Progress, Total: Integer);
@@ -69,11 +70,11 @@ uses
 function TDelphiParserTests.FindDatTestsRoot: string;
 const
 	CANDIDATES: array[0..4] of string = (
-		'Library\DelphiParser\TestData',
-		'..\Library\DelphiParser\TestData',
-		'..\..\Library\DelphiParser\TestData',
-		'..\..\..\Library\DelphiParser\TestData',
-		'TestData'
+			'TestData',
+			'Library\DelphiParser\TestData',
+			'..\Library\DelphiParser\TestData',
+			'..\..\Library\DelphiParser\TestData',
+			'..\..\..\Library\DelphiParser\TestData'
 	);
 var
 	baseDir, candidate: string;
@@ -173,12 +174,6 @@ begin
 		payload := line;
 		if section = 'document' then
 		begin
-			if (payload <> '') and (payload[1] = '|') then
-			begin
-				Delete(payload, 1, 1);
-				if (payload <> '') and (payload[1] = ' ') then
-					Delete(payload, 1, 1);
-			end;
 			AppendLine(cur.ExpectedTree, payload);
 		end
 		else if section = 'data' then
@@ -1050,7 +1045,12 @@ begin
 		sl.Text := ExpectedTree;
 
 		// Pre-validate structure so tests reliably get exceptions for malformed inputs
-		ValidateStructure(sl);
+		try
+			ValidateStructure(sl);
+		except
+			on E:Exception do
+				Fail(E.Message);
+		end;
 
 		i := 1; // start after the root line
 		ParseIndented(root, 0 {root indent}, sl, i);
@@ -1082,12 +1082,15 @@ begin
 	nTest := 0;
 	nFailures := 0;
 
+	//1. List of files
 	files := EnumerateDatFiles;
 	for fileName in files do
 	begin
+		//2. List of tests in the file
 		cases := EnumerateDatTestCases(fileName);
 		CheckTrue(Length(cases) > 0, 'No test cases found in ' + fileName);
 
+		//3. Enumerate all the tests
 		for i := 0 to High(cases) do
 		begin
 			if (MAX_TESTS > 0) and (nTest >= MAX_TESTS) then
@@ -1146,7 +1149,7 @@ ntCompilationUnit
 		ntImplementation
 ''';
 
-	CompareSource(sourceCode, expectedTree);
+	CompareSource(sourceCode, expectedTree, 'Test_ParseConstSection');
 end;
 
 procedure TDelphiParserTests.Test_ParseResStringSection;
@@ -1174,7 +1177,7 @@ ntCompilationUnit
 		ntImplementation
 ''';
 
-	CompareSource(sourceCode, expectedTree);
+	CompareSource(sourceCode, expectedTree, 'Test_ParseResStringSection');
 end;
 
 procedure TDelphiParserTests.Test_ParseResStringSection_Concatenated;
@@ -1204,7 +1207,7 @@ ntCompilationUnit
 //ERRORS
 //	E2026 Constant expression required
 
-	CompareSource(sourceCode, expectedTree);
+	CompareSource(sourceCode, expectedTree, 'Test_ParseResStringSection_Concatenated');
 end;
 
 procedure TDelphiParserTests.Test_ParseFieldSection;
@@ -1416,7 +1419,7 @@ ntCompilationUnit
 		ntImplementation
 ''';
 
-	CompareSource(sourceCode, expectedTree);
+	CompareSource(sourceCode, expectedTree, 'Test_ParseFieldSection');
 end;
 
 procedure TDelphiParserTests.Test_ParseClassType;
@@ -1449,7 +1452,7 @@ ntCompilationUnit
 		ntImplementation
 ''';
 
-	CompareSource(sourceCode, expectedTree);
+	CompareSource(sourceCode, expectedTree, 'Test_ParseClassType');
 end;
 
 procedure TDelphiParserTests.Test_ParseConstructorMethodHeading;
@@ -1481,7 +1484,7 @@ ntCompilationUnit
 		ntImplementation
 ''';
 
-	CompareSource(sourceCode, expectedTree);
+	CompareSource(sourceCode, expectedTree, 'Test_ParseConstructorMethodHeading');
 end;
 
 procedure TDelphiParserTests.Test_ParseConstWithTrailingDecimalLiteral;
@@ -1762,7 +1765,7 @@ ntCompilationUnit
 
 ''';
 
-	CompareSource(sourceCode, expectedTree);
+	CompareSource(sourceCode, expectedTree, 'Test_UnitPortabilityDirectives');
 end;
 
 initialization

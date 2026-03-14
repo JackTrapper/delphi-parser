@@ -306,7 +306,7 @@ type
 		ptLocal,
 		ptNear,
 		ptNodefault,
-		ptOperator,
+		ptOperator,				//Directive "operator"
 		ptOut,
 		ptPackage,
 
@@ -714,7 +714,7 @@ The following reserved words cannot be redefined or used as identifiers.
 		function IsWhitespaceCharacter(const ch: WideChar): Boolean;
 
 		// Detect the special keywords (e.g. reserved words, directives)
-		function GetReservedTokenKind(  const Keyword: string): TptTokenKind; // GetReservedTokenKind
+		function GetReservedTokenKind( const Keyword: string): TptTokenKind; // GetReservedTokenKind
 		function GetDirectiveTokenKind(const Keyword: string): TptTokenKind;  // GetDirectiveTokenKind
 
 		// String processing utilities
@@ -941,7 +941,7 @@ const
 
 	// Complier directives are similar to reserved words, except they can be reused as identifiers.
 	// Hence -- although it is inadvisable to do so -- you can define an identifier that looks exactly like a directive.
-	Directives: array[0..55] of record
+	Directives: array[0..57] of record
 		directive: string;
 		tokenType: TptTokenKind;
 	end = (
@@ -968,8 +968,10 @@ const
 		(directive: 'index';				tokenType:ptIndex),
 		(directive: 'local';				tokenType:ptLocal),
 		(directive: 'message';			tokenType:ptMessage),
+		(directive: 'name';				tokenType:ptName),
 		(directive: 'near';				tokenType:ptNear),
 		(directive: 'nodefault';		tokenType:ptNodefault),
+		(directive: 'on';					tokenType:ptOn),
 		(directive: 'operator';			tokenType:ptOperator),
 		(directive: 'out';				tokenType:ptOut),
 		(directive: 'overload';			tokenType:ptOverload),

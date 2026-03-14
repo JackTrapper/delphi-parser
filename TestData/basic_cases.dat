@@ -1,0 +1,7492 @@
+#name
+ParseConstSection.Basic
+#data
+unit Unit1;
+interface
+const
+   A = 1;
+	B= 2;
+   C =3;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="Unit1"
+		ntQualifiedIdentifier anName="Unit1"
+		ntInterfaceSection
+			ntConstants
+				ntConstant anName="A" anValueText="1"
+					ntIdentifier anName="A"
+					ntExpression anValueText="1"
+				ntConstant anName="B" anValueText="2"
+					ntIdentifier anName="B"
+					ntExpression anValueText="2"
+				ntConstant anName="C" anValueText="3"
+					ntIdentifier anName="C"
+					ntExpression anValueText="3"
+		ntImplementation
+
+
+
+#name
+ParseResStringSection.Basic
+#data
+unit TestCase.ParseStringSection;
+interface
+resourcestring
+	SProduct = 'Hello world!';
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="TestCase.ParseStringSection"
+		ntQualifiedIdentifier anName="TestCase.ParseStringSection"
+		ntInterfaceSection
+			ntResourceStrings
+				ntResourceString anName="SProduct" anValueText="Hello world!"
+					ntExpression anValueText="Hello world!"
+		ntImplementation
+
+
+
+#name
+ParseResStringSection.Concatenated
+#data
+unit TestCase.ParseStringSection;
+interface
+resourcestring
+	SProduct = 'Hello, '+'world!';
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="TestCase.ParseStringSection"
+		ntQualifiedIdentifier anName="TestCase.ParseStringSection"
+		ntInterfaceSection
+			ntResourceStrings
+				ntResourceString anName="SProduct" anValueText="Hello, world!"
+					ntExpression anValueText="Hello, world!"
+		ntImplementation
+
+
+
+
+#name
+MethodInventory.ParseAndIsPossible
+#data
+unit Inventory;
+interface
+
+implementation
+end.
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="Inventory"
+		ntQualifiedIdentifier
+		ntInterfaceSection
+		ntImplementation
+
+#name
+ParseProperty
+#data
+unit U;
+interface
+type
+  T = class
+  private
+    F: Integer;
+  public
+    property P: Integer read F write F;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntVisibilitySection anVisibility="private"
+							ntField
+								ntName anName="F"
+								ntType anName="Integer"
+						ntVisibilitySection anVisibility="public"
+							ntProperty
+								ntIdentifier anName="P"
+								ntType anName="Integer"
+								ntPropertyDirective anKind="read"
+									ntParticle
+										ntIdentifier anName="F"
+								ntPropertyDirective anKind="write"
+									ntParticle
+										ntIdentifier anName="F"
+		ntImplementation
+
+#name
+ParsePropertyDirective
+#data
+unit U;
+interface
+type
+  T = class
+  private
+    F: Integer;
+  public
+    property P: Integer read F write F;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntVisibilitySection anVisibility="private"
+							ntField
+								ntName anName="F"
+								ntType anName="Integer"
+						ntVisibilitySection anVisibility="public"
+							ntProperty
+								ntIdentifier anName="P"
+								ntType anName="Integer"
+								ntPropertyDirective
+									ntParticle
+										ntIdentifier anName="F"
+								ntPropertyDirective
+									ntParticle
+										ntIdentifier anName="F"
+		ntImplementation
+
+#name
+ParseStream
+#data
+unit U;
+interface
+
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+
+#name
+ParseMethodOrProperty
+#data
+unit U;
+interface
+type
+  T = class
+    procedure P;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntMethod anKind="avProcedure"
+							ntQualifiedIdentifier anName="P"
+		ntImplementation
+
+#name
+ParseFieldDecl
+#data
+unit U;
+interface
+type
+  T = class
+    A, B: Integer;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntField
+							ntName anName="A"
+							ntName anName="B"
+							ntType anName="Integer"
+		ntImplementation
+
+#name
+ParseCore
+#data
+unit U;
+interface
+
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+
+#name
+ParseFile
+#data
+unit U;
+interface
+
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+
+#name
+ParseText
+#data
+unit U;
+interface
+
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+
+#name
+ParseLibraryFile
+#data
+library Library1;
+begin
+end.
+#errors
+#document
+ntCompilationUnit
+	ntLibrary
+		ntIdentifier anName="Library1"
+
+#name
+ParsePackageFile
+#data
+package P;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntPackage
+		ntQualifiedIdentifier anName="P"
+
+#name
+ParseProgramFile
+#data
+program P;
+begin end.
+#errors
+#document
+ntCompilationUnit
+	ntProgram
+		ntIdentifier anName="P"
+
+#name
+ParseUnitDeclaration
+#data
+unit U;
+interface
+
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+
+#name
+ParseUsesClause
+#data
+unit U;
+interface
+uses System.SysUtils;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntUses
+				ntUsedUnit anName="System.SysUtils"
+					ntQualifiedIdentifier anName="System.SysUtils"
+		ntImplementation
+
+#name
+ParseUsedUnit
+#data
+unit U;
+interface
+uses System.SysUtils;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntUses
+				ntUsedUnit anName="System.SysUtils"
+					ntQualifiedIdentifier anName="System.SysUtils"
+		ntImplementation
+
+#name
+ParseImplementationDecl
+#data
+unit U;
+interface
+implementation
+const
+  C = 1;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntConstants
+				ntConstant anName="C" anValueText="1"
+					ntIdentifier anName="C"
+					ntExpression anValueText="1"
+
+#name
+ParseQualifiedIdentifier
+#data
+unit A.B;
+interface
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="A.B"
+		ntQualifiedIdentifier anName="A.B"
+		ntInterfaceSection
+		ntImplementation
+
+#name
+ParseTerm
+#data
+unit U;
+interface
+const
+  C = 1 + 2 * 3;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntConstants
+				ntConstant anName="C" anValueText="1+2*3"
+					ntIdentifier anName="C"
+					ntExpression anValueText="1+2*3"
+		ntImplementation
+
+#name
+ParseSimpleExpression
+#data
+unit U;
+interface
+const
+  C = 1 + 2 * 3;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntConstants
+				ntConstant anName="C" anValueText="1+2*3"
+					ntIdentifier anName="C"
+					ntExpression anValueText="1+2*3"
+		ntImplementation
+
+#name
+ParseExpression
+#data
+unit U;
+interface
+const
+  C = 1 + 2 * 3;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntConstants
+				ntConstant anName="C" anValueText="1+2*3"
+					ntIdentifier anName="C"
+					ntExpression anValueText="1+2*3"
+		ntImplementation
+
+#name
+ParseFinalizationSection
+#data
+unit U;
+interface
+implementation
+initialization
+finalization
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+		ntInitialization
+		ntFinalization
+
+#name
+ParseEnumeratedType
+#data
+unit U;
+interface
+type
+  TEnum = (A, B);
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="TEnum"
+					ntType anName="avEnum"
+						ntIdentifier anName="A"
+						ntIdentifier anName="B"
+		ntImplementation
+
+#name
+ParseSubrangeType
+#data
+unit U;
+interface
+type
+  TSub = 1..2;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="TSub"
+					ntExpressionOrRange
+						ntParticle
+						ntParticle
+		ntImplementation
+
+#name
+ParseRealType
+#data
+unit U;
+interface
+type
+  TReal = 1.5;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="TReal"
+					ntExpressionOrRange
+						ntParticle
+		ntImplementation
+
+#name
+ParseOrdinalType
+#data
+unit U;
+interface
+type
+  TOrd = 1;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="TOrd"
+					ntExpressionOrRange
+						ntParticle
+		ntImplementation
+
+#name
+ParseVariableReference
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  A.B;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntParticle
+							ntIdentifier anName="A"
+							ntIdentifier anName="B"
+#name
+ParseVisibilitySection
+#data
+unit U;
+interface
+type
+  T = class
+  private
+    F: Integer;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntVisibilitySection anVisibility="private"
+							ntField
+								ntName anName="F"
+								ntType anName="Integer"
+		ntImplementation
+
+#name
+ParseVisibilitySectionContent
+#data
+unit U;
+interface
+type
+  T = class
+    F: Integer;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntField
+							ntName anName="F"
+							ntType anName="Integer"
+		ntImplementation
+
+#name
+ParseInterfaceType
+#data
+unit U;
+interface
+type
+  ITest = interface
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="ITest"
+					ntType anType="avInterface"
+		ntImplementation
+
+#name
+ParseClassType
+#data
+unit U;
+interface
+type
+  T = class end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+		ntImplementation
+
+#name
+ParseClassHelper
+#data
+unit U;
+interface
+type
+  TStringHelper = class helper for string
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="TStringHelper"
+					ntHelper
+						ntType
+		ntImplementation
+
+#name
+ParseClassMemberList
+#data
+unit U;
+interface
+type
+  T = record
+    F: Integer;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="record"
+						ntField
+							ntName anName="F"
+							ntType anName="Integer"
+		ntImplementation
+
+#name
+ParseProceduralType
+#data
+unit U;
+interface
+type
+  TProc = procedure;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="TProc"
+					ntType anName="procedure" anType="procedure"
+		ntImplementation
+
+#name
+ParsePointerType
+#data
+unit U;
+interface
+type
+  PInt = ^Integer;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="PInt"
+					ntType anType="avPointer"
+						ntType anName="Integer"
+		ntImplementation
+
+#name
+ParseStringType
+#data
+unit U;
+interface
+type
+  S10 = string[10];
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="S10"
+					ntType
+						ntParticle
+		ntImplementation
+
+#name
+ParseStructuredType
+#data
+unit U;
+interface
+type
+  TInts = array of Integer;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="TInts"
+					ntType anType="array"
+						ntType anName="Integer"
+		ntImplementation
+
+#name
+ParseSimpleType
+#data
+unit U;
+interface
+type
+  TAlias = 1;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="TAlias"
+					ntExpressionOrRange
+						ntParticle
+		ntImplementation
+
+#name
+ParseTypeDeclaration
+#data
+unit U;
+interface
+type
+  T = class end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+		ntImplementation
+
+#name
+ParseType
+#data
+unit U;
+interface
+type
+  T = class end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+		ntImplementation
+
+#name
+ParseTypedConstant
+#data
+unit U;
+interface
+const
+  C: array[0..1] of Integer = (1,2);
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntConstants
+				ntConstant anName="C" anValueText="(1,2)"
+					ntIdentifier anName="C"
+					ntType anType="array"
+						ntExpressionOrRange
+							ntParticle
+							ntParticle
+						ntType anName="Integer"
+					ntExpression anValueText="(1,2)"
+		ntImplementation
+
+#name
+ParseTypeId
+#data
+unit U;
+interface
+type
+  TAlias = Integer;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="TAlias"
+					ntType anName="Integer"
+		ntImplementation
+
+#name
+ParseConstantName
+#data
+unit U;
+interface
+const
+  C = 1;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntConstants
+				ntConstant anName="C" anValueText="1"
+					ntIdentifier anName="C"
+					ntExpression anValueText="1"
+		ntImplementation
+
+#name
+ParseMethodHeading
+#data
+unit U;
+interface
+type
+  T = class
+    procedure P;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntMethod anKind="avProcedure"
+							ntQualifiedIdentifier anName="P"
+		ntImplementation
+
+#name
+ParseVarSection
+#data
+unit U;
+interface
+var
+  V: Integer;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntVarSection
+				ntVariable
+					ntIdentifierList
+						ntIdentifier anName="V"
+					ntType anName="Integer"
+		ntImplementation
+
+#name
+IsPossibleConstSection
+#data
+unit U;
+interface
+const
+  C = 1;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntConstants
+				ntConstant anName="C" anValueText="1"
+					ntIdentifier anName="C"
+					ntExpression anValueText="1"
+		ntImplementation
+
+#name
+IsPossibleMethodHeading
+#data
+unit U;
+interface
+type
+  T = class
+    procedure P;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntMethod anKind="avProcedure"
+							ntQualifiedIdentifier anName="P"
+		ntImplementation
+
+#name
+IsPossibleResStringSection
+#data
+unit U;
+interface
+resourcestring
+  S = 'x';
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntResourceStrings
+				ntResourceString anName="S" anValueText="x"
+					ntExpression anValueText="x"
+		ntImplementation
+
+#name
+IsPossibleTypeDeclaration
+#data
+unit U;
+interface
+type
+  T = class end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+		ntImplementation
+
+#name
+IsPossibleTypeSection
+#data
+unit U;
+interface
+type
+  T = class end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+		ntImplementation
+
+#name
+IsPossibleUsesClause
+#data
+unit U;
+interface
+uses System.SysUtils;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntUses
+				ntUsedUnit anName="System.SysUtils"
+					ntQualifiedIdentifier anName="System.SysUtils"
+		ntImplementation
+
+#name
+IsPossibleVarSection
+#data
+unit U;
+interface
+var
+  V: Integer;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntVarSection
+				ntVariable
+					ntIdentifierList
+						ntIdentifier anName="V"
+					ntType anName="Integer"
+		ntImplementation
+
+#name
+IsPossibleVisibilitySectionContent
+#data
+unit U;
+interface
+type
+  T = class
+    F: Integer;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntField
+							ntName anName="F"
+							ntType anName="Integer"
+		ntImplementation
+
+#name
+ParseTypeSection
+#data
+unit U;
+interface
+type
+  T = class end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+		ntImplementation
+
+#name
+ParseTypeParam
+#data
+unit U;
+interface
+type
+  TGen<T> = class end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="TGen"
+					ntTypeParams
+						ntTypeParam
+							ntType anName="T"
+					ntType anType="avClass"
+		ntImplementation
+
+#name
+ParseTypeParamConstraint
+#data
+unit U;
+interface
+type
+  TGen<T: class> = class end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="TGen"
+					ntTypeParams
+						ntTypeParam
+							ntType anName="T"
+							ntConstraints
+								ntClassConstraint
+					ntType anType="avClass"
+		ntImplementation
+
+#name
+ParseConstraintTypeRef
+#data
+unit U;
+interface
+type
+  TGen<T: IInterface> = class end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="TGen"
+					ntTypeParams
+						ntTypeParam
+							ntType anName="T"
+							ntConstraints
+								ntType
+									ntQualifiedIdentifier anName="IInterface"
+					ntType anType="avClass"
+		ntImplementation
+
+#name
+ParseTypeParams
+#data
+unit U;
+interface
+type
+  TGen<T> = class end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="TGen"
+					ntTypeParams
+						ntTypeParam
+							ntType anName="T"
+					ntType anType="avClass"
+		ntImplementation
+
+#name
+ParseConstSection
+#data
+unit U;
+interface
+const
+  C = 1;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntConstants
+				ntConstant anName="C" anValueText="1"
+					ntIdentifier anName="C"
+					ntExpression anValueText="1"
+		ntImplementation
+
+#name
+ParseConstantDecl
+#data
+unit U;
+interface
+const
+  C = 1;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntConstants
+				ntConstant anName="C" anValueText="1"
+					ntIdentifier anName="C"
+					ntExpression anValueText="1"
+		ntImplementation
+
+#name
+IsPossibleConstantDecl
+#data
+unit U;
+interface
+const
+  C = 1;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntConstants
+				ntConstant anName="C" anValueText="1"
+					ntIdentifier anName="C"
+					ntExpression anValueText="1"
+		ntImplementation
+
+#name
+ParseResStringSection
+#data
+unit U;
+interface
+resourcestring
+  S = 'x';
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntResourceStrings
+				ntResourceString anName="S" anValueText="x"
+					ntExpression anValueText="x"
+		ntImplementation
+
+#name
+IsPossibleResourceStringDecl
+#data
+unit U;
+interface
+resourcestring
+  S = 'x';
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntResourceStrings
+				ntResourceString anName="S" anValueText="x"
+					ntExpression anValueText="x"
+		ntImplementation
+
+#name
+ParseResourceStringDecl
+#data
+unit U;
+interface
+resourcestring
+  S = 'x';
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntResourceStrings
+				ntResourceString anName="S" anValueText="x"
+					ntExpression anValueText="x"
+		ntImplementation
+
+#name
+ParseInterfaceDeclaration
+#data
+unit U;
+interface
+const
+  C = 1;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntConstants
+				ntConstant anName="C" anValueText="1"
+					ntIdentifier anName="C"
+					ntExpression anValueText="1"
+		ntImplementation
+
+#name
+ParseInitializationSection
+#data
+unit U;
+interface
+implementation
+initialization
+finalization
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+		ntInitialization
+		ntFinalization
+
+#name
+ParseImplementationSection
+#data
+unit U;
+interface
+
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+
+#name
+ParseInterfaceSection
+#data
+unit U;
+interface
+
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+
+#name
+ParsePortabilityDirective
+#data
+unit U platform;
+interface
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntPortabilityDirective anPlatform="avTrue"
+		ntInterfaceSection
+		ntImplementation
+
+#name
+IsPossiblePortabilityDirective
+#data
+unit U platform;
+interface
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntPortabilityDirective anPlatform="avTrue"
+		ntInterfaceSection
+		ntImplementation
+
+#name
+IsPossibleProperty
+#data
+unit U;
+interface
+type
+  T = class
+  private
+    F: Integer;
+  public
+    property P: Integer read F write F;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntVisibilitySection anVisibility="private"
+							ntField
+								ntName anName="F"
+								ntType anName="Integer"
+						ntVisibilitySection anVisibility="public"
+							ntProperty
+								ntIdentifier anName="P"
+								ntType anName="Integer"
+								ntPropertyDirective
+									ntParticle
+										ntIdentifier anName="F"
+								ntPropertyDirective
+									ntParticle
+										ntIdentifier anName="F"
+		ntImplementation
+
+#name
+ParseIdentifierList
+#data
+unit U;
+interface
+type
+  T = class
+    A, B: Integer;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntField
+							ntName anName="A"
+							ntName anName="B"
+							ntType anName="Integer"
+		ntImplementation
+
+#name
+ParseIndexSpecifier
+#data
+unit U;
+interface
+type
+  T = class
+  private
+    F: Integer;
+  public
+    property P: Integer index 1 read F write F;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntVisibilitySection anVisibility="private"
+							ntField
+								ntName anName="F"
+								ntType anName="Integer"
+						ntVisibilitySection anVisibility="public"
+							ntProperty
+								ntIdentifier anName="P"
+								ntType anName="Integer"
+								ntPropertyDirective
+									ntParticle
+								ntPropertyDirective
+									ntParticle
+										ntIdentifier anName="F"
+								ntPropertyDirective
+									ntParticle
+										ntIdentifier anName="F"
+		ntImplementation
+
+#name
+ParseIdentifier
+#data
+unit U;
+interface
+
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+
+#name
+IsPossibleIdentifier
+#data
+unit U;
+interface
+
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+
+#name
+IsPossibleImplementationDecl
+#data
+unit U;
+interface
+implementation
+const
+  C = 1;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntConstants
+				ntConstant anName="C" anValueText="1"
+					ntIdentifier anName="C"
+					ntExpression anValueText="1"
+
+#name
+IsPossibleLabelID
+#data
+unit U;
+interface
+implementation
+procedure P;
+label L1;
+begin
+  goto L1;
+L1:
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntLabel
+					ntLabel anName="L1"
+				ntStatementList
+					ntStatement
+						ntGoto
+							ntLabel anName="L1"
+					ntStatement
+						ntLabel anName="L1"
+
+#name
+ParseAncestorList
+#data
+unit U;
+interface
+type
+  TChild = class(TObject, IInterface)
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="TChild"
+					ntType anType="avClass"
+						ntQualifiedIdentifier anName="TObject"
+						ntQualifiedIdentifier anName="IInterface"
+		ntImplementation
+
+
+#name
+ParseBlock
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+
+#name
+ParseStatement
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  X := a + b - c;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntAssign
+							ntParticle
+								ntIdentifier anName="X"
+							ntBinaryExpression
+								ntBinaryExpression
+									ntParticle
+										ntIdentifier anName="a"
+									ntAdd
+									ntParticle
+										ntIdentifier anName="b"
+								ntSub
+								ntParticle
+									ntIdentifier anName="c"
+#name
+ParseStatements
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  X := 1;
+  Y := 2;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntAssign
+							ntParticle
+								ntIdentifier anName="X"
+							ntParticle
+					ntStatement
+						ntAssign
+							ntParticle
+								ntIdentifier anName="Y"
+							ntParticle
+#name
+ParseStatementList
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  X := 1;
+  Y := 2;
+  Z := 3;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntAssign
+							ntParticle
+								ntIdentifier anName="X"
+							ntParticle
+					ntStatement
+						ntAssign
+							ntParticle
+								ntIdentifier anName="Y"
+							ntParticle
+					ntStatement
+						ntAssign
+							ntParticle
+								ntIdentifier anName="Z"
+							ntParticle
+
+#name
+ParseSimpleStatement
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  X := 1;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntAssign
+							ntParticle
+								ntIdentifier anName="X"
+							ntParticle
+
+#name
+ParseStatementOrExpression
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  WriteLn('hello');
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntParticle
+							ntIdentifier anName="WriteLn"
+							ntParticle
+#name
+ParseEmptyStatement
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  ;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+
+#name
+ParseIfStatement
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  if True then
+    X := 1;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntIf
+							ntParticle
+								ntIdentifier anName="True"
+							ntThen
+								ntStatement
+									ntAssign
+										ntParticle
+											ntIdentifier anName="X"
+										ntParticle
+
+#name
+ParseThenStatement
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  if True then
+    X := 1;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntIf
+							ntParticle
+								ntIdentifier anName="True"
+							ntThen
+								ntStatement
+									ntAssign
+										ntParticle
+											ntIdentifier anName="X"
+										ntParticle
+
+#name
+ParseElseStatement
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  if True then
+    X := 1
+  else
+    X := 2;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntIf
+							ntParticle
+								ntIdentifier anName="True"
+							ntThen
+								ntStatement
+									ntAssign
+										ntParticle
+											ntIdentifier anName="X"
+										ntParticle
+							ntElse
+								ntStatement
+									ntAssign
+										ntParticle
+											ntIdentifier anName="X"
+										ntParticle
+
+#name
+ParseForStatement
+#data
+unit U;
+interface
+implementation
+procedure P;
+var I: Integer;
+begin
+  for I := 1 to 10 do
+    X := I;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntVarSection
+					ntVariable
+						ntIdentifierList
+							ntIdentifier anName="I"
+						ntType anName="Integer"
+				ntStatementList
+					ntStatement
+						ntFor
+							ntQualifiedIdentifier anName="I"
+							ntFrom
+								ntParticle
+							ntTo
+								ntParticle
+							ntStatement
+								ntAssign
+									ntParticle
+										ntIdentifier anName="X"
+									ntParticle
+										ntIdentifier anName="I"
+
+#name
+ParseForStatementTo
+#data
+unit U;
+interface
+implementation
+procedure P;
+var I: Integer;
+begin
+  for I := 1 to 10 do
+    X := I;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntVarSection
+					ntVariable
+						ntIdentifierList
+							ntIdentifier anName="I"
+						ntType anName="Integer"
+				ntStatementList
+					ntStatement
+						ntFor
+							ntQualifiedIdentifier anName="I"
+							ntFrom
+								ntParticle
+							ntTo
+								ntParticle
+							ntStatement
+								ntAssign
+									ntParticle
+										ntIdentifier anName="X"
+									ntParticle
+										ntIdentifier anName="I"
+
+#name
+ParseForStatementDownTo
+#data
+unit U;
+interface
+implementation
+procedure P;
+var I: Integer;
+begin
+  for I := 10 downto 1 do
+    X := I;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntVarSection
+					ntVariable
+						ntIdentifierList
+							ntIdentifier anName="I"
+						ntType anName="Integer"
+				ntStatementList
+					ntStatement
+						ntFor
+							ntQualifiedIdentifier anName="I"
+							ntFrom
+								ntParticle
+							ntDownTo
+								ntParticle
+							ntStatement
+								ntAssign
+									ntParticle
+										ntIdentifier anName="X"
+									ntParticle
+										ntIdentifier anName="I"
+
+#name
+ParseForStatementFrom
+#data
+unit U;
+interface
+implementation
+procedure P;
+var I: Integer;
+begin
+  for I := 1 to 10 do
+    X := I;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntVarSection
+					ntVariable
+						ntIdentifierList
+							ntIdentifier anName="I"
+						ntType anName="Integer"
+				ntStatementList
+					ntStatement
+						ntFor
+							ntQualifiedIdentifier anName="I"
+							ntFrom
+								ntParticle
+							ntTo
+								ntParticle
+							ntStatement
+								ntAssign
+									ntParticle
+										ntIdentifier anName="X"
+									ntParticle
+										ntIdentifier anName="I"
+
+#name
+ParseForStatementIn
+#data
+unit U;
+interface
+implementation
+procedure P;
+var S: string;
+begin
+  for S in List do
+    X := S;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntVarSection
+					ntVariable
+						ntIdentifierList
+							ntIdentifier anName="S"
+						ntType
+				ntStatementList
+					ntStatement
+						ntFor
+							ntQualifiedIdentifier anName="S"
+							ntIn
+								ntParticle
+									ntIdentifier anName="List"
+							ntStatement
+								ntAssign
+									ntParticle
+										ntIdentifier anName="X"
+									ntParticle
+										ntIdentifier anName="S"
+
+#name
+ParseWhileStatement
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  while True do
+    X := 1;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntWhile
+							ntParticle
+								ntIdentifier anName="True"
+							ntStatement
+								ntAssign
+									ntParticle
+										ntIdentifier anName="X"
+									ntParticle
+
+#name
+ParseRepeatStatement
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  repeat
+    X := 1;
+  until True;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntRepeat
+							ntStatementList
+								ntStatement
+									ntAssign
+										ntParticle
+											ntIdentifier anName="X"
+										ntParticle
+							ntParticle
+								ntIdentifier anName="True"
+
+#name
+ParseCaseStatement
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  case X of
+    1: Y := 1;
+    2: Y := 2;
+  end;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntCaseStatement
+							ntParticle
+								ntIdentifier anName="X"
+							ntCaseSelector
+								ntCaseLabels
+									ntCaseLabel
+										ntExpression
+											ntParticle
+								ntStatement
+									ntAssign
+										ntParticle
+											ntIdentifier anName="Y"
+										ntParticle
+							ntCaseSelector
+								ntCaseLabels
+									ntCaseLabel
+										ntExpression
+											ntParticle
+								ntStatement
+									ntAssign
+										ntParticle
+											ntIdentifier anName="Y"
+										ntParticle
+
+#name
+ParseCaseSelector
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  case X of
+    1: Y := 1;
+  end;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntCaseStatement
+							ntParticle
+								ntIdentifier anName="X"
+							ntCaseSelector
+								ntCaseLabels
+									ntCaseLabel
+										ntExpression
+											ntParticle
+								ntStatement
+									ntAssign
+										ntParticle
+											ntIdentifier anName="Y"
+										ntParticle
+
+#name
+ParseCaseLabel
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  case X of
+    1: Y := 1;
+  end;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntCaseStatement
+							ntParticle
+								ntIdentifier anName="X"
+							ntCaseSelector
+								ntCaseLabels
+									ntCaseLabel
+										ntExpression
+											ntParticle
+								ntStatement
+									ntAssign
+										ntParticle
+											ntIdentifier anName="Y"
+										ntParticle
+
+#name
+ParseCaseLabelList
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  case X of
+    1, 2, 3: Y := 1;
+  end;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntCaseStatement
+							ntParticle
+								ntIdentifier anName="X"
+							ntCaseSelector
+								ntCaseLabels
+									ntCaseLabel
+										ntExpression
+											ntParticle
+									ntCaseLabel
+										ntExpression
+											ntParticle
+									ntCaseLabel
+										ntExpression
+											ntParticle
+								ntStatement
+									ntAssign
+										ntParticle
+											ntIdentifier anName="Y"
+										ntParticle
+
+#name
+ParseTryStatement
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  try
+    X := 1;
+  except
+  end;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntTry
+							ntStatementList
+								ntStatement
+									ntAssign
+										ntParticle
+											ntIdentifier anName="X"
+										ntParticle
+							ntExcept
+								ntStatementList
+
+#name
+ParseExceptBlock
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  try
+    X := 1;
+  except
+    Y := 2;
+  end;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntTry
+							ntStatementList
+								ntStatement
+									ntAssign
+										ntParticle
+											ntIdentifier anName="X"
+										ntParticle
+							ntExcept
+								ntStatementList
+									ntStatement
+										ntAssign
+											ntParticle
+												ntIdentifier anName="Y"
+											ntParticle
+
+#name
+ParseFinallyBlock
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  try
+    X := 1;
+  finally
+    Y := 2;
+  end;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntTry
+							ntStatementList
+								ntStatement
+									ntAssign
+										ntParticle
+											ntIdentifier anName="X"
+										ntParticle
+							ntFinally
+								ntStatementList
+									ntStatement
+										ntAssign
+											ntParticle
+												ntIdentifier anName="Y"
+											ntParticle
+
+#name
+ParseExceptionHandler
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  try
+    X := 1;
+  except
+    on E: Exception do
+      Y := 2;
+  end;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntTry
+							ntStatementList
+								ntStatement
+									ntAssign
+										ntParticle
+											ntIdentifier anName="X"
+										ntParticle
+							ntExcept
+								ntExceptionHandler
+									ntIdentifier anName="E"
+									ntQualifiedIdentifier anName="Exception"
+									ntStatement
+										ntAssign
+											ntParticle
+												ntIdentifier anName="Y"
+											ntParticle
+
+#name
+ParseExceptionHandlerList
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  try
+    X := 1;
+  except
+    on E: EInvalidOp do
+      Y := 1;
+    on E: Exception do
+      Y := 2;
+  end;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntTry
+							ntStatementList
+								ntStatement
+									ntAssign
+										ntParticle
+											ntIdentifier anName="X"
+										ntParticle
+							ntExcept
+								ntExceptionHandler
+									ntIdentifier anName="E"
+									ntQualifiedIdentifier anName="EInvalidOp"
+									ntStatement
+										ntAssign
+											ntParticle
+												ntIdentifier anName="Y"
+											ntParticle
+								ntExceptionHandler
+									ntIdentifier anName="E"
+									ntQualifiedIdentifier anName="Exception"
+									ntStatement
+										ntAssign
+											ntParticle
+												ntIdentifier anName="Y"
+											ntParticle
+
+#name
+ParseExceptionItem
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  try
+    X := 1;
+  except
+    on E: Exception do
+      Y := 2;
+  end;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntTry
+							ntStatementList
+								ntStatement
+									ntAssign
+										ntParticle
+											ntIdentifier anName="X"
+										ntParticle
+							ntExcept
+								ntExceptionHandler
+									ntIdentifier anName="E"
+									ntQualifiedIdentifier anName="Exception"
+									ntStatement
+										ntAssign
+											ntParticle
+												ntIdentifier anName="Y"
+											ntParticle
+
+#name
+ParseExceptionVariable
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  try
+    X := 1;
+  except
+    on E: Exception do
+      WriteLn(E.Message);
+  end;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntTry
+							ntStatementList
+								ntStatement
+									ntAssign
+										ntParticle
+											ntIdentifier anName="X"
+										ntParticle
+							ntExcept
+								ntExceptionHandler
+									ntIdentifier anName="E"
+									ntQualifiedIdentifier anName="Exception"
+									ntStatement
+										ntParticle
+											ntIdentifier anName="WriteLn"
+											ntParticle
+												ntIdentifier anName="E"
+												ntIdentifier anName="Message"
+
+#name
+ParseExceptionClassTypeIdentifier
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  try
+    X := 1;
+  except
+    on E: Exception do;
+  end;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntTry
+							ntStatementList
+								ntStatement
+									ntAssign
+										ntParticle 
+											ntIdentifier anName="X"
+										ntParticle
+							ntExcept
+								ntExceptionHandler
+									ntIdentifier anName="E"
+									ntQualifiedIdentifier anName="Exception"
+
+#name
+ParseExceptionIdentifier
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  try
+    X := 1;
+  except
+    on Exception do;
+  end;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntTry
+							ntStatementList
+								ntStatement
+									ntAssign
+										ntParticle 
+											ntIdentifier anName="X"
+										ntParticle
+							ntExcept
+								ntExceptionHandler
+									ntQualifiedIdentifier anName="Exception"
+
+#name
+ParseExceptionBlockElseBranch
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  try
+    X := 1;
+  except
+    on E: Exception do;
+  else
+    Y := 2;
+  end;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntTry
+							ntStatementList
+								ntStatement
+									ntAssign
+										ntParticle 
+											ntIdentifier anName="X"
+										ntParticle
+							ntExcept
+								ntExceptionHandler
+									ntIdentifier anName="E"
+									ntQualifiedIdentifier anName="Exception"
+								ntElse
+									ntStatementList
+										ntStatement
+											ntAssign
+												ntParticle 
+													ntIdentifier anName="Y"
+												ntParticle
+
+#name
+ParseGotoStatement
+#data
+unit U;
+interface
+implementation
+procedure P;
+label L1;
+begin
+  goto L1;
+  L1:
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntLabel
+					ntLabel anName="L1"
+				ntStatementList
+					ntStatement
+						ntGoto
+							ntLabel anName="L1"
+					ntStatement
+						ntLabel anName="L1"
+
+#name
+ParseLabeledStatement
+#data
+unit U;
+interface
+implementation
+procedure P;
+label L1;
+begin
+  L1: X := 1;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntLabel
+					ntLabel anName="L1"
+				ntStatementList
+					ntStatement
+						ntLabel anName="L1"
+						ntAssign
+							ntParticle
+								ntIdentifier anName="X"
+							ntParticle
+
+#name
+ParseLabelDeclarationSection
+#data
+unit U;
+interface
+implementation
+procedure P;
+label L1, L2;
+begin
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntLabel
+					ntLabel anName="L1"
+					ntLabel anName="L2"
+				ntStatementList
+
+#name
+ParseLabelId
+#data
+unit U;
+interface
+implementation
+procedure P;
+label L1;
+begin
+  goto L1;
+  L1:
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntLabel
+					ntLabel anName="L1"
+				ntStatementList
+					ntStatement
+						ntGoto
+							ntLabel anName="L1"
+					ntStatement
+						ntLabel anName="L1"
+
+#name
+ParseRaiseStatement
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  raise Exception.Create('error');
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntRaise
+							ntParticle
+								ntIdentifier anName="Exception"
+								ntIdentifier anName="Create"
+								ntParticle
+#name
+ParseWithStatement
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  with Obj do
+    X := 1;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntWith
+							ntExpressionList
+								ntParticle
+									ntIdentifier anName="Obj"
+							ntStatement
+								ntAssign
+									ntParticle
+										ntIdentifier anName="X"
+									ntParticle
+
+#name
+ParseWithExpressionList
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  with A, B do
+    X := 1;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntWith
+							ntExpressionList
+								ntParticle
+									ntIdentifier anName="A"
+								ntParticle
+									ntIdentifier anName="B"
+							ntStatement
+								ntAssign
+									ntParticle
+										ntIdentifier anName="X"
+									ntParticle
+
+#name
+ParseInheritedStatement
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  inherited;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntInherited
+
+#name
+ParseInheritedVariableReference
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  inherited Create;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntInherited
+							ntParticle
+								ntIdentifier anName="Create"
+
+#name
+ParseInlineVarDeclaration
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  var X := 1;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntVarSection
+							ntVariable
+								ntIdentifierList
+									ntIdentifier anName="X"
+								ntAssign
+									ntParticle
+
+#name
+ParseInlineVarSection
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  var X: Integer := 1;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntVarSection
+							ntVariable
+								ntIdentifierList
+									ntIdentifier anName="X"
+								ntType anName="Integer"
+								ntAssign
+									ntParticle
+
+#name
+ParseInlineConstSection
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  const X = 1;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntConstants
+							ntConstant anName="X" anValueText="1"
+								ntIdentifier anName="X"
+								ntExpression anValueText="1"
+
+#name
+ParseInlineStatement
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  var X := 1;
+  X := X + 1;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntVarSection
+							ntVariable
+								ntIdentifierList
+									ntIdentifier anName="X"
+								ntAssign
+									ntParticle
+					ntStatement
+						ntAssign
+							ntParticle
+								ntIdentifier anName="X"
+							ntBinaryExpression
+								ntParticle
+									ntIdentifier anName="X"
+								ntAdd
+								ntParticle
+
+#name
+ParseFactor
+#data
+unit U;
+interface
+const
+  C = 42;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntConstants
+				ntConstant anName="C" anValueText="42"
+					ntIdentifier anName="C"
+					ntExpression anValueText="42"
+		ntImplementation
+
+#name
+ParseAddOp
+#data
+unit U;
+interface
+const
+  C = 1 + 2;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntConstants
+				ntConstant anName="C" anValueText="1+2"
+					ntIdentifier anName="C"
+					ntExpression anValueText="1+2"
+		ntImplementation
+
+#name
+ParseMultiplicativeOperator
+#data
+unit U;
+interface
+const
+  C = 2 * 3;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntConstants
+				ntConstant anName="C" anValueText="2*3"
+					ntIdentifier anName="C"
+					ntExpression anValueText="2*3"
+		ntImplementation
+
+#name
+ParseRelativeOperator
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  if X > 1 then
+    Y := 1;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntIf
+							ntExpression
+								ntParticle
+									ntIdentifier anName="X"
+								ntGreater
+								ntParticle
+							ntThen
+								ntStatement
+									ntAssign
+										ntParticle
+											ntIdentifier anName="Y"
+										ntParticle
+
+#name
+ParseNotOp
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  if not Done then
+    X := 1;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntIf
+							ntUnaryOperator
+								ntParticle
+									ntIdentifier anName="Done"
+							ntThen
+								ntStatement
+									ntAssign
+										ntParticle
+											ntIdentifier anName="X"
+										ntParticle
+
+#name
+ParseUnaryMinus
+#data
+unit U;
+interface
+const
+  C = -1;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntConstants
+				ntConstant anName="C" anValueText="-1"
+					ntIdentifier anName="C"
+					ntExpression anValueText="-1"
+		ntImplementation
+
+#name
+ParseAddressOp
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  Ptr := @X;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntAssign
+							ntParticle
+								ntIdentifier anName="Ptr"
+							ntUnaryOperator
+								ntParticle
+									ntIdentifier anName="X"
+
+#name
+ParseAsOp
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  Y := Obj as TObject;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntAssign
+							ntParticle
+								ntIdentifier anName="Y"
+							ntExpression
+								ntParticle
+									ntIdentifier anName="Obj"
+								ntAs
+								ntParticle
+									ntIdentifier anName="TObject"
+
+#name
+ParseDotOp
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  X := Obj.Value;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntAssign
+							ntParticle
+								ntIdentifier anName="X"
+							ntParticle
+								ntIdentifier anName="Obj"
+								ntIdentifier anName="Value"
+
+#name
+ParseIndexOp
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  X := Arr[0];
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntAssign
+							ntParticle
+								ntIdentifier anName="X"
+							ntParticle
+								ntIdentifier anName="Arr"
+								ntParticle
+
+#name
+ParsePointerSymbol
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  X := Ptr^;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntAssign
+							ntParticle
+								ntIdentifier anName="X"
+							ntParticle
+								ntIdentifier anName="Ptr"
+
+#name
+ParseExpressionList
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  Foo(1, 2, 3);
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntParticle
+							ntIdentifier anName="Foo"
+							ntParticle
+							ntParticle
+							ntParticle
+
+#name
+ParseParameterExpression
+#data
+unit Unit1;
+interface
+procedure Test;
+implementation
+procedure Test;
+var
+	x: Integer;
+begin
+	x := 3;
+	WriteLn(x:10);
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="Unit1"
+		ntQualifiedIdentifier anName="Unit1"
+		ntInterfaceSection
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="Test"
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="Test"
+				ntVarSection
+					ntVariable
+						ntIdentifierList
+							ntIdentifier anName="x"
+						ntType anName="Integer"
+				ntStatementList
+					ntStatement
+						ntAssign
+							ntParticle
+								ntIdentifier anName="x"
+							ntParticle
+					ntStatement
+						ntParticle
+							ntIdentifier anName="WriteLn"
+							ntParameterExpression
+								ntParticle
+									ntIdentifier anName="x"
+								ntParticle
+
+#name
+ParseExpressionOrRange
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  case X of
+    1..3: Y := 1;
+  end;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntCaseStatement
+							ntParticle
+								ntIdentifier anName="X"
+							ntCaseSelector
+								ntCaseLabels
+									ntCaseLabel
+										ntExpression
+											ntParticle
+										ntExpression
+											ntParticle
+								ntStatement
+									ntAssign
+										ntParticle
+											ntIdentifier anName="Y"
+										ntParticle
+
+#name
+ParseDesignator
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  X := Y;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntAssign
+							ntParticle
+								ntIdentifier anName="X"
+							ntParticle
+								ntIdentifier anName="Y"
+
+#name
+ParseVariable
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  X := Y;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntAssign
+							ntParticle
+								ntIdentifier anName="X"
+							ntParticle
+								ntIdentifier anName="Y"
+
+#name
+ParseNumber
+#data
+unit U;
+interface
+const
+  C = 42;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntConstants
+				ntConstant anName="C" anValueText="42"
+					ntIdentifier anName="C"
+					ntExpression anValueText="42"
+		ntImplementation
+
+#name
+ParseNilToken
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  X := nil;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntAssign
+							ntParticle
+								ntIdentifier anName="X"
+							ntParticle
+
+#name
+ParseStringConst
+#data
+unit U;
+interface
+const
+  S = 'hello';
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntConstants
+				ntConstant anName="S" anValueText="hello"
+					ntIdentifier anName="S"
+					ntExpression anValueText="hello"
+		ntImplementation
+
+#name
+ParseStringConstSimple
+#data
+unit U;
+interface
+const
+  S = 'world';
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntConstants
+				ntConstant anName="S" anValueText="world"
+					ntIdentifier anName="S"
+					ntExpression anValueText="world"
+		ntImplementation
+
+#name
+ParseCharString
+#data
+unit U;
+interface
+const
+  C = #65;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntConstants
+				ntConstant anName="C" anValueText="#65"
+					ntIdentifier anName="C"
+					ntExpression anValueText="#65"
+		ntImplementation
+
+#name
+ParseSetConstructor
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  S := [1, 2, 3];
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntAssign
+							ntParticle
+								ntIdentifier anName="S"
+							ntParticle
+								ntExpressionOrRange
+									ntExpressionOrRange
+										ntParticle
+									ntExpressionOrRange
+										ntParticle
+									ntExpressionOrRange
+										ntParticle
+
+#name
+ParseSetElement
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  S := [1];
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntAssign
+							ntParticle
+								ntIdentifier anName="S"
+							ntParticle
+								ntExpressionOrRange
+									ntExpressionOrRange
+										ntParticle
+
+#name
+ParseAtExpression
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  raise E at ReturnAddr;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntRaise
+							ntParticle
+								ntIdentifier anName="E"
+							ntAt
+								ntParticle
+									ntIdentifier anName="ReturnAddr"
+
+#name
+ParseConstantExpression
+#data
+unit U;
+interface
+const
+  C = 1 + 2 + 3;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntConstants
+				ntConstant anName="C" anValueText="1+2+3"
+					ntIdentifier anName="C"
+					ntExpression anValueText="1+2+3"
+		ntImplementation
+
+#name
+ParseConstantValue
+#data
+unit U;
+interface
+const
+  C = 42;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntConstants
+				ntConstant anName="C" anValueText="42"
+					ntIdentifier anName="C"
+					ntExpression anValueText="42"
+		ntImplementation
+
+#name
+ParseConstantValueTyped
+#data
+unit U;
+interface
+const
+  C: Integer = 42;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntConstants
+				ntConstant anName="C" anValueText="42"
+					ntIdentifier anName="C"
+					ntType anName="Integer"
+					ntExpression anValueText="42"
+		ntImplementation
+
+#name
+ParseConstantColon
+#data
+unit U;
+interface
+const
+  C: Integer = 42;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntConstants
+				ntConstant anName="C" anValueText="42"
+					ntIdentifier anName="C"
+					ntType anName="Integer"
+					ntExpression anValueText="42"
+		ntImplementation
+
+#name
+ParseConstantEqual
+#data
+unit U;
+interface
+const
+  C = 42;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntConstants
+				ntConstant anName="C" anValueText="42"
+					ntIdentifier anName="C"
+					ntExpression anValueText="42"
+		ntImplementation
+
+#name
+ParseConstantType
+#data
+unit U;
+interface
+const
+  C: Integer = 42;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntConstants
+				ntConstant anName="C" anValueText="42"
+					ntIdentifier anName="C"
+					ntType anName="Integer"
+					ntExpression anValueText="42"
+		ntImplementation
+
+#name
+ParseArrayConstant
+#data
+unit U;
+interface
+const
+  A: array[0..1] of Integer = (1, 2);
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntConstants
+				ntConstant anName="A" anValueText="(1,2)"
+					ntIdentifier anName="A"
+					ntType anType="array"
+						ntExpressionOrRange
+							ntParticle
+							ntParticle
+						ntType anName="Integer"
+					ntExpression anValueText="(1,2)"
+		ntImplementation
+
+#name
+ParseRecordFieldConstant
+#data
+unit U;
+interface
+type
+  TPoint = record X, Y: Integer end;
+const
+  P: TPoint = (X: 1; Y: 2);
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="TPoint"
+					ntType anType="record"
+						ntField
+							ntName anName="X"
+							ntName anName="Y"
+							ntType anName="Integer"
+			ntConstants
+				ntConstant anName="P" anValueText="(X:1"
+					ntIdentifier anName="P"
+					ntType anName="TPoint"
+					ntExpression anValueText="(X:1"
+				ntConstant anName="Y" anValueText=")"
+					ntIdentifier anName="Y"
+					ntExpressionOrRange
+						ntParticle
+					ntExpression anValueText=")"
+		ntImplementation
+
+#name
+ParseRoundOpen
+#data
+unit U;
+interface
+const
+  C = (1 + 2);
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntConstants
+				ntConstant anName="C" anValueText="(1+2)"
+					ntIdentifier anName="C"
+					ntExpression anValueText="(1+2)"
+		ntImplementation
+
+#name
+ParseRoundClose
+#data
+unit U;
+interface
+const
+  C = (1 + 2);
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntConstants
+				ntConstant anName="C" anValueText="(1+2)"
+					ntIdentifier anName="C"
+					ntExpression anValueText="(1+2)"
+		ntImplementation
+
+#name
+ParseProcedureMethodHeading
+#data
+unit U;
+interface
+type
+  T = class
+    procedure DoSomething;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntMethod anKind="avProcedure"
+							ntQualifiedIdentifier anName="DoSomething"
+		ntImplementation
+
+#name
+ParseFunctionMethodHeading
+#data
+unit U;
+interface
+type
+  T = class
+    function GetValue: Integer;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntMethod anKind="avFunction"
+							ntQualifiedIdentifier anName="GetValue"
+							ntType anName="Integer"
+		ntImplementation
+
+#name
+ParseConstructorMethodHeading
+#data
+unit U;
+interface
+type
+  T = class
+    constructor Create;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntMethod anKind="avConstructor"
+							ntQualifiedIdentifier anName="Create"
+		ntImplementation
+
+#name
+ParseDestructorMethodHeading
+#data
+unit U;
+interface
+type
+  T = class
+    destructor Destroy; override;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntMethod anKind="avDestructor"
+							ntQualifiedIdentifier anName="Destroy"
+							ntHintDirective
+		ntImplementation
+
+#name
+ParseOperatorMethodHeading
+#data
+unit U;
+interface
+type
+  T = record
+    class operator Add(A, B: T): T;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="record"
+						ntMethod anClass="avTrue" anKind="avOperator"
+							ntQualifiedIdentifier anName="Add"
+							ntParameterList
+								ntParameter
+									ntIdentifierList
+										ntIdentifier anName="A"
+										ntIdentifier anName="B"
+									ntParameterType
+										ntQualifiedIdentifier anName="T"
+							ntType anName="T"
+		ntImplementation
+
+#name
+ParseReturnType
+#data
+unit U;
+interface
+type
+  T = class
+    function GetValue: Integer;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntMethod anKind="avFunction"
+							ntQualifiedIdentifier anName="GetValue"
+							ntType anName="Integer"
+		ntImplementation
+
+#name
+ParseFormalParameterList
+#data
+unit U;
+interface
+type
+  T = class
+    procedure DoIt(A: Integer; B: string);
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntMethod anKind="avProcedure"
+							ntQualifiedIdentifier anName="DoIt"
+							ntParameterList
+								ntParameter
+									ntIdentifierList
+										ntIdentifier anName="A"
+									ntParameterType
+										ntQualifiedIdentifier anName="Integer"
+								ntParameter
+									ntIdentifierList
+										ntIdentifier anName="B"
+									ntParameterType
+		ntImplementation
+
+#name
+ParseFormalParameterSection
+#data
+unit U;
+interface
+type
+  T = class
+    procedure DoIt(A: Integer);
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntMethod anKind="avProcedure"
+							ntQualifiedIdentifier anName="DoIt"
+							ntParameterList
+								ntParameter
+									ntIdentifierList
+										ntIdentifier anName="A"
+									ntParameterType
+										ntQualifiedIdentifier anName="Integer"
+		ntImplementation
+
+#name
+ParseFormalParameterType
+#data
+unit U;
+interface
+type
+  T = class
+    procedure DoIt(A: Integer);
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntMethod anKind="avProcedure"
+							ntQualifiedIdentifier anName="DoIt"
+							ntParameterList
+								ntParameter
+									ntIdentifierList
+										ntIdentifier anName="A"
+									ntParameterType
+										ntQualifiedIdentifier anName="Integer"
+		ntImplementation
+
+#name
+ParseConstParameter
+#data
+unit U;
+interface
+type
+  T = class
+    procedure DoIt(const A: Integer);
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntMethod anKind="avProcedure"
+							ntQualifiedIdentifier anName="DoIt"
+							ntParameterList
+								ntParameter
+									ntIdentifierList
+										ntIdentifier anName="A"
+									ntParameterType
+										ntQualifiedIdentifier anName="Integer"
+		ntImplementation
+
+#name
+ParseVarParameter
+#data
+unit U;
+interface
+type
+  T = class
+    procedure DoIt(var A: Integer);
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntMethod anKind="avProcedure"
+							ntQualifiedIdentifier anName="DoIt"
+							ntParameterList
+								ntParameter
+									ntIdentifierList
+										ntIdentifier anName="A"
+									ntParameterType
+										ntQualifiedIdentifier anName="Integer"
+		ntImplementation
+
+#name
+ParseOutParameter
+#data
+unit U;
+interface
+type
+  T = class
+    procedure DoIt(out A: Integer);
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntMethod anKind="avProcedure"
+							ntQualifiedIdentifier anName="DoIt"
+							ntParameterList
+								ntParameter
+									ntIdentifierList
+										ntIdentifier anName="A"
+									ntParameterType
+										ntQualifiedIdentifier anName="Integer"
+		ntImplementation
+
+#name
+ParseInParameter
+#data
+unit U;
+interface
+type
+  T = class
+    procedure DoIt([ref] const A: Integer);
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntMethod anKind="avProcedure"
+							ntQualifiedIdentifier anName="DoIt"
+							ntParameterList
+								ntParameter
+									ntAttributes
+										ntAttribute
+											ntName anName="ref"
+									ntIdentifierList
+										ntIdentifier anName="A"
+									ntParameterType
+										ntQualifiedIdentifier anName="Integer"
+		ntImplementation
+
+#name
+ParseParameterFormal
+#data
+unit U;
+interface
+type
+  T = class
+    procedure DoIt(A, B: Integer);
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntMethod anKind="avProcedure"
+							ntQualifiedIdentifier anName="DoIt"
+							ntParameterList
+								ntParameter
+									ntIdentifierList
+										ntIdentifier anName="A"
+										ntIdentifier anName="B"
+									ntParameterType
+										ntQualifiedIdentifier anName="Integer"
+		ntImplementation
+
+#name
+ParseParameterName
+#data
+unit U;
+interface
+type
+  T = class
+    procedure DoIt(AValue: Integer);
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntMethod anKind="avProcedure"
+							ntQualifiedIdentifier anName="DoIt"
+							ntParameterList
+								ntParameter
+									ntIdentifierList
+										ntIdentifier anName="AValue"
+									ntParameterType
+										ntQualifiedIdentifier anName="Integer"
+		ntImplementation
+
+#name
+ParseParameterNameList
+#data
+unit U;
+interface
+type
+  T = class
+    procedure DoIt(A, B, C: Integer);
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntMethod anKind="avProcedure"
+							ntQualifiedIdentifier anName="DoIt"
+							ntParameterList
+								ntParameter
+									ntIdentifierList
+										ntIdentifier anName="A"
+										ntIdentifier anName="B"
+										ntIdentifier anName="C"
+									ntParameterType
+										ntQualifiedIdentifier anName="Integer"
+		ntImplementation
+
+#name
+ParseMethodKind
+#data
+unit U;
+interface
+type
+  T = class
+    procedure P;
+    function F: Integer;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntMethod anKind="avProcedure"
+							ntQualifiedIdentifier anName="P"
+						ntMethod anKind="avFunction"
+							ntQualifiedIdentifier anName="F"
+							ntType anName="Integer"
+		ntImplementation
+
+#name
+ParseFunctionMethodName
+#data
+unit U;
+interface
+implementation
+function TFoo.GetValue: Integer;
+begin
+  Result := 1;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avFunction"
+				ntQualifiedIdentifier anName="TFoo.GetValue"
+				ntType anName="Integer"
+				ntStatementList
+					ntStatement
+						ntAssign
+							ntParticle
+								ntIdentifier anName="Result"
+							ntParticle
+
+#name
+ParseProcedureMethodName
+#data
+unit U;
+interface
+implementation
+procedure TFoo.DoIt;
+begin
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="TFoo.DoIt"
+				ntStatementList
+
+#name
+ParseFunctionProcedureName
+#data
+unit U;
+interface
+implementation
+function GetValue: Integer;
+begin
+  Result := 1;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avFunction"
+				ntQualifiedIdentifier anName="GetValue"
+				ntType anName="Integer"
+				ntStatementList
+					ntStatement
+						ntAssign
+							ntParticle
+								ntIdentifier anName="Result"
+							ntParticle
+
+#name
+ParseObjectNameOfMethod
+#data
+unit U;
+interface
+implementation
+procedure TFoo.Bar;
+begin
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="TFoo.Bar"
+				ntStatementList
+
+#name
+ParseForwardDeclaration
+#data
+unit U;
+interface
+implementation
+procedure P; forward;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anForward="avTrue" anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntHintDirective anForward="avTrue"
+
+#name
+ParseFunctionMethodDeclaration
+#data
+unit U;
+interface
+implementation
+function F: Integer;
+begin
+  Result := 1;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avFunction"
+				ntQualifiedIdentifier anName="F"
+				ntType anName="Integer"
+				ntStatementList
+					ntStatement
+						ntAssign
+							ntParticle
+								ntIdentifier anName="Result"
+							ntParticle
+
+#name
+ParseProcedureDeclarationSection
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+
+#name
+ParseClassMethodOrProperty
+#data
+unit U;
+interface
+type
+  T = class
+    class procedure DoIt;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntMethod anClass="avTrue" anKind="avProcedure"
+							ntQualifiedIdentifier anName="DoIt"
+		ntImplementation
+
+#name
+ParseClassMethodHeading
+#data
+unit U;
+interface
+type
+  T = class
+    class function GetValue: Integer;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntMethod anClass="avTrue" anKind="avFunction"
+							ntQualifiedIdentifier anName="GetValue"
+							ntType anName="Integer"
+		ntImplementation
+
+#name
+ParseClassMethodResolution
+#data
+unit U;
+interface
+type
+  T = class(TInterfacedObject, IFoo)
+    procedure IFoo.Bar = MyBar;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntQualifiedIdentifier anName="TInterfacedObject"
+						ntQualifiedIdentifier anName="IFoo"
+						ntMethod anKind="avProcedure"
+							ntQualifiedIdentifier anName="IFoo.Bar"
+							ntQualifiedIdentifier anName="MyBar"
+		ntImplementation
+
+#name
+ParseClassField
+#data
+unit U;
+interface
+type
+  T = class
+    FValue: Integer;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntField
+							ntName anName="FValue"
+							ntType anName="Integer"
+		ntImplementation
+
+#name
+ParseClassClass
+#data
+unit U;
+interface
+type
+  T = class
+    class procedure DoIt;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntMethod anClass="avTrue" anKind="avProcedure"
+							ntQualifiedIdentifier anName="DoIt"
+		ntImplementation
+
+#name
+ParseClassProperty
+#data
+unit U;
+interface
+type
+  T = class
+  private
+    class var FValue: Integer;
+  public
+    class property Value: Integer read FValue write FValue;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntVisibilitySection anVisibility="private"
+							ntFieldSection
+								ntField
+									ntName anName="FValue"
+									ntType anName="Integer"
+						ntVisibilitySection anVisibility="public"
+							ntProperty anClass="avTrue"
+								ntIdentifier anName="Value"
+								ntType anName="Integer"
+								ntPropertyDirective anKind="read"
+									ntParticle
+										ntIdentifier anName="FValue"
+								ntPropertyDirective anKind="write"
+									ntParticle
+										ntIdentifier anName="FValue"
+		ntImplementation
+
+#name
+ParseClassOfType
+#data
+unit U;
+interface
+type
+  TRef = class of TObject;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="TRef"
+					ntType anType="avClassOf"
+						ntQualifiedIdentifier anName="TObject"
+		ntImplementation
+
+#name
+ParseAnonymousMethod
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  Proc := procedure begin end;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntAssign
+							ntParticle
+								ntIdentifier anName="Proc"
+							ntParticle
+								ntAnonymousMethod anKind="avProcedure"
+									ntStatementList
+
+#name
+ParseAnonymousMethodType
+#data
+unit U;
+interface
+type
+  TProc = reference to procedure;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="TProc"
+					ntType anType="reference" anKind="avProcedure"
+		ntImplementation
+
+#name
+ParseClassTypeEnd
+#data
+unit U;
+interface
+type
+  T = class
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+		ntImplementation
+
+#name
+ParseClassVisibility
+#data
+unit U;
+interface
+type
+  T = class
+  private
+    FA: Integer;
+  protected
+    FB: Integer;
+  public
+    FC: Integer;
+  published
+    FD: Integer;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntVisibilitySection anVisibility="private"
+							ntField
+								ntName anName="FA"
+								ntType anName="Integer"
+						ntVisibilitySection anVisibility="protected"
+							ntField
+								ntName anName="FB"
+								ntType anName="Integer"
+						ntVisibilitySection anVisibility="public"
+							ntField
+								ntName anName="FC"
+								ntType anName="Integer"
+						ntVisibilitySection anVisibility="published"
+							ntField
+								ntName anName="FD"
+								ntType anName="Integer"
+		ntImplementation
+
+#name
+ParseVisibilityPrivate
+#data
+unit U;
+interface
+type
+  T = class
+  private
+    F: Integer;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntVisibilitySection anVisibility="private"
+							ntField
+								ntName anName="F"
+								ntType anName="Integer"
+		ntImplementation
+
+#name
+ParseVisibilityProtected
+#data
+unit U;
+interface
+type
+  T = class
+  protected
+    F: Integer;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntVisibilitySection anVisibility="protected"
+							ntField
+								ntName anName="F"
+								ntType anName="Integer"
+		ntImplementation
+
+#name
+ParseVisibilityPublic
+#data
+unit U;
+interface
+type
+  T = class
+  public
+    F: Integer;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntVisibilitySection anVisibility="public"
+							ntField
+								ntName anName="F"
+								ntType anName="Integer"
+		ntImplementation
+
+#name
+ParseVisibilityPublished
+#data
+unit U;
+interface
+type
+  T = class
+  published
+    F: Integer;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntVisibilitySection anVisibility="published"
+							ntField
+								ntName anName="F"
+								ntType anName="Integer"
+		ntImplementation
+
+#name
+ParseVisibilityStrictPrivate
+#data
+unit U;
+interface
+type
+  T = class
+  strict private
+    F: Integer;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntVisibilitySection anVisibility="strict private"
+							ntField
+								ntName anName="F"
+								ntType anName="Integer"
+		ntImplementation
+
+#name
+ParseVisibilityStrictProtected
+#data
+unit U;
+interface
+type
+  T = class
+  strict protected
+    F: Integer;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntVisibilitySection anVisibility="strict protected"
+							ntField
+								ntName anName="F"
+								ntType anName="Integer"
+		ntImplementation
+
+#name
+ParseVisibilityAutomated
+#data
+unit U;
+interface
+type
+  T = class
+  automated
+    F: Integer;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntVisibilitySection anVisibility="automated"
+							ntField
+								ntName anName="F"
+								ntType anName="Integer"
+		ntImplementation
+
+#name
+ParseDirective
+#data
+unit U;
+interface
+type
+  T = class
+    procedure P; virtual;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntMethod anKind="avProcedure"
+							ntQualifiedIdentifier anName="P"
+							ntHintDirective
+		ntImplementation
+
+#name
+IsPossibleDirective
+#data
+unit U;
+interface
+type
+  T = class
+    procedure P; virtual;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntMethod anKind="avProcedure"
+							ntQualifiedIdentifier anName="P"
+							ntHintDirective
+		ntImplementation
+
+#name
+ParseDirectiveDeprecated
+#data
+unit U;
+interface
+type
+  T = class
+    procedure P; deprecated 'Use Q instead';
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntMethod anKind="avProcedure"
+							ntQualifiedIdentifier anName="P"
+							ntHintDirective
+								ntPortabilityDirective anDeprecated="Use Q instead"
+		ntImplementation
+
+#name
+ParseDirectiveLibrary
+#data
+unit U;
+interface
+type
+  T = class
+    procedure P; library;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntMethod anKind="avProcedure"
+							ntQualifiedIdentifier anName="P"
+							ntHintDirective
+								ntPortabilityDirective anLibrary="avTrue"
+		ntImplementation
+
+#name
+ParseDirectivePlatform
+#data
+unit U;
+interface
+type
+  T = class
+    procedure P; platform;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntMethod anKind="avProcedure"
+							ntQualifiedIdentifier anName="P"
+							ntHintDirective
+								ntPortabilityDirective anPlatform="avTrue"
+		ntImplementation
+
+#name
+ParseDirectiveBindingMessage
+#data
+unit U;
+interface
+type
+  T = class
+    procedure WMPaint(var Msg: TMessage); message 15;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntMethod anKind="avProcedure"
+							ntQualifiedIdentifier anName="WMPaint"
+							ntParameterList
+								ntParameter
+									ntIdentifierList
+										ntIdentifier anName="Msg"
+									ntParameterType
+										ntQualifiedIdentifier anName="TMessage"
+							ntHintDirective
+								ntParticle
+		ntImplementation
+
+#name
+ParseExternalDirective
+#data
+unit U;
+interface
+implementation
+procedure P; external 'lib.dll';
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anExternal="avTrue" anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntHintDirective anExternal="avTrue"
+					ntExternal
+						ntParticle
+
+#name
+ParseExternalDirectiveThree
+#data
+unit U;
+interface
+implementation
+procedure P; external 'lib.dll' name 'Func';
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anExternal="avTrue" anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntHintDirective anExternal="avTrue"
+					ntExternal
+						ntParticle
+						ntParticle
+
+#name
+ParseAccessSpecifier
+#data
+unit U;
+interface
+type
+  T = class
+  private
+    FX: Integer;
+  public
+    property X: Integer read FX write FX;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntVisibilitySection anVisibility="private"
+							ntField
+								ntName anName="FX"
+								ntType anName="Integer"
+						ntVisibilitySection anVisibility="public"
+							ntProperty
+								ntIdentifier anName="X"
+								ntType anName="Integer"
+								ntPropertyDirective anKind="read"
+									ntParticle
+										ntIdentifier anName="FX"
+								ntPropertyDirective anKind="write"
+									ntParticle
+										ntIdentifier anName="FX"
+		ntImplementation
+
+#name
+ParsePropertySpecifiers
+#data
+unit U;
+interface
+type
+  T = class
+  private
+    FX: Integer;
+  public
+    property X: Integer read FX write FX;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntVisibilitySection anVisibility="private"
+							ntField
+								ntName anName="FX"
+								ntType anName="Integer"
+						ntVisibilitySection anVisibility="public"
+							ntProperty
+								ntIdentifier anName="X"
+								ntType anName="Integer"
+								ntPropertyDirective anKind="read"
+									ntParticle
+										ntIdentifier anName="FX"
+								ntPropertyDirective anKind="write"
+									ntParticle
+										ntIdentifier anName="FX"
+		ntImplementation
+
+#name
+ParsePropertyInterface
+#data
+unit U;
+interface
+type
+  T = class
+    property Items[Index: Integer]: string read GetItem write SetItem;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntProperty
+							ntIdentifier anName="Items"
+							ntParameter
+								ntIdentifierList
+									ntIdentifier anName="Index"
+								ntParameterType
+									ntQualifiedIdentifier anName="Integer"
+							ntType
+							ntPropertyDirective anKind="read"
+								ntParticle
+									ntIdentifier anName="GetItem"
+							ntPropertyDirective anKind="write"
+								ntParticle
+									ntIdentifier anName="SetItem"
+		ntImplementation
+
+#name
+ParsePropertyParameterList
+#data
+unit U;
+interface
+type
+  T = class
+    property Items[I: Integer; J: Integer]: string read GetItem;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntProperty
+							ntIdentifier anName="Items"
+							ntParameter
+								ntIdentifierList
+									ntIdentifier anName="I"
+								ntParameterType
+									ntQualifiedIdentifier anName="Integer"
+							ntParameter
+								ntIdentifierList
+									ntIdentifier anName="J"
+								ntParameterType
+									ntQualifiedIdentifier anName="Integer"
+							ntType
+							ntPropertyDirective anKind="read"
+								ntParticle
+									ntIdentifier anName="GetItem"
+		ntImplementation
+
+#name
+ParsePropertyDefault
+#data
+unit U;
+interface
+type
+  T = class
+    property Items[Index: Integer]: string read GetItem; default;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntProperty
+							ntIdentifier anName="Items"
+							ntParameter
+								ntIdentifierList
+									ntIdentifier anName="Index"
+								ntParameterType
+									ntQualifiedIdentifier anName="Integer"
+							ntType
+							ntPropertyDirective anKind="read"
+								ntParticle
+									ntIdentifier anName="GetItem"
+							ntPropertyDirective anKind="isdefault"
+		ntImplementation
+
+#name
+ParseReadAccessIdentifier
+#data
+unit U;
+interface
+type
+  T = class
+  private
+    FX: Integer;
+  public
+    property X: Integer read FX;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntVisibilitySection anVisibility="private"
+							ntField
+								ntName anName="FX"
+								ntType anName="Integer"
+						ntVisibilitySection anVisibility="public"
+							ntProperty
+								ntIdentifier anName="X"
+								ntType anName="Integer"
+								ntPropertyDirective anKind="read"
+									ntParticle
+										ntIdentifier anName="FX"
+		ntImplementation
+
+#name
+ParseWriteAccessIdentifier
+#data
+unit U;
+interface
+type
+  T = class
+  private
+    FX: Integer;
+  public
+    property X: Integer write FX;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntVisibilitySection anVisibility="private"
+							ntField
+								ntName anName="FX"
+								ntType anName="Integer"
+						ntVisibilitySection anVisibility="public"
+							ntProperty
+								ntIdentifier anName="X"
+								ntType anName="Integer"
+								ntPropertyDirective anKind="write"
+									ntParticle
+										ntIdentifier anName="FX"
+		ntImplementation
+
+#name
+ParseStorageSpecifier
+#data
+unit U;
+interface
+type
+  T = class
+  private
+    FX: Integer;
+  public
+    property X: Integer read FX stored True;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntVisibilitySection anVisibility="private"
+							ntField
+								ntName anName="FX"
+								ntType anName="Integer"
+						ntVisibilitySection anVisibility="public"
+							ntProperty
+								ntIdentifier anName="X"
+								ntType anName="Integer"
+								ntPropertyDirective anKind="read"
+									ntParticle
+										ntIdentifier anName="FX"
+								ntPropertyDirective anKind="stored"
+									ntParticle
+										ntIdentifier anName="True"
+		ntImplementation
+
+#name
+ParseStorageDefault
+#data
+unit U;
+interface
+type
+  T = class
+  private
+    FX: Integer;
+  public
+    property X: Integer read FX default 0;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntVisibilitySection anVisibility="private"
+							ntField
+								ntName anName="FX"
+								ntType anName="Integer"
+						ntVisibilitySection anVisibility="public"
+							ntProperty
+								ntIdentifier anName="X"
+								ntType anName="Integer"
+								ntPropertyDirective anKind="read"
+									ntParticle
+										ntIdentifier anName="FX"
+								ntPropertyDirective anKind="default"
+									ntParticle
+		ntImplementation
+
+#name
+ParseStorageStored
+#data
+unit U;
+interface
+type
+  T = class
+  private
+    FX: Integer;
+    function IsStored: Boolean;
+  public
+    property X: Integer read FX stored IsStored;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntVisibilitySection anVisibility="private"
+							ntField
+								ntName anName="FX"
+								ntType anName="Integer"
+							ntMethod anKind="avFunction"
+								ntQualifiedIdentifier anName="IsStored"
+								ntType anName="Boolean"
+						ntVisibilitySection anVisibility="public"
+							ntProperty
+								ntIdentifier anName="X"
+								ntType anName="Integer"
+								ntPropertyDirective anKind="read"
+									ntParticle
+										ntIdentifier anName="FX"
+								ntPropertyDirective anKind="stored"
+									ntParticle
+										ntIdentifier anName="IsStored"
+		ntImplementation
+
+#name
+ParseStorageNoDefault
+#data
+unit U;
+interface
+type
+  T = class
+  private
+    FX: Integer;
+  public
+    property X: Integer read FX nodefault;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntVisibilitySection anVisibility="private"
+							ntField
+								ntName anName="FX"
+								ntType anName="Integer"
+						ntVisibilitySection anVisibility="public"
+							ntProperty
+								ntIdentifier anName="X"
+								ntType anName="Integer"
+								ntPropertyDirective anKind="read"
+									ntParticle
+										ntIdentifier anName="FX"
+								ntPropertyDirective anKind="nodefault"
+		ntImplementation
+
+#name
+ParseImplementsSpecifier
+#data
+unit U;
+interface
+type
+  T = class(TInterfacedObject, IFoo)
+  private
+    FFoo: IFoo;
+  public
+    property Foo: IFoo read FFoo implements IFoo;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntQualifiedIdentifier anName="TInterfacedObject"
+						ntQualifiedIdentifier anName="IFoo"
+						ntVisibilitySection anVisibility="private"
+							ntField
+								ntName anName="FFoo"
+								ntType anName="IFoo"
+						ntVisibilitySection anVisibility="public"
+							ntProperty
+								ntIdentifier anName="Foo"
+								ntType anName="IFoo"
+								ntPropertyDirective anKind="read"
+									ntParticle
+										ntIdentifier anName="FFoo"
+								ntPropertyDirective anKind="implements"
+									ntQualifiedIdentifier anName="IFoo"
+		ntImplementation
+
+#name
+ParseDispIDSpecifier
+#data
+unit U;
+interface
+type
+  T = class
+    property X: Integer dispid 1;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntProperty
+							ntIdentifier anName="X"
+							ntType anName="Integer"
+							ntPropertyDirective anKind="dispid"
+								ntParticle
+		ntImplementation
+
+#name
+ParseArrayType
+#data
+unit U;
+interface
+type
+  TArr = array[0..9] of Integer;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="TArr"
+					ntType anType="array"
+						ntExpressionOrRange
+							ntParticle
+							ntParticle
+						ntType anName="Integer"
+		ntImplementation
+
+#name
+ParseSetType
+#data
+unit U;
+interface
+type
+  TByteSet = set of Byte;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="TByteSet"
+					ntType anType="set"
+						ntType anName="Byte"
+		ntImplementation
+
+#name
+ParseFileType
+#data
+unit U;
+interface
+type
+  TIntFile = file of Integer;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="TIntFile"
+					ntType anType="file"
+						ntType anName="Integer"
+		ntImplementation
+
+#name
+ParseOrdinalIdentifier
+#data
+unit U;
+interface
+type
+  T = Byte;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anName="Byte"
+		ntImplementation
+
+#name
+ParseRealIdentifier
+#data
+unit U;
+interface
+type
+  T = Double;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anName="Double"
+		ntImplementation
+
+#name
+ParseStringIdentifier
+#data
+unit U;
+interface
+type
+  T = string;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType
+		ntImplementation
+
+#name
+ParseTypeSimple
+#data
+unit U;
+interface
+type
+  T = Integer;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anName="Integer"
+		ntImplementation
+
+#name
+ParseInterfaceGUID
+#data
+unit U;
+interface
+type
+  ITest = interface
+    ['{00000000-0000-0000-0000-000000000000}']
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="ITest"
+					ntType anType="avInterface"
+						ntParticle
+							ntExpressionOrRange
+								ntExpressionOrRange
+									ntParticle
+		ntImplementation
+
+#name
+ParseInterfaceHeritage
+#data
+unit U;
+interface
+type
+  IChild = interface(IParent)
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="IChild"
+					ntType anType="avInterface"
+						ntQualifiedIdentifier anName="IParent"
+		ntImplementation
+
+#name
+ParseClassConstraint
+#data
+unit U;
+interface
+type
+  TGen<T: class> = class
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="TGen"
+					ntTypeParams
+						ntTypeParam
+							ntType anName="T"
+							ntConstraints
+								ntClassConstraint
+					ntType anType="avClass"
+		ntImplementation
+
+#name
+ParseConstructorConstraint
+#data
+unit U;
+interface
+type
+  TGen<T: constructor> = class
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="TGen"
+					ntTypeParams
+						ntTypeParam
+							ntType anName="T"
+							ntConstraints
+								ntConstructorConstraint
+					ntType anType="avClass"
+		ntImplementation
+
+#name
+ParseRecordConstraint
+#data
+unit U;
+interface
+type
+  TGen<T: record> = class
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="TGen"
+					ntTypeParams
+						ntTypeParam
+							ntType anName="T"
+							ntConstraints
+								ntRecordConstraint
+					ntType anType="avClass"
+		ntImplementation
+
+#name
+ParseConstraintList
+#data
+unit U;
+interface
+type
+  TGen<T: class, constructor> = class
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="TGen"
+					ntTypeParams
+						ntTypeParam
+							ntType anName="T"
+							ntConstraints
+								ntClassConstraint
+								ntConstructorConstraint
+					ntType anType="avClass"
+		ntImplementation
+
+#name
+ParseConstraint
+#data
+unit U;
+interface
+type
+  TGen<T: class> = class
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="TGen"
+					ntTypeParams
+						ntTypeParam
+							ntType anName="T"
+							ntConstraints
+								ntClassConstraint
+					ntType anType="avClass"
+		ntImplementation
+
+#name
+ParseTypeArgs
+#data
+unit U;
+interface
+type
+  T = TList<Integer>;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anName="TList"
+						ntTypeArgs
+							ntType anName="Integer"
+		ntImplementation
+
+#name
+ParseVarDecl
+#data
+unit U;
+interface
+var
+  X: Integer;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntVarSection
+				ntVariable
+					ntIdentifierList
+						ntIdentifier anName="X"
+					ntType anName="Integer"
+		ntImplementation
+
+#name
+ParseVarAbsolute
+#data
+unit U;
+interface
+var
+  X: Integer;
+  Y: Integer absolute X;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntVarSection
+				ntVariable
+					ntIdentifierList
+						ntIdentifier anName="X"
+					ntType anName="Integer"
+				ntVariable
+					ntIdentifierList
+						ntIdentifier anName="Y"
+					ntType anName="Integer"
+					ntAbsolute
+						ntParticle
+							ntIdentifier anName="X"
+		ntImplementation
+
+#name
+ParseVarEqual
+#data
+unit U;
+interface
+var
+  X: Integer = 0;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntVarSection
+				ntVariable
+					ntIdentifierList
+						ntIdentifier anName="X"
+					ntType anName="Integer"
+					ntConstant
+						ntValue
+							ntExpression anValueText="0"
+		ntImplementation
+
+#name
+ParseFieldDeclaration
+#data
+unit U;
+interface
+type
+  T = record
+    X: Integer;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="record"
+						ntField
+							ntName anName="X"
+							ntType anName="Integer"
+		ntImplementation
+
+#name
+ParseFieldList
+#data
+unit U;
+interface
+type
+  T = record
+    X: Integer;
+    Y: string;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="record"
+						ntField
+							ntName anName="X"
+							ntType anName="Integer"
+						ntField
+							ntName anName="Y"
+							ntType
+		ntImplementation
+
+#name
+ParseFieldName
+#data
+unit U;
+interface
+type
+  T = record
+    X: Integer;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="record"
+						ntField
+							ntName anName="X"
+							ntType anName="Integer"
+		ntImplementation
+
+#name
+ParseFieldNameList
+#data
+unit U;
+interface
+type
+  T = record
+    A, B, C: Integer;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="record"
+						ntField
+							ntName anName="A"
+							ntName anName="B"
+							ntName anName="C"
+							ntType anName="Integer"
+		ntImplementation
+
+#name
+ParseIdentList
+#data
+unit U;
+interface
+var
+  A, B, C: Integer;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntVarSection
+				ntVariable
+					ntIdentifierList
+						ntIdentifier anName="A"
+						ntIdentifier anName="B"
+						ntIdentifier anName="C"
+					ntType anName="Integer"
+		ntImplementation
+
+#name
+ParseVariantSection
+#data
+unit U;
+interface
+type
+  T = record
+    case Tag: Integer of
+      0: (X: Integer);
+      1: (Y: Double);
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="record"
+						ntCaseStatement
+							ntField
+								ntName anName="Tag"
+								ntType anName="Integer"
+							ntCaseSelector
+								ntCaseLabels
+									ntCaseLabel
+										ntExpression
+											ntParticle
+								ntFieldSection
+									ntField
+										ntName anName="X"
+										ntType anName="Integer"
+							ntCaseSelector
+								ntCaseLabels
+									ntCaseLabel
+										ntExpression
+											ntParticle
+								ntFieldSection
+									ntField
+										ntName anName="Y"
+										ntType anName="Double"
+		ntImplementation
+
+#name
+ParseVariantIdentifier
+#data
+unit U;
+interface
+type
+  T = record
+    case Tag: Integer of
+      0: (X: Integer);
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="record"
+						ntCaseStatement
+							ntField
+								ntName anName="Tag"
+								ntType anName="Integer"
+							ntCaseSelector
+								ntCaseLabels
+									ntCaseLabel
+										ntExpression
+											ntParticle
+								ntFieldSection
+									ntField
+										ntName anName="X"
+										ntType anName="Integer"
+		ntImplementation
+
+#name
+ParseTagField
+#data
+unit U;
+interface
+type
+  T = record
+    case Tag: Integer of
+      0: (X: Integer);
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="record"
+						ntCaseStatement
+							ntField
+								ntName anName="Tag"
+								ntType anName="Integer"
+							ntCaseSelector
+								ntCaseLabels
+									ntCaseLabel
+										ntExpression
+											ntParticle
+								ntFieldSection
+									ntField
+										ntName anName="X"
+										ntType anName="Integer"
+		ntImplementation
+
+#name
+ParseTagFieldName
+#data
+unit U;
+interface
+type
+  T = record
+    case Tag: Integer of
+      0: (X: Integer);
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="record"
+						ntCaseStatement
+							ntField
+								ntName anName="Tag"
+								ntType anName="Integer"
+							ntCaseSelector
+								ntCaseLabels
+									ntCaseLabel
+										ntExpression
+											ntParticle
+								ntFieldSection
+									ntField
+										ntName anName="X"
+										ntType anName="Integer"
+		ntImplementation
+
+#name
+ParseTagFieldTypeName
+#data
+unit U;
+interface
+type
+  T = record
+    case Tag: Integer of
+      0: (X: Integer);
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="record"
+						ntCaseStatement
+							ntField
+								ntName anName="Tag"
+								ntType anName="Integer"
+							ntCaseSelector
+								ntCaseLabels
+									ntCaseLabel
+										ntExpression
+											ntParticle
+								ntFieldSection
+									ntField
+										ntName anName="X"
+										ntType anName="Integer"
+		ntImplementation
+
+#name
+ParseRecordVariant
+#data
+unit U;
+interface
+type
+  T = record
+    case Integer of
+      0: (X: Integer);
+      1: (Y: Double);
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="record"
+						ntCaseStatement
+							ntField
+								ntType anName="Integer"
+							ntCaseSelector
+								ntCaseLabels
+									ntCaseLabel
+										ntExpression
+											ntParticle
+								ntFieldSection
+									ntField
+										ntName anName="X"
+										ntType anName="Integer"
+							ntCaseSelector
+								ntCaseLabels
+									ntCaseLabel
+										ntExpression
+											ntParticle
+								ntFieldSection
+									ntField
+										ntName anName="Y"
+										ntType anName="Double"
+		ntImplementation
+
+#name
+ParseRecordAlign
+#data
+unit U;
+interface
+type
+  T = record
+    X: Integer;
+  end align 8;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="record"
+						ntField
+							ntName anName="X"
+							ntType anName="Integer"
+					ntAlignmentParam
+						ntExpression
+							ntParticle
+		ntImplementation
+
+#name
+ParseExportStatement
+#data
+library L;
+exports
+  Foo;
+begin end.
+#errors
+#document
+ntCompilationUnit
+	ntLibrary
+		ntIdentifier anName="L"
+		ntExports
+			ntElement
+				ntIdentifier anName="Foo"
+
+#name
+ParseExportsItem
+#data
+library L;
+exports
+  Foo,
+  Bar;
+begin end.
+#errors
+#document
+ntCompilationUnit
+	ntLibrary
+		ntIdentifier anName="L"
+		ntExports
+			ntElement
+				ntIdentifier anName="Foo"
+			ntElement
+				ntIdentifier anName="Bar"
+
+#name
+ParseExportsName
+#data
+library L;
+exports
+  Foo name 'MyFoo';
+begin end.
+#errors
+#document
+ntCompilationUnit
+	ntLibrary
+		ntIdentifier anName="L"
+		ntExports
+			ntElement
+				ntIdentifier anName="Foo"
+				ntParticle
+
+#name
+ParseRequiresClause
+#data
+package P;
+requires
+  rtl;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntPackage
+		ntQualifiedIdentifier anName="P"
+		ntRequires
+			ntQualifiedIdentifier anName="rtl"
+
+#name
+IsPossibleRequiresClause
+#data
+package P;
+requires
+  rtl;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntPackage
+		ntQualifiedIdentifier anName="P"
+		ntRequires
+			ntQualifiedIdentifier anName="rtl"
+
+#name
+ParseRequiresIdentifier
+#data
+package P;
+requires
+  rtl, vcl;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntPackage
+		ntQualifiedIdentifier anName="P"
+		ntRequires
+			ntQualifiedIdentifier anName="rtl"
+			ntQualifiedIdentifier anName="vcl"
+
+#name
+ParseMainUsesClause
+#data
+program P;
+uses
+  SysUtils;
+begin end.
+#errors
+#document
+ntCompilationUnit
+	ntProgram
+		ntIdentifier anName="P"
+		ntUses
+			ntUsedUnit anName="SysUtils"
+				ntQualifiedIdentifier anName="SysUtils"
+
+#name
+ParseMainUsedUnitStatement
+#data
+program P;
+uses
+  SysUtils in 'SysUtils.pas';
+begin end.
+#errors
+#document
+ntCompilationUnit
+	ntProgram
+		ntIdentifier anName="P"
+		ntUses
+			ntUsedUnit anName="SysUtils"
+				ntQualifiedIdentifier anName="SysUtils"
+
+#name
+ParseAssemblyAttribute
+#data
+unit U;
+interface
+[assembly: AssemblyVersion('1.0')]
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntAttribute
+				ntParticle
+					ntIdentifier anName="AssemblyVersion"
+					ntParticle
+		ntImplementation
+
+#name
+ParseAttributeSections
+#data
+unit U;
+interface
+type
+  [CustomAttr]
+  T = class
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntAttributes
+						ntAttribute
+							ntName anName="CustomAttr"
+					ntType anType="avClass"
+		ntImplementation
+
+#name
+ParseAttributeSection
+#data
+unit U;
+interface
+type
+  [CustomAttr]
+  T = class
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntAttributes
+						ntAttribute
+							ntName anName="CustomAttr"
+					ntType anType="avClass"
+		ntImplementation
+
+#name
+ParseAttributeList
+#data
+unit U;
+interface
+type
+  [AttrA, AttrB]
+  T = class
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntAttributes
+						ntAttribute
+							ntName anName="AttrA"
+							ntAttribute
+								ntName anName="AttrB"
+					ntType anType="avClass"
+		ntImplementation
+
+#name
+ParseAttribute
+#data
+unit U;
+interface
+type
+  [CustomAttr]
+  T = class
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntAttributes
+						ntAttribute
+							ntName anName="CustomAttr"
+					ntType anType="avClass"
+		ntImplementation
+
+#name
+ParseAttributeName
+#data
+unit U;
+interface
+type
+  [CustomAttr]
+  T = class
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntAttributes
+						ntAttribute
+							ntName anName="CustomAttr"
+					ntType anType="avClass"
+		ntImplementation
+
+#name
+ParseAttributeArguments
+#data
+unit U;
+interface
+type
+  [CustomAttr(1, 'hello')]
+  T = class
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntAttributes
+						ntAttribute
+							ntName anName="CustomAttr"
+							ntArguments
+								ntPositionalArgument
+									ntValue
+										ntParticle
+									ntPositionalArgument
+										ntValue
+											ntParticle
+					ntType anType="avClass"
+		ntImplementation
+
+#name
+ParsePositionalArgument
+#data
+unit U;
+interface
+type
+  [CustomAttr(42)]
+  T = class
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntAttributes
+						ntAttribute
+							ntName anName="CustomAttr"
+							ntArguments
+								ntPositionalArgument
+									ntValue
+										ntParticle
+					ntType anType="avClass"
+		ntImplementation
+
+#name
+ParseStringStatement
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  S := 'hello';
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntAssign
+							ntParticle
+								ntIdentifier anName="S"
+							ntParticle
+
+#name
+ParseAssemblerStatement
+#data
+unit U;
+interface
+implementation
+procedure P; assembler;
+asm
+  NOP
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntHintDirective
+				ntStatementList anType="avAsm"
+
+#name
+ParseStringTypeInternal
+#data
+unit U;
+interface
+type
+  TStr = type string;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="TStr" anDistinct="true"
+					ntType
+		ntImplementation
+
+#name
+ParseEnumeratedTypeElement
+#data
+unit U;
+interface
+type
+  TColor = (Red, Green, Blue);
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="TColor"
+					ntType anName="avEnum"
+						ntIdentifier anName="Red"
+						ntIdentifier anName="Green"
+						ntIdentifier anName="Blue"
+		ntImplementation
+
+#name
+ParseObjectHeritage
+#data
+unit U;
+interface
+type
+  T = object(TParent)
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="object"
+						ntQualifiedIdentifier anName="TParent"
+		ntImplementation
+
+#name
+ParseObjectField
+#data
+unit U;
+interface
+type
+  T = object
+    X: Integer;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="object"
+						ntField
+							ntName anName="X"
+							ntType anName="Integer"
+		ntImplementation
+
+#name
+ParseObjectTypeEnd
+#data
+unit U;
+interface
+type
+  T = object
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="object"
+		ntImplementation
+
+#name
+ParseObjectVisibility
+#data
+unit U;
+interface
+type
+  T = object
+  public
+    X: Integer;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="object"
+						ntVisibilitySection anVisibility="public"
+							ntField
+								ntName anName="X"
+								ntType anName="Integer"
+		ntImplementation
+
+#name
+IsPossibleVisibilitySection
+#data
+unit U;
+interface
+type
+  T = class
+  private
+    F: Integer;
+  public
+    procedure P;
+  end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="T"
+					ntType anType="avClass"
+						ntVisibilitySection anVisibility="private"
+							ntField
+								ntName anName="F"
+								ntType anName="Integer"
+						ntVisibilitySection anVisibility="public"
+							ntMethod anKind="avProcedure"
+								ntQualifiedIdentifier anName="P"
+		ntImplementation
+
+#name
+ParseWhileStatement
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  while True do
+    X := 1;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntWhile
+							ntParticle
+								ntIdentifier anName="True"
+							ntStatement
+								ntAssign
+									ntParticle
+										ntIdentifier anName="X"
+									ntParticle
+
+#name
+ParseScriptFile
+#data
+A := 1;
+#errors
+#document
+ntCompilationUnit
+	ntStatementList
+		ntStatement
+			ntAssign
+				ntParticle
+					ntIdentifier anName="A"
+				ntParticle
+
+#name
+Empty case else generates empty ntCaseElse nodefault
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+	case FErrorLevel of
+	1: LogError(s);
+	else
+	end;
+end;
+end.
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntCaseStatement
+							ntParticle
+								ntIdentifier anName="FErrorLevel"
+							ntCaseSelector
+								ntCaseLabels
+									ntCaseLabel
+										ntExpression
+											ntParticle
+								ntStatement
+									ntParticle
+										ntIdentifier anName="LogError"
+										ntParticle
+											ntIdentifier anName="s"
+							ntCaseElse

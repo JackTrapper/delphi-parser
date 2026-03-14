@@ -1,0 +1,4855 @@
+# https://docwiki.embarcadero.com/RADStudio/Athens/en/Error_and_Warning_Messages_(Delphi)
+
+#name
+#errors
+DisposeCount cannot be declared in classes with destructors
+
+
+#name
+#errors
+E1038 Unit identifier '%s' does not match file name
+
+#name
+E2001 Ordinal type required
+#mode
+partial
+#data
+program Produce;
+type
+  TByteSet = set of 0..7;
+var
+  BitCount: array [TByteSet] of Integer;
+begin
+end.
+#errors
+E2001 Ordinal type required
+#document
+ntCompilationUnit
+	ntProgram
+		ntIdentifier anName="Produce"
+	ntUnknown anName="Unexpected trailing tokens"
+
+#name
+E2002 File type not allowed here
+#mode
+partial
+#data
+program Produce;
+
+procedure WriteInteger(T: Text; I: Integer);
+begin
+  Writeln(T, I);
+end;
+
+begin
+end.
+#errors
+E2002 File type not allowed here
+#document
+ntCompilationUnit
+	ntProgram
+		ntIdentifier anName="Produce"
+		ntMethod anKind="avProcedure"
+			ntQualifiedIdentifier anName="WriteInteger"
+			ntParameterList
+				ntParameter
+					ntIdentifierList
+						ntIdentifier anName="T"
+					ntParameterType
+						ntQualifiedIdentifier anName="Text"
+				ntParameter
+					ntIdentifierList
+						ntIdentifier anName="I"
+					ntParameterType
+						ntQualifiedIdentifier anName="Integer"
+			ntStatementList
+				ntStatement
+					ntParticle
+						ntIdentifier anName="Writeln"
+						ntParticle
+							ntIdentifier anName="T"
+						ntParticle
+							ntIdentifier anName="I"
+
+#name
+E2003 Undeclared identifier '%s'
+#mode
+partial
+#data
+program Produce;
+var
+  Counter: Integer;
+begin
+  Count := 0;
+  Inc(Count);
+  Writeln(Count);
+end.
+#errors
+E2003 Undeclared identifier '%s'
+#document
+ntCompilationUnit
+	ntProgram
+		ntIdentifier anName="Produce"
+		ntVarSection
+			ntVariable
+				ntIdentifierList
+					ntIdentifier anName="Counter"
+				ntType anName="Integer"
+		ntStatementList
+			ntStatement
+				ntAssign
+					ntParticle
+						ntIdentifier anName="Count"
+					ntParticle
+			ntStatement
+				ntParticle
+					ntIdentifier anName="Inc"
+					ntParticle
+						ntIdentifier anName="Count"
+			ntStatement
+				ntParticle
+					ntIdentifier anName="Writeln"
+					ntParticle
+						ntIdentifier anName="Count"
+
+#name
+E2004 Identifier redeclared '%s'
+#mode
+partial
+#data
+program Tests;
+var
+  Tests: Integer;
+begin
+end.
+#errors
+E2004 Identifier redeclared '%s'
+#document
+ntCompilationUnit
+	ntProgram
+		ntIdentifier anName="Tests"
+		ntVarSection
+			ntVariable
+				ntIdentifierList
+					ntIdentifier anName="Tests"
+				ntType anName="Integer"
+
+#name
+E2005 '%s' is not a type identifier
+#mode
+partial
+#data
+program Produce;
+type
+  TMyClass = class
+    Field: Integer;
+  end;
+var
+  MyClass: TMyClass;
+
+procedure Proc(C: MyClass);           (*<-- Error message here*)
+begin
+end;
+
+begin
+end.
+#errors
+E2005 '%s' is not a type identifier
+#document
+ntCompilationUnit
+	ntProgram
+		ntIdentifier anName="Produce"
+	ntUnknown anName="Unexpected trailing tokens"
+
+#name
+E2006 PACKED not allowed here
+#mode
+partial
+#data
+program Produce;
+type
+  SmallReal = packed Real;
+begin
+end.
+#errors
+E2006 PACKED not allowed here
+#document
+ntCompilationUnit
+	ntProgram
+		ntIdentifier anName="Produce"
+	ntUnknown anName="Unexpected trailing tokens"
+
+#name
+E2007 Constant or type identifier expected
+#mode
+partial
+#data
+program Produce;
+var
+  c : ExceptionClass; (*ExceptionClass is a variable in System*)
+begin
+end.
+#errors
+E2007 Constant or type identifier expected
+#document
+ntCompilationUnit
+	ntProgram
+		ntIdentifier anName="Produce"
+		ntVarSection
+			ntVariable
+				ntIdentifierList
+					ntIdentifier anName="c"
+				ntType anName="ExceptionClass"
+
+#name
+E2008 Incompatible types
+#mode
+partial
+#data
+unit unit1;
+interface
+  type
+    ExportedType = (alpha, beta, gamma);
+
+implementation
+begin
+end.
+
+unit unit2;
+interface
+  type
+    ExportedType = (alpha, beta, gamma);
+
+  procedure ExportedProcedure(v : ExportedType);
+
+implementation
+  procedure ExportedProcedure(v : ExportedType);
+  begin
+  end;
+
+begin
+end.
+
+program Produce;
+uses unit1, unit2;
+
+var
+  A: array [0..9] of char;
+  I: Integer;
+  V : ExportedType;
+begin
+  ExportedProcedure(v);
+  I:= Hi(A);
+end.
+#errors
+E2008 Incompatible types
+#document
+ntCompilationUnit
+	ntUnitDeclaration
+		ntQualifiedIdentifier
+
+#name
+E2008 Incompatible types - Example 2
+#mode
+partial
+#data
+unit unit1;
+interface
+  type
+    ExportedType = (alpha, beta, gamma);
+
+implementation
+begin
+end.
+
+unit unit2;
+interface
+  type
+    ExportedType = (alpha, beta, gamma);
+
+  procedure ExportedProcedure(v : ExportedType);
+
+implementation
+  procedure ExportedProcedure(v : ExportedType);
+  begin
+  end;
+
+begin
+end.
+
+program Solve;
+uses unit1, unit2;
+var
+  A: array [0..9] of char;
+  I: Integer;
+  V : unit2.ExportedType;
+begin
+  ExportedProcedure(v);
+  I:= High(A);
+end.
+#errors
+E2008 Incompatible types
+#document
+ntCompilationUnit
+	ntUnitDeclaration
+		ntQualifiedIdentifier
+
+#name
+E2009 Incompatible types - '%s'
+#mode
+partial
+#data
+program Produce;
+
+  type
+    ProcedureParm0 = procedure; stdcall;
+    ProcedureParm1 = procedure(VAR x : Integer);
+
+  procedure WrongConvention; register;
+  begin
+  end;
+
+  procedure WrongParms(x, y, z : Integer);
+  begin
+  end;
+
+  procedure TakesParm0(p : ProcedureParm0);
+  begin
+  end;
+
+  procedure TakesParm1(p : ProcedureParm1);
+  begin
+  end;
+
+begin
+  TakesParm0(WrongConvention);
+  TakesParm1(WrongParms);
+end.
+#errors
+E2009 Incompatible types - '%s'
+#document
+ntCompilationUnit
+	ntProgram
+		ntIdentifier anName="Produce"
+	ntUnknown anName="Unexpected trailing tokens"
+
+#name
+E2009 Incompatbile types - '%s' (2 of 2)
+#data
+program Solve;
+
+  type
+    ProcedureParm0 = procedure; stdcall;
+    ProcedureParm1 = procedure(VAR x : Integer);
+
+  procedure RightConvention; stdcall;
+  begin
+  end;
+
+  procedure RightParms(VAR x : Integer);
+  begin
+  end;
+
+  procedure TakesParm0(p : ProcedureParm0);
+  begin
+  end;
+
+  procedure TakesParm1(p : ProcedureParm1);
+  begin
+  end;
+
+begin
+  TakesParm0(RightConvention);
+  TakesParm1(RightParms);
+end.
+#errors
+E2009 Incompatible types - '%s'
+
+
+#name
+E2010 Incompatible types - '%s' and '%s'
+#data
+ program Produce;
+ 
+ procedure Proc(I: Integer);
+ begin
+ end;
+ 
+ begin
+   Proc( 22 / 7 ); (*Result of / operator is Real*)
+ end.
+#errors
+E2010 Incompatible types - '%s' and '%s'
+
+
+
+#name
+E2011 Low bound exceeds high bound
+#data
+program Produce;
+type
+  SubrangeType = 1..0;              (*Gets: Low bound exceeds high bound *)
+begin
+  case True of
+  True..False:                      (*Gets: Low bound exceeds high bound *)
+    Writeln('Expected result');
+  else
+    Writeln('Unexpected result');
+  end;
+end.
+#errors
+E2011 Low bound exceeds high bound
+
+
+#name
+E2012 Type of expression must be BOOLEAN
+#data
+program Produce;
+var
+  P: Pointer;
+begin
+  if P then
+    Writeln('P <> nil');
+end.
+#errors
+E2012 Type of expression must be BOOLEAN
+
+
+#name
+E2013 Type of expression must be INTEGER
+#data
+program Produce;
+type
+  color = (red,green,blue);
+var
+  S3 : string[Succ(High(color))];
+begin
+end.
+#errors
+E2013 Type of expression must be INTEGER
+
+
+#name
+E2014 Statement expected, but expression of type '%s' found
+#data
+  program Produce;
+    var
+      a : Integer;
+  begin
+     (3 + 4);
+  end.
+#errors
+E2014 Statement expected, but expression of type '%s' found
+
+
+#name
+E2015 Operator not applicable to this operand type
+#data
+program Produce;
+var
+  P: ^Integer;
+begin
+  if P and P^ > 0 then
+    Writeln('P points to a number greater 0');
+end.
+#errors
+E2015 Operator not applicable to this operand type
+
+
+#name
+E2016 Array type required
+#data
+program Produce;
+var
+  P: ^Integer;
+  I: Integer;
+begin
+  Writeln(P[I]);
+end.
+#errors
+E2016 Array type required
+
+
+#name
+E2017 Pointer type required
+#data
+program Produce;
+var
+  C: TObject;
+begin
+  C^.Destroy;
+end.
+#errors
+E2017 Pointer type required
+
+
+#name
+E2018 Record, object or class type required
+#data
+ program Produce;
+
+    type
+      RecordDesc = class
+        ch : Char;
+      end;
+
+    var
+      pCh : PChar;
+      r : RecordDesc;
+
+    procedure A;
+    begin
+      pCh.ch := 'A';    (* case 1 *)
+
+      with pCh do begin (* case 2 *)
+      end;
+    end;
+  end.
+#errors
+E2018 Record, object or class type required
+
+
+#name
+E2019 Object type required
+#data
+type
+  MyObject = object(TObject)
+  end;
+begin
+end.
+#errors
+E2019 Object type required
+
+
+#name
+E2020 Object or class type required
+#data
+program Produce;
+type
+  TInteger = class
+    Value: Integer;
+  end;
+var
+  V: TInteger;
+begin
+  V := Integer.Create;
+end.
+#errors
+E2020 Object or class type required
+
+
+#name
+E2021 Class type required
+#data
+TMyClass = class(IMyInterface1, IMyInterface2);
+#errors
+E2021 Class type required
+
+
+#name
+E2022 Class helper type required
+#data
+
+#errors
+E2022 Class helper type required
+
+
+#name
+E2023 Function needs result type
+#data
+program Produce;
+
+function Sum(A: array of Integer);
+var I: Integer;
+begin
+  Result := 0;
+  for I := 0 to High(A) do
+    Result := Result + A[I];
+end;
+
+begin
+end.
+#errors
+E2023 Function needs result type
+
+
+#name
+E2024 Invalid function result type
+#data
+program Produce;
+
+function OpenFile(Name: string): File;
+begin
+end;
+
+begin
+end.
+#errors
+E2024 Invalid function result type
+
+
+#name
+E2025 Procedure cannot have a result type
+#data
+program Produce;
+
+procedure DotProduct(const A,B: array of Double): Double;
+var
+  I: Integer;
+begin
+  Result := 0.0;
+  for I := 0 to High(A) do
+    Result := Result + A[I]*B[I];
+end;
+
+const
+  C: array [1..3] of Double = (1,2,3);
+
+begin
+  Writeln( DotProduct(C,C) );
+end.
+#errors
+E2025 Procedure cannot have a result type
+
+
+#name
+E2026 Constant expression expected
+#data
+program Produce;
+const
+  Message = 'Hello World!';
+  WPosition = Pos('W', Message);
+begin
+end.
+#errors
+E2026 Constant expression expected
+
+
+#name
+E2027 Duplicate tag value
+#data
+program Produce;
+type
+  VariantRecord = record
+    case Integer of
+    0  (IntField: Integer);
+    0  (RealField: Real);     (*<-- Error message here*)
+  end;
+
+begin
+end.
+	program Solve;
+type
+  VariantRecord = record
+    case Integer of
+    0  (IntField: Integer);
+    1 (RealField: Real);
+  end;
+
+begin
+end.
+#errors
+E2027 Duplicate tag value
+
+
+#name
+E2028 Sets may have at most 256 elements
+#data
+program Produce;
+type
+  BigSet = set of 1..256;  (*<-- error message given here*)
+begin
+end.
+#errors
+E2028 Sets may have at most 256 elements
+
+
+#name
+E2029 %s expected but %s found
+#data
+program Produce;
+type
+  BigSet = set of 1..256;  (*<-- error message given here*)
+begin
+end.
+#errors
+E2029 %s expected but %s found
+
+#name
+E2030 Duplicate case label
+#data
+program Produce;
+
+function DigitCount(I: Integer): Integer;
+begin
+  case Abs(I) of
+  0                     DigitCount := 1;
+  0        ..9         DigitCount := 1;   (*<-- Error message here*)
+  10       ..99        DigitCount := 2;
+  100      ..999       DigitCount := 3;
+  1000     ..9999      DigitCount := 4;
+  10000    ..99999     DigitCount := 5;
+  100000   ..999999    DigitCount := 6;
+  1000000  ..9999999   DigitCount := 7;
+  10000000 ..99999999  DigitCount := 8;
+  100000000..999999999 DigitCount := 9;
+  else                  DigitCount := 10;
+  end;
+end;
+
+begin
+  Writeln( DigitCount(12345) );
+end.
+#errors
+E2030 Duplicate case label
+
+
+#name
+E2031 Label expected
+#data
+program Produce;
+
+begin
+  if 2*2 <> 4 then
+    goto Exit; (*<-- Error message here: Exit is also a standard procedure*)
+  (*...*)
+Exit:              (*Additional error messages here*)
+end.
+	program Solve;
+label
+  Exit;            (*Labels must be declared in Delphi*)
+begin
+  if 2*2 <> 4 then
+    goto Exit;
+  (*...*)
+Exit:
+end.
+#errors
+E2031 Label expected
+
+
+#name
+E2032 For loop control variable must have ordinal type
+#data
+program Produce;
+var
+  x: Real;
+begin (*Plot sine wave*)
+  for x := 0 to 2*pi/0.2 do                            (*<-- Error message here*)
+    Writeln( '*': Round((Sin(x*0.2) + 1)*20) + 1 );
+end.
+#errors
+E2032 For loop control variable must have ordinal type
+
+
+#name
+E2033 Types of actual and formal var parameters must be identical
+#data
+program Produce;
+
+procedure SwapBytes(var B1, B2 Byte);
+var
+  Temp: Byte;
+begin
+  Temp := B1; B1 := B2; B2 := Temp;
+end;
+
+var
+  C1, C2 0..255;     (*Similar to a byte, but NOT identical*)
+begin
+  SwapBytes(C1,C2);   (*<-- Error message here*)
+end.
+#errors
+E2033 Types of actual and formal var parameters must be identical
+
+
+#name
+E2034 Too many actual parameters
+#data
+program Produce;
+
+function Max(A,B: Integer): Integer;
+begin
+  if A > B then Max := A else Max := B
+end;
+
+begin
+  Writeln( Max(1,2,3) );   (*<-- Error message here*)
+end.
+#errors
+E2034 Too many actual parameters
+
+
+#name
+E2035 Not enough actual parameters
+#data
+program Produce;
+var
+  X: Real;
+begin
+  Val('3.141592', X);   (*<-- Error message here*)
+end.
+#errors
+E2035 Not enough actual parameters
+
+
+#name
+E2036 Variable required
+#data
+program Produce;
+var
+  I: Integer;
+  PI: ^Integer;
+begin
+  PI := Addr(1);
+end.
+#errors
+E2036 Variable required
+
+
+#name
+E2037 Declaration of '%s' differs from previous declaration
+#data
+program Produce;
+
+type
+  MyClass = class
+    procedure Proc(Inx: Integer);
+    function Func: Integer;
+    procedure Load(const Name: string);
+    procedure Perform(Flag: Boolean);
+    constructor Create;
+    destructor Destroy(Msg: string); override;      (*<-- Error message here*)
+    class function NewInstance: MyClass; override;  (*<-- Error message here*)
+  end;
+
+procedure MyClass.Proc(Index: Integer);             (*<-- Error message here*)
+begin
+end;
+
+function MyClass.Func: Longint;                     (*<-- Error message here*)
+begin
+end;
+
+procedure MyClass.Load(Name: string);               (*<-- Error message here*)
+begin
+end;
+
+procedure MyClass.Perform(Flag: Boolean); cdecl;    (*<-- Error message here*)
+begin
+end;
+
+procedure MyClass.Create;                           (*<-- Error message here*)
+begin
+end;
+
+function MyClass.NewInstance: MyClass;              (*<-- Error message here*)
+begin
+end;
+
+begin
+end.
+#errors
+E2037 Declaration of '%s' differs from previous declaration
+
+
+#name
+E2038 Illegal character in input file - '%s' (%s)
+#data
+program Produce;
+
+begin
+  Writeln("Hello world!");   (*<-- Error messages here*)
+end.
+#errors
+E2038 Illegal character in input file - '%s' (%s)
+
+
+#name
+E2045 Bad object file format - '%s'
+#data
+
+#errors
+E2045 Bad object file format - '%s'
+
+
+#name
+E2049 Label declaration not allowed in interface part
+#data
+unit Produce;
+interface
+label 99;
+implementation
+begin
+99:
+end.
+#errors
+E2049 Label declaration not allowed in interface part
+
+
+#name
+E2050 Statements not allowed in interface part
+#data
+unit Produce;
+
+interface
+
+procedure MyProc;
+begin                (*<-- Error message here*)
+end;
+
+implementation
+
+begin
+end.
+#errors
+E2050 Statements not allowed in interface part
+
+
+#name
+E2052 Unterminated string
+#data
+program Produce;
+
+begin
+  Writeln('Hello world!);   (*<-- Error message here -*)
+end.
+#errors
+E2052 Unterminated string
+
+
+#name
+E2053 Syntax error in real number
+#data
+program Produce;
+const
+  SpeedOfLight = 3.0E 8;    (*<-- Error message here*)
+begin
+end.
+#errors
+E2053 Syntax error in real number
+
+
+#name
+E2054 Illegal type in Write/Writeln statement
+#data
+program Produce;
+type
+  TColor = (red,green,blue);
+var
+  Color : TColor;
+begin
+  Writeln(Color);
+end.
+#errors
+E2054 Illegal type in Write/Writeln statement
+
+
+#name
+E2055 Illegal type in Read/Readln statement
+#data
+program Produce;
+type
+  TColor = (red,green,blue);
+var
+  Color : TColor;
+begin
+  Readln(Color);     (*<-- Error message here*)
+end.
+#errors
+E2055 Illegal type in Read/Readln statement
+
+
+#name
+E2056 String literals may have at most 255 elements
+#data
+program Produce;
+var
+  LongString : string[256];  (*<-- Error message here*)
+begin
+end.
+#errors
+E2056 String literals may have at most 255 elements
+
+
+#name
+E2057 Unexpected end of file in comment started on line %ld
+#data
+program Produce;
+(*Let's start a comment here but forget to close it
+begin
+end.
+#errors
+E2057 Unexpected end of file in comment started on line %ld
+
+
+#name
+E2058 Class, interface and object types only allowed in type section
+#data
+program Produce;
+
+var
+  MyClass : class
+    Field: Integer;
+  end;
+
+begin
+end.
+#errors
+E2058 Class, interface and object types only allowed in type section
+
+
+#name
+E2059 Local class, interface or object types not allowed
+#data
+program Produce;
+
+  procedure MyProc;
+  type
+    TMyClass = class
+      Field: Integer;
+    end;
+  begin
+  (*...*)
+  end;
+
+begin
+end.
+#errors
+E2059 Local class, interface or object types not allowed
+
+
+#name
+E2060 Class and interface types only allowed in type section
+#data
+program Produce;
+
+var
+  MyClass : class
+    Field: Integer;
+  end;
+
+begin
+end.
+#errors
+E2060 Class and interface types only allowed in type section
+
+
+#name
+E2061 Local class or interface types not allowed
+#data
+
+#errors
+E2061 Local class or interface types not allowed
+
+
+#name
+E2062 Virtual constructors are not allowed
+#data
+program Produce;
+
+type
+  TMyObject = object
+    constructor Init; virtual;
+  end;
+
+constructor TMyObject.Init;
+begin
+end;
+
+begin
+end.
+#errors
+E2062 Virtual constructors are not allowed
+
+
+#name
+E2064 Left side cannot be assigned to
+#data
+program Produce;
+
+const
+  c = 1;
+
+procedure p(const s: string);
+begin
+  s := 'changed';            (*<-- Error message here*)
+end;
+
+function f: PChar;
+begin
+  f := 'Hello';              (*This is fine - we are setting the return value*)
+end;
+
+begin
+  c := 2;                    (*<-- Error message here*)
+  f := 'h';                  (*<-- Error message here*)
+end.
+#errors
+E2064 Left side cannot be assigned to
+
+
+#name
+E2065 Unsatisfied forward or external declaration '%s'
+#data
+program Produce;
+
+type
+  TMyClass = class
+  constructor Create;
+  end;
+
+function Sum(const a: array of Double): Double; forward;
+
+function Summ(const a: array of Double): Double;
+var
+  i: Integer;
+begin
+  Result := 0.0;
+  for i:= 0 to High(a) do
+  Result := Result + a[i];
+end;
+
+begin
+end.
+#errors
+E2065 Unsatisfied forward or external declaration '%s'
+
+
+#name
+E2066 Missing operator or semicolon
+#data
+program Produce;
+var
+  I: Integer;
+begin
+  I := 1 2                 (*<-- Error message here*)
+  if I = 3 then            (*<-- Error message here*)
+  Writeln('Fine')
+end.
+#errors
+E2066 Missing operator or semicolon
+
+
+#name
+E2067 Missing parameter type
+#data
+program Produce;
+
+procedure P(I;J: Integer);                            (*<-- Error message here*)
+begin
+end;
+
+function ComputeHash(Buffer; Size: Integer): Integer; (*<-- Error message here*)
+begin
+end;
+
+
+begin
+end.
+#errors
+E2067 Missing parameter type
+
+
+#name
+E2068 Illegal reference to symbol '%s' in object file '%s'
+#data
+
+#errors
+E2068 Illegal reference to symbol '%s' in object file '%s'
+
+
+#name
+E2070 Unknown directive - '%s'
+#data
+program Produce;
+
+procedure P; stcall;
+begin
+end;
+
+procedure Q forward;
+
+function GetLastError: Integer external 'kernel32.dll';
+
+begin
+end.
+#errors
+E2070 Unknown directive - '%s'
+
+
+#name
+E2071 This type cannot be initialized
+#data
+program Produce;
+
+var
+  V: Variant = 0;
+
+begin
+end.
+#errors
+E2071 This type cannot be initialized
+
+
+#name
+E2072 Number of elements (%d) differs from declaration (%d)
+#data
+program Produce;
+
+var
+  A : array [1..10] of Integer = (1,2,3,4,5,6,7,8,9);
+
+begin
+end.
+#errors
+E2072 Number of elements (%d) differs from declaration (%d)
+
+
+#name
+E2073 Label already defined '%s'
+#data
+program Produce;
+label 1;
+begin
+1:
+  goto 1;
+1        (*<-- Error message here*)
+end.
+#errors
+E2073 Label already defined '%s'
+
+
+#name
+E2074 Label declared and referenced, but not set '%s'
+#data
+  program Produce;
+
+    procedure Labeled;
+    label 10;
+    begin
+      goto 10;
+    end;
+
+  begin
+  end.
+#errors
+E2074 Label declared and referenced, but not set '%s'
+
+
+#name
+E2075 This form of method call only allowed in methods of derived types
+#data
+program Produce;
+
+type
+  TMyClass = class
+    constructor Create;
+  end;
+
+procedure Create;
+begin
+  inherited Create;      (*<-- Error message here*)
+end;
+
+begin
+end.
+#errors
+E2075 This form of method call only allowed in methods of derived types
+
+
+#name
+E2076 This form of method call only allowed for class methods
+#data
+program Produce;
+
+type
+  TMyClass = class
+  (*...*)
+  end;
+var
+  MyClass: TMyClass;
+
+begin
+  MyClass := TMyClass.Create;  (*Fine, constructor*)
+  Writeln(TMyClass.ClassName); (*Fine, class method*)
+  TMyClass.Destroy;            (*<-- Error message here*)
+end.
+#errors
+E2076 This form of method call only allowed for class methods
+
+
+#name
+E2078 Procedure FAIL only allowed in constructor
+#data
+
+#errors
+E2078 Procedure FAIL only allowed in constructor
+
+
+#name
+E2079 Procedure NEW needs constructor
+#data
+program Produce;
+
+type
+  PMyObject = ^TMyObject;
+  TMyObject = object
+  F: Integer;
+  constructor Init;
+  destructor Done;
+  end;
+
+constructor TMyObject.Init;
+begin
+  F := 42;
+end;
+
+destructor TMyObject.Done;
+begin
+end;
+
+var
+  P: PMyObject;
+
+begin
+  New(P, Done);              (*<-- Error message here*)
+end.
+#errors
+E2079 Procedure NEW needs constructor
+
+
+#name
+E2080 Procedure DISPOSE needs destructor
+#data
+program Produce;
+
+type
+  PMyObject = ^TMyObject;
+  TMyObject = object
+  F: Integer;
+  constructor Init;
+  destructor Done;
+  end;
+
+constructor TMyObject.Init;
+begin
+  F := 42;
+end;
+
+destructor TMyObject.Done;
+begin
+end;
+
+var
+  P: PMyObject;
+
+begin
+  New(P, Init);
+  (*...*)
+  Dispose(P, Init);        (*<-- Error message here*)
+end.
+#errors
+E2080 Procedure DISPOSE needs destructor
+
+
+#name
+E2081 Assignment to FOR-Loop variable '%s'
+#data
+program Produce;
+
+var
+  I: Integer;
+  A: array [0..99] of Integer;
+begin
+  for I := 0 to 99 do begin
+    if A[I] = 42 then
+      I := 99;
+  end;
+end.
+#errors
+E2081 Assignment to FOR-Loop variable '%s'
+
+
+#name
+E2082 TYPEOF can only be applied to object types with a VMT
+#data
+program Produce;
+
+type
+  TMyObject = object
+    procedure MyProc;
+  end;
+
+procedure TMyObject.MyProc;
+begin
+  (*...*)
+end;
+
+var
+  P: Pointer;
+begin
+  P := TypeOf(TMyObject);    (*<-- Error message here*)
+end.
+#errors
+E2082 TYPEOF can only be applied to object types with a VMT
+
+
+#name
+E2083 Order of fields in record constant differs from declaration
+#data
+program Produce;
+
+type
+  TPoint = record
+    X, Y: Integer;
+  end;
+
+var
+  Point : TPoint = (Y: 123; X: 456);
+
+begin
+end.
+#errors
+E2083 Order of fields in record constant differs from declaration
+
+
+#name
+E2085 Unit name mismatch: '%s' '%s'
+#data
+
+#errors
+E2085 Unit name mismatch: '%s' '%s'
+
+
+#name
+E2086 Type '%s' is not yet completely defined
+#data
+program Produce;
+
+type
+  TListEntry = record
+    Next: ^TListEntry;                      (*<-- Error message here*)
+    Data: Integer;
+  end;
+  TMyClass = class;                         (*<-- Error message here*)
+  TMyClassRef = class of TMyClass;
+  TMyClasss = class                         (*<-- Typo ...*)
+    (*...*)
+  end;
+
+begin
+end.
+#errors
+E2086 Type '%s' is not yet completely defined
+
+
+#name
+E2088 Variable name expected
+#data
+program Produce;
+
+var
+  I : Integer;
+  J : Integer absolute Addr(I);   (*<-- Error message here*)
+
+begin
+end.
+	program Solve;
+
+const
+  Addr = 0;
+
+var
+  I : Integer;
+  J : Integer absolute I;
+
+begin
+end.
+#errors
+E2088 Variable name expected
+
+
+#name
+E2089 Invalid typecast
+#data
+program Produce;
+
+begin
+  Writeln( Integer(Pi) );
+end.
+#errors
+E2089 Invalid typecast
+
+
+#name
+E2090 User break - compilation aborted
+#data
+
+#errors
+E2090 User break - compilation aborted
+
+
+#name
+E2091 Segment/Offset pairs not supported in 32-bit Delphi
+#data
+program Produce;
+
+var
+  VideoMode : Integer absolute $0040 $0049;
+
+begin
+  Writeln( Byte(Ptr($0040,$0049)^) );
+end.
+#errors
+E2091 Segment/Offset pairs not supported in 32-bit Delphi
+
+
+#name
+E2093 Label '%s' is not declared in current procedure
+#data
+program Produce;
+
+label 99;
+
+procedure MyProc;
+begin
+  (*Something goes very wrong...*)
+  goto 99;
+end;
+
+begin
+  MyProc;
+  99:
+    Writeln('Fatal error');
+end.
+#errors
+E2093 Label '%s' is not declared in current procedure
+
+
+#name
+E2094 Local procedure/function '%s' assigned to procedure variable
+#data
+program Produce;
+
+var
+  P: Procedure;
+
+procedure Outer;
+
+  procedure Local;
+  begin
+    Writeln('Local is executing');
+  end;
+
+begin
+  P := Local;       (*<-- Error message here*)
+end;
+
+begin
+  Outer;
+  P;
+end.
+#errors
+E2094 Local procedure/function '%s' assigned to procedure variable
+
+
+#name
+E2095 Missing ENDIF directive
+#data
+program Produce;
+(*$APPTYPE CONSOLE*)
+begin
+(*$IfOpt O+*)
+  Writeln('Compiled with optimizations');
+(*$Else*)
+  Writeln('Compiled without optimizations');
+(*Endif*)
+end.                                           (*<-- Error message here*)
+#errors
+E2095 Missing ENDIF directive
+
+
+#name
+E2096 Method identifier expected
+#data
+program Produce;
+
+type
+  TMyBase = class
+    Field: Integer;
+  end;
+  TMyDerived = class (TMyBase)
+    Field: Integer;
+    function Get: Integer;
+  Automated
+    property Prop: Integer read Field;    (*<-- Error message here*)
+  end;
+
+function TMyDerived.Get: Integer;
+begin
+  Result := TMyBase.Field;                (*<-- Error message here*)
+end;
+
+begin
+end.
+#errors
+E2096 Method identifier expected
+
+
+#name
+E2097 BREAK or CONTINUE outside of loop
+#data
+program Produce;
+
+  procedure Error;
+    var i : Integer;
+  begin
+    i := 0;
+    while i < 100 do
+      INC(i);
+      if odd(i) then begin
+        INC(i);
+  continue;
+      end;
+  end;
+
+begin
+end.
+#errors
+E2097 BREAK or CONTINUE outside of loop
+
+
+#name
+E2098 Division by zero
+#data
+
+#errors
+E2098 Division by zero
+
+
+#name
+E2099 Overflow in conversion or arithmetic operation
+#data
+
+#errors
+E2099 Overflow in conversion or arithmetic operation
+
+
+#name
+E2100 Data type too large exceeds 2 GB
+#data
+
+#errors
+E2100 Data type too large exceeds 2 GB
+
+
+#name
+E2102 Integer constant too large
+#data
+
+#errors
+E2102 Integer constant too large
+
+
+#name
+E2103 16-Bit fixup encountered in object file '%s'
+#data
+
+#errors
+E2103 16-Bit fixup encountered in object file '%s'
+
+
+#name
+E2104 Bad relocation encountered in object file '%s'
+#data
+
+#errors
+E2104 Bad relocation encountered in object file '%s'
+
+
+#name
+E2105 Inline assembler syntax error
+#data
+
+#errors
+E2105 Inline assembler syntax error
+
+
+#name
+E2106 Inline assembler stack overflow
+#data
+
+#errors
+E2106 Inline assembler stack overflow
+
+
+#name
+E2107 Operand size mismatch
+#data
+
+#errors
+E2107 Operand size mismatch
+
+
+#name
+E2108 Memory reference expected
+#data
+
+#errors
+E2108 Memory reference expected
+
+
+#name
+E2109 Constant expected
+#data
+
+#errors
+E2109 Constant expected
+
+
+#name
+E2110 Type expected
+#data
+
+#errors
+E2110 Type expected
+
+
+#name
+E2111 Cannot add or subtract relocatable symbols
+#data
+
+#errors
+E2111 Cannot add or subtract relocatable symbols
+
+
+#name
+E2112 Invalid register combination
+#data
+
+#errors
+E2112 Invalid register combination
+
+
+#name
+E2113 Numeric overflow
+#data
+
+#errors
+E2113 Numeric overflow
+
+
+#name
+E2114 String constant too long
+#data
+
+#errors
+E2114 String constant too long
+
+
+#name
+E2115 Error in numeric constant
+#data
+
+#errors
+E2115 Error in numeric constant
+
+
+#name
+E2116 Invalid combination of opcode and operands
+#data
+
+#errors
+E2116 Invalid combination of opcode and operands
+
+
+#name
+E2117 486/487 instructions not enabled
+#data
+
+#errors
+E2117 486/487 instructions not enabled
+
+
+#name
+E2118 Division by zero
+#data
+
+#errors
+E2118 Division by zero
+
+
+#name
+E2119 Structure field identifier expected
+#data
+
+#errors
+E2119 Structure field identifier expected
+
+
+#name
+E2120 LOOP/JCXZ distance out of range
+#data
+
+#errors
+E2120 LOOP/JCXZ distance out of range
+
+
+#name
+E2121 Procedure or function name expected
+#data
+
+#errors
+E2121 Procedure or function name expected
+
+
+#name
+E2122 PROCEDURE or FUNCTION expected
+#data
+
+#errors
+E2122 PROCEDURE or FUNCTION expected
+
+
+#name
+E2123 PROCEDURE, FUNCTION, PROPERTY, or VAR expected
+#data
+
+#errors
+E2123 PROCEDURE, FUNCTION, PROPERTY, or VAR expected
+
+
+#name
+E2124 Instance member '%s' inaccessible here
+#data
+
+#errors
+E2124 Instance member '%s' inaccessible here
+
+
+#name
+E2125 EXCEPT or FINALLY expected
+#data
+
+#errors
+E2125 EXCEPT or FINALLY expected
+
+
+#name
+E2126 Cannot BREAK, CONTINUE or EXIT out of a FINALLY clause
+#data
+
+#errors
+E2126 Cannot BREAK, CONTINUE or EXIT out of a FINALLY clause
+
+
+#name
+E2127 'GOTO %s' leads into or out of TRY statement
+#data
+
+#errors
+E2127 'GOTO %s' leads into or out of TRY statement
+
+
+#name
+E2128 %s clause expected, but %s found
+#data
+
+#errors
+E2128 %s clause expected, but %s found
+
+
+#name
+E2129 Cannot assign to a read-only property
+#data
+
+#errors
+E2129 Cannot assign to a read-only property
+
+
+#name
+E2130 Cannot read a write-only property
+#data
+
+#errors
+E2130 Cannot read a write-only property
+
+
+#name
+E2131 Class already has a default property
+#data
+
+#errors
+E2131 Class already has a default property
+
+
+#name
+E2132 Default property must be an array property
+#data
+
+#errors
+E2132 Default property must be an array property
+
+
+#name
+E2133 TYPEINFO standard function expects a type identifier
+#data
+
+#errors
+E2133 TYPEINFO standard function expects a type identifier
+
+
+#name
+E2134 Type '%s' has no type info
+#data
+
+#errors
+E2134 Type '%s' has no type info
+
+
+#name
+E2136 No definition for abstract method '%s' allowed
+#data
+
+#errors
+E2136 No definition for abstract method '%s' allowed
+
+
+#name
+E2137 Method '%s' not found in base class
+#data
+
+#errors
+E2137 Method '%s' not found in base class
+
+
+#name
+E2138 Invalid message parameter list
+#data
+
+#errors
+E2138 Invalid message parameter list
+
+
+#name
+E2139 Illegal message method index
+#data
+
+#errors
+E2139 Illegal message method index
+
+
+#name
+E2140 Duplicate message method index
+#data
+
+#errors
+E2140 Duplicate message method index
+
+
+#name
+E2142 Inaccessible value
+#data
+
+#errors
+E2142 Inaccessible value
+
+
+#name
+E2143 Expression has no value
+#data
+
+#errors
+E2143 Expression has no value
+
+
+#name
+E2144 Destination is inaccessible
+#data
+
+#errors
+E2144 Destination is inaccessible
+
+
+#name
+E2145 Re-raising an exception only allowed in exception handler
+#data
+
+#errors
+E2145 Re-raising an exception only allowed in exception handler
+
+
+#name
+E2146 Default values must be of ordinal, pointer or small set type
+#data
+
+#errors
+E2146 Default values must be of ordinal, pointer or small set type
+
+
+#name
+E2147 Property '%s' does not exist in base class
+#data
+
+#errors
+E2147 Property '%s' does not exist in base class
+
+
+#name
+E2148 Dynamic method or message handler not allowed here
+#data
+
+#errors
+E2148 Dynamic method or message handler not allowed here
+
+
+#name
+E2149 Class does not have a default property
+#data
+
+#errors
+E2149 Class does not have a default property
+
+
+#name
+E2150 Bad argument type in variable type array constructor
+#data
+
+#errors
+E2150 Bad argument type in variable type array constructor
+
+
+#name
+E2151 Could not load RLINK32.DLL
+#data
+
+#errors
+E2151 Could not load RLINK32.DLL
+
+
+#name
+E2152 Wrong or corrupted version of RLINK32.DLL
+#data
+
+#errors
+E2152 Wrong or corrupted version of RLINK32.DLL
+
+
+#name
+E2153 ';' not allowed before 'ELSE'
+#data
+
+#errors
+E2153 ';' not allowed before 'ELSE'
+
+
+#name
+E2154 Type '%s' needs finalization - not allowed in variant record
+#data
+
+#errors
+E2154 Type '%s' needs finalization - not allowed in variant record
+
+
+#name
+E2155 Type '%s' needs finalization - not allowed in file type
+#data
+
+#errors
+E2155 Type '%s' needs finalization - not allowed in file type
+
+
+#name
+E2156 Expression too complicated
+#data
+
+#errors
+E2156 Expression too complicated
+
+
+#name
+E2157 Element 0 inaccessible - use 'Length' or 'SetLength'
+#data
+
+#errors
+E2157 Element 0 inaccessible - use 'Length' or 'SetLength'
+
+
+#name
+E2158 %s unit out of date or corrupted - missing '%s'
+#data
+
+#errors
+E2158 %s unit out of date or corrupted - missing '%s'
+
+
+#name
+E2159 %s unit out of date or corrupted - missing '%s.%s'
+#data
+
+#errors
+E2159 %s unit out of date or corrupted - missing '%s.%s'
+
+
+#name
+E2160 Type not allowed in OLE Automation call
+#data
+
+#errors
+E2160 Type not allowed in OLE Automation call
+
+
+#name
+E2163 Too many conditional symbols
+#data
+
+#errors
+E2163 Too many conditional symbols
+
+
+#name
+E2165 Compile terminated by user
+#data
+
+#errors
+E2165 Compile terminated by user
+
+
+#name
+E2166 Unnamed arguments must precede named arguments in OLE Automation call
+#data
+
+#errors
+E2166 Unnamed arguments must precede named arguments in OLE Automation call
+
+
+#name
+E2167 Abstract methods must be virtual or dynamic
+#data
+
+#errors
+E2167 Abstract methods must be virtual or dynamic
+
+
+#name
+E2168 Field or method identifier expected
+#data
+
+#errors
+E2168 Field or method identifier expected
+
+
+#name
+E2169 Field definition not allowed after methods or properties
+#data
+
+#errors
+E2169 Field definition not allowed after methods or properties
+
+
+#name
+E2170 Cannot override a non-virtual method
+#data
+
+#errors
+E2170 Cannot override a non-virtual method
+
+
+#name
+E2171 Variable '%s' inaccessible here due to optimization
+#data
+
+#errors
+E2171 Variable '%s' inaccessible here due to optimization
+
+
+#name
+E2172 Necessary library helper function was eliminated by linker (%s)
+#data
+
+#errors
+E2172 Necessary library helper function was eliminated by linker (%s)
+
+
+#name
+E2173 Missing or invalid conditional symbol in '$%s' directive
+#data
+
+#errors
+E2173 Missing or invalid conditional symbol in '$%s' directive
+
+
+#name
+E2174 '%s' not previously declared as a PROPERTY
+#data
+
+#errors
+E2174 '%s' not previously declared as a PROPERTY
+
+
+#name
+E2175 Field definition not allowed in OLE automation section
+#data
+
+#errors
+E2175 Field definition not allowed in OLE automation section
+
+
+#name
+E2176 Illegal type in OLE automation section: '%s'
+#data
+
+#errors
+E2176 Illegal type in OLE automation section: '%s'
+
+
+#name
+E2177 Constructors and destructors not allowed in OLE automation section
+#data
+
+#errors
+E2177 Constructors and destructors not allowed in OLE automation section
+
+
+#name
+E2178 Dynamic methods and message handlers not allowed in OLE automation section
+#data
+
+#errors
+E2178 Dynamic methods and message handlers not allowed in OLE automation section
+
+
+#name
+E2179 Only register calling convention allowed in OLE automation section
+#data
+
+#errors
+E2179 Only register calling convention allowed in OLE automation section
+
+
+#name
+E2180 Dispid '%d' already used by '%s'
+#data
+
+#errors
+E2180 Dispid '%d' already used by '%s'
+
+
+#name
+E2181 Redeclaration of property not allowed in OLE automation section
+#data
+
+#errors
+E2181 Redeclaration of property not allowed in OLE automation section
+
+
+#name
+E2182 '%s' clause not allowed in OLE automation section
+#data
+
+#errors
+E2182 '%s' clause not allowed in OLE automation section
+
+
+#name
+E2183 Dispid clause only allowed in OLE automation section
+#data
+
+#errors
+E2183 Dispid clause only allowed in OLE automation section
+
+
+#name
+E2184 %s section valid only in class types
+#data
+
+#errors
+E2184 %s section valid only in class types
+
+
+#name
+E2185 Overriding automated virtual method '%s' cannot specify a dispid
+#data
+
+#errors
+E2185 Overriding automated virtual method '%s' cannot specify a dispid
+
+
+#name
+E2186 Published Real property '%s' must be Single, Real, Double or Extended
+#data
+
+#errors
+E2186 Published Real property '%s' must be Single, Real, Double or Extended
+
+
+#name
+E2187 Size of published set '%s' is 4 bytes
+#data
+
+#errors
+E2187 Size of published set '%s' is 4 bytes
+
+
+#name
+E2188 Published property '%s' cannot be of type %s
+#data
+
+#errors
+E2188 Published property '%s' cannot be of type %s
+
+
+#name
+E2189 Thread local variables cannot be local to a function
+#data
+
+#errors
+E2189 Thread local variables cannot be local to a function
+
+
+#name
+E2190 Thread local variables cannot be ABSOLUTE
+#data
+
+#errors
+E2190 Thread local variables cannot be ABSOLUTE
+
+
+#name
+E2191 EXPORTS allowed only at global scope
+#data
+
+#errors
+E2191 EXPORTS allowed only at global scope
+
+
+#name
+E2192 Constants cannot be used as open array arguments
+#data
+
+#errors
+E2192 Constants cannot be used as open array arguments
+
+
+#name
+E2193 Slice standard function only allowed as open array argument
+#data
+
+#errors
+E2193 Slice standard function only allowed as open array argument
+
+
+#name
+E2194 Cannot initialize thread local variables
+#data
+
+#errors
+E2194 Cannot initialize thread local variables
+
+
+#name
+E2195 Cannot initialize local variables
+#data
+
+#errors
+E2195 Cannot initialize local variables
+
+
+#name
+E2196 Cannot initialize multiple variables
+#data
+
+#errors
+E2196 Cannot initialize multiple variables
+
+
+#name
+E2197 Constant object cannot be passed as var parameter
+#data
+
+#errors
+E2197 Constant object cannot be passed as var parameter
+
+
+#name
+E2198 %s cannot be applied to a long string
+#data
+
+#errors
+E2198 %s cannot be applied to a long string
+
+
+#name
+E2199 Packages '%s' and '%s' both contain unit '%s'
+#data
+
+#errors
+E2199 Packages '%s' and '%s' both contain unit '%s'
+
+
+#name
+E2200 Package '%s' already contains unit '%s'
+#data
+
+#errors
+E2200 Package '%s' already contains unit '%s'
+
+
+#name
+E2201 Need imported data reference ($G) to access '%s' from unit '%s'
+#data
+
+#errors
+E2201 Need imported data reference ($G) to access '%s' from unit '%s'
+
+
+#name
+E2202 Required package '%s' not found
+#data
+
+#errors
+E2202 Required package '%s' not found
+
+
+#name
+E2203 $WEAKPACKAGEUNIT '%s' contains global data
+#data
+
+#errors
+E2203 $WEAKPACKAGEUNIT '%s' contains global data
+
+
+#name
+E2204 Improper GUID syntax
+#data
+
+#errors
+E2204 Improper GUID syntax
+
+
+#name
+E2205 Interface type required
+#data
+
+#errors
+E2205 Interface type required
+
+
+#name
+E2206 Property overrides not allowed in interface type
+#data
+
+#errors
+E2206 Property overrides not allowed in interface type
+
+
+#name
+E2207 '%s' clause not allowed in interface type
+#data
+
+#errors
+E2207 '%s' clause not allowed in interface type
+
+
+#name
+E2208 Interface '%s' already implemented by '%s'
+#data
+
+#errors
+E2208 Interface '%s' already implemented by '%s'
+
+
+#name
+E2209 Field declarations not allowed in interface type
+#data
+
+#errors
+E2209 Field declarations not allowed in interface type
+
+
+#name
+E2210 '%s' directive not allowed in in interface type
+#data
+
+#errors
+E2210 '%s' directive not allowed in in interface type
+
+
+#name
+E2211 Declaration of '%s' differs from declaration in interface '%s'
+#data
+
+#errors
+E2211 Declaration of '%s' differs from declaration in interface '%s'
+
+
+#name
+E2212 Package unit '%s' cannot appear in contains or uses clauses
+#data
+
+#errors
+E2212 Package unit '%s' cannot appear in contains or uses clauses
+
+
+#name
+E2213 Bad packaged unit format %s.%s
+#data
+
+#errors
+E2213 Bad packaged unit format %s.%s
+
+
+#name
+E2214 Package '%s' is recursively required
+#data
+
+#errors
+E2214 Package '%s' is recursively required
+
+
+#name
+E2215 16-Bit segment encountered in object file '%s'
+#data
+
+#errors
+E2215 16-Bit segment encountered in object file '%s'
+
+
+#name
+E2216 Can't handle section '%s' in object file '%s'
+#data
+
+#errors
+E2216 Can't handle section '%s' in object file '%s'
+
+
+#name
+E2217 Published field '%s' not a class or interface type
+#data
+
+#errors
+E2217 Published field '%s' not a class or interface type
+
+
+#name
+E2218 Published method '%s' contains an unpublishable type
+#data
+
+#errors
+E2218 Published method '%s' contains an unpublishable type
+
+
+#name
+E2220 Never-build package '%s' requires always-build package '%s'
+#data
+
+#errors
+E2220 Never-build package '%s' requires always-build package '%s'
+
+
+#name
+E2221 $WEAKPACKAGEUNIT '%s' cannot have initialization or finalization code
+#data
+
+#errors
+E2221 $WEAKPACKAGEUNIT '%s' cannot have initialization or finalization code
+
+
+#name
+E2222 $WEAKPACKAGEUNIT & $DENYPACKAGEUNIT both specified
+#data
+
+#errors
+E2222 $WEAKPACKAGEUNIT & $DENYPACKAGEUNIT both specified
+
+
+#name
+E2223 $DENYPACKAGEUNIT '%s' cannot be put into a package
+#data
+
+#errors
+E2223 $DENYPACKAGEUNIT '%s' cannot be put into a package
+
+
+#name
+E2224 $DESIGNONLY and $RUNONLY only allowed in package unit
+#data
+
+#errors
+E2224 $DESIGNONLY and $RUNONLY only allowed in package unit
+
+
+#name
+E2225 Never-build package '%s' must be recompiled
+#data
+
+#errors
+E2225 Never-build package '%s' must be recompiled
+
+
+#name
+E2226 Compilation terminated; too many errors
+#data
+
+#errors
+E2226 Compilation terminated; too many errors
+
+
+#name
+E2227 Imagebase is too high - program exceeds 2 GB limit
+#data
+
+#errors
+E2227 Imagebase is too high - program exceeds 2 GB limit
+
+
+#name
+E2228 A dispinterface type cannot have an ancestor interface
+#data
+
+#errors
+E2228 A dispinterface type cannot have an ancestor interface
+
+
+#name
+E2229 A dispinterface type requires an interface identification
+#data
+
+#errors
+E2229 A dispinterface type requires an interface identification
+
+
+#name
+E2230 Methods of dispinterface types cannot specify directives
+#data
+
+#errors
+E2230 Methods of dispinterface types cannot specify directives
+
+
+#name
+E2231 '%s' directive not allowed in dispinterface type
+#data
+
+#errors
+E2231 '%s' directive not allowed in dispinterface type
+
+
+#name
+E2232 Interface '%s' has no interface identification
+#data
+
+#errors
+E2232 Interface '%s' has no interface identification
+
+
+#name
+E2233 Property '%s' inaccessible here
+#data
+
+#errors
+E2233 Property '%s' inaccessible here
+
+
+#name
+E2234 Getter or setter for property '%s' cannot be found
+#data
+
+#errors
+E2234 Getter or setter for property '%s' cannot be found
+
+
+#name
+E2236 Constructors and destructors must have %s calling convention
+#data
+
+#errors
+E2236 Constructors and destructors must have %s calling convention
+
+
+#name
+E2237 Parameter '%s' not allowed here due to default value
+#data
+
+#errors
+E2237 Parameter '%s' not allowed here due to default value
+
+
+#name
+E2238 Default value required for '%s'
+#data
+
+#errors
+E2238 Default value required for '%s'
+
+
+#name
+E2239 Default parameter '%s' must be by-value or const
+#data
+
+#errors
+E2239 Default parameter '%s' must be by-value or const
+
+
+#name
+E2240 $EXTERNALSYM and $NODEFINE not allowed for '%s'; only global symbols
+#data
+
+#errors
+E2240 $EXTERNALSYM and $NODEFINE not allowed for '%s'; only global symbols
+
+
+#name
+E2241 C++ obj files must be generated (-jp)
+#data
+
+#errors
+E2241 C++ obj files must be generated (-jp)
+
+
+#name
+E2242 '%s' is not the name of a unit
+#data
+
+#errors
+E2242 '%s' is not the name of a unit
+
+
+#name
+E2245 Recursive include file %s
+#data
+
+#errors
+E2245 Recursive include file %s
+
+
+#name
+E2246 Need to specify at least one dimension for SetLength of dynamic array
+#data
+
+#errors
+E2246 Need to specify at least one dimension for SetLength of dynamic array
+
+
+#name
+E2247 Cannot take the address when compiling to byte code
+#data
+
+#errors
+E2247 Cannot take the address when compiling to byte code
+
+
+#name
+E2248 Cannot use old style object types when compiling to byte code
+#data
+
+#errors
+E2248 Cannot use old style object types when compiling to byte code
+
+
+#name
+E2249 Cannot use absolute variables when compiling to byte code
+#data
+
+#errors
+E2249 Cannot use absolute variables when compiling to byte code
+
+
+#name
+E2250 There is no overloaded version of '%s' that can be called with these arguments
+#data
+
+#errors
+E2250 There is no overloaded version of '%s' that can be called with these arguments
+
+
+#name
+E2251 Ambiguous overloaded call to '%s'
+#data
+
+#errors
+E2251 Ambiguous overloaded call to '%s'
+
+
+#name
+E2252 Method '%s' with identical parameters already exists
+#data
+
+#errors
+E2252 Method '%s' with identical parameters already exists
+
+
+#name
+E2253 Ancestor type '%s' does not have an accessible default constructor
+#data
+
+#errors
+E2253 Ancestor type '%s' does not have an accessible default constructor
+
+
+#name
+E2254 Overloaded procedure '%s' must be marked with the 'overload' directive
+#data
+
+#errors
+E2254 Overloaded procedure '%s' must be marked with the 'overload' directive
+
+
+#name
+E2255 New not supported for dynamic arrays - use SetLength
+#data
+
+#errors
+E2255 New not supported for dynamic arrays - use SetLength
+
+
+#name
+E2256 Dispose not supported (nor necessary) for dynamic arrays
+#data
+
+#errors
+E2256 Dispose not supported (nor necessary) for dynamic arrays
+
+
+#name
+E2257 Duplicate implements clause for interface '%s'
+#data
+
+#errors
+E2257 Duplicate implements clause for interface '%s'
+
+
+#name
+E2258 Implements clause only allowed within class types
+#data
+
+#errors
+E2258 Implements clause only allowed within class types
+
+
+#name
+E2259 Implements clause only allowed for properties of class or interface type
+#data
+
+#errors
+E2259 Implements clause only allowed for properties of class or interface type
+
+
+#name
+E2260 Implements clause not allowed together with index clause
+#data
+
+#errors
+E2260 Implements clause not allowed together with index clause
+
+
+#name
+E2261 Implements clause only allowed for readable property
+#data
+
+#errors
+E2261 Implements clause only allowed for readable property
+
+
+#name
+E2262 Implements getter must be %s calling convention
+#data
+
+#errors
+E2262 Implements getter must be %s calling convention
+
+
+#name
+E2263 Implements getter cannot be dynamic or message method
+#data
+
+#errors
+E2263 Implements getter cannot be dynamic or message method
+
+
+#name
+E2264 Cannot have method resolutions for interface '%s'
+#data
+
+#errors
+E2264 Cannot have method resolutions for interface '%s'
+
+
+#name
+E2265 Interface '%s' not mentioned in interface list
+#data
+
+#errors
+E2265 Interface '%s' not mentioned in interface list
+
+
+#name
+E2266 Only one of a set of overloaded methods can be published
+#data
+
+#errors
+E2266 Only one of a set of overloaded methods can be published
+
+
+#name
+E2267 Previous declaration of '%s' was not marked with the 'overload' directive
+#data
+
+#errors
+E2267 Previous declaration of '%s' was not marked with the 'overload' directive
+
+
+#name
+E2268 Parameters of this type cannot have default values
+#data
+
+#errors
+E2268 Parameters of this type cannot have default values
+
+
+#name
+E2270 Published property getters and setters must have %s calling convention
+#data
+
+#errors
+E2270 Published property getters and setters must have %s calling convention
+
+
+#name
+E2271 Property getters and setters cannot be overloaded
+#data
+
+#errors
+E2271 Property getters and setters cannot be overloaded
+
+
+#name
+E2272 Cannot use reserved unit name '%s'
+#data
+
+#errors
+E2272 Cannot use reserved unit name '%s'
+
+
+#name
+E2273 No overloaded version of '%s' with this parameter list exists
+#data
+
+#errors
+E2273 No overloaded version of '%s' with this parameter list exists
+
+
+#name
+E2274 property attribute 'label' cannot be used in dispinterface
+#data
+
+#errors
+E2274 property attribute 'label' cannot be used in dispinterface
+
+
+#name
+E2275 property attribute 'label' cannot be an empty string
+#data
+
+#errors
+E2275 property attribute 'label' cannot be an empty string
+
+
+#name
+E2276 Identifier '%s' cannot be exported
+#data
+
+#errors
+E2276 Identifier '%s' cannot be exported
+
+
+#name
+E2277 Only external cdecl functions may use varargs
+#data
+
+#errors
+E2277 Only external cdecl functions may use varargs
+
+
+#name
+E2278 Cannot take address of local symbol %s
+#data
+
+#errors
+E2278 Cannot take address of local symbol %s
+
+
+#name
+E2279 Too many nested conditional directives
+#data
+
+#errors
+E2279 Too many nested conditional directives
+
+
+#name
+E2280 Unterminated conditional directive
+#data
+
+#errors
+E2280 Unterminated conditional directive
+
+
+#name
+E2281 Type not allowed in Variant Dispatch call
+#data
+
+#errors
+E2281 Type not allowed in Variant Dispatch call
+
+
+#name
+E2282 Property setters cannot take var parameters
+#data
+
+#errors
+E2282 Property setters cannot take var parameters
+
+
+#name
+E2283 Too many local constants. Use shorter procedures
+#data
+
+#errors
+E2283 Too many local constants. Use shorter procedures
+
+
+#name
+E2284 Duplicate resource name type %d '%s'
+#data
+
+#errors
+E2284 Duplicate resource name type %d '%s'
+
+
+#name
+E2285 Duplicate resource id type %d id %d
+#data
+
+#errors
+E2285 Duplicate resource id type %d id %d
+
+
+#name
+E2286 Coverage library name is too long: %s
+#data
+
+#errors
+E2286 Coverage library name is too long: %s
+
+
+#name
+E2287 Cannot export '%s' multiple times
+#data
+
+#errors
+E2287 Cannot export '%s' multiple times
+
+
+#name
+E2288 File name too long (exceeds %d characters)
+#data
+
+#errors
+E2288 File name too long (exceeds %d characters)
+
+
+#name
+E2289 Unresolved custom attribute %s
+#data
+
+#errors
+E2289 Unresolved custom attribute %s
+
+
+#name
+E2290 Cannot mix destructors with IDisposable
+#data
+
+#errors
+E2290 Cannot mix destructors with IDisposable
+
+
+#name
+E2291 Missing implementation of interface method %s.%s
+#data
+
+#errors
+E2291 Missing implementation of interface method %s.%s
+
+
+#name
+E2292 '%s' must reference a property or field of class '%s'
+#data
+
+#errors
+E2292 '%s' must reference a property or field of class '%s'
+
+
+#name
+E2293 Cannot have both a DLLImport attribute and an external or calling convention directive
+#data
+
+#errors
+E2293 Cannot have both a DLLImport attribute and an external or calling convention directive
+
+
+#name
+E2294 A class helper that descends from '%s' can only help classes that are descendents '%s'
+#data
+
+#errors
+E2294 A class helper that descends from '%s' can only help classes that are descendents '%s'
+
+
+#name
+E2295 A class helper cannot introduce a destructor
+#data
+
+#errors
+E2295 A class helper cannot introduce a destructor
+
+
+#name
+E2296 A constructor introduced in a class helper must call the parameterless constructor of the helped class as the first statement
+#data
+
+#errors
+E2296 A constructor introduced in a class helper must call the parameterless constructor of the helped class as the first statement
+
+
+#name
+E2298 read/write not allowed for CLR events. Use Include/Exclude procedure
+#data
+
+#errors
+E2298 read/write not allowed for CLR events. Use Include/Exclude procedure
+
+
+#name
+E2299 Property required
+#data
+
+#errors
+E2299 Property required
+
+
+#name
+E2300 Cannot generate property accessor '%s' because '%s' already exists
+#data
+
+#errors
+E2300 Cannot generate property accessor '%s' because '%s' already exists
+
+
+#name
+E2301 Method '%s' with identical parameters and result type already exists
+#data
+
+#errors
+E2301 Method '%s' with identical parameters and result type already exists
+
+
+#name
+E2306 'Self' is initialized more than once
+#data
+
+#errors
+E2306 'Self' is initialized more than once
+
+
+#name
+E2307 NEW standard function expects a dynamic array type identifier
+#data
+
+#errors
+E2307 NEW standard function expects a dynamic array type identifier
+
+
+#name
+E2308 Need to specify at least one dimension for NEW of dynamic array
+#data
+
+#errors
+E2308 Need to specify at least one dimension for NEW of dynamic array
+
+
+#name
+E2309 Attribute - Known attribute named argument cannot be an array
+#data
+
+#errors
+E2309 Attribute - Known attribute named argument cannot be an array
+
+
+#name
+E2310 Attribute - A custom marshaler requires the custom marshaler type
+#data
+
+#errors
+E2310 Attribute - A custom marshaler requires the custom marshaler type
+
+
+#name
+E2311 Attribute - MarshalAs fixed string requires a size
+#data
+
+#errors
+E2311 Attribute - MarshalAs fixed string requires a size
+
+
+#name
+E2312 Attribute - Invalid argument to a known attribute
+#data
+
+#errors
+E2312 Attribute - Invalid argument to a known attribute
+
+
+#name
+E2313 Attribute - Known attribute cannot specify properties
+#data
+
+#errors
+E2313 Attribute - Known attribute cannot specify properties
+
+
+#name
+E2314 Attribute - The MarshalAs attribute has fields set that are not valid for the specified unmanaged type
+#data
+
+#errors
+E2314 Attribute - The MarshalAs attribute has fields set that are not valid for the specified unmanaged type
+
+
+#name
+E2315 Attribute - Known custom attribute on invalid target
+#data
+
+#errors
+E2315 Attribute - Known custom attribute on invalid target
+
+
+#name
+E2316 Attribute - The format of the GUID was invalid
+#data
+
+#errors
+E2316 Attribute - The format of the GUID was invalid
+
+
+#name
+E2317 Attribute - Known custom attribute had invalid value
+#data
+
+#errors
+E2317 Attribute - Known custom attribute had invalid value
+
+
+#name
+E2318 Attribute - The MarshalAs constant size cannot be negative
+#data
+
+#errors
+E2318 Attribute - The MarshalAs constant size cannot be negative
+
+
+#name
+E2319 Attribute - The MarshalAs parameter index cannot be negative
+#data
+
+#errors
+E2319 Attribute - The MarshalAs parameter index cannot be negative
+
+
+#name
+E2320 Attribute - The specified unmanaged type is only valid on fields
+#data
+
+#errors
+E2320 Attribute - The specified unmanaged type is only valid on fields
+
+
+#name
+E2321 Attribute - Known custom attribute has repeated named argument
+#data
+
+#errors
+E2321 Attribute - Known custom attribute has repeated named argument
+
+
+#name
+E2322 Attribute - Unexpected type in known attribute
+#data
+
+#errors
+E2322 Attribute - Unexpected type in known attribute
+
+
+#name
+E2323 Attribute - Unrecognized argument to a known custom attribute
+#data
+
+#errors
+E2323 Attribute - Unrecognized argument to a known custom attribute
+
+
+#name
+E2324 Attribute - Known attribute named argument doesn't support variant
+#data
+
+#errors
+E2324 Attribute - Known attribute named argument doesn't support variant
+
+
+#name
+E2325 Attribute '%s' is not valid on this target
+#data
+
+#errors
+E2325 Attribute '%s' is not valid on this target
+
+
+#name
+E2326 Attribute '%s' can only be used once per target
+#data
+
+#errors
+E2326 Attribute '%s' can only be used once per target
+
+
+#name
+E2327 Linker error while emitting attribute '%s' for '%s'
+#data
+
+#errors
+E2327 Linker error while emitting attribute '%s' for '%s'
+
+
+#name
+E2328 Linker error while emitting metadata
+#data
+
+#errors
+E2328 Linker error while emitting metadata
+
+
+#name
+E2329 Metadata - Error occured during a read
+#data
+
+#errors
+E2329 Metadata - Error occured during a read
+
+
+#name
+E2330 Metadata - Error occured during a write
+#data
+
+#errors
+E2330 Metadata - Error occured during a write
+
+
+#name
+E2331 Metadata - File is read only
+#data
+
+#errors
+E2331 Metadata - File is read only
+
+
+#name
+E2332 Metadata - An ill-formed name was given
+#data
+
+#errors
+E2332 Metadata - An ill-formed name was given
+
+
+#name
+E2333 Metadata - Data value was truncated
+#data
+
+#errors
+E2333 Metadata - Data value was truncated
+
+
+#name
+E2334 Metadata - Old version error
+#data
+
+#errors
+E2334 Metadata - Old version error
+
+
+#name
+E2335 Metadata - A shared mem open failed to open at the originally
+#data
+
+#errors
+E2335 Metadata - A shared mem open failed to open at the originally
+
+
+#name
+E2336 Metadata - Create of shared memory failed. A memory mapping of the same name already exists
+#data
+
+#errors
+E2336 Metadata - Create of shared memory failed. A memory mapping of the same name already exists
+
+
+#name
+E2337 Metadata - There isn't .CLB data in the memory or stream
+#data
+
+#errors
+E2337 Metadata - There isn't .CLB data in the memory or stream
+
+
+#name
+E2338 Metadata - Database is read only
+#data
+
+#errors
+E2338 Metadata - Database is read only
+
+
+#name
+E2339 Metadata - The importing scope is not compatible with the emitting scope
+#data
+
+#errors
+E2339 Metadata - The importing scope is not compatible with the emitting scope
+
+
+#name
+E2340 Metadata - Data too large
+#data
+
+#errors
+E2340 Metadata - Data too large
+
+
+#name
+E2341 Metadata - Column cannot be changed
+#data
+
+#errors
+E2341 Metadata - Column cannot be changed
+
+
+#name
+E2342 Metadata - Too many RID or primary key columns, 1 is max
+#data
+
+#errors
+E2342 Metadata - Too many RID or primary key columns, 1 is max
+
+
+#name
+E2343 Metadata - Primary key column may not allow the null value
+#data
+
+#errors
+E2343 Metadata - Primary key column may not allow the null value
+
+
+#name
+E2344 Metadata - Data too large
+#data
+
+#errors
+E2344 Metadata - Data too large
+
+
+#name
+E2345 Metadata - Attempt to define an object that already exists
+#data
+
+#errors
+E2345 Metadata - Attempt to define an object that already exists
+
+
+#name
+E2346 Metadata - A guid was not provided where one was required
+#data
+
+#errors
+E2346 Metadata - A guid was not provided where one was required
+
+
+#name
+E2347 Metadata - Bad binary signature
+#data
+
+#errors
+E2347 Metadata - Bad binary signature
+
+
+#name
+E2348 Metadata - Bad input parameters
+#data
+
+#errors
+E2348 Metadata - Bad input parameters
+
+
+#name
+E2349 Metadata - Cannot resolve typeref
+#data
+
+#errors
+E2349 Metadata - Cannot resolve typeref
+
+
+#name
+E2350 Metadata - No logical space left to create more user strings
+#data
+
+#errors
+E2350 Metadata - No logical space left to create more user strings
+
+
+#name
+E2351 Final methods must be virtual or dynamic
+#data
+
+#errors
+E2351 Final methods must be virtual or dynamic
+
+
+#name
+E2352 Cannot override a final method
+#data
+
+#errors
+E2352 Cannot override a final method
+
+
+#name
+E2353 Cannot extend sealed class '%s'
+#data
+
+#errors
+E2353 Cannot extend sealed class '%s'
+
+
+#name
+E2354 String element cannot be passed to var parameter
+#data
+
+#errors
+E2354 String element cannot be passed to var parameter
+
+
+#name
+E2355 Class property accessor must be a class field or class static method
+#data
+
+#errors
+E2355 Class property accessor must be a class field or class static method
+
+
+#name
+E2356 Property accessor must be an instance field or method
+#data
+
+#errors
+E2356 Property accessor must be an instance field or method
+
+
+#name
+E2357 PROCEDURE, FUNCTION, or CONSTRUCTOR expected
+#data
+
+#errors
+E2357 PROCEDURE, FUNCTION, or CONSTRUCTOR expected
+
+
+#name
+E2358 Class constructors not allowed in class helpers
+#data
+
+#errors
+E2358 Class constructors not allowed in class helpers
+
+
+#name
+E2359 Multiple class constructors in class %s: %s and %s
+#data
+
+#errors
+E2359 Multiple class constructors in class %s: %s and %s
+
+
+#name
+E2360 Class constructors cannot have parameters
+#data
+
+#errors
+E2360 Class constructors cannot have parameters
+
+
+#name
+E2361 Cannot access private symbol %s.%s
+#data
+
+#errors
+E2361 Cannot access private symbol %s.%s
+
+
+#name
+E2362 Cannot access protected symbol %s.%s
+#data
+
+#errors
+E2362 Cannot access protected symbol %s.%s
+
+
+#name
+E2363 Only methods of descendent types may access protected symbol %s%s.%s across assembly boundaries
+#data
+
+#errors
+E2363 Only methods of descendent types may access protected symbol %s%s.%s across assembly boundaries
+
+
+#name
+E2366 Global procedure or class static method expected
+#data
+
+#errors
+E2366 Global procedure or class static method expected
+
+
+#name
+E2370 Cannot use inherited methods for interface property accessors
+#data
+
+#errors
+E2370 Cannot use inherited methods for interface property accessors
+
+
+#name
+E2371 ABSTRACT and FINAL cannot be used together
+#data
+
+#errors
+E2371 ABSTRACT and FINAL cannot be used together
+
+
+#name
+E2372 Identifier expected
+#data
+
+#errors
+E2372 Identifier expected
+
+
+#name
+E2373 Call to abstract method %s.%s
+#data
+
+#errors
+E2373 Call to abstract method %s.%s
+
+
+#name
+E2374 Cannot make unique type from %s
+#data
+
+#errors
+E2374 Cannot make unique type from %s
+
+
+#name
+E2375 PRIVATE or PROTECTED expected
+#data
+
+#errors
+E2375 PRIVATE or PROTECTED expected
+
+
+#name
+E2376 STATIC can only be used on non-virtual class methods
+#data
+
+#errors
+E2376 STATIC can only be used on non-virtual class methods
+
+
+#name
+E2377 Unable to locate Borland.Delphi.Compiler.ResCvt.dll
+#data
+
+#errors
+E2377 Unable to locate Borland.Delphi.Compiler.ResCvt.dll
+
+
+#name
+E2378 Error while converting resource %s
+#data
+
+#errors
+E2378 Error while converting resource %s
+
+
+#name
+E2379 Virtual methods not allowed in record types
+#data
+
+#errors
+E2379 Virtual methods not allowed in record types
+
+
+#name
+E2380 Instance or class static method expected
+#data
+
+#errors
+E2380 Instance or class static method expected
+
+
+#name
+E2381 Resource string length exceeds Windows limit of 4096 characters
+#data
+
+#errors
+E2381 Resource string length exceeds Windows limit of 4096 characters
+
+
+#name
+E2382 Cannot call constructors using instance variables
+#data
+
+#errors
+E2382 Cannot call constructors using instance variables
+
+
+#name
+E2383 ABSTRACT and SEALED cannot be used together
+#data
+
+#errors
+E2383 ABSTRACT and SEALED cannot be used together
+
+
+#name
+E2385 Error while signing assembly
+#data
+
+#errors
+E2385 Error while signing assembly
+
+
+#name
+E2386 Invalid version string '%s' specified in %s
+#data
+
+#errors
+E2386 Invalid version string '%s' specified in %s
+
+
+#name
+E2387 The key container name '%s' does not exist
+#data
+
+#errors
+E2387 The key container name '%s' does not exist
+
+
+#name
+E2388 Unrecognized strong name key file '%s'
+#data
+
+#errors
+E2388 Unrecognized strong name key file '%s'
+
+
+#name
+E2389 Protected member '%s' is inaccessible here
+#data
+
+#errors
+E2389 Protected member '%s' is inaccessible here
+
+
+#name
+E2390 Class must be sealed to call a private constructor without a type qualifier
+#data
+
+#errors
+E2390 Class must be sealed to call a private constructor without a type qualifier
+
+
+#name
+E2391 Potentially polymorphic constructor calls must be virtual
+#data
+
+#errors
+E2391 Potentially polymorphic constructor calls must be virtual
+
+
+#name
+E2392 Can't generate required accessor method(s) for property %s.%s due to name conflict with existing symbol %s in the same scope
+#data
+
+#errors
+E2392 Can't generate required accessor method(s) for property %s.%s due to name conflict with existing symbol %s in the same scope
+
+
+#name
+E2393 Invalid operator declaration
+#data
+
+#errors
+E2393 Invalid operator declaration
+
+
+#name
+E2394 Parameterless constructors not allowed on record types
+#data
+
+#errors
+E2394 Parameterless constructors not allowed on record types
+
+
+#name
+E2395 Unsafe procedure only allowed if compiling with $UNSAFECODE ON
+#data
+
+#errors
+E2395 Unsafe procedure only allowed if compiling with $UNSAFECODE ON
+
+
+#name
+E2396 Unsafe code only allowed in unsafe procedure
+#data
+
+#errors
+E2396 Unsafe code only allowed in unsafe procedure
+
+
+#name
+E2397 Unsafe pointer only allowed if compiling with $UNSAFECODE ON
+#data
+
+#errors
+E2397 Unsafe pointer only allowed if compiling with $UNSAFECODE ON
+
+
+#name
+E2398 Class methods in record types must be static
+#data
+
+#errors
+E2398 Class methods in record types must be static
+
+
+#name
+E2399 Namespace conflicts with unit name '%s'
+#data
+
+#errors
+E2399 Namespace conflicts with unit name '%s'
+
+
+#name
+E2400 Unknown Resource Format '%s'
+#data
+
+#errors
+E2400 Unknown Resource Format '%s'
+
+
+#name
+E2402 Constructing instance of abstract class '%s'
+#data
+
+#errors
+E2402 Constructing instance of abstract class '%s'
+
+
+#name
+E2403 Add or remove accessor for event '%s' cannot be found
+#data
+
+#errors
+E2403 Add or remove accessor for event '%s' cannot be found
+
+
+#name
+E2404 Cannot mix READ/WRITE property accessors with ADD/REMOVE accessors
+#data
+
+#errors
+E2404 Cannot mix READ/WRITE property accessors with ADD/REMOVE accessors
+
+
+#name
+E2405 Unknown element type found importing signature of %s.%s
+#data
+
+#errors
+E2405 Unknown element type found importing signature of %s.%s
+
+
+#name
+E2406 EXPORTS section allowed only if compiling with $UNSAFECODE ON
+#data
+
+#errors
+E2406 EXPORTS section allowed only if compiling with $UNSAFECODE ON
+
+
+#name
+E2407 Duplicate resource identifier %s found in unit %s(%s) and %s(%s)
+#data
+
+#errors
+E2407 Duplicate resource identifier %s found in unit %s(%s) and %s(%s)
+
+
+#name
+E2408 Can't extract strong name key from assembly %s
+#data
+
+#errors
+E2408 Can't extract strong name key from assembly %s
+
+
+#name
+E2409 Fully qualified nested type name %s exceeds 1024 byte limit
+#data
+
+#errors
+E2409 Fully qualified nested type name %s exceeds 1024 byte limit
+
+
+#name
+E2410 Unsafe pointer variables, parameters or consts only allowed in unsafe procedure
+#data
+
+#errors
+E2410 Unsafe pointer variables, parameters or consts only allowed in unsafe procedure
+
+
+#name
+E2411 Unit %s in package %s refers to unit %s which is not found in any package. Packaged units must refer only to packaged units
+#data
+
+#errors
+E2411 Unit %s in package %s refers to unit %s which is not found in any package. Packaged units must refer only to packaged units
+
+
+#name
+E2412 CREATE expected
+#data
+
+#errors
+E2412 CREATE expected
+
+
+#name
+E2413 Dynamic array type needed
+#data
+
+#errors
+E2413 Dynamic array type needed
+
+
+#name
+E2414 Disposed_ cannot be declared in classes with destructors
+#data
+
+#errors
+E2414 Disposed_ cannot be declared in classes with destructors
+
+
+#name
+E2415 Could not import assembly '%s' because it contains namespace '%s'
+#data
+
+#errors
+E2415 Could not import assembly '%s' because it contains namespace '%s'
+
+
+#name
+E2416 Could not import package '%s' because it contains system unit '%s'
+#data
+
+#errors
+E2416 Could not import package '%s' because it contains system unit '%s'
+
+
+#name
+E2417 Field offset cannot be determined for variant record because previous field type is unknown size record type
+#data
+
+#errors
+E2417 Field offset cannot be determined for variant record because previous field type is unknown size record type
+
+
+#name
+E2418 Type '%s' needs initialization - not allowed in variant record
+#data
+
+#errors
+E2418 Type '%s' needs initialization - not allowed in variant record
+
+
+#name
+E2419 Record type too large: exceeds 1 MB
+#data
+
+#errors
+E2419 Record type too large: exceeds 1 MB
+
+
+#name
+E2420 Interface '%s' used in '%s' is not yet completely defined
+#data
+
+#errors
+E2420 Interface '%s' used in '%s' is not yet completely defined
+
+
+#name
+E2422 Imported identifier '%s' conflicts with '%s' in namespace '%s'
+#data
+
+#errors
+E2422 Imported identifier '%s' conflicts with '%s' in namespace '%s'
+
+
+#name
+E2423 Void type not usable in this context
+#data
+
+#errors
+E2423 Void type not usable in this context
+
+
+#name
+E2424 Codepage '%s' is not installed on this machine
+#data
+
+#errors
+E2424 Codepage '%s' is not installed on this machine
+
+
+#name
+E2425 Inline methods must not be virtual nor dynamic
+#data
+
+#errors
+E2425 Inline methods must not be virtual nor dynamic
+
+
+#name
+E2426 Inline function must not have asm block
+#data
+
+#errors
+E2426 Inline function must not have asm block
+
+
+#name
+E2428 Field '%s' needs initialization - not allowed in CLS compliant value types
+#data
+
+#errors
+E2428 Field '%s' needs initialization - not allowed in CLS compliant value types
+
+
+#name
+E2429 Duplicate implementation for 'set of %s' in this scope
+#data
+
+#errors
+E2429 Duplicate implementation for 'set of %s' in this scope
+
+
+#name
+E2430 for-in statement cannot operate on collection type '%s'
+#data
+
+#errors
+E2430 for-in statement cannot operate on collection type '%s'
+
+
+#name
+E2431 for-in statement cannot operate on collection type '%s' because '%s' does not contain a member for '%s', or it is inaccessible
+#data
+
+#errors
+E2431 for-in statement cannot operate on collection type '%s' because '%s' does not contain a member for '%s', or it is inaccessible
+
+
+#name
+E2432 %s cannot be applied to a rectangular dynamic array
+#data
+
+#errors
+E2432 %s cannot be applied to a rectangular dynamic array
+
+
+#name
+E2433 Method declarations not allowed in anonymous record or local record type
+#data
+
+#errors
+E2433 Method declarations not allowed in anonymous record or local record type
+
+
+#name
+E2434 Property declarations not allowed in anonymous record or local record type
+#data
+
+#errors
+E2434 Property declarations not allowed in anonymous record or local record type
+
+
+#name
+E2435 Class member declarations not allowed in anonymous record or local record type
+#data
+
+#errors
+E2435 Class member declarations not allowed in anonymous record or local record type
+
+
+#name
+E2436 Type declarations not allowed in anonymous record or local record type
+#data
+
+#errors
+E2436 Type declarations not allowed in anonymous record or local record type
+
+
+#name
+E2437 Constant declarations not allowed in anonymous record or local record type
+#data
+
+#errors
+E2437 Constant declarations not allowed in anonymous record or local record type
+
+
+#name
+E2439 Inline function must not have open array argument
+#data
+
+#errors
+E2439 Inline function must not have open array argument
+
+
+#name
+E2441 Inline function declared in interface section must not use local symbol '%s'
+#data
+
+#errors
+E2441 Inline function declared in interface section must not use local symbol '%s'
+
+
+#name
+E2442 Inline directive not allowed in constructor or destructor
+#data
+
+#errors
+E2442 Inline directive not allowed in constructor or destructor
+
+
+#name
+E2447 Duplicate symbol '%s' defined in namespace '%s' by '%s' and '%s'
+#data
+
+#errors
+E2447 Duplicate symbol '%s' defined in namespace '%s' by '%s' and '%s'
+
+
+#name
+E2448 An attribute argument must be a constant expression, typeof expression or array constructor
+#data
+
+#errors
+E2448 An attribute argument must be a constant expression, typeof expression or array constructor
+
+
+#name
+E2449 Inlined nested routine '%s' cannot access outer scope variable '%s'
+#data
+
+#errors
+E2449 Inlined nested routine '%s' cannot access outer scope variable '%s'
+
+
+#name
+E2450 There is no overloaded version of array property '%s' that can be used with these arguments
+#data
+
+#errors
+E2450 There is no overloaded version of array property '%s' that can be used with these arguments
+
+
+#name
+E2452 Unicode characters not allowed in published symbols
+#data
+
+#errors
+E2452 Unicode characters not allowed in published symbols
+
+
+#name
+E2453 Destination cannot be assigned to
+#data
+
+#errors
+E2453 Destination cannot be assigned to
+
+
+#name
+E2454 Slice standard function not allowed for VAR nor OUT argument
+#data
+
+#errors
+E2454 Slice standard function not allowed for VAR nor OUT argument
+
+
+#name
+E2459 Class property accessor must not have field selector
+#data
+
+#errors
+E2459 Class property accessor must not have field selector
+
+
+#name
+E2460 Cannot inherit from special class '%s.%s'
+#data
+
+#errors
+E2460 Cannot inherit from special class '%s.%s'
+
+
+#name
+E2461 Identifier '%s' is not an instance field
+#data
+
+#errors
+E2461 Identifier '%s' is not an instance field
+
+
+#name
+E2463 '%s' directive not allowed in record type
+#data
+
+#errors
+E2463 '%s' directive not allowed in record type
+
+
+#name
+E2464 First parameter of Assign operator must be var parameter
+#data
+
+#errors
+E2464 First parameter of Assign operator must be var parameter
+
+
+#name
+E2465 A record cannot introduce a destructor
+#data
+
+#errors
+E2465 A record cannot introduce a destructor
+
+
+#name
+E2466 Never-build package '%s' requires always-build package '%s'
+#data
+
+#errors
+E2466 Never-build package '%s' requires always-build package '%s'
+
+
+#name
+E2467 Record or object type required
+#data
+
+#errors
+E2467 Record or object type required
+
+
+#name
+E2468 Linker detected duplicate name '%s' made from type '%s' in both unit '%s' and '%s'
+#data
+
+#errors
+E2468 Linker detected duplicate name '%s' made from type '%s' in both unit '%s' and '%s'
+
+
+#name
+E2469 Linker detected duplicate name '%s' made from both type '%s' in unit '%s' and type '%s' in unit '%s'
+#data
+
+#errors
+E2469 Linker detected duplicate name '%s' made from both type '%s' in unit '%s' and type '%s' in unit '%s'
+
+
+#name
+E2470 Linker detected duplicate name '%s' made from type '%s' in unit '%s' and conflicting with compiler generated class name for unit '%s'
+#data
+
+#errors
+E2470 Linker detected duplicate name '%s' made from type '%s' in unit '%s' and conflicting with compiler generated class name for unit '%s'
+
+
+#name
+E2471 Possibly parameterless constructors not allowed on record types
+#data
+
+#errors
+E2471 Possibly parameterless constructors not allowed on record types
+
+
+#name
+E2474 Record type required
+#data
+
+#errors
+E2474 Record type required
+
+
+#name
+E2475 '%s' directive not allowed in record helper type
+#data
+
+#errors
+E2475 '%s' directive not allowed in record helper type
+
+
+#name
+E2501 Inline function cannot call nested routine '%s'
+#data
+
+#errors
+E2501 Inline function cannot call nested routine '%s'
+
+
+#name
+E2506 Method of parameterized type declared in interface section must not use local symbol '%s'
+#data
+
+#errors
+E2506 Method of parameterized type declared in interface section must not use local symbol '%s'
+
+
+#name
+E2507 CLASS constraint and RECORD constraint cannot be specified together
+#data
+
+#errors
+E2507 CLASS constraint and RECORD constraint cannot be specified together
+
+
+#name
+E2508 type parameters not allowed on this type
+#data
+
+#errors
+E2508 type parameters not allowed on this type
+
+
+#name
+E2510 Type '%s' is not a valid constraint
+#data
+
+#errors
+E2510 Type '%s' is not a valid constraint
+
+
+#name
+E2511 Type parameter '%s' must be a class type
+#data
+
+#errors
+E2511 Type parameter '%s' must be a class type
+
+
+#name
+E2512 Type parameter '%s' must be a non-nullable value type
+#data
+
+#errors
+E2512 Type parameter '%s' must be a non-nullable value type
+
+
+#name
+E2513 Type parameter '%s' must have one public parameterless constructor named Create
+#data
+
+#errors
+E2513 Type parameter '%s' must have one public parameterless constructor named Create
+
+
+#name
+E2514 Type parameter '%s' must support interface '%s'
+#data
+
+#errors
+E2514 Type parameter '%s' must support interface '%s'
+
+
+#name
+E2515 Type parameter '%s' is not compatible with type '%s'
+#data
+
+#errors
+E2515 Type parameter '%s' is not compatible with type '%s'
+
+
+#name
+E2516 Constraint '%s' is conflicting with previous constraints
+#data
+
+#errors
+E2516 Constraint '%s' is conflicting with previous constraints
+
+
+#name
+E2517 Operator '%s' must take %d parameter(s)
+#data
+
+#errors
+E2517 Operator '%s' must take %d parameter(s)
+
+
+#name
+E2518 Operator '%s' must take least one '%s' type in parameters
+#data
+
+#errors
+E2518 Operator '%s' must take least one '%s' type in parameters
+
+
+#name
+E2519 First parameter type of operator '%s' and result type must be identical
+#data
+
+#errors
+E2519 First parameter type of operator '%s' and result type must be identical
+
+
+#name
+E2520 Result type of operator '%s' must be Boolean type
+#data
+
+#errors
+E2520 Result type of operator '%s' must be Boolean type
+
+
+#name
+E2521 Operator '%s' must take one '%s' type in parameter or result type
+#data
+
+#errors
+E2521 Operator '%s' must take one '%s' type in parameter or result type
+
+
+#name
+E2522 Operator '%s' can not convert to/from ancestor type
+#data
+
+#errors
+E2522 Operator '%s' can not convert to/from ancestor type
+
+
+#name
+E2527 Helper type '%s' cannot be used in declarations
+#data
+
+#errors
+E2527 Helper type '%s' cannot be used in declarations
+
+
+#name
+E2528 Type parameters not allowed on this method
+#data
+
+#errors
+E2528 Type parameters not allowed on this method
+
+
+#name
+E2529 Type parameters not allowed on operator
+#data
+
+#errors
+E2529 Type parameters not allowed on operator
+
+
+#name
+E2530 Type parameters not allowed on global procedure or function
+#data
+
+#errors
+E2530 Type parameters not allowed on global procedure or function
+
+
+#name
+E2531 Method '%s' requires explicit type argument(s)
+#data
+
+#errors
+E2531 Method '%s' requires explicit type argument(s)
+
+
+#name
+E2532 Couldn't infer generic type argument from different argument types for method '%s'
+#data
+
+#errors
+E2532 Couldn't infer generic type argument from different argument types for method '%s'
+
+
+#name
+E2533 Virtual, dynamic and message methods cannot have type parameters
+#data
+
+#errors
+E2533 Virtual, dynamic and message methods cannot have type parameters
+
+
+#name
+E2534 Class constructor must not be virtual, dynamic nor message
+#data
+
+#errors
+E2534 Class constructor must not be virtual, dynamic nor message
+
+
+#name
+E2535 Interface methods must not have parameterized methods
+#data
+
+#errors
+E2535 Interface methods must not have parameterized methods
+
+
+#name
+E2537 DEFAULT standard function expects a type identifier
+#data
+
+#errors
+E2537 DEFAULT standard function expects a type identifier
+
+
+#name
+E2538 DEFAULT standard function not allowed for this type
+#data
+
+#errors
+E2538 DEFAULT standard function not allowed for this type
+
+
+#name
+E2539 Missing implementation for abstract method '%s.%s'
+#data
+
+#errors
+E2539 Missing implementation for abstract method '%s.%s'
+
+
+#name
+E2540 Cannot seal abstract type '%s'
+#data
+
+#errors
+E2540 Cannot seal abstract type '%s'
+
+
+#name
+E2543 Instantiated data type '%s' too large: exceeds 2 GB
+#data
+
+#errors
+E2543 Instantiated data type '%s' too large: exceeds 2 GB
+
+
+#name
+E2545 Cannot publish class property '%s' - only instance properties can be published
+#data
+
+#errors
+E2545 Cannot publish class property '%s' - only instance properties can be published
+
+
+#name
+E2548 Cannot take a class reference of parameterized type
+#data
+
+#errors
+E2548 Cannot take a class reference of parameterized type
+
+
+#name
+E2549 Cannot declare parameterized type derived from custom attribute class
+#data
+
+#errors
+E2549 Cannot declare parameterized type derived from custom attribute class
+
+
+#name
+E2556 Type of procedure result or untyped parameter cannot be used as type argument
+#data
+
+#errors
+E2556 Type of procedure result or untyped parameter cannot be used as type argument
+
+
+#name
+E2551 There is no type parameterized methods of '%s' that can be used with these number of type parameters
+#data
+
+#errors
+E2551 There is no type parameterized methods of '%s' that can be used with these number of type parameters
+
+
+#name
+E2552 CLASS or RECORD constraint and class type constraint cannot be specified together
+#data
+
+#errors
+E2552 CLASS or RECORD constraint and class type constraint cannot be specified together
+
+
+#name
+E2553 Class type constraint cannot be specified more than once
+#data
+
+#errors
+E2553 Class type constraint cannot be specified more than once
+
+
+#name
+E2555 Cannot capture symbol '%s'
+#data
+
+#errors
+E2555 Cannot capture symbol '%s'
+
+
+#name
+E2560 $OBJTYPENAME not allowed for '%s'; only global and non-alias type symbol
+#data
+
+#errors
+E2560 $OBJTYPENAME not allowed for '%s'; only global and non-alias type symbol
+
+
+#name
+E2561 Specified options for $EXTERNALSYM and $NODEFINE are not allowed for '%s'; only global and non-alias type symbol
+#data
+
+#errors
+E2561 Specified options for $EXTERNALSYM and $NODEFINE are not allowed for '%s'; only global and non-alias type symbol
+
+
+#name
+E2562 Field identifier required
+#data
+
+#errors
+E2562 Field identifier required
+
+
+#name
+E2563 Specified interface type is not declared
+#data
+
+#errors
+E2563 Specified interface type is not declared
+
+
+#name
+E2564 Undefined type '%s'
+#data
+
+#errors
+E2564 Undefined type '%s'
+
+
+#name
+E2565 Cannot use parameterized or instantiated type as custom attribute
+#data
+
+#errors
+E2565 Cannot use parameterized or instantiated type as custom attribute
+
+
+#name
+E2568 Can't create new instance without CONSTRUCTOR constraint in type parameter declaration
+#data
+
+#errors
+E2568 Can't create new instance without CONSTRUCTOR constraint in type parameter declaration
+
+
+#name
+E2569 Type parameter '%s' may need finalization - not allowed in variant record. Consider using RECORD constraint
+#data
+
+#errors
+E2569 Type parameter '%s' may need finalization - not allowed in variant record. Consider using RECORD constraint
+
+
+#name
+E2570 Local procedure in generic method or method of generic type is not supported
+#data
+
+#errors
+E2570 Local procedure in generic method or method of generic type is not supported
+
+
+#name
+E2571 Type parameter '%s' doesn't have class or interface constraint
+#data
+
+#errors
+E2571 Type parameter '%s' doesn't have class or interface constraint
+
+
+#name
+E2572 RTTI visibility set constant expression of type System.TRttiVisibility expected
+#data
+
+#errors
+E2572 RTTI visibility set constant expression of type System.TRttiVisibility expected
+
+
+#name
+E2573 Illegal value for the ALIGN directive (valid for one of 1, 2, 4, 8 or 16)
+#data
+
+#errors
+E2573 Illegal value for the ALIGN directive (valid for one of 1, 2, 4, 8 or 16)
+
+
+#name
+E2574 Instantiated type can not be used for TYPE'd type declaration
+#data
+
+#errors
+E2574 Instantiated type can not be used for TYPE'd type declaration
+
+
+#name
+E2575 RTTI for '%s' is too large; reduce scope with $RTTI or reduce type size
+#data
+
+#errors
+E2575 RTTI for '%s' is too large; reduce scope with $RTTI or reduce type size
+
+
+#name
+E2584 Weak attribute only allowed on fields and variables of type class or interface: '%s'
+#data
+
+#errors
+E2584 Weak attribute only allowed on fields and variables of type class or interface: '%s'
+
+
+#name
+E2589 Helper type can not be declared in parameterized type context
+#data
+
+#errors
+E2589 Helper type can not be declared in parameterized type context
+
+
+#name
+E2590 Linker option string too long
+#data
+
+#errors
+E2590 Linker option string too long
+
+
+#name
+E2591_Only cdecl functions may use varargs
+#data
+
+#errors
+E2591_Only cdecl functions may use varargs
+
+
+#name
+E2597 '%s'
+#data
+
+#errors
+E2597 '%s'
+
+
+#name
+E2598 Virtual methods not allowed in record helper types
+#data
+
+#errors
+E2598 Virtual methods not allowed in record helper types
+
+
+#name
+E2599 Field definition not allowed in helper type
+#data
+
+#errors
+E2599 Field definition not allowed in helper type
+
+
+#name
+E2601 Procedure NEW needs constructor identifier of '%s', but undeclared identifier '%s' found
+#data
+
+#errors
+E2601 Procedure NEW needs constructor identifier of '%s', but undeclared identifier '%s' found
+
+
+#name
+E2602 Procedure DISPOSE needs destructor identifier of '%s', but undeclared identifier '%s' found
+#data
+
+#errors
+E2602 Procedure DISPOSE needs destructor identifier of '%s', but undeclared identifier '%s' found
+
+
+#name
+E2603 Constraint '%s' cannot be specified more than once
+#data
+
+#errors
+E2603 Constraint '%s' cannot be specified more than once
+
+
+#name
+Linker error: %s
+#data
+
+#errors
+Linker error: %s
+
+
+#name
+Linker error: %s: %s
+#data
+
+#errors
+Linker error: %s: %s
+
+
+

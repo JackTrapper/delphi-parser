@@ -1,0 +1,133 @@
+Files that did not parse = 1 / 1
+FILE: C:\Dev\Delphi6\Source\Vcl\FMTBcd.pas
+OUTPUT:
+*** Errors ***
+Entering ->Type
+  NumberTypes 
+Entering ->Type
+  NumberTypes 
+Entering ->Type
+  NumberTypes 
+Entering ->Type
+  NumberTypes 
+Entering ->Type
+  NumberTypes 
+Entering ->Type
+  NumberTypes 
+Entering ->Type
+  NumberTypes 
+Entering TypeId 
+   PointerType 
+  IdentTypes 
+Entering TypeId 
+  StrucType  
+ OrdIdent 
+ OrdIdent 
+  StrucType  
+In ArrayType ->
+  NumberTypes 
+Entering NumberTypes ConstExpr
+ OrdIdent 
+  IdentTypes 
+ OrdIdent 
+  IdentTypes 
+ OrdIdent 
+  IdentTypes 
+ OrdIdent 
+  IdentTypes 
+  IdentTypes 
+  IdentTypes 
+  IdentTypes 
+  IdentTypes 
+  IdentTypes 
+ OrdIdent 
+ OrdIdent 
+  IdentTypes 
+  IdentTypes 
+  IdentTypes 
+ RealType 
+  IdentTypes 
+  IdentTypes 
+   StringType  
+  IdentTypes 
+   StringType  
+  IdentTypes 
+   StringType  
+  IdentTypes 
+  IdentTypes 
+  IdentTypes 
+  IdentTypes 
+ RealType 
+  IdentTypes 
+  IdentTypes 
+   StringType  
+  IdentTypes 
+    VariantType  
+  IdentTypes 
+    VariantType  
+   StringType  
+ OrdIdent 
+    VariantType  
+ RealType 
+ OrdIdent 
+ OrdIdent 
+    VariantType  
+  IdentTypes 
+    VariantType  
+    VariantType  
+ OrdIdent 
+  IdentTypes 
+   StringType  
+  IdentTypes 
+   StringType  
+  IdentTypes 
+ OrdIdent 
+ RealType 
+  IdentTypes 
+ RealType 
+  IdentTypes 
+ OrdIdent 
+  IdentTypes 
+    VariantType  
+  IdentTypes 
+ RealType 
+  IdentTypes 
+ OrdIdent 
+ OrdIdent 
+ OrdIdent 
+  IdentTypes 
+   StringType  
+  IdentTypes 
+ RealType 
+  IdentTypes 
+ OrdIdent 
+ OrdIdent 
+  IdentTypes 
+ RealType 
+ OrdIdent 
+  IdentTypes 
+  IdentTypes 
+ OrdIdent 
+   StringType  
+   StringType  
+  IdentTypes 
+   StringType  
+  IdentTypes 
+ OrdIdent 
+  IdentTypes 
+Entering TypedConstant 1 from ConstDecl
+
+")" expected
+Line 102
+Column 69
+................................
+  NullBcd: TBcd = (Precision: 0; SignSpecialPlaces: 0; Fraction: (0 ERROR->,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0));
+
+";" expected
+Line 102
+Column 132
+................................
+  NullBcd: TBcd = (Precision: 0; SignSpecialPlaces: 0; Fraction: (0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0) ERROR->);
+
+........................................................
+

@@ -1,0 +1,2074 @@
+From: <Saved by Blink>
+Snapshot-Content-Location: http://www.felix-colibri.com/papers/compilers/delphi_5_grammar/delphi_5_grammar.html
+Subject: Felix Colibri- the Delphi 5 EBFN grammar
+Date: Mon, 11 Nov 2024 12:13:54 -0500
+MIME-Version: 1.0
+Content-Type: multipart/related;
+	type="text/html";
+	boundary="----MultipartBoundary--B4GHlZGR6W1PxxBBufAyAieOZ6BYhMV1v2ziKQU89A----"
+
+
+------MultipartBoundary--B4GHlZGR6W1PxxBBufAyAieOZ6BYhMV1v2ziKQU89A----
+Content-Type: text/html
+Content-ID: <frame-D8E4FC53E1F9C6FCF4F871C887657E05@mhtml.blink>
+Content-Transfer-Encoding: quoted-printable
+Content-Location: http://www.felix-colibri.com/papers/compilers/delphi_5_grammar/delphi_5_grammar.html
+
+<html><head><meta http-equiv=3D"Content-Type" content=3D"text/html; charset=
+=3Dwindows-1252"> <title>Felix Colibri- the Delphi 5 EBFN grammar</title>  =
+<meta http-equiv=3D"CONTENT-LANGUAGE" content=3D"English"> <meta http-equiv=
+=3D"VW96.OBJECT TYPE" content=3D"Archive">
+<meta name=3D"TITLE" content=3D"Felix Colibri- the Delphi 5 EBFN grammar"> =
+<meta name=3D"DESCRIPTION" content=3D"the grammar used to parse the Delphi =
+5 VCL.">
+<meta name=3D"KEYWORDS" content=3D"Delphi Grammar,Delphi 5 BNF,Pascal Langu=
+age,Scanner,Parser,Compilers,Generator,Grammar,Bnf,Ebnf,Iebnf,Delphi,Progra=
+mming,Development,Project,Free Source Code,Objet Oriented Programming,Tools=
+,Toolboxes,Librairies,Helper,Helpers">
+<meta name=3D"OWNER" content=3D"fcolibri@felix-colibri.com"> <meta name=3D"=
+AUTHOR" content=3D"=A9 2006 Felix John COLIBRI"> <meta name=3D"ROBOTS" cont=
+ent=3D"index,follow"> <meta name=3D"REVISIT-AFTER" content=3D"15 days"> <me=
+ta name=3D"ROBOTS" content=3D"ALL"> </head>
+<body leftmargin=3D"0" topmargin=3D"0" marginwidth=3D"0" marginheight=3D"0"=
+ alink=3D"red"> <div> <div style=3D"position:absolute; left:0px; Top:0px;">=
+ <table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" height=3D"100%" wi=
+dth=3D"100%" bgcolor=3D"#FFBBFF"> <tbody><tr>
+<td width=3D"20%" valign=3D"top"> <table cellspacing=3D"5" bgcolor=3D"#FFBB=
+FF" width=3D"200"> <tbody><tr align=3D"center"> <td> menu </td> </tr> </tbo=
+dy></table> </td> <td width=3D"80%" height=3D"100%" valign=3D"top" bgcolor=
+=3D"#FFFFFF"> <table border=3D"0" width=3D"100%" bgcolor=3D"#FFBBFF"> <tbod=
+y><tr>
+<td align=3D"center"> <table border=3D"0" bgcolor=3D"#CCFFFF"> <tbody><tr> =
+<td>
+&nbsp;&nbsp;<a href=3D"http://www.felix-colibri.com/index.html">Home</a> &n=
+bsp;<img src=3D"http://www.felix-colibri.com/forward_3.png" alt=3D"=3D=3D>"=
+>&nbsp; <a href=3D"http://www.felix-colibri.com/papers/papers.html">papers<=
+/a> &nbsp;<img src=3D"http://www.felix-colibri.com/forward_3.png" alt=3D"=
+=3D=3D>">&nbsp; <a href=3D"http://www.felix-colibri.com/papers/compilers/co=
+mpilers.html">compilers</a> &nbsp;<img src=3D"http://www.felix-colibri.com/=
+forward_3.png" alt=3D"=3D=3D>">&nbsp;
+</td> <td bgcolor=3D"#FFFFCC"> <a href=3D"http://www.felix-colibri.com/pape=
+rs/compilers/delphi_5_grammar/delphi_5_grammar.html">delphi_5_grammar</a> <=
+/td> <td> &nbsp;&nbsp; </td> </tr> </tbody></table> </td> </tr> </tbody></t=
+able> <table cellspacing=3D"5" width=3D"100%" height=3D"500"> <tbody><tr> <=
+td valign=3D"top"> <p>
+<table border=3D"0" bgcolor=3D"CCFFFF" width=3D"100%"> <tbody><tr> <td> <h2=
+><center><font color=3D"#FF0000">Delphi 5 Grammar</font> - Felix John COLIB=
+RI.</center></h2> </td> </tr> </tbody></table> </p><blockquote> <ul> <li><b=
+>abstract</b> : the Delphi 5 ebnf grammar<br>
+</li><li><b>key words</b> : ebnf, iebnf, compiler, pascal<br> </li><li><b>s=
+oftware used</b> : Windows XP, Delphi 6<br> </li><li><b>hardware used</b> :=
+ Pentium 1.400Mhz, 256 M memory, 140 G hard disc<br> </li><li><b>scope</b> =
+: Delphi 1 to 8 for Windows, Kylix<br>
+</li><li><b>level</b> : Delphi developer<br> </li><li><b>plan</b> :<br> <ul=
+> <li><a href=3D"http://www.felix-colibri.com/papers/compilers/delphi_5_gra=
+mmar/delphi_5_grammar.html#introduction">Introduction</a><br> </li><li><a h=
+ref=3D"http://www.felix-colibri.com/papers/compilers/delphi_5_grammar/delph=
+i_5_grammar.html#the_delphi5_grammar">The grammar</a><br> </li></ul> </li><=
+/ul> </blockquote> <p> </p><hr>
+<h2><a name=3D"introduction"></a>1 - Introduction</h2> Here is the grammar =
+we are using to parse Delphi programs. <p> <br><br> </p><hr> <h2><a name=3D=
+"the_delphi5_grammar"></a>2 - The grammar</h2> <h3>2.1 - History</h3>
+We are using our <i>GenCot</i> parser generator to analyze Delphi programs.=
+ This generator is used to parse Pascal (and Delphi) as well as other gramm=
+ars (C, PDF, assembler, SQL etc). <p>
+The last Delphi version we worked on was for Delphi 5. The grammar below yi=
+elded a parser which was able to parse the Delphi&nbsp;5 VCL. </p><p> This =
+grammar was built from our old UCSD grammar. It does not descend from the
+P4 grammar (so the production names will be similar but not identical). The=
+ text was manually extended to support Delphi. When it worked on  our proje=
+cts, we feard that it only used our own Delphi idioms. To harden it a bit, =
+we
+unparsed Martin WALDENBURG's excellent Delphi Parser. His parser is not, as=
+ I understand, built from a grammar, but the methods nicely follow the prod=
+uction any Delphi grammar would contain. So analyzing the methods, and thei=
+r calls
+yielded another grammar which was consolidated with the previous one. Final=
+ly we launched the corresponding parser on the VCL, and corrected the gramm=
+ar in order to swallow any Delphi&nbsp;5 VCL construct (at that time mwPars=
+er handled
+Delphi&nbsp;4). The grammar has not been checked for any Delphi&nbsp;6 addi=
+tion(s), and was not tested on the Delphi&nbsp;6 (or later) VCL. </p><p> <b=
+r><br> </p><h3>2.2 - The grammar specifics</h3>
+The general syntax of the grammar is IEBNF: an EBNF version with added inde=
+ntation. The indentation corresponds to the Pascal nesting of the parsing p=
+rocedures. This nesting is not mandatory: the grammar could as well be alph=
+abetically sorted. <p>
+In order to parse Delphi 5, we had to add a couple of "features" to the gra=
+mmar. They are noted with a $ prefix: </p><ul> <li>$NOREAD will ask the gen=
+erator to check the presence of the following token
+but not read this token (a kind of test, or check). Here is an example of t=
+he handling of the ";" in <b>CASE</b> <p> </p><center> <table border=3D"1" =
+cellspacing=3D"0" cellpadding=3D"0" bgcolor=3D"#FFFFCC" width=3D"80%"> <tbo=
+dy><tr> <td> <blockquote> &nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"=
+0"><i>case</i></font>=3D&nbsp;<font color=3D"FF0000"><b>CASE</b></font>&nbs=
+p;<font color=3D"0"><i>expression</i></font>&nbsp;<font color=3D"FF0000"><b=
+>OF</b></font>&nbsp;<font color=3D"0"><i>case_element</i></font>&nbsp;{&nbs=
+p;'<font color=3D"FF0000"><b>;</b></font>'&nbsp;[&nbsp;<font color=3D"FF000=
+0"><b>ELSE</b></font>&nbsp;$<font color=3D"FF0000"><b>NOREAD</b></font>&nbs=
+p;|&nbsp;<font color=3D"FF0000"><b>END</b></font>&nbsp;$<font color=3D"FF00=
+00"><b>NOREAD</b></font>&nbsp;|&nbsp;<font color=3D"0"><i>case_element</i><=
+/font>&nbsp;]&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;<font color=3D"FF0000"><b>ELSE</b></font>=
+&nbsp;<font color=3D"0"><i>instruction_list</i></font>&nbsp;]&nbsp;<font co=
+lor=3D"FF0000"><b>END</b></font>&nbsp;<b>.</b><br>
+</blockquote> </td> </tr> </tbody></table> </center> <p> </p></li><li>$&lt;=
+xxx ... $&gt;xxx will push and pop a syntax directive, and the parser will =
+be able to check whether the execution is currently in this phase. Some Del=
+phi
+identifiers have only a special meaning while Delphi is in some parts of th=
+e syntax. Here is an example with <b>PROPERTY</b> specifiers: <p> </p><cent=
+er> <table border=3D"1" cellspacing=3D"0" cellpadding=3D"0" bgcolor=3D"#FFF=
+FCC" width=3D"80%"> <tbody><tr> <td> <blockquote>
+&nbsp;<br>
+<font color=3D"0"><i>property_specifiers</i></font>=3D&nbsp;$&lt;<font colo=
+r=3D"0"><i>prop</i></font>&nbsp;[&nbsp;<font color=3D"FF0000"><b>INDEX</b><=
+/font>&nbsp;<font color=3D"0"><i>constant_expression</i></font>&nbsp;]&nbsp=
+;$&gt;<font color=3D"0"><i>prop</i></font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;$&lt;<font color=3D"0"><i>prop</i></font>&nbsp;[&nb=
+sp;<font color=3D"FF0000"><b>READ</b></font>&nbsp;<font color=3D"0"><i>vari=
+able_access</i></font>&nbsp;|&nbsp;<font color=3D"FF0000"><b>READONLY</b></=
+font>&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;<f=
+ont color=3D"FF0000"><b>WRITE</b></font>&nbsp;<font color=3D"0000FF"><b>WRI=
+TE_NAME</b></font>&nbsp;|&nbsp;<font color=3D"FF0000"><b>WRITEONLY</b></fon=
+t>&nbsp;]&nbsp;$&gt;<font color=3D"0"><i>prop</i></font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;$&lt;<font color=3D"0"><i>prop</i></font>&nbsp;[&nb=
+sp;<font color=3D"FF0000"><b>DISPID</b></font>&nbsp;<font color=3D"0"><i>co=
+nstant_expression</i></font>&nbsp;]&nbsp;[&nbsp;'<font color=3D"FF0000"><b>=
+;</b></font>'&nbsp;]&nbsp;$&gt;<font color=3D"0"><i>prop</i></font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;$&lt;<font color=3D"0"><i>prop</i></font>&nbsp;{&nb=
+sp;<font color=3D"0"><i>storage_specifier</i></font>&nbsp;['<font color=3D"=
+FF0000"><b>;</b></font>'&nbsp;]&nbsp;}&nbsp;$&gt;<font color=3D"0"><i>prop<=
+/i></font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;<font color=3D"FF0000"><b>IMPLEMENTS</b></fo=
+nt>&nbsp;<font color=3D"0"><i>unit_qualified_identifier</i></font>&nbsp;{&n=
+bsp;'<font color=3D"FF0000"><b>,</b></font>'&nbsp;<font color=3D"0"><i>unit=
+_qualified_identifier</i></font>&nbsp;}&nbsp;'<font color=3D"FF0000"><b>;</=
+b></font>'&nbsp;]&nbsp;<b></b>
+</blockquote> </td> </tr> </tbody></table> </center> <p> The <b>READ</b> id=
+entifier is considered as a keyword only during <b>PROPERTY</b> parsing. Yo=
+u can use the Pascal <i>Read</i> predefined procedure anywhere else,
+and can declare <i>read</i> variable whenever you like. So "read" is only c=
+onsidered as a keyword during <b>PROPERTY</b> processing. Hence our $&lt;pr=
+op directive </p><p> </p></li><li>$i_xxx will ask the generator to emit a c=
+all to a hand written i_xxx.pas
+file where some ad-hoc parsing code will be placed. This is the worst hack =
+of all, and a complete denial of any EBNF handling. We only used this in de=
+sparate cases where we could not write LL1 productions which would
+correctly handle all cases found in the parsing of the VCL (or other Delphi=
+ files we had to analyze). <p> If the grammar was only to show Delphi synta=
+x, this could have been avoided.
+Also, if the grammar had been used LALR parsers more powerful than LL1 (LAL=
+R or other) this could also be removed. </p><p> </p></li><li>some productio=
+ns have several versions, with one or serveral "_" suffixes.
+This is the case for <i>simple_expression</i>. The reason is that the produ=
+ction is found in different productions, sometimes with some slight variati=
+ons. In our case, <i>simple_expression</i> is required <ul> <li>in <i>const=
+ant_expression</i><br>
+</li><li>in <i>type</i><br> </li><li>in <i>expression</i><br> </li></ul> If=
+ the <i>parse_simple_expression</i> procedure is nested within <i>parse_con=
+stant_expression</i>, <i>parse_type</i> and <i>parse_expression</i>, the <i=
+>Delphi</i>
+syntax has no problem of handling the procedure with the same name. But our=
+ <i>Gencot</i> tool requires unique production names, mainly because when w=
+e are writing a grammar, groups of productions are often moved from one pla=
+ce to
+another, and the possible duplicates at a same syntactic level would cause =
+too much trouble.<br> </li><li>our grammar cannot be used to check Delphi s=
+yntax. It accepts constructs that the true Delphi compiler will reject. How=
+ever, the corresponding parser
+will parse Delphi&nbsp;5 correct programs, and this is how we use it: this =
+grammar, or its simplified versions, is used to build tools which require p=
+arsing of Delphi programs (cross-ref, call graphs, liveness, modification
+locus, pretty printing, reordering, renaming, refactoring etc).<br> </li></=
+ul> <br><br> <h3>2.3 - The Delphi 5 Grammar</h3> Here is the grammar: <p> <=
+/p><center> <table border=3D"1" cellspacing=3D"0" cellpadding=3D"0" bgcolor=
+=3D"#FFFFCC" width=3D"80%"> <tbody><tr> <td> <blockquote>
+&nbsp;<br>
+<font color=3D"0"><i>start</i></font>=3D&nbsp;<font color=3D"0"><i>program<=
+/i></font>&nbsp;&nbsp;|&nbsp;<font color=3D"0"><i>unit</i></font>&nbsp;|&nb=
+sp;<font color=3D"0"><i>library</i></font>&nbsp;|&nbsp;<font color=3D"0"><i=
+>package</i></font>&nbsp;<b>.</b><br> <p>
+&nbsp;&nbsp;<font color=3D"0"><i>identifier_list</i></font>=3D&nbsp;<font c=
+olor=3D"0000FF"><b>ID_NAME</b></font>&nbsp;{&nbsp;'<font color=3D"FF0000"><=
+b>,</b></font>'&nbsp;<font color=3D"0000FF"><b>ID_NAME</b></font>&nbsp;}&nb=
+sp;<b>.</b><br>
+&nbsp;&nbsp;<font color=3D"0"><i>unit_qualified_identifier</i></font>=3D&nb=
+sp;<font color=3D"0000FF"><b>ID_NAME</b></font>&nbsp;{&nbsp;'<font color=3D=
+"FF0000"><b>.</b></font>'&nbsp;<font color=3D"0000FF"><b>ID_NAME</b></font>=
+&nbsp;}&nbsp;<b>.</b><br> </p><p>
+&nbsp;&nbsp;<font color=3D"0"><i>type_name</i></font>=3D&nbsp;<font color=
+=3D"0000FF"><b>TYPE_NAME</b></font>&nbsp;|&nbsp;<font color=3D"0000FF"><b>S=
+TRING</b></font>&nbsp;|&nbsp;<font color=3D"FF0000"><b>FILE</b></font>&nbsp=
+;<b>.</b><br>
+&nbsp;&nbsp;<font color=3D"0"><i>unit_qualified_type_name</i></font>=3D&nbs=
+p;<font color=3D"0"><i>type_name</i></font>&nbsp;[&nbsp;'<font color=3D"FF0=
+000"><b>.</b></font>'&nbsp;<font color=3D"0"><i>type_name</i></font>&nbsp;]=
+&nbsp;<b>.</b><br> </p><p>
+&nbsp;&nbsp;<font color=3D"0"><i>function_result_type</i></font>=3D&nbsp;<f=
+ont color=3D"0"><i>type_name</i></font>&nbsp;<b>.</b><br> </p><p> &nbsp;&nb=
+sp;<font color=3D"0"><i>constant_expression</i></font>=3D&nbsp;<font color=
+=3D"FF0000"><b>F</b></font>&nbsp;<b>.</b><br>
+&nbsp;&nbsp;<font color=3D"0"><i>string_expression</i></font>=3D&nbsp;(&nbs=
+p;<font color=3D"0000FF"><b>STRING_NAME</b></font>&nbsp;|&nbsp;<font color=
+=3D"0000FF"><b>STRING_LITTERAL</b></font>&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;'<font color=3D"FF0000"><b>+</b>=
+</font>'&nbsp;(&nbsp;<font color=3D"0000FF"><b>STRING_NAME</b></font>&nbsp;=
+|&nbsp;<font color=3D"0000FF"><b>STRING_LITTERAL</b></font>&nbsp;)&nbsp;}&n=
+bsp;<b>.</b><br> </p><p>
+&nbsp;&nbsp;<font color=3D"0"><i>variable_access</i></font>=3D&nbsp;(&nbsp;=
+<font color=3D"0000FF"><b>ACCESS_NAME</b></font>&nbsp;|&nbsp;<font color=3D=
+"0000FF"><b>STRING</b></font>&nbsp;)&nbsp;{&nbsp;<font color=3D"0"><i>end_a=
+ccess_</i></font>&nbsp;}&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>end_access_</i></font>=3D&nbsp=
+;{&nbsp;<font color=3D"0"><i>array_access_</i></font>&nbsp;|&nbsp;<font col=
+or=3D"0"><i>record_access_</i></font>&nbsp;|&nbsp;'<font color=3D"FF0000"><=
+b>^</b></font>'&nbsp;|&nbsp;<font color=3D"0"><i>function_parameters_</i></=
+font>&nbsp;}&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>array_access_</i><=
+/font>=3D&nbsp;'<font color=3D"FF0000"><b>[</b></font>'&nbsp;<font color=3D=
+"0"><i>constant_expression</i></font>&nbsp;{&nbsp;'<font color=3D"FF0000"><=
+b>,</b></font>'&nbsp;<font color=3D"0"><i>constant_expression</i></font>&nb=
+sp;}&nbsp;'<font color=3D"FF0000"><b>]</b></font>'&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>record_access_</i>=
+</font>=3D&nbsp;'<font color=3D"FF0000"><b>.</b></font>'&nbsp;<font color=
+=3D"0"><i>variable_access</i></font>&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>function_parameter=
+s_</i></font>=3D&nbsp;'<font color=3D"FF0000"><b>(</b></font>'&nbsp;[&nbsp;=
+<font color=3D"0"><i>constant_expression</i></font>&nbsp;{&nbsp;'<font colo=
+r=3D"FF0000"><b>,</b></font>'&nbsp;<font color=3D"0"><i>constant_expression=
+</i></font>&nbsp;}&nbsp;]&nbsp;'<font color=3D"FF0000"><b>)</b></font>'&nbs=
+p;<b>.</b><br>
+</p><p>
+&nbsp;&nbsp;<font color=3D"0"><i>set_factor</i></font>=3D&nbsp;'<font color=
+=3D"FF0000"><b>[</b></font>'&nbsp;[&nbsp;<font color=3D"0"><i>set_element</=
+i></font>&nbsp;{&nbsp;'<font color=3D"FF0000"><b>,</b></font>'&nbsp;<font c=
+olor=3D"0"><i>set_element</i></font>&nbsp;}&nbsp;]&nbsp;'<font color=3D"FF0=
+000"><b>]</b></font>'&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>set_element</i></font>=3D&nbsp=
+;<font color=3D"0"><i>constant_expression</i></font>&nbsp;[&nbsp;'<font col=
+or=3D"FF0000"><b>..</b></font>'&nbsp;<font color=3D"0"><i>constant_expressi=
+on</i></font>&nbsp;]&nbsp;<b>.</b><br>
+</p><p>
+&nbsp;&nbsp;<font color=3D"0"><i>constant_expression</i></font>=3D&nbsp;<fo=
+nt color=3D"0"><i>simple_expression__</i></font>&nbsp;[&nbsp;('<font color=
+=3D"FF0000"><b>=3D</b></font>'&nbsp;|&nbsp;'<font color=3D"FF0000"><b>&lt;&=
+gt;</b></font>'&nbsp;|&nbsp;'<font color=3D"FF0000"><b>&lt;</b></font>'&nbs=
+p;|&nbsp;'<font color=3D"FF0000"><b>&lt;=3D</b></font>'&nbsp;|&nbsp;'<font =
+color=3D"FF0000"><b>&gt;</b></font>'&nbsp;|&nbsp;'<font color=3D"FF0000"><b=
+>&gt;=3D</b></font>'&nbsp;|&nbsp;<font color=3D"FF0000"><b>IN</b></font>&nb=
+sp;&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>simple_expression_=
+_</i></font>&nbsp;]&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>simple_expression__</i></font>=
+=3D&nbsp;[&nbsp;'<font color=3D"FF0000"><b>+</b></font>'&nbsp;|&nbsp;'<font=
+ color=3D"FF0000"><b>-</b></font>'&nbsp;]&nbsp;<font color=3D"0"><i>term__<=
+/i></font>&nbsp;{&nbsp;('<font color=3D"FF0000"><b>+</b></font>'&nbsp;|&nbs=
+p;'<font color=3D"FF0000"><b>-</b></font>'&nbsp;|&nbsp;<font color=3D"FF000=
+0"><b>OR</b></font>&nbsp;|&nbsp;<font color=3D"FF0000"><b>XOR</b></font>&nb=
+sp;)&nbsp;<font color=3D"0"><i>term__</i></font>&nbsp;&nbsp;}&nbsp;<b>.</b>=
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>term__</i></font>=
+=3D&nbsp;<font color=3D"0"><i>factor__</i></font>&nbsp;{&nbsp;('<font color=
+=3D"FF0000"><b>*</b></font>'&nbsp;|&nbsp;'<font color=3D"FF0000"><b>/</b></=
+font>'&nbsp;|&nbsp;<font color=3D"FF0000"><b>DIV</b></font>&nbsp;|&nbsp;<fo=
+nt color=3D"FF0000"><b>MOD</b></font>&nbsp;|&nbsp;<font color=3D"FF0000"><b=
+>AND</b></font>&nbsp;|&nbsp;<font color=3D"FF0000"><b>SHR</b></font>&nbsp;|=
+&nbsp;<font color=3D"FF0000"><b>SHL</b></font>&nbsp;)&nbsp;<font color=3D"0=
+"><i>factor__</i></font>&nbsp;}&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>factor=
+__</i></font>=3D&nbsp;<font color=3D"0000FF"><b>NUMBER</b></font>&nbsp;|&nb=
+sp;<font color=3D"0000FF"><b>STRING_LITTERAL</b></font>&nbsp;|&nbsp;<font c=
+olor=3D"FF0000"><b>NIL</b></font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&n=
+bsp;<font color=3D"0"><i>variable_access</i></font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&n=
+bsp;<font color=3D"FF0000"><b>NOT</b></font>&nbsp;<font color=3D"0"><i>fact=
+or__</i></font>&nbsp;|&nbsp;'<font color=3D"FF0000"><b>@</b></font>'&nbsp;<=
+font color=3D"0"><i>factor__</i></font>&nbsp;|&nbsp;<font color=3D"0"><i>se=
+t_factor</i></font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&n=
+bsp;'<font color=3D"FF0000"><b>^</b></font>'&nbsp;<font color=3D"0000FF"><b=
+>NAME</b></font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&n=
+bsp;'<font color=3D"FF0000"><b>(</b></font>'&nbsp;<font color=3D"0"><i>cons=
+tant_expression</i></font>&nbsp;'<font color=3D"FF0000"><b>)</b></font>'<b>=
+.</b><br> </p><p>
+&nbsp;&nbsp;<font color=3D"0"><i>typed_constant</i></font>=3D&nbsp;<font co=
+lor=3D"0"><i>simple_expression_</i></font>&nbsp;[&nbsp;('<font color=3D"FF0=
+000"><b>=3D</b></font>'&nbsp;|&nbsp;'<font color=3D"FF0000"><b>&lt;&gt;</b>=
+</font>'&nbsp;|&nbsp;'<font color=3D"FF0000"><b>&lt;</b></font>'&nbsp;|&nbs=
+p;'<font color=3D"FF0000"><b>&lt;=3D</b></font>'&nbsp;|&nbsp;'<font color=
+=3D"FF0000"><b>&gt;</b></font>'&nbsp;|&nbsp;'<font color=3D"FF0000"><b>&gt;=
+=3D</b></font>'&nbsp;|&nbsp;<font color=3D"FF0000"><b>IN</b></font>&nbsp;&n=
+bsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>simple_expression_=
+</i></font>&nbsp;]&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>simple_expression_</i></font>=
+=3D&nbsp;[&nbsp;'<font color=3D"FF0000"><b>+</b></font>'&nbsp;|&nbsp;'<font=
+ color=3D"FF0000"><b>-</b></font>'&nbsp;]&nbsp;<font color=3D"0"><i>term_</=
+i></font>&nbsp;{&nbsp;('<font color=3D"FF0000"><b>+</b></font>'&nbsp;|&nbsp=
+;'<font color=3D"FF0000"><b>-</b></font>'&nbsp;|&nbsp;<font color=3D"FF0000=
+"><b>OR</b></font>&nbsp;|&nbsp;<font color=3D"FF0000"><b>XOR</b></font>&nbs=
+p;)&nbsp;<font color=3D"0"><i>term_</i></font>&nbsp;}&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>term_</i></font>=
+=3D&nbsp;<font color=3D"0"><i>factor_</i></font>&nbsp;{&nbsp;('<font color=
+=3D"FF0000"><b>*</b></font>'&nbsp;|&nbsp;'<font color=3D"FF0000"><b>/</b></=
+font>'&nbsp;|&nbsp;<font color=3D"FF0000"><b>DIV</b></font>&nbsp;|&nbsp;<fo=
+nt color=3D"FF0000"><b>MOD</b></font>&nbsp;|&nbsp;<font color=3D"FF0000"><b=
+>AND</b></font>&nbsp;|&nbsp;<font color=3D"FF0000"><b>SHR</b></font>&nbsp;|=
+&nbsp;<font color=3D"FF0000"><b>SHL</b></font>&nbsp;)&nbsp;<font color=3D"0=
+"><i>factor_</i></font>&nbsp;}&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>factor=
+_</i></font>=3D&nbsp;<font color=3D"0000FF"><b>NUMBER</b></font>&nbsp;|&nbs=
+p;<font color=3D"0000FF"><b>STRING_LITTERAL</b></font>&nbsp;|&nbsp;<font co=
+lor=3D"FF0000"><b>NIL</b></font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<fo=
+nt color=3D"FF00FF">//&nbsp;--&nbsp;id&nbsp;or&nbsp;field&nbsp;"(f1:&nbsp;v=
+1;&nbsp;f2:&nbsp;v2)"</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&n=
+bsp;<font color=3D"0"><i>variable_access</i></font>&nbsp;[&nbsp;'<font colo=
+r=3D"FF0000"><b>:</b></font>'&nbsp;<font color=3D"0"><i>typed_constant</i><=
+/font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;{&nbsp;'<font color=3D"FF0000"><b>;</b></font>'&nbsp;<=
+font color=3D"0"><i>variable_access</i></font>&nbsp;'<font color=3D"FF0000"=
+><b>:</b></font>'&nbsp;<font color=3D"0"><i>typed_constant</i></font>&nbsp;=
+}&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&n=
+bsp;<font color=3D"FF0000"><b>NOT</b></font>&nbsp;<font color=3D"0"><i>fact=
+or_</i></font>&nbsp;|&nbsp;'<font color=3D"FF0000"><b>@</b></font>'&nbsp;<f=
+ont color=3D"0"><i>factor_</i></font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&n=
+bsp;'<font color=3D"FF0000"><b>^</b></font>'&nbsp;<font color=3D"0000FF"><b=
+>NAME</b></font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&n=
+bsp;'<font color=3D"FF0000"><b>(</b></font>'&nbsp;[&nbsp;<font color=3D"0">=
+<i>typed_constant_</i></font>]&nbsp;&nbsp;'<font color=3D"FF0000"><b>)</b><=
+/font>'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&n=
+bsp;<font color=3D"0"><i>set_factor</i></font>&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"=
+FF00FF">//&nbsp;--&nbsp;array&nbsp;"(1,&nbsp;2,&nbsp;3)"&nbsp;or&nbsp;"fn(p=
+1,&nbsp;p2")</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"=
+0"><i>typed_constant_</i></font>=3D&nbsp;<font color=3D"0"><i>typed_constan=
+t</i></font>&nbsp;{&nbsp;'<font color=3D"FF0000"><b>,</b></font>'&nbsp;<fon=
+t color=3D"0"><i>typed_constant</i></font>&nbsp;}&nbsp;<b>.</b><br>
+</p><p>
+&nbsp;&nbsp;<font color=3D"0"><i>formal_parameters</i></font>=3D&nbsp;'<fon=
+t color=3D"FF0000"><b>(</b></font>'&nbsp;<font color=3D"0"><i>formal_parame=
+ter</i></font>&nbsp;{&nbsp;'<font color=3D"FF0000"><b>;</b></font>'&nbsp;<f=
+ont color=3D"0"><i>formal_parameter</i></font>&nbsp;}&nbsp;'<font color=3D"=
+FF0000"><b>)</b></font>'&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>formal_parameter</i></font>=3D=
+&nbsp;[&nbsp;<font color=3D"0"><i>parameter</i></font>&nbsp;|&nbsp;<font co=
+lor=3D"0"><i>var_parameter</i></font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;<font color=3D"0"><i=
+>const_parameter</i></font>&nbsp;|&nbsp;<font color=3D"0"><i>out_parameter<=
+/i></font>&nbsp;|&nbsp;<font color=3D"0"><i>in_parameter</i></font>&nbsp;]&=
+nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>parameter_name_lis=
+t</i></font>=3D&nbsp;<font color=3D"0000FF"><b>PARAMETER_NAME</b></font>&nb=
+sp;{&nbsp;'<font color=3D"FF0000"><b>,</b></font>'&nbsp;<font color=3D"0000=
+FF"><b>PARAMETER_NAME</b></font>&nbsp;}&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>array_or_name_type=
+</i></font>=3D&nbsp;<font color=3D"FF0000"><b>ARRAY</b></font>&nbsp;<font c=
+olor=3D"FF0000"><b>OF</b></font>&nbsp;(&nbsp;<font color=3D"FF0000"><b>CONS=
+T</b></font>&nbsp;|&nbsp;<font color=3D"0"><i>unit_qualified_type_name</i><=
+/font>&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;<font co=
+lor=3D"0"><i>unit_qualified_type_name</i></font>&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>parameter</i></fon=
+t>=3D&nbsp;<font color=3D"0"><i>parameter_name_list</i></font>&nbsp;'<font =
+color=3D"FF0000"><b>:</b></font>'&nbsp;<font color=3D"0"><i>array_or_name_t=
+ype</i></font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;['<font color=
+=3D"FF0000"><b>=3D</b></font>'&nbsp;<font color=3D"0"><i>constant_expressio=
+n</i></font>&nbsp;]&nbsp;&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>var_parameter</i><=
+/font>=3D&nbsp;<font color=3D"FF0000"><b>VAR</b></font>&nbsp;<font color=3D=
+"0"><i>parameter_name_list</i></font>&nbsp;[&nbsp;'<font color=3D"FF0000"><=
+b>:</b></font>'&nbsp;<font color=3D"0"><i>array_or_name_type</i></font>&nbs=
+p;]&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>const_parameter</i=
+></font>=3D&nbsp;<font color=3D"FF0000"><b>CONST</b></font>&nbsp;<font colo=
+r=3D"0"><i>parameter_name_list</i></font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;'<font c=
+olor=3D"FF0000"><b>:</b></font>'&nbsp;<font color=3D"0"><i>array_or_name_ty=
+pe</i></font>&nbsp;['<font color=3D"FF0000"><b>=3D</b></font>'&nbsp;<font c=
+olor=3D"0"><i>constant_expression</i></font>&nbsp;]&nbsp;]&nbsp;<b>.</b><br=
+>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>out_parameter</i><=
+/font>=3D&nbsp;<font color=3D"FF0000"><b>OUT</b></font>&nbsp;<font color=3D=
+"0"><i>parameter_name_list</i></font>&nbsp;[&nbsp;'<font color=3D"FF0000"><=
+b>:</b></font>'&nbsp;<font color=3D"0"><i>array_or_name_type</i></font>&nbs=
+p;]&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>in_parameter</i></=
+font>=3D&nbsp;<font color=3D"FF0000"><b>IN</b></font>&nbsp;<font color=3D"0=
+"><i>parameter</i></font>&nbsp;<b>.</b><br> </p><p>
+&nbsp;&nbsp;<font color=3D"0"><i>dos_directives</i></font>=3D&nbsp;<font co=
+lor=3D"FF0000"><b>NEAR</b></font>&nbsp;|&nbsp;<font color=3D"FF0000"><b>FAR=
+</b></font>&nbsp;|&nbsp;<font color=3D"FF0000"><b>EXPORT</b></font>&nbsp;|&=
+nbsp;<font color=3D"FF0000"><b>ASSEMBLER</b></font>&nbsp;<b>.</b><br>
+&nbsp;&nbsp;<font color=3D"0"><i>calling_directives</i></font>=3D&nbsp;<fon=
+t color=3D"FF0000"><b>CDECL</b></font>&nbsp;|&nbsp;<font color=3D"FF0000"><=
+b>PASCAL</b></font>&nbsp;|&nbsp;<font color=3D"FF0000"><b>REGISTER</b></fon=
+t>&nbsp;|&nbsp;<font color=3D"FF0000"><b>SAFECALL</b></font>&nbsp;|&nbsp;<f=
+ont color=3D"FF0000"><b>STDCALL</b></font>&nbsp;<b>.</b><br>
+&nbsp;&nbsp;<font color=3D"0"><i>overload_directive</i></font>=3D&nbsp;<fon=
+t color=3D"FF0000"><b>OVERLOAD</b></font>&nbsp;<b>.</b><br>
+&nbsp;&nbsp;<font color=3D"0"><i>method_directives</i></font>=3D&nbsp;<font=
+ color=3D"FF0000"><b>ABSTRACT</b></font>&nbsp;|&nbsp;<font color=3D"FF0000"=
+><b>VIRTUAL</b></font>&nbsp;|&nbsp;<font color=3D"FF0000"><b>DYNAMIC</b></f=
+ont><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;<font color=3D"FF000=
+0"><b>OVERRIDE</b></font>&nbsp;|&nbsp;<font color=3D"FF0000"><b>REINTRODUCE=
+</b></font>&nbsp;|&nbsp;<font color=3D"FF0000"><b>MESSAGE</b></font>&nbsp;<=
+font color=3D"0"><i>constant_expression</i></font>&nbsp;<b>.</b><br>
+</p><p> &nbsp;&nbsp;<font color=3D"0"><i>const_type_var_declarations</i></f=
+ont>=3D&nbsp;<font color=3D"0"><i>constant_definitions</i></font>&nbsp;|&nb=
+sp;<font color=3D"0"><i>resource_defintions</i></font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;<font color=3D"0"><i>type_defini=
+tions</i></font>&nbsp;|&nbsp;<font color=3D"0"><i>variable_declarations</i>=
+</font>&nbsp;<b>.</b><br> </p><p>
+&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>type</i></font>=3D&nbsp;<font =
+color=3D"0"><i>keyed_types</i></font>&nbsp;|&nbsp;<font color=3D"0"><i>type=
+_0</i></font>&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"FF00FF">//&nbsp;--&nbsp;=
+called&nbsp;by&nbsp;i_type</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>enumeration_type</=
+i></font>=3D&nbsp;'<font color=3D"FF0000"><b>(</b></font>'&nbsp;<font color=
+=3D"0"><i>identifier_list</i></font>&nbsp;'<font color=3D"FF0000"><b>)</b><=
+/font>'&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>expression_t</i></=
+font>=3D&nbsp;<font color=3D"0"><i>simple_expression_t</i></font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;(&nbsp;(=
+'<font color=3D"FF0000"><b>=3D</b></font>'&nbsp;|&nbsp;'<font color=3D"FF00=
+00"><b>&lt;&gt;</b></font>'&nbsp;|&nbsp;'<font color=3D"FF0000"><b>&lt;</b>=
+</font>'&nbsp;|&nbsp;'<font color=3D"FF0000"><b>&lt;=3D</b></font>'&nbsp;|&=
+nbsp;'<font color=3D"FF0000"><b>&gt;</b></font>'&nbsp;|&nbsp;'<font color=
+=3D"FF0000"><b>&gt;=3D</b></font>'&nbsp;|&nbsp;<font color=3D"FF0000"><b>IN=
+</b></font>&nbsp;&nbsp;)&nbsp;<font color=3D"0"><i>simple_expression_t</i><=
+/font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&n=
+bsp;'<font color=3D"FF0000"><b>..</b></font>'&nbsp;<font color=3D"0"><i>end=
+_range_type</i></font>&nbsp;)&nbsp;]&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>simple=
+_expression_t</i></font>=3D&nbsp;[&nbsp;'<font color=3D"FF0000"><b>+</b></f=
+ont>'&nbsp;|&nbsp;'<font color=3D"FF0000"><b>-</b></font>'&nbsp;]&nbsp;<fon=
+t color=3D"0"><i>term_t</i></font>&nbsp;{&nbsp;('<font color=3D"FF0000"><b>=
++</b></font>'&nbsp;|&nbsp;'<font color=3D"FF0000"><b>-</b></font>'&nbsp;|&n=
+bsp;<font color=3D"FF0000"><b>OR</b></font>&nbsp;|&nbsp;<font color=3D"FF00=
+00"><b>XOR</b></font>&nbsp;)&nbsp;<font color=3D"0"><i>term_t</i></font>&nb=
+sp;}&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"=
+0"><i>term_t</i></font>=3D&nbsp;<font color=3D"0"><i>factor_t</i></font>&nb=
+sp;{&nbsp;('<font color=3D"FF0000"><b>*</b></font>'&nbsp;|&nbsp;'<font colo=
+r=3D"FF0000"><b>/</b></font>'&nbsp;|&nbsp;<font color=3D"FF0000"><b>DIV</b>=
+</font>&nbsp;|&nbsp;<font color=3D"FF0000"><b>MOD</b></font>&nbsp;|&nbsp;<f=
+ont color=3D"FF0000"><b>AND</b></font>&nbsp;|&nbsp;<font color=3D"FF0000"><=
+b>SHR</b></font>&nbsp;|&nbsp;<font color=3D"FF0000"><b>SHL</b></font>&nbsp;=
+)&nbsp;<font color=3D"0"><i>factor_t</i></font>&nbsp;}&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<fo=
+nt color=3D"0"><i>factor_t</i></font>=3D&nbsp;<font color=3D"0000FF"><b>NUM=
+BER</b></font>&nbsp;|&nbsp;<font color=3D"0000FF"><b>STRING_LITTERAL</b></f=
+ont>&nbsp;|&nbsp;<font color=3D"FF0000"><b>NIL</b></font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;|&nbsp;<font color=3D"0"><i>variable_access</i></font>=
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;|&nbsp;<font color=3D"FF0000"><b>NOT</b></font>&nbsp;<=
+font color=3D"0"><i>factor_t</i></font>&nbsp;|&nbsp;'<font color=3D"FF0000"=
+><b>@</b></font>'&nbsp;<font color=3D"0"><i>factor_t</i></font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;|&nbsp;'<font color=3D"FF0000"><b>^</b></font>'&nbsp;<=
+font color=3D"0000FF"><b>NAME</b></font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;|&nbsp;'<font color=3D"FF0000"><b>(</b></font>'&nbsp;<=
+font color=3D"0"><i>expression_t</i></font>&nbsp;'<font color=3D"FF0000"><b=
+>)</b></font>'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;|&nbsp;<font color=3D"0"><i>set_factor</i></font>&nbsp=
+;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>end_ra=
+nge_type</i></font>=3D&nbsp;<font color=3D"0"><i>simple_expression_t</i></f=
+ont>&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>type_0</i></font>=
+=3D&nbsp;(&nbsp;<font color=3D"0000FF"><b>NUMBER</b></font>&nbsp;|&nbsp;<fo=
+nt color=3D"0000FF"><b>STRING_LITTERAL</b></font>&nbsp;|&nbsp;<font color=
+=3D"FF0000"><b>NIL</b></font>&nbsp;|&nbsp;<font color=3D"FF0000"><b>NOT</b>=
+</font>&nbsp;|&nbsp;'<font color=3D"FF0000"><b>+</b></font>'&nbsp;|&nbsp;'<=
+font color=3D"FF0000"><b>-</b></font>'&nbsp;|&nbsp;'<font color=3D"FF0000">=
+<b>@</b></font>'&nbsp;|&nbsp;'<font color=3D"FF0000"><b>(</b></font>'&nbsp;=
+|&nbsp;'<font color=3D"FF0000"><b>[</b></font>'&nbsp;|&nbsp;<font color=3D"=
+0000FF"><b>NAME</b></font>&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$<font color=3D=
+"0"><i>i_type</i></font>&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>keyed_types</i></f=
+ont>=3D&nbsp;<font color=3D"0"><i>string_type</i></font>&nbsp;|&nbsp;<font =
+color=3D"0"><i>structured_type</i></font>&nbsp;|&nbsp;<font color=3D"0"><i>=
+pointer_type</i></font>&nbsp;|&nbsp;<font color=3D"0"><i>procedural_type</i=
+></font>&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"FF00FF">//&n=
+bsp;--&nbsp;handle&nbsp;STRING&nbsp;as&nbsp;array[index_type]</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>string=
+_type</i></font>=3D&nbsp;<font color=3D"0000FF"><b>STRING</b></font>&nbsp;[=
+&nbsp;'<font color=3D"FF0000"><b>[</b></font>'&nbsp;<font color=3D"0"><i>co=
+nstant_expression</i></font>&nbsp;'<font color=3D"FF0000"><b>]</b></font>'&=
+nbsp;]&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>struct=
+ured_type</i></font>=3D&nbsp;[&nbsp;<font color=3D"FF0000"><b>PACKED</b></f=
+ont>&nbsp;]&nbsp;(&nbsp;<font color=3D"0"><i>array_type</i></font>&nbsp;|&n=
+bsp;<font color=3D"0"><i>record_type</i></font>&nbsp;|&nbsp;<font color=3D"=
+0"><i>set_type</i></font>&nbsp;|&nbsp;<font color=3D"0"><i>file_type</i></f=
+ont>&nbsp;&nbsp;)&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"=
+0"><i>array_type</i></font>=3D&nbsp;<font color=3D"FF0000"><b>ARRAY</b></fo=
+nt>&nbsp;[&nbsp;'<font color=3D"FF0000"><b>[</b></font>'&nbsp;<font color=
+=3D"0"><i>index_type</i></font>&nbsp;{&nbsp;'<font color=3D"FF0000"><b>,</b=
+></font>'&nbsp;<font color=3D"0"><i>index_type</i></font>&nbsp;}&nbsp;'<fon=
+t color=3D"FF0000"><b>]</b></font>'&nbsp;]&nbsp;<font color=3D"FF0000"><b>O=
+F</b></font>&nbsp;<font color=3D"0"><i>type</i></font>&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<fo=
+nt color=3D"0"><i>index_type</i></font>=3D&nbsp;<font color=3D"0"><i>consta=
+nt_expression</i></font>&nbsp;[&nbsp;'<font color=3D"FF0000"><b>..</b></fon=
+t>'&nbsp;<font color=3D"0"><i>constant_expression</i></font>&nbsp;]&nbsp;<b=
+>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"=
+0"><i>record_type</i></font>=3D&nbsp;<font color=3D"FF0000"><b>RECORD</b></=
+font>&nbsp;<font color=3D"0"><i>field_list</i></font>&nbsp;<font color=3D"F=
+F0000"><b>END</b></font>&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<fo=
+nt color=3D"0"><i>field_list</i></font>=3D&nbsp;{&nbsp;<font color=3D"0"><i=
+>common_field</i></font>&nbsp;'<font color=3D"FF0000"><b>;</b></font>'&nbsp=
+;}&nbsp;[&nbsp;<font color=3D"0"><i>variant_fields</i></font>&nbsp;]&nbsp;<=
+b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;<font color=3D"0"><i>common_field</i></font>=3D&nbsp;<font color=
+=3D"0"><i>identifier_list</i></font>&nbsp;'<font color=3D"FF0000"><b>:</b><=
+/font>'&nbsp;<font color=3D"0"><i>type</i></font>&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;<font color=3D"0"><i>variant_fields</i></font>=3D&nbsp;<font color=
+=3D"FF0000"><b>CASE</b></font>&nbsp;<font color=3D"0"><i>tag</i></font>&nbs=
+p;<font color=3D"FF0000"><b>OF</b></font>&nbsp;<font color=3D"0"><i>cases</=
+i></font>&nbsp;{&nbsp;<font color=3D"0"><i>cases</i></font>&nbsp;}&nbsp;<b>=
+.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>tag</i></font>=3D&nbsp;<font colo=
+r=3D"0000FF"><b>VARIANT_TAG_NAME</b></font>&nbsp;[&nbsp;'<font color=3D"FF0=
+000"><b>:</b></font>'&nbsp;<font color=3D"0"><i>unit_qualified_type_name</i=
+></font>&nbsp;]&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>cases</i></font>=3D&nbsp;<font co=
+lor=3D"0"><i>constant_expression</i></font>&nbsp;{&nbsp;'<font color=3D"FF0=
+000"><b>,</b></font>'&nbsp;<font color=3D"0"><i>constant_expression</i></fo=
+nt>&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'<font color=3D"FF0000"><b>:</=
+b></font>'&nbsp;<font color=3D"0"><i>one_case</i></font>&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>one_case</i></font>=
+=3D&nbsp;'<font color=3D"FF0000"><b>(</b></font>'&nbsp;[&nbsp;<font color=
+=3D"0"><i>common_field</i></font>&nbsp;{&nbsp;'<font color=3D"FF0000"><b>;<=
+/b></font>'&nbsp;[&nbsp;(&nbsp;<font color=3D"0"><i>common_field</i></font>=
+&nbsp;|&nbsp;<font color=3D"0"><i>variant_fields</i></font>&nbsp;)&nbsp;]&n=
+bsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;<font color=3D"0"><i=
+>variant_fields</i></font>&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;'<font color=3D"FF0000"><b>)</b></font>'&nbsp;[&nbsp;'<fo=
+nt color=3D"FF0000"><b>;</b></font>'&nbsp;]&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"=
+0"><i>set_type</i></font>=3D&nbsp;<font color=3D"FF0000"><b>SET</b></font>&=
+nbsp;<font color=3D"FF0000"><b>OF</b></font>&nbsp;<font color=3D"0"><i>type=
+</i></font>&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"=
+0"><i>file_type</i></font>=3D&nbsp;<font color=3D"FF0000"><b>FILE</b></font=
+>&nbsp;[&nbsp;<font color=3D"FF0000"><b>OF</b></font>&nbsp;<font color=3D"0=
+"><i>type</i></font>&nbsp;]&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>pointe=
+r_type</i></font>=3D&nbsp;'<font color=3D"FF0000"><b>^</b></font>'&nbsp;<fo=
+nt color=3D"0000FF"><b>POINTED_NAME</b></font>&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>proced=
+ural_type</i></font>=3D&nbsp;(&nbsp;<font color=3D"FF0000"><b>PROCEDURE</b>=
+</font>&nbsp;[&nbsp;<font color=3D"0"><i>formal_parameters</i></font>&nbsp;=
+]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;|&nbsp;<font color=3D"FF0000"><b>FUNCTION</b></font>&n=
+bsp;[&nbsp;<font color=3D"0"><i>formal_parameters</i></font>&nbsp;]&nbsp;'<=
+font color=3D"FF0000"><b>:</b></font>'&nbsp;<font color=3D"0"><i>function_r=
+esult_type</i></font>&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$&l=
+t;<font color=3D"0"><i>dir</i></font>(&nbsp;[&nbsp;<font color=3D"FF0000"><=
+b>OF</b></font>&nbsp;<font color=3D"FF0000"><b>OBJECT</b></font>&nbsp;]&nbs=
+p;|&nbsp;<font color=3D"0"><i>i_procedural_type_directives</i></font>&nbsp;=
+)&nbsp;$&gt;<font color=3D"0"><i>dir</i></font>&nbsp;&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"=
+0"><i>procedural_type_directives</i></font>=3D&nbsp;<font color=3D"0"><i>ca=
+lling_directives</i></font>&nbsp;&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"=
+0"><i>i_procedural_type_directives</i></font>=3D&nbsp;&nbsp;(&nbsp;'<font c=
+olor=3D"FF0000"><b>;</b></font>'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;|&nbsp;<font color=3D"FF0000"><b>CDECL</b></font>&nbsp;|&nbsp;<fon=
+t color=3D"FF0000"><b>PASCAL</b></font>&nbsp;|&nbsp;<font color=3D"FF0000">=
+<b>REGISTER</b></font>&nbsp;|&nbsp;<font color=3D"FF0000"><b>SAFECALL</b></=
+font>&nbsp;|&nbsp;<font color=3D"FF0000"><b>STDCALL</b></font>&nbsp;)&nbsp;=
+$<font color=3D"0"><i>i_directives</i></font>&nbsp;<b>.</b><br>
+</p><p>
+&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>constant_definitions</i></font=
+>=3D&nbsp;<font color=3D"FF0000"><b>CONST</b></font>&nbsp;<font color=3D"0"=
+><i>constant_definition</i></font>&nbsp;{&nbsp;<font color=3D"0"><i>constan=
+t_definition</i></font>&nbsp;&nbsp;}&nbsp;&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>constant_definitio=
+n</i></font>=3D&nbsp;<font color=3D"0000FF"><b>CONST_NAME</b></font>&nbsp;[=
+&nbsp;'<font color=3D"FF0000"><b>:</b></font>'&nbsp;<font color=3D"0"><i>ty=
+pe</i></font>&nbsp;]&nbsp;'<font color=3D"FF0000"><b>=3D</b></font>'&nbsp;<=
+font color=3D"0"><i>typed_constant</i></font>&nbsp;'<font color=3D"FF0000">=
+<b>;</b></font>'&nbsp;<b>.</b><br>
+</p><p>
+&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>resource_defintions</i></font>=
+=3D&nbsp;<font color=3D"0000FF"><b>RESOURCESTRING</b></font>&nbsp;<font col=
+or=3D"0"><i>resource_definition</i></font>&nbsp;{&nbsp;<font color=3D"0"><i=
+>resource_definition</i></font>&nbsp;}&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>resource_definitio=
+n</i></font>=3D&nbsp;<font color=3D"0000FF"><b>RESOURCE_NAME</b></font>&nbs=
+p;'<font color=3D"FF0000"><b>=3D</b></font>'&nbsp;<font color=3D"0"><i>stri=
+ng_expression</i></font>&nbsp;'<font color=3D"FF0000"><b>;</b></font>'&nbsp=
+;<b>.</b><br>
+</p><p>
+&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>type_definitions</i></font>=3D=
+&nbsp;<font color=3D"FF0000"><b>TYPE</b></font>&nbsp;<font color=3D"0"><i>t=
+ype_definition</i></font>&nbsp;&nbsp;{&nbsp;<font color=3D"0"><i>type_defin=
+ition</i></font>&nbsp;&nbsp;}&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>type_definition</i=
+></font>=3D&nbsp;<font color=3D"0000FF"><b>TYPE_NAME</b></font>&nbsp;'<font=
+ color=3D"FF0000"><b>=3D</b></font>'&nbsp;[&nbsp;<font color=3D"FF0000"><b>=
+TYPE</b></font>&nbsp;]&nbsp;(&nbsp;<font color=3D"0"><i>class_type</i></fon=
+t>&nbsp;|&nbsp;<font color=3D"0"><i>interface_type</i></font>&nbsp;|&nbsp;<=
+font color=3D"0"><i>type</i></font>&nbsp;)&nbsp;'<font color=3D"FF0000"><b>=
+;</b></font>'&nbsp;<b>.</b><br>
+</p><p> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"FF00=
+FF">//&nbsp;--&nbsp;used&nbsp;in&nbsp;INTERFACE&nbsp;also</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>proper=
+ty</i></font>=3D&nbsp;<font color=3D"FF0000"><b>PROPERTY</b></font>&nbsp;$&=
+gt;<font color=3D"0"><i>priv</i></font>&nbsp;<font color=3D"0000FF"><b>PROP=
+ERTY_NAME</b></font>&nbsp;[&nbsp;<font color=3D"0"><i>property_type</i></fo=
+nt>&nbsp;]&nbsp;<font color=3D"0"><i>property_specifiers</i></font>&nbsp;<b=
+>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"=
+0"><i>property_type</i></font>=3D&nbsp;[&nbsp;<font color=3D"0"><i>property=
+_indexes</i></font>&nbsp;]&nbsp;'<font color=3D"FF0000"><b>:</b></font>'&nb=
+sp;<font color=3D"0"><i>unit_qualified_type_name</i></font>&nbsp;<b>.</b><b=
+r>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<fo=
+nt color=3D"0"><i>property_indexes</i></font>=3D&nbsp;'<font color=3D"FF000=
+0"><b>[</b></font>'&nbsp;<font color=3D"0"><i>property_index</i></font>&nbs=
+p;{&nbsp;'<font color=3D"FF0000"><b>;</b></font>'&nbsp;<font color=3D"0"><i=
+>property_index</i></font>&nbsp;}&nbsp;'<font color=3D"FF0000"><b>]</b></fo=
+nt>'&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;<font color=3D"0"><i>property_index</i></font>=3D&nbsp;[&nbsp;<fon=
+t color=3D"FF0000"><b>CONST</b></font>&nbsp;]&nbsp;<font color=3D"0000FF"><=
+b>INDEX_NAME</b></font>&nbsp;{&nbsp;'<font color=3D"FF0000"><b>,</b></font>=
+'&nbsp;<font color=3D"0000FF"><b>INDEX_NAME</b></font>&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'<font color=3D"FF0000"><b>:</b></font>'&n=
+bsp;<font color=3D"0"><i>unit_qualified_type_name</i></font>&nbsp;<b>.</b><=
+br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"=
+0"><i>property_specifiers</i></font>=3D&nbsp;$&lt;<font color=3D"0"><i>prop=
+</i></font>&nbsp;[&nbsp;<font color=3D"FF0000"><b>INDEX</b></font>&nbsp;<fo=
+nt color=3D"0"><i>constant_expression</i></font>&nbsp;]&nbsp;$&gt;<font col=
+or=3D"0"><i>prop</i></font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;<font color=3D"FF00FF">//&nbsp;--&nbsp;"READ&nbsp;FTabSize.Y"</fon=
+t><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;$&lt;<font color=3D"0"><i>prop</i></font>&nbsp;[&nbsp;<font color=
+=3D"FF0000"><b>READ</b></font>&nbsp;<font color=3D"0"><i>variable_access</i=
+></font>&nbsp;|&nbsp;<font color=3D"FF0000"><b>READONLY</b></font>&nbsp;]<b=
+r>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;<font color=3D"FF0000"><b>WRITE</b>=
+</font>&nbsp;<font color=3D"0000FF"><b>WRITE_NAME</b></font>&nbsp;|&nbsp;<f=
+ont color=3D"FF0000"><b>WRITEONLY</b></font>&nbsp;]&nbsp;$&gt;<font color=
+=3D"0"><i>prop</i></font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;<font color=3D"FF00FF">//&nbsp;--&nbsp;some&nbsp;params&nbsp;calle=
+d&nbsp;"dispid"</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;$&lt;<font color=3D"0"><i>prop</i></font>&nbsp;[&nbsp;<font color=
+=3D"FF0000"><b>DISPID</b></font>&nbsp;<font color=3D"0"><i>constant_express=
+ion</i></font>&nbsp;]&nbsp;[&nbsp;'<font color=3D"FF0000"><b>;</b></font>'&=
+nbsp;]&nbsp;$&gt;<font color=3D"0"><i>prop</i></font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;$&lt;<font color=3D"0"><i>prop</i></font>&nbsp;{&nbsp;<font color=
+=3D"0"><i>storage_specifier</i></font>&nbsp;['<font color=3D"FF0000"><b>;</=
+b></font>'&nbsp;]&nbsp;}&nbsp;$&gt;<font color=3D"0"><i>prop</i></font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;[&nbsp;<font color=3D"FF0000"><b>IMPLEMENTS</b></font>&nbsp;<font =
+color=3D"0"><i>unit_qualified_identifier</i></font>&nbsp;{&nbsp;'<font colo=
+r=3D"FF0000"><b>,</b></font>'&nbsp;<font color=3D"0"><i>unit_qualified_iden=
+tifier</i></font>&nbsp;}&nbsp;'<font color=3D"FF0000"><b>;</b></font>'&nbsp=
+;]&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font col=
+or=3D"0"><i>storage_specifier</i></font>=3D&nbsp;<font color=3D"0"><i>stora=
+ge_stored</i></font>&nbsp;|&nbsp;<font color=3D"0"><i>storage_default</i></=
+font>&nbsp;&nbsp;|&nbsp;<font color=3D"0"><i>storage_no_default</i></font>&=
+nbsp;&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<fo=
+nt color=3D"0"><i>storage_stored</i></font>=3D&nbsp;<font color=3D"FF0000">=
+<b>STORED</b></font>&nbsp;[&nbsp;<font color=3D"0"><i>constant_expression</=
+i></font>&nbsp;]&nbsp;&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<fo=
+nt color=3D"0"><i>storage_default</i></font>=3D&nbsp;<font color=3D"FF0000"=
+><b>DEFAULT</b></font>&nbsp;[&nbsp;<font color=3D"0"><i>constant_expression=
+</i></font>&nbsp;]&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<fo=
+nt color=3D"0"><i>storage_no_default</i></font>=3D&nbsp;<font color=3D"FF00=
+00"><b>NODEFAULT</b></font>&nbsp;<b>.</b><br> </p><p>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"FF00FF">//&n=
+bsp;--&nbsp;the&nbsp;;&nbsp;is&nbsp;in&nbsp;the&nbsp;type_definitions</font=
+><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>class_=
+type</i></font>=3D&nbsp;<font color=3D"FF0000"><b>CLASS</b></font>&nbsp;[&n=
+bsp;<font color=3D"0"><i>class_reference</i></font>&nbsp;|&nbsp;<font color=
+=3D"0"><i>class_definition</i></font>&nbsp;]&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"=
+0"><i>class_reference</i></font>=3D&nbsp;<font color=3D"FF0000"><b>OF</b></=
+font>&nbsp;<font color=3D"0"><i>unit_qualified_type_name</i></font>&nbsp;<b=
+>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"=
+FF00FF">//&nbsp;--&nbsp;class_definition&nbsp;:&nbsp;can&nbsp;be&nbsp;fowar=
+d&nbsp;with&nbsp;inheritance</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"=
+0"><i>class_definition</i></font>=3D&nbsp;[&nbsp;<font color=3D"0"><i>inher=
+itance</i></font>&nbsp;]&nbsp;[&nbsp;<font color=3D"0"><i>class_body</i></f=
+ont>&nbsp;]&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<fo=
+nt color=3D"0"><i>inheritance</i></font>=3D&nbsp;'<font color=3D"FF0000"><b=
+>(</b></font>'&nbsp;<font color=3D"0"><i>unit_qualified_type_name</i></font=
+>&nbsp;{&nbsp;'<font color=3D"FF0000"><b>,</b></font>'&nbsp;<font color=3D"=
+0"><i>unit_qualified_type_name</i></font>&nbsp;}&nbsp;'<font color=3D"FF000=
+0"><b>)</b></font>'&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<fo=
+nt color=3D"0"><i>class_body</i></font>=3D&nbsp;<font color=3D"0"><i>fields=
+_and_procs_section</i></font>&nbsp;{&nbsp;<font color=3D"0"><i>fields_and_p=
+rocs_section</i></font>&nbsp;}&nbsp;<font color=3D"FF0000"><b>END</b></font=
+>&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;<font color=3D"0"><i>fields_and_procs_section</i></font>=3D&nbsp;$=
+&lt;<font color=3D"0"><i>priv</i></font>&nbsp;<font color=3D"0"><i>protecti=
+on</i></font>&nbsp;<font color=3D"0"><i>fields_and_procs</i></font>&nbsp;$&=
+gt;<font color=3D"0"><i>priv</i></font>&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>protection</i></font>=3D&nbsp;[&n=
+bsp;<font color=3D"FF0000"><b>PRIVATE</b></font>&nbsp;&nbsp;|&nbsp;<font co=
+lor=3D"FF0000"><b>PROTECTED</b></font>&nbsp;|&nbsp;<font color=3D"FF0000"><=
+b>PUBLIC</b></font>&nbsp;|&nbsp;<font color=3D"FF0000"><b>PUBLISHED</b></fo=
+nt>&nbsp;]&nbsp;&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>fields_and_procs</i></font>=3D&nb=
+sp;{&nbsp;<font color=3D"0"><i>class_field</i></font>&nbsp;}&nbsp;{&nbsp;<f=
+ont color=3D"0"><i>class_methods</i></font>&nbsp;|&nbsp;<font color=3D"0"><=
+i>property</i></font>&nbsp;$&lt;<font color=3D"0"><i>priv</i></font>&nbsp;}=
+&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>class_field</i></font=
+>=3D&nbsp;<font color=3D"0"><i>identifier_list</i></font>&nbsp;$&gt;<font c=
+olor=3D"0"><i>priv</i></font>&nbsp;'<font color=3D"FF0000"><b>:</b></font>'=
+&nbsp;<font color=3D"0"><i>type</i></font>&nbsp;'<font color=3D"FF0000"><b>=
+;</b></font>'&nbsp;$&lt;<font color=3D"0"><i>priv</i></font>&nbsp;<b>.</b><=
+br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>class_methods</i></fo=
+nt>=3D&nbsp;<font color=3D"0"><i>constructor</i></font>&nbsp;|&nbsp;<font c=
+olor=3D"0"><i>destructor</i></font>&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;<font color=
+=3D"FF0000"><b>CLASS</b></font>&nbsp;]&nbsp;(&nbsp;<font color=3D"0"><i>cla=
+ss_procedure</i></font>&nbsp;|&nbsp;<font color=3D"0"><i>class_function</i>=
+</font>&nbsp;)&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>method_di=
+rectives_</i></font>=3D&nbsp;$&lt;<font color=3D"0"><i>dir</i></font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp=
+;(<font color=3D"0"><i>method_directives</i></font>&nbsp;|&nbsp;<font color=
+=3D"0"><i>overload_directive</i></font>&nbsp;|&nbsp;<font color=3D"0"><i>ca=
+lling_directives</i></font>)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp=
+;'<font color=3D"FF0000"><b>;</b></font>']&nbsp;}&nbsp;$&gt;<font color=3D"=
+0"><i>dir</i></font>&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"FF00FF">//&nbsp=
+;--&nbsp;if&nbsp;interfaces&nbsp;:&nbsp;"FUNCTION&nbsp;i_xxx.yyy&nbsp;=3D&n=
+bsp;zzz;"</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>rename_me=
+thod</i></font>=3D&nbsp;'<font color=3D"FF0000"><b>.</b></font>'&nbsp;<font=
+ color=3D"0000FF"><b>NAME</b></font>&nbsp;'<font color=3D"FF0000"><b>=3D</b=
+></font>'&nbsp;<font color=3D"0000FF"><b>NAME</b></font>&nbsp;'<font color=
+=3D"FF0000"><b>;</b></font>'&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>construct=
+or</i></font>=3D&nbsp;<font color=3D"FF0000"><b>CONSTRUCTOR</b></font>&nbsp=
+;$&gt;<font color=3D"0"><i>priv</i></font>&nbsp;<font color=3D"0000FF"><b>P=
+R_NAME</b></font>&nbsp;[&nbsp;<font color=3D"0"><i>formal_parameters</i></f=
+ont>&nbsp;]&nbsp;'<font color=3D"FF0000"><b>;</b></font>'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0">=
+<i>method_directives_</i></font>&nbsp;$&lt;<font color=3D"0"><i>priv</i></f=
+ont>&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>destructo=
+r</i></font>=3D&nbsp;<font color=3D"FF0000"><b>DESTRUCTOR</b></font>&nbsp;$=
+&gt;<font color=3D"0"><i>priv</i></font>&nbsp;<font color=3D"0000FF"><b>PR_=
+NAME</b></font>&nbsp;[&nbsp;<font color=3D"0"><i>formal_parameters</i></fon=
+t>&nbsp;]&nbsp;'<font color=3D"FF0000"><b>;</b></font>'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0">=
+<i>method_directives_</i></font>&nbsp;$&lt;<font color=3D"0"><i>priv</i></f=
+ont>&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>class_pro=
+cedure</i></font>=3D&nbsp;<font color=3D"FF0000"><b>PROCEDURE</b></font>&nb=
+sp;$&gt;<font color=3D"0"><i>priv</i></font>&nbsp;<font color=3D"0000FF"><b=
+>PR_NAME</b></font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(&nbsp;<font color=
+=3D"0"><i>rename_method</i></font>&nbsp;|&nbsp;[&nbsp;<font color=3D"0"><i>=
+formal_parameters</i></font>&nbsp;]&nbsp;'<font color=3D"FF0000"><b>;</b></=
+font>'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font =
+color=3D"0"><i>method_directives_</i></font>&nbsp;)&nbsp;$&lt;<font color=
+=3D"0"><i>priv</i></font>&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>class_fun=
+ction</i></font>=3D&nbsp;<font color=3D"FF0000"><b>FUNCTION</b></font>&nbsp=
+;$&gt;<font color=3D"0"><i>priv</i></font>&nbsp;<font color=3D"0000FF"><b>F=
+N_NAME</b></font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(&nbsp;<font color=
+=3D"0"><i>rename_method</i></font>&nbsp;|&nbsp;[&nbsp;<font color=3D"0"><i>=
+formal_parameters</i></font>&nbsp;]&nbsp;'<font color=3D"FF0000"><b>:</b></=
+font>'&nbsp;<font color=3D"0"><i>function_result_type</i></font>&nbsp;'<fon=
+t color=3D"FF0000"><b>;</b></font>'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font =
+color=3D"0"><i>method_directives_</i></font>&nbsp;)&nbsp;$&lt;<font color=
+=3D"0"><i>priv</i></font>&nbsp;<b>.</b><br>
+</p><p>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>interf=
+ace_type</i></font>=3D&nbsp;(&nbsp;<font color=3D"FF0000"><b>INTERFACE</b><=
+/font>&nbsp;|&nbsp;<font color=3D"FF0000"><b>DISPINTERFACE</b></font>&nbsp;=
+)&nbsp;[&nbsp;<font color=3D"0"><i>interface_definition</i></font>&nbsp;]&n=
+bsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"=
+0"><i>interface_definition</i></font>=3D&nbsp;[&nbsp;<font color=3D"0"><i>i=
+nterface_heritage</i></font>]&nbsp;[<font color=3D"0"><i>interface_g_u_i_d<=
+/i></font>&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;<font color=3D"0"><i>interface_member_list</i></font>&nbsp;<font c=
+olor=3D"FF0000"><b>END</b></font>&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<fo=
+nt color=3D"0"><i>interface_heritage</i></font>=3D&nbsp;'<font color=3D"FF0=
+000"><b>(</b></font>'&nbsp;<font color=3D"0"><i>identifier_list</i></font>&=
+nbsp;'<font color=3D"FF0000"><b>)</b></font>'&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<fo=
+nt color=3D"0"><i>interface_g_u_i_d</i></font>=3D&nbsp;'<font color=3D"FF00=
+00"><b>[</b></font>'&nbsp;<font color=3D"0"><i>string_expression</i></font>=
+&nbsp;'<font color=3D"FF0000"><b>]</b></font>'&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<fo=
+nt color=3D"0"><i>interface_member_list</i></font>=3D&nbsp;{&nbsp;<font col=
+or=3D"0"><i>class_procedure_</i></font>&nbsp;|&nbsp;<font color=3D"0"><i>cl=
+ass_function_</i></font>&nbsp;|&nbsp;<font color=3D"0"><i>property</i></fon=
+t>&nbsp;}&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;<font color=3D"0"><i>interface_directives_</i></font>=3D&nbsp;$&lt=
+;<font color=3D"0"><i>dir</i></font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;(<font colo=
+r=3D"0"><i>method_directives</i></font>&nbsp;|&nbsp;<font color=3D"0"><i>ov=
+erload_directive</i></font>&nbsp;|&nbsp;<font color=3D"0"><i>calling_direct=
+ives</i></font>&nbsp;|&nbsp;<font color=3D"0"><i>dispid</i></font>&nbsp;)<b=
+r>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;'<font colo=
+r=3D"FF0000"><b>;</b></font>']&nbsp;}&nbsp;$&gt;<font color=3D"0"><i>dir</i=
+></font>&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>dispid</i></font>=3D&nbsp;<font c=
+olor=3D"FF0000"><b>DISPID</b></font>&nbsp;<font color=3D"0"><i>constant_exp=
+ression</i></font>&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;<font color=3D"FF00FF">//&nbsp;--&nbsp;redefinition&nbsp;"PROCEDUR=
+E&nbsp;x.y=3D&nbsp;z;"&nbsp;(axctrls)</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;<font color=3D"0"><i>class_procedure_</i></font>=3D&nbsp;(&nbsp;<f=
+ont color=3D"FF0000"><b>PROCEDURE</b></font>&nbsp;|&nbsp;<font color=3D"FF0=
+000"><b>CONSTRUCTOR</b></font>&nbsp;|&nbsp;<font color=3D"FF0000"><b>DESTRU=
+CTOR</b></font>&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0000FF"><b>PR_NAME</b></fon=
+t>&nbsp;[&nbsp;<font color=3D"0"><i>formal_parameters</i></font>&nbsp;]&nbs=
+p;'<font color=3D"FF0000"><b>;</b></font>'&nbsp;<font color=3D"0"><i>interf=
+ace_directives_</i></font>&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;<font color=3D"0"><i>class_function_</i></font>=3D&nbsp;<font colo=
+r=3D"FF0000"><b>FUNCTION</b></font>&nbsp;<font color=3D"0000FF"><b>FN_NAME<=
+/b></font>&nbsp;&nbsp;[&nbsp;<font color=3D"0"><i>formal_parameters</i></fo=
+nt>&nbsp;]&nbsp;'<font color=3D"FF0000"><b>:</b></font>'&nbsp;<font color=
+=3D"0"><i>function_result_type</i></font>&nbsp;'<font color=3D"FF0000"><b>;=
+</b></font>'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>interface_directives_=
+</i></font>&nbsp;<b>.</b><br> </p><p>
+&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>variable_declarations</i></fon=
+t>=3D&nbsp;(<font color=3D"FF0000"><b>THREADVAR</b></font>&nbsp;|&nbsp;<fon=
+t color=3D"FF0000"><b>VAR</b></font>)&nbsp;<font color=3D"0"><i>variable_de=
+claration</i></font>&nbsp;{&nbsp;<font color=3D"0"><i>variable_declaration<=
+/i></font>&nbsp;}&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"FF00FF">//&nbsp;--&nbsp;=
+has&nbsp;separated&nbsp;in&nbsp;2&nbsp;because&nbsp;of&nbsp;initialization<=
+/font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"FF00FF">//&nbsp;--&nbsp;=
+absolute&nbsp;can&nbsp;be&nbsp;after&nbsp;a&nbsp;list,&nbsp;but&nbsp;not&nb=
+sp;with&nbsp;initialization</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>variable_declarati=
+on</i></font>=3D&nbsp;<font color=3D"0000FF"><b>ID_NAME</b></font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(&nbsp;'<font c=
+olor=3D"FF0000"><b>:</b></font>'&nbsp;<font color=3D"0"><i>type</i></font>&=
+nbsp;&nbsp;[&nbsp;'<font color=3D"FF0000"><b>=3D</b></font>'&nbsp;<font col=
+or=3D"0"><i>typed_constant</i></font>&nbsp;|&nbsp;<font color=3D"0"><i>abso=
+lute</i></font>&nbsp;]&nbsp;'<font color=3D"FF0000"><b>;</b></font>'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;{&=
+nbsp;'<font color=3D"FF0000"><b>,</b></font>'&nbsp;<font color=3D"0000FF"><=
+b>ID_NAME</b></font>&nbsp;}&nbsp;&nbsp;'<font color=3D"FF0000"><b>:</b></fo=
+nt>'&nbsp;<font color=3D"0"><i>type</i></font>&nbsp;&nbsp;[&nbsp;<font colo=
+r=3D"0"><i>absolute</i></font>&nbsp;]&nbsp;'<font color=3D"FF0000"><b>;</b>=
+</font>'&nbsp;)&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>=
+absolute</i></font>=3D&nbsp;<font color=3D"FF0000"><b>ABSOLUTE</b></font>&n=
+bsp;<font color=3D"0000FF"><b>OTHER_VAR_NAME</b></font>&nbsp;<b>.</b><br> <=
+/p><p>
+&nbsp;&nbsp;<font color=3D"FF00FF">//&nbsp;--&nbsp;code</font><br> </p><p>
+&nbsp;&nbsp;<font color=3D"0"><i>expression</i></font>=3D&nbsp;<font color=
+=3D"0"><i>simple_expression</i></font>&nbsp;[&nbsp;('<font color=3D"FF0000"=
+><b>=3D</b></font>'&nbsp;|&nbsp;'<font color=3D"FF0000"><b>&lt;&gt;</b></fo=
+nt>'&nbsp;|&nbsp;'<font color=3D"FF0000"><b>&lt;</b></font>'&nbsp;|&nbsp;'<=
+font color=3D"FF0000"><b>&lt;=3D</b></font>'&nbsp;|&nbsp;'<font color=3D"FF=
+0000"><b>&gt;</b></font>'&nbsp;|&nbsp;'<font color=3D"FF0000"><b>&gt;=3D</b=
+></font>'&nbsp;|&nbsp;<font color=3D"FF0000"><b>IN</b></font>&nbsp;|&nbsp;<=
+font color=3D"FF0000"><b>IS</b></font>&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>simple_expression<=
+/i></font>&nbsp;]&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>simple_expression</i></font>=
+=3D&nbsp;[&nbsp;'<font color=3D"FF0000"><b>+</b></font>'&nbsp;|&nbsp;'<font=
+ color=3D"FF0000"><b>-</b></font>'&nbsp;]&nbsp;<font color=3D"0"><i>term</i=
+></font>&nbsp;{&nbsp;('<font color=3D"FF0000"><b>+</b></font>'&nbsp;|&nbsp;=
+'<font color=3D"FF0000"><b>-</b></font>'&nbsp;|&nbsp;<font color=3D"FF0000"=
+><b>OR</b></font>&nbsp;|&nbsp;<font color=3D"FF0000"><b>XOR</b></font>&nbsp=
+;)&nbsp;<font color=3D"0"><i>term</i></font>&nbsp;}&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>term</i></font>=3D=
+&nbsp;<font color=3D"0"><i>factor</i></font>&nbsp;{&nbsp;('<font color=3D"F=
+F0000"><b>*</b></font>'&nbsp;|&nbsp;'<font color=3D"FF0000"><b>/</b></font>=
+'&nbsp;|&nbsp;<font color=3D"FF0000"><b>DIV</b></font>&nbsp;|&nbsp;<font co=
+lor=3D"FF0000"><b>MOD</b></font>&nbsp;|&nbsp;<font color=3D"FF0000"><b>AND<=
+/b></font>&nbsp;|&nbsp;<font color=3D"FF0000"><b>SHR</b></font>&nbsp;|&nbsp=
+;<font color=3D"FF0000"><b>SHL</b></font>&nbsp;)&nbsp;<font color=3D"0"><i>=
+factor</i></font>&nbsp;}&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"FF00FF">//&n=
+bsp;--&nbsp;called&nbsp;by&nbsp;$i_access_or_expression</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"FF00FF">//&n=
+bsp;--&nbsp;can&nbsp;be&nbsp;empty&nbsp;if&nbsp;fn&nbsp;call&nbsp;"fn()"</f=
+ont><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>parent=
+hized_expression</i></font>=3D&nbsp;'<font color=3D"FF0000"><b>(</b></font>=
+'&nbsp;[&nbsp;<font color=3D"0"><i>expression</i></font>&nbsp;{&nbsp;'<font=
+ color=3D"FF0000"><b>,</b></font>'&nbsp;<font color=3D"0"><i>expression</i>=
+</font>&nbsp;}&nbsp;]&nbsp;'<font color=3D"FF0000"><b>)</b></font>'&nbsp;<b=
+>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>factor=
+</i></font>=3D&nbsp;<font color=3D"0000FF"><b>NUMBER</b></font>&nbsp;|&nbsp=
+;<font color=3D"0000FF"><b>STRING_LITTERAL</b></font>&nbsp;|&nbsp;<font col=
+or=3D"FF0000"><b>NIL</b></font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&n=
+bsp;<font color=3D"FF0000"><b>NOT</b></font>&nbsp;<font color=3D"0"><i>fact=
+or</i></font>&nbsp;|&nbsp;'<font color=3D"FF0000"><b>@</b></font>'&nbsp;<fo=
+nt color=3D"0"><i>factor</i></font>&nbsp;|&nbsp;<font color=3D"FF0000"><b>I=
+NHERITED</b></font>&nbsp;[&nbsp;<font color=3D"0"><i>factor</i></font>&nbsp=
+;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&n=
+bsp;'<font color=3D"FF0000"><b>^</b></font>'&nbsp;<font color=3D"0000FF"><b=
+>NAME</b></font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&n=
+bsp;<font color=3D"0"><i>set_factor</i></font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<fo=
+nt color=3D"FF00FF">//&nbsp;--&nbsp;x=3D&nbsp;(Sender&nbsp;AS&nbsp;tButton)=
+.Caption</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<fo=
+nt color=3D"FF00FF">//&nbsp;--&nbsp;the&nbsp;AS&nbsp;is&nbsp;only&nbsp;for&=
+nbsp;the&nbsp;level&nbsp;0</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&n=
+bsp;(&nbsp;<font color=3D"0000FF"><b>NAME</b></font>&nbsp;|&nbsp;<font colo=
+r=3D"0000FF"><b>STRING</b></font>&nbsp;)&nbsp;{&nbsp;<font color=3D"0"><i>p=
+arenthized_expression</i></font>&nbsp;|&nbsp;<font color=3D"0"><i>end_acces=
+s</i></font>&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&n=
+bsp;<font color=3D"0"><i>parenthized_expression</i></font>&nbsp;{&nbsp;<fon=
+t color=3D"0"><i>end_access</i></font>&nbsp;}&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"=
+0"><i>end_access</i></font>=3D&nbsp;{&nbsp;<font color=3D"0"><i>array_acces=
+s</i></font>&nbsp;|&nbsp;<font color=3D"0"><i>record_access</i></font>&nbsp=
+;|&nbsp;'<font color=3D"FF0000"><b>^</b></font>'&nbsp;|&nbsp;<font color=3D=
+"0"><i>as_access</i></font>&nbsp;&nbsp;}&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<fo=
+nt color=3D"0"><i>array_access</i></font>=3D&nbsp;'<font color=3D"FF0000"><=
+b>[</b></font>'&nbsp;<font color=3D"0"><i>expression</i></font>&nbsp;{&nbsp=
+;'<font color=3D"FF0000"><b>,</b></font>'&nbsp;<font color=3D"0"><i>express=
+ion</i></font>&nbsp;}&nbsp;'<font color=3D"FF0000"><b>]</b></font>'&nbsp;<b=
+>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<fo=
+nt color=3D"0"><i>record_access</i></font>=3D&nbsp;'<font color=3D"FF0000">=
+<b>.</b></font>'&nbsp;<font color=3D"0"><i>expression</i></font>&nbsp;<b>.<=
+/b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<fo=
+nt color=3D"0"><i>as_access</i></font>=3D&nbsp;<font color=3D"FF0000"><b>AS=
+</b></font>&nbsp;<font color=3D"0000FF"><b>NAME</b></font>&nbsp;<b>.</b><br=
+> </p><p>
+&nbsp;&nbsp;<font color=3D"FF00FF">//&nbsp;--&nbsp;instructions</font><br> =
+</p><p>
+&nbsp;&nbsp;<font color=3D"0"><i>asm</i></font>=3D&nbsp;<font color=3D"FF00=
+00"><b>ASM</b></font>&nbsp;{&nbsp;<font color=3D"0"><i>asm_statement</i></f=
+ont>&nbsp;}&nbsp;<font color=3D"FF0000"><b>END</b></font>&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"FF00FF">//&nbsp;--&nbsp;for&nbsp;pas=
+ting&nbsp;in&nbsp;i_asm</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>asm_statement_</i></font>=3D&n=
+bsp;{&nbsp;<font color=3D"0000FF"><b>NAME</b></font>&nbsp;|&nbsp;<font colo=
+r=3D"0000FF"><b>NUMBER</b></font>&nbsp;|&nbsp;<font color=3D"0000FF"><b>STR=
+ING_LITTERAL</b></font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;'<font color=3D"FF00=
+00"><b>[</b></font>'&nbsp;|&nbsp;'<font color=3D"FF0000"><b>]</b></font>'&n=
+bsp;|&nbsp;'<font color=3D"FF0000"><b>.</b></font>'&nbsp;&nbsp;|&nbsp;'<fon=
+t color=3D"FF0000"><b>,</b></font>'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;'<font color=3D"FF00=
+00"><b>:</b></font>'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;'<font color=3D"FF00=
+00"><b>+</b></font>'&nbsp;|&nbsp;'<font color=3D"FF0000"><b>-</b></font>'&n=
+bsp;|&nbsp;'<font color=3D"FF0000"><b>*</b></font>'&nbsp;|&nbsp;'<font colo=
+r=3D"FF0000"><b>/</b></font>'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;<font color=3D"FF000=
+0"><b>NOT</b></font>&nbsp;&nbsp;|&nbsp;<font color=3D"FF0000"><b>AND</b></f=
+ont>&nbsp;|&nbsp;<font color=3D"FF0000"><b>OR</b></font>&nbsp;|&nbsp;<font =
+color=3D"FF0000"><b>XOR</b></font>&nbsp;|&nbsp;<font color=3D"FF0000"><b>SH=
+R</b></font>&nbsp;|&nbsp;<font color=3D"FF0000"><b>SHL</b></font>&nbsp;|&nb=
+sp;<font color=3D"FF0000"><b>DIV</b></font>&nbsp;}&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>label_</i></font>=3D&nbsp;&nbs=
+p;'<font color=3D"FF0000"><b>@</b></font>'&nbsp;[&nbsp;'<font color=3D"FF00=
+00"><b>@</b></font>']&nbsp;(&nbsp;<font color=3D"0000FF"><b>ALL_NAME</b></f=
+ont>&nbsp;|&nbsp;<font color=3D"0000FF"><b>NUMBER</b></font>&nbsp;)&nbsp;<b=
+>.</b><br>
+</p><p> &nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>asm_statement</i></fon=
+t>=3D&nbsp;(&nbsp;<font color=3D"0000FF"><b>NAME</b></font>&nbsp;|&nbsp;<fo=
+nt color=3D"0000FF"><b>NUMBER</b></font>&nbsp;|&nbsp;<font color=3D"0000FF"=
+><b>STRING_LITTERAL</b></font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;'<font color=3D"FF00=
+00"><b>[</b></font>'&nbsp;|&nbsp;'<font color=3D"FF0000"><b>]</b></font>'&n=
+bsp;|&nbsp;'<font color=3D"FF0000"><b>.</b></font>'&nbsp;&nbsp;|&nbsp;'<fon=
+t color=3D"FF0000"><b>,</b></font>'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;'<font color=3D"FF00=
+00"><b>@</b></font>'<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&=
+nbsp;'<font color=3D"FF0000"><b>:</b></font>'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;'<font color=3D"FF00=
+00"><b>+</b></font>'&nbsp;|&nbsp;'<font color=3D"FF0000"><b>-</b></font>'&n=
+bsp;|&nbsp;'<font color=3D"FF0000"><b>*</b></font>'&nbsp;|&nbsp;'<font colo=
+r=3D"FF0000"><b>/</b></font>'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;<font color=3D"FF000=
+0"><b>NOT</b></font>&nbsp;&nbsp;|&nbsp;<font color=3D"FF0000"><b>AND</b></f=
+ont>&nbsp;|&nbsp;<font color=3D"FF0000"><b>OR</b></font>&nbsp;|&nbsp;<font =
+color=3D"FF0000"><b>XOR</b></font>&nbsp;|&nbsp;<font color=3D"FF0000"><b>SH=
+R</b></font>&nbsp;|&nbsp;<font color=3D"FF0000"><b>SHL</b></font>&nbsp;|&nb=
+sp;<font color=3D"FF0000"><b>DIV</b></font>&nbsp;)&nbsp;$<font color=3D"0">=
+<i>i_asm</i></font>&nbsp;<b>.</b><br>
+</p><p> &nbsp;&nbsp;<font color=3D"0"><i>composed_instruction</i></font>=3D=
+&nbsp;<font color=3D"FF0000"><b>F</b></font>&nbsp;<b>.</b><br> </p><p> &nbs=
+p;&nbsp;<font color=3D"FF00FF">//&nbsp;--&nbsp;allows&nbsp;empty&nbsp;";"&n=
+bsp;instruction</font><br>
+&nbsp;&nbsp;<font color=3D"0"><i>instruction_list</i></font>=3D&nbsp;[&nbsp=
+;<font color=3D"0"><i>instruction</i></font>&nbsp;]&nbsp;{&nbsp;'<font colo=
+r=3D"FF0000"><b>;</b></font>'&nbsp;[&nbsp;<font color=3D"0"><i>instruction<=
+/i></font>&nbsp;]&nbsp;}&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>instruction</i></font>=3D&nbsp=
+;{&nbsp;<font color=3D"0"><i>assignment_or_call</i></font>&nbsp;|&nbsp;<fon=
+t color=3D"0"><i>structured_instruction</i></font>&nbsp;}&nbsp;<b>.</b><br>=
+ </p><p>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"FF00FF">//&nbsp;--&nbsp;=
+this&nbsp;covers&nbsp;"x[3].z:=3D&nbsp;u;"&nbsp;or&nbsp;"my_proc(3+&nbsp;zz=
+)";</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"FF00FF">//&nbsp;--&nbsp;=
+acces&nbsp;or&nbsp;(pchar+&nbsp;1)^&nbsp;:=3D&nbsp;...</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>assignment_or_call=
+</i></font>=3D&nbsp;<font color=3D"0"><i>expression</i></font>&nbsp;[&nbsp;=
+<font color=3D"0"><i>end_assignment</i></font>&nbsp;]&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"FF00FF">//&n=
+bsp;--&nbsp;"(Sender&nbsp;As&nbsp;tButton).Caption:=3D&nbsp;xxx"</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>end_as=
+signment</i></font>=3D&nbsp;'<font color=3D"FF0000"><b>:=3D</b></font>'&nbs=
+p;<font color=3D"0"><i>expression</i></font>&nbsp;<b>.</b><br> </p><p>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>structured_instruc=
+tion</i></font>=3D&nbsp;<font color=3D"0"><i>composed_instruction</i></font=
+>&nbsp;|&nbsp;<font color=3D"0"><i>test</i></font>&nbsp;|&nbsp;<font color=
+=3D"0"><i>repetition</i></font>&nbsp;|&nbsp;<font color=3D"0"><i>with</i></=
+font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;<font co=
+lor=3D"0"><i>try</i></font>&nbsp;|&nbsp;<font color=3D"0"><i>inherited_call=
+</i></font>&nbsp;|&nbsp;<font color=3D"0"><i>raise_statement</i></font>&nbs=
+p;|&nbsp;<font color=3D"0"><i>asm</i></font>&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>test</=
+i></font>=3D&nbsp;<font color=3D"0"><i>if</i></font>&nbsp;|&nbsp;<font colo=
+r=3D"0"><i>case</i></font>&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"=
+0"><i>if</i></font>=3D&nbsp;<font color=3D"FF0000"><b>IF</b></font>&nbsp;<f=
+ont color=3D"0"><i>expression</i></font>&nbsp;<font color=3D"FF0000"><b>THE=
+N</b></font>&nbsp;<font color=3D"0"><i>instruction</i></font>&nbsp;[&nbsp;<=
+font color=3D"FF0000"><b>ELSE</b></font>&nbsp;<font color=3D"0"><i>instruct=
+ion</i></font>&nbsp;]&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"=
+FF00FF">//&nbsp;--&nbsp;D5:&nbsp;';'&nbsp;after&nbsp;last&nbsp;instr&nbsp;o=
+r&nbsp;before&nbsp;ELSE&nbsp;optional&nbsp;!</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"=
+0"><i>case</i></font>=3D&nbsp;<font color=3D"FF0000"><b>CASE</b></font>&nbs=
+p;<font color=3D"0"><i>expression</i></font>&nbsp;<font color=3D"FF0000"><b=
+>OF</b></font>&nbsp;<font color=3D"0"><i>case_element</i></font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;{&nbsp;'<font color=3D"FF0000"><b>;</b></font>'&nbsp;[&nbsp;<font =
+color=3D"FF0000"><b>ELSE</b></font>&nbsp;$<font color=3D"FF0000"><b>NOREAD<=
+/b></font>&nbsp;|&nbsp;<font color=3D"FF0000"><b>END</b></font>&nbsp;$<font=
+ color=3D"FF0000"><b>NOREAD</b></font>&nbsp;|&nbsp;<font color=3D"0"><i>cas=
+e_element</i></font>&nbsp;]&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;<font color=3D"FF0000"><b>ELSE</b></font>=
+&nbsp;<font color=3D"0"><i>instruction_list</i></font>&nbsp;]&nbsp;<font co=
+lor=3D"FF0000"><b>END</b></font>&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<fo=
+nt color=3D"0"><i>case_element</i></font>=3D&nbsp;<font color=3D"0"><i>case=
+_label</i></font>&nbsp;'<font color=3D"FF0000"><b>:</b></font>'&nbsp;<font =
+color=3D"0"><i>instruction</i></font>&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;<font color=3D"FF00FF">//&nbsp;--&nbsp;a&nbsp;general&nbsp;constan=
+t&nbsp;constant_expression,&nbsp;but&nbsp;no&nbsp;set&nbsp;[],</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;<font color=3D"FF00FF">//&nbsp;--&nbsp;&nbsp;&nbsp;unless&nbsp;in&=
+nbsp;a&nbsp;function&nbsp;call</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;<font color=3D"0"><i>case_label</i></font>=3D&nbsp;<font color=3D"=
+0"><i>constant_expression</i></font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;(&nbsp;'<font color=3D"FF0000"><b>,=
+</b></font>'&nbsp;<font color=3D"0"><i>constant_expression</i></font>&nbsp;=
+|&nbsp;'<font color=3D"FF0000"><b>..</b></font>'&nbsp;<font color=3D"0"><i>=
+constant_expression</i></font>&nbsp;)&nbsp;}&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>repeti=
+tion</i></font>=3D&nbsp;<font color=3D"0"><i>while</i></font>&nbsp;|&nbsp;<=
+font color=3D"0"><i>repeat</i></font>&nbsp;|&nbsp;<font color=3D"0"><i>for<=
+/i></font>&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"=
+0"><i>while</i></font>=3D&nbsp;<font color=3D"FF0000"><b>WHILE</b></font>&n=
+bsp;<font color=3D"0"><i>expression</i></font>&nbsp;<font color=3D"FF0000">=
+<b>DO</b></font>&nbsp;<font color=3D"0"><i>instruction</i></font>&nbsp;<b>.=
+</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"=
+0"><i>repeat</i></font>=3D&nbsp;<font color=3D"FF0000"><b>REPEAT</b></font>=
+&nbsp;<font color=3D"0"><i>instruction_list</i></font>&nbsp;<font color=3D"=
+FF0000"><b>UNTIL</b></font>&nbsp;<font color=3D"0"><i>expression</i></font>=
+&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"=
+0"><i>for</i></font>=3D&nbsp;<font color=3D"FF0000"><b>FOR</b></font>&nbsp;=
+<font color=3D"0"><i>unit_qualified_identifier</i></font>&nbsp;'<font color=
+=3D"FF0000"><b>:=3D</b></font>'&nbsp;<font color=3D"0"><i>expression</i></f=
+ont>&nbsp;[&nbsp;<font color=3D"FF0000"><b>TO</b></font>&nbsp;|&nbsp;<font =
+color=3D"FF0000"><b>DOWNTO</b></font>&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;<font color=3D"0"><i>expression</i></font>&nbsp;<font color=3D"FF0=
+000"><b>DO</b></font>&nbsp;<font color=3D"0"><i>instruction</i></font>&nbsp=
+;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"FF00FF">//&n=
+bsp;--&nbsp;"with&nbsp;xxx&nbsp;AS"</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>with</=
+i></font>=3D&nbsp;<font color=3D"FF0000"><b>WITH</b></font>&nbsp;<font colo=
+r=3D"0"><i>expression</i></font>&nbsp;{&nbsp;'<font color=3D"FF0000"><b>,</=
+b></font>'&nbsp;<font color=3D"0"><i>expression</i></font>&nbsp;}&nbsp;<fon=
+t color=3D"FF0000"><b>DO</b></font>&nbsp;<font color=3D"0"><i>instruction</=
+i></font>&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>try</i=
+></font>=3D&nbsp;<font color=3D"FF0000"><b>TRY</b></font>&nbsp;<font color=
+=3D"0"><i>instruction_list</i></font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(&n=
+bsp;<font color=3D"FF0000"><b>EXCEPT</b></font>&nbsp;<font color=3D"0"><i>e=
+xcept_block</i></font>&nbsp;|&nbsp;<font color=3D"FF0000"><b>FINALLY</b></f=
+ont>&nbsp;<font color=3D"0"><i>instruction_list</i></font>&nbsp;)&nbsp;<fon=
+t color=3D"FF0000"><b>END</b></font>&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"=
+0"><i>except_block</i></font>=3D&nbsp;<font color=3D"0"><i>on</i></font>&nb=
+sp;[&nbsp;<font color=3D"FF0000"><b>ELSE</b></font>&nbsp;<font color=3D"0">=
+<i>instruction_list</i></font>&nbsp;]&nbsp;|&nbsp;<font color=3D"0"><i>inst=
+ruction_list</i></font>&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<fo=
+nt color=3D"FF00FF">//&nbsp;--&nbsp;can&nbsp;have&nbsp;"ON&nbsp;ezero&nbsp;=
+DO&nbsp;ELSE&nbsp;xxx&nbsp;;"&nbsp;or&nbsp;"ON&nbsp;xxx&nbsp;DO&nbsp;;"</fo=
+nt><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<fo=
+nt color=3D"0"><i>on</i></font>=3D&nbsp;<font color=3D"0"><i>handle_instruc=
+tion</i></font>&nbsp;{&nbsp;'<font color=3D"FF0000"><b>;</b></font>'&nbsp;[=
+&nbsp;<font color=3D"0"><i>handle_instruction</i></font>&nbsp;]&nbsp;}&nbsp=
+;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;<font color=3D"0"><i>exception_identifier</i></font>=3D&nbsp;<font=
+ color=3D"0"><i>unit_qualified_identifier</i></font>&nbsp;[&nbsp;'<font col=
+or=3D"FF0000"><b>:</b></font>'&nbsp;<font color=3D"0"><i>unit_qualified_ide=
+ntifier</i></font>&nbsp;]&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;<font color=3D"0"><i>handle_instruction</i></font>=3D&nbsp;<font c=
+olor=3D"FF0000"><b>ON</b></font>&nbsp;<font color=3D"0"><i>exception_identi=
+fier</i></font>&nbsp;<font color=3D"FF0000"><b>DO</b></font>&nbsp;[&nbsp;<f=
+ont color=3D"0"><i>instruction</i></font>&nbsp;'<font color=3D"FF0000"><b>;=
+</b></font>'&nbsp;]&nbsp;<b>.</b><br>
+</p><p> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"FF00=
+FF">//&nbsp;--&nbsp;"Inherited&nbsp;Items[Index]:=3D&nbsp;"</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>inheri=
+ted_call</i></font>=3D&nbsp;<font color=3D"FF0000"><b>INHERITED</b></font>&=
+nbsp;[&nbsp;<font color=3D"0"><i>instruction</i></font>&nbsp;]&nbsp;<b>.</b=
+><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"FF00FF">//&n=
+bsp;inline_statement=3D&nbsp;INLINE&nbsp;'('&nbsp;INTEGERCONST&nbsp;{'/'&nb=
+sp;INTEGERCONST&nbsp;}&nbsp;')'&nbsp;.</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>raise_=
+statement</i></font>=3D&nbsp;$&lt;<font color=3D"0"><i>at</i></font>&nbsp;<=
+font color=3D"FF0000"><b>RAISE</b></font>&nbsp;[&nbsp;<font color=3D"0"><i>=
+variable_access</i></font>&nbsp;]&nbsp;[&nbsp;<font color=3D"FF0000"><b>AT<=
+/b></font>&nbsp;<font color=3D"0"><i>constant_expression</i></font>&nbsp;]&=
+nbsp;$&gt;<font color=3D"0"><i>at</i></font>&nbsp;<b>.</b><br>
+</p><p> &nbsp;&nbsp;<font color=3D"0"><i>composed_instruction</i></font>=3D=
+&nbsp;<font color=3D"FF0000"><b>BEGIN</b></font>&nbsp;<font color=3D"0"><i>=
+instruction_list</i></font>&nbsp;<font color=3D"FF0000"><b>END</b></font>&n=
+bsp;<b>.</b><br> </p><p>
+&nbsp;&nbsp;<font color=3D"FF00FF">//&nbsp;--&nbsp;bloc</font><br> &nbsp;&n=
+bsp;<font color=3D"FF00FF">//&nbsp;--&nbsp;VIRTUAL&nbsp;etc&nbsp;only&nbsp;=
+in&nbsp;CLASS</font><br> </p><p>
+&nbsp;&nbsp;<font color=3D"0"><i>routine_header</i></font>=3D&nbsp;<font co=
+lor=3D"0"><i>class_methods_header</i></font>&nbsp;|&nbsp;<font color=3D"0">=
+<i>constructor_header</i></font>&nbsp;|&nbsp;<font color=3D"0"><i>destructo=
+r_header</i></font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;<font color=3D"0"><i=
+>procedure_header</i></font>&nbsp;|&nbsp;<font color=3D"0"><i>function_head=
+er</i></font>&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"FF00FF">//&nbsp;--&nbsp;methods&nbsp=
+;have&nbsp;no&nbsp;directives&nbsp;in&nbsp;implementation</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>class_methods_header</i></font=
+>=3D&nbsp;<font color=3D"FF0000"><b>CLASS</b></font>&nbsp;(<font color=3D"0=
+"><i>class_procedure_method</i></font>&nbsp;|&nbsp;<font color=3D"0"><i>cla=
+ss_function_method</i></font>&nbsp;)&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>class_procedure_me=
+thod</i></font>=3D&nbsp;<font color=3D"FF0000"><b>PROCEDURE</b></font>&nbsp=
+;<font color=3D"0000FF"><b>CLASS_NAME</b></font>&nbsp;'<font color=3D"FF000=
+0"><b>.</b></font>'&nbsp;<font color=3D"0000FF"><b>PR_NAME</b></font>&nbsp;=
+[&nbsp;<font color=3D"0"><i>formal_parameters</i></font>&nbsp;]&nbsp;'<font=
+ color=3D"FF0000"><b>;</b></font>'&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"FF00FF">//&nbsp;--&nbsp;=
+repeating&nbsp;the&nbsp;result&nbsp;is&nbsp;optional</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>class_function_met=
+hod</i></font>=3D&nbsp;<font color=3D"FF0000"><b>FUNCTION</b></font>&nbsp;<=
+font color=3D"0000FF"><b>CLASS_NAME</b></font>&nbsp;[&nbsp;'<font color=3D"=
+FF0000"><b>.</b></font>'&nbsp;<font color=3D"0000FF"><b>FN_NAME</b></font>&=
+nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;<font co=
+lor=3D"0"><i>formal_parameters</i></font>&nbsp;]&nbsp;[&nbsp;'<font color=
+=3D"FF0000"><b>:</b></font>'&nbsp;<font color=3D"0"><i>function_result_type=
+</i></font>&nbsp;]&nbsp;'<font color=3D"FF0000"><b>;</b></font>'&nbsp;<b>.<=
+/b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>constructor_header</i></font>=
+=3D&nbsp;<font color=3D"FF0000"><b>CONSTRUCTOR</b></font>&nbsp;<font color=
+=3D"0000FF"><b>CLASS_NAME</b></font>&nbsp;'<font color=3D"FF0000"><b>.</b><=
+/font>'&nbsp;<font color=3D"0000FF"><b>PR_NAME</b></font>&nbsp;[&nbsp;<font=
+ color=3D"0"><i>formal_parameters</i></font>&nbsp;]&nbsp;'<font color=3D"FF=
+0000"><b>;</b></font>'&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>destructor_header</i></font>=
+=3D&nbsp;<font color=3D"FF0000"><b>DESTRUCTOR</b></font>&nbsp;<font color=
+=3D"0000FF"><b>CLASS_NAME</b></font>&nbsp;'<font color=3D"FF0000"><b>.</b><=
+/font>'&nbsp;<font color=3D"0000FF"><b>PR_NAME</b></font>&nbsp;[&nbsp;<font=
+ color=3D"0"><i>formal_parameters</i></font>&nbsp;]&nbsp;'<font color=3D"FF=
+0000"><b>;</b></font>'&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"FF00FF">//&nbsp;--&nbsp;always&nbsp;=
+;&nbsp;before&nbsp;directives&nbsp;(for&nbsp;procedural&nbsp;cdecl&nbsp;is&=
+nbsp;without&nbsp;?&nbsp;)</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>code_procedure_directives</i><=
+/font>=3D&nbsp;$&lt;<font color=3D"0"><i>dir</i></font>&nbsp;{&nbsp;(<font =
+color=3D"0"><i>dos_directives</i></font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;<font color=3D"0"><i=
+>calling_directives</i></font>&nbsp;|&nbsp;<font color=3D"0"><i>overload_di=
+rective</i></font>)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;'<font color=3D"FF00=
+00"><b>;</b></font>']&nbsp;}&nbsp;$&gt;<font color=3D"0"><i>dir</i></font>&=
+nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>procedure_header</i></font>=3D=
+&nbsp;<font color=3D"FF0000"><b>PROCEDURE</b></font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0000FF"><b>C=
+LASS_OR_PR_NAME</b></font>&nbsp;[&nbsp;'<font color=3D"FF0000"><b>.</b></fo=
+nt>'&nbsp;<font color=3D"0000FF"><b>PR_NAME</b></font>&nbsp;]&nbsp;[&nbsp;<=
+font color=3D"0"><i>formal_parameters</i></font>&nbsp;]&nbsp;'<font color=
+=3D"FF0000"><b>;</b></font>'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"=
+0"><i>code_procedure_directives</i></font>&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"FF00FF">//&nbsp;--&nbsp;for&nbsp;the=
+&nbsp;functions,&nbsp;STDCALL&nbsp;does&nbsp;not&nbsp;require&nbsp;;&nbsp;"=
+fn&nbsp;xxx:&nbsp;yyy&nbsp;STDCALL;"</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>function_header</i></font>=3D&=
+nbsp;<font color=3D"FF0000"><b>FUNCTION</b></font>&nbsp;<font color=3D"0000=
+FF"><b>CLASS_OR_FN_NAME</b></font>&nbsp;[&nbsp;'<font color=3D"FF0000"><b>.=
+</b></font>'&nbsp;<font color=3D"0000FF"><b>FN_NAME</b></font>&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;<font color=3D"0"><i=
+>formal_parameters</i></font>&nbsp;]&nbsp;[&nbsp;'<font color=3D"FF0000"><b=
+>:</b></font>'&nbsp;<font color=3D"0"><i>function_result_type</i></font>&nb=
+sp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;'<font color=3D"FF00=
+00"><b>;</b></font>'&nbsp;]&nbsp;<font color=3D"0"><i>code_procedure_direct=
+ives</i></font>&nbsp;[&nbsp;'<font color=3D"FF0000"><b>;</b></font>'&nbsp;]=
+&nbsp;<b>.</b><br> </p><p>
+&nbsp;&nbsp;<font color=3D"0"><i>bloc</i></font>=3D&nbsp;<font color=3D"FF0=
+000"><b>F</b></font>&nbsp;<b>.</b><br>
+&nbsp;&nbsp;<font color=3D"0"><i>main_declarations</i></font>=3D&nbsp;<font=
+ color=3D"0"><i>const_type_var_declarations</i></font>&nbsp;|&nbsp;<font co=
+lor=3D"0"><i>procedure_declarations_and_body</i></font>&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>procedure_declarations_and_bod=
+y</i></font>=3D&nbsp;{&nbsp;<font color=3D"0"><i>procedure_declaration</i><=
+/font>&nbsp;}&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>procedure_declarat=
+ion</i></font>=3D&nbsp;<font color=3D"0"><i>routine_header</i></font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$&lt;<font colo=
+r=3D"0"><i>dir</i></font>&nbsp;(&nbsp;<font color=3D"FF0000"><b>FORWARD</b>=
+</font>&nbsp;&nbsp;$&gt;<font color=3D"0"><i>dir</i></font>&nbsp;|&nbsp;<fo=
+nt color=3D"FF0000"><b>EXTERNAL</b></font>&nbsp;$&gt;<font color=3D"0"><i>d=
+ir</i></font>&nbsp;<font color=3D"0"><i>end_external</i></font>&nbsp;|&nbsp=
+;$&gt;<font color=3D"0"><i>dir</i></font>&nbsp;<font color=3D"0"><i>bloc</i=
+></font>&nbsp;)&nbsp;'<font color=3D"FF0000"><b>;</b></font>'&nbsp;<b>.</b>=
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"FF00FF">//&n=
+bsp;"procedure&nbsp;xxx;&nbsp;external;"</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"FF00FF">//&n=
+bsp;"procedure&nbsp;xxx;&nbsp;external&nbsp;'xxx';"</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"FF00FF">//&n=
+bsp;"procedure&nbsp;xxx;&nbsp;external&nbsp;xxx;"</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"FF00FF">//&n=
+bsp;"procedure&nbsp;xxx;&nbsp;external&nbsp;xxx&nbsp;NAME&nbsp;'MessageBoxA=
+';"</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"FF00FF">//&n=
+bsp;"procedure&nbsp;xxx;&nbsp;external&nbsp;xxx&nbsp;'MessageBoxA'&nbsp;IND=
+EX&nbsp;31;"</font><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>end_ex=
+ternal</i></font>=3D&nbsp;[&nbsp;<font color=3D"0"><i>constant_expression</=
+i></font>&nbsp;$&lt;<font color=3D"0"><i>index</i></font>&nbsp;[&nbsp;<font=
+ color=3D"0"><i>index</i></font>&nbsp;]&nbsp;$&gt;<font color=3D"0"><i>inde=
+x</i></font>&nbsp;]&nbsp;'<font color=3D"FF0000"><b>.</b></font>'&nbsp;<b>.=
+</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"=
+0"><i>index</i></font>=3D&nbsp;<font color=3D"FF0000"><b>INDEX</b></font>&n=
+bsp;<font color=3D"0"><i>constant_expression</i></font>&nbsp;<b>.</b><br>
+&nbsp;&nbsp;<font color=3D"0"><i>bloc</i></font>=3D&nbsp;{&nbsp;<font color=
+=3D"0"><i>main_declarations</i></font>&nbsp;}&nbsp;(&nbsp;<font color=3D"0"=
+><i>composed_instruction</i></font>&nbsp;|&nbsp;<font color=3D"0"><i>asm</i=
+></font>&nbsp;)&nbsp;<b>.</b><br> </p><p>
+&nbsp;&nbsp;<font color=3D"0"><i>main_uses</i></font>=3D&nbsp;<font color=
+=3D"FF0000"><b>USES</b></font>&nbsp;<font color=3D"0"><i>uses_in</i></font>=
+&nbsp;{&nbsp;'<font color=3D"FF0000"><b>,</b></font>'&nbsp;<font color=3D"0=
+"><i>uses_in</i></font>&nbsp;}&nbsp;'<font color=3D"FF0000"><b>;</b></font>=
+'&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>uses_in</i></font>=3D&nbsp;<fo=
+nt color=3D"0000FF"><b>UNIT_NAME</b></font>&nbsp;[&nbsp;<font color=3D"FF00=
+00"><b>IN</b></font>&nbsp;<font color=3D"0"><i>constant_expression</i></fon=
+t>&nbsp;]&nbsp;<b>.</b><br> </p><p>
+&nbsp;&nbsp;<font color=3D"FF00FF">//&nbsp;--&nbsp;program&nbsp;/&nbsp;unit=
+s&nbsp;/&nbsp;library&nbsp;/&nbsp;packages</font><br> </p><p>
+&nbsp;&nbsp;<font color=3D"0"><i>program</i></font>=3D&nbsp;<font color=3D"=
+FF0000"><b>PROGRAM</b></font>&nbsp;<font color=3D"0000FF"><b>NAME</b></font=
+>&nbsp;'<font color=3D"FF0000"><b>;</b></font>'&nbsp;[&nbsp;<font color=3D"=
+0"><i>main_uses</i></font>&nbsp;]&nbsp;<font color=3D"0"><i>bloc</i></font>=
+&nbsp;'<font color=3D"FF0000"><b>.</b></font>'&nbsp;<b>.</b><br>
+</p><p>
+&nbsp;&nbsp;<font color=3D"0"><i>unit</i></font>=3D&nbsp;<font color=3D"FF0=
+000"><b>UNIT</b></font>&nbsp;<font color=3D"0000FF"><b>UNIT_NAME</b></font>=
+&nbsp;'<font color=3D"FF0000"><b>;</b></font>'&nbsp;<font color=3D"0"><i>un=
+it_interface</i></font>&nbsp;<font color=3D"0"><i>unit_implementation</i></=
+font>&nbsp;<font color=3D"0"><i>unit_end</i></font>&nbsp;'<font color=3D"FF=
+0000"><b>.</b></font>'&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>uses</i></font>=3D&nbsp;<font =
+color=3D"FF0000"><b>USES</b></font>&nbsp;<font color=3D"0"><i>identifier_li=
+st</i></font>&nbsp;'<font color=3D"FF0000"><b>;</b></font>'&nbsp;<b>.</b><b=
+r>
+&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>unit_interface</i></font>=3D&n=
+bsp;<font color=3D"FF0000"><b>INTERFACE</b></font>&nbsp;[&nbsp;<font color=
+=3D"0"><i>uses</i></font>&nbsp;]&nbsp;{&nbsp;<font color=3D"0"><i>const_typ=
+e_var_declarations</i></font>&nbsp;|&nbsp;<font color=3D"0"><i>routine_head=
+er</i></font>&nbsp;}&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>unit_implementation</i></font>=
+=3D&nbsp;<font color=3D"FF0000"><b>IMPLEMENTATION</b></font>&nbsp;[&nbsp;<f=
+ont color=3D"0"><i>uses</i></font>&nbsp;]&nbsp;{&nbsp;<font color=3D"0"><i>=
+main_declarations</i></font>&nbsp;}&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>unit_end</i></font>=3D&nbsp;(&=
+nbsp;<font color=3D"FF0000"><b>BEGIN</b></font>&nbsp;<font color=3D"0"><i>i=
+nstruction_list</i></font>&nbsp;|&nbsp;<font color=3D"0"><i>initialization<=
+/i></font>&nbsp;)&nbsp;<font color=3D"FF0000"><b>END</b></font>&nbsp;<b>.</=
+b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>initialization</i>=
+</font>=3D&nbsp;[&nbsp;<font color=3D"FF0000"><b>INITIALIZATION</b></font>&=
+nbsp;<font color=3D"0"><i>instruction_list</i></font>&nbsp;[&nbsp;<font col=
+or=3D"FF0000"><b>FINALIZATION</b></font>&nbsp;<font color=3D"0"><i>instruct=
+ion_list</i></font>&nbsp;]]&nbsp;<b>.</b><br>
+</p><p>
+&nbsp;&nbsp;<font color=3D"0"><i>library</i></font>=3D&nbsp;<font color=3D"=
+FF0000"><b>LIBRARY</b></font>&nbsp;<font color=3D"0000FF"><b>LIBRARY_NAME</=
+b></font>&nbsp;<font color=3D"0"><i>main_uses</i></font>&nbsp;<font color=
+=3D"0"><i>bloc</i></font>&nbsp;'<font color=3D"FF0000"><b>.</b></font>'&nbs=
+p;<b>.</b><br>
+</p><p> &nbsp;&nbsp;<font color=3D"0"><i>package</i></font>=3D&nbsp;<font c=
+olor=3D"FF0000"><b>PACKAGE</b></font>&nbsp;<font color=3D"0000FF"><b>PACKAG=
+E_NAME</b></font>&nbsp;'<font color=3D"FF0000"><b>;</b></font>'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$&lt;<font color=3D"0"><i>pack</i></fon=
+t>&nbsp;[&nbsp;<font color=3D"0"><i>requires_clause</i></font>&nbsp;]&nbsp;=
+[&nbsp;<font color=3D"0"><i>contains_clause</i></font>&nbsp;]&nbsp;$&gt;<fo=
+nt color=3D"0"><i>pack</i></font>&nbsp;<font color=3D"FF0000"><b>END</b></f=
+ont>&nbsp;'<font color=3D"FF0000"><b>.</b></font>'&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>requires_clause</i></font>=3D&=
+nbsp;<font color=3D"FF0000"><b>REQUIRES</b></font>&nbsp;<font color=3D"0000=
+FF"><b>REQUIRES_NAME</b></font>&nbsp;{'<font color=3D"FF0000"><b>,</b></fon=
+t>'&nbsp;<font color=3D"0000FF"><b>REQUIRES_NAME</b></font>&nbsp;}&nbsp;'<f=
+ont color=3D"FF0000"><b>;</b></font>'&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>contains_clause</i></font>=3D&=
+nbsp;<font color=3D"FF0000"><b>CONTAINS</b></font>&nbsp;<font color=3D"0"><=
+i>contains_statement</i></font>&nbsp;{'<font color=3D"FF0000"><b>,</b></fon=
+t>'&nbsp;<font color=3D"0"><i>contains_statement</i></font>&nbsp;}&nbsp;'<f=
+ont color=3D"FF0000"><b>;</b></font>'&nbsp;<b>.</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color=3D"0"><i>contains_statement=
+</i></font>=3D&nbsp;<font color=3D"0000FF"><b>CONTAINS_NAME</b></font>&nbsp=
+;[&nbsp;<font color=3D"FF0000"><b>IN</b></font>&nbsp;<font color=3D"0"><i>c=
+onstant_expression</i></font>&nbsp;]&nbsp;<b>.</b><br>
+<b>.</b><br> </p><p> </p></blockquote> </td> </tr> </tbody></table> </cente=
+r> <p> <br><br> </p><h3>2.4 - Other Delphi grammars</h3> Googling on the We=
+b you will find several other <i>Delphi</i> grammars. <p> <br><br> </p><hr>=
+ <h2>3 - References</h2> <ul>
+<li><a href=3D"http://parserbuilder.sourceforge.net/d6grammar.html">Delphi =
+6 Grammar</a><br> This is the COCO/R grammar. We have found this link on Go=
+ogle but not checked this grammar<br> </li><li>CocolSoft also has a Delphi =
+grammar<br>
+</li><li>Martin WALDENBURG offered a source code parser, which can be found=
+ using Google (mwParse). He also had a nice Delphi grammar page, but the li=
+nk I had is no longer valid.<br> </li></ul> <br><br> <hr> <h2>4 - Comments<=
+/h2> <br><br> As usual: <ul>
+<li>please tell us at <a href=3D"mailto:fcolibri@felix-colibri.com">fcolibr=
+i@felix-colibri.com</a> if you <b>found some errors, mistakes, bugs, broken=
+ links or had some problem downloading the file</b>. Resulting corrections =
+will
+be helpful for other readers<br> </li><li>we welcome any <b>comment, critic=
+ism, enhancement, other sources or reference suggestion</b>. Just send an e=
+-mail to <a href=3D"mailto:fcolibri@felix-colibri.com">fcolibri@felix-colib=
+ri.com</a>.<br>
+</li><li>or more simply, enter your (anonymous or with your e-mail if you w=
+ant an answer) comments below and <b>clic the "send" button</b><form method=
+=3D"POST" action=3D"http://www.felix-colibri.com/scripts/opinionx.exe"><cen=
+ter>
+<table border=3D"1" cellspacing=3D"0" cellpadding=3D"2" bgcolor=3D"#CCFFFF"=
+ width=3D"80%"> <tbody><tr> <td valign=3D"top"> Name : </td> <td> <input ty=
+pe=3D"text" size=3D"70" name=3D"firstname"> </td> </tr> <tr> <td valign=3D"=
+top"> E-mail : </td> <td>
+<input type=3D"text" size=3D"70" name=3D"email"> </td> </tr> <tr> <td valig=
+n=3D"top" bgcolor=3D"#FFFFCC"> <font color=3D"#FF0000"><b>Comments&nbsp;*</=
+b>&nbsp;:</font> </td> <td bgcolor=3D"#FFFFCC"> <textarea class=3D"clsInput=
+Box" cols=3D"53" name=3D"delphi_5_grammar" rows=3D"5" wrap=3D"physical"></t=
+extarea> </td> </tr> <tr> <td valign=3D"top" bgcolor=3D"#CCFFFF"> &nbsp; </=
+td> <td bgcolor=3D"#CCFFFF" align=3D"center"> <input type=3D"submit" value=
+=3D"Send my Comments"> </td> </tr> </tbody></table> </center> </form> <p>
+</p></li><li>and if you liked this article, <b>talk about this site</b> to =
+your fellow developpers, <b>add a link to your links page</b> ou <b>mention=
+ our articles in your blog or newsgroup posts</b> when relevant. That's the=
+ way we operate:
+the more traffic and Google references we get, the more articles we will wr=
+ite.<br> </li></ul> <br><br> <hr> <h2>5 - The author</h2> <font color=3D"#F=
+F0000"><b>Felix John COLIBRI</b></font> works at the <b>Pascal
+Institute</b>. Starting with Pascal in 1979, he then became involved with O=
+bject Oriented Programming, Delphi, Sql, Tcp/Ip, Html, UML. Currently, he i=
+s mainly
+active in the area of <a href=3D"http://www.felix-colibri.com/delphi_custom=
+_developments/delphi_custom_developments.html"><b>custom software developme=
+nt</b></a> (new projects, maintenance, audits, BDE migration, Delphi
+Xe_n migrations, refactoring), <a href=3D"http://www.felix-colibri.com/delp=
+hi_custom_developments/delphi_consultant/delphi_consultant.html"><b>Delphi =
+Consulting</b></a> and <a href=3D"http://www.felix-colibri.com/training/tra=
+ining.html"><b>Delph
+training</b></a>. His <a href=3D"http://www.felix-colibri.com/index.html"><=
+b>web site</b></a> features tutorials, technical papers about programming w=
+ith full downloadable <b>source code</b>, and the <b>description and calend=
+ar</b> of forthcoming <a href=3D"http://www.felix-colibri.com/training/trai=
+ning.html"><b>Delphi, FireBird, Tcp/IP, Web Services, OOP&nbsp; / &nbsp;UML=
+, Design Patterns, Unit Testing</b></a> training sessions.<br> </td> </tr> =
+</tbody></table>
+<table border=3D"0" cellpadding=3D"2" width=3D"100%" bgcolor=3D"#FFFFFF"> <=
+tbody><tr> <td> <table border=3D"0" align=3D"center" bgcolor=3D"#CCFFFF"> <=
+tbody><tr> <td bgcolor=3D"#CCFFFF"> <center> Created: nov-04. Last updated:=
+ jul-15 - 98 articles, 131 .ZIP sources, 1012 figures<br>
+<font color=3D"#808080"> Copyright&nbsp;=A9 Felix J. Colibri &nbsp;&nbsp;<a=
+ href=3D"http://www.felix-colibri.com/index.html">http://www.felix-colibri.=
+com</a> 2004 - 2015. All rigths reserved</font><br> </center><center>
+<font color=3D"FF0000">Back:</font> &nbsp;&nbsp; <a href=3D"http://www.feli=
+x-colibri.com/index.html">Home</a>&nbsp; <a href=3D"http://www.felix-colibr=
+i.com/papers/papers.html">Papers</a>&nbsp;
+<a href=3D"http://www.felix-colibri.com/training/training.html">Training</a=
+>&nbsp; <a href=3D"http://www.felix-colibri.com/delphi_custom_developments/=
+delphi_custom_developments.html">Delphi developments</a>&nbsp;
+<a href=3D"http://www.felix-colibri.com/sweet_home/valid_delphi_links/valid=
+_delphi_links.html">Links</a>&nbsp; <a href=3D"http://www.felix-colibri.com=
+/download/download.html">Download</a> </center> </td> </tr> </tbody></table=
+> </td> </tr> </tbody></table> </td> </tr> </tbody></table>
+</div> <div style=3D"position:absolute; left:0px; Top:0px; width: 200px; ba=
+ckground-color: FFBBFF; "> <table cellspacing=3D"5" bgcolor=3D"#FFBBFF" wid=
+th=3D"100%"> <tbody><tr align=3D"center"> <td align=3D"center"> <center><ta=
+ble bgcolor=3D"#FFBBFF"> <tbody><tr align=3D"center">
+<td align=3D"center"> <center><img src=3D"http://www.felix-colibri.com/pasc=
+al_institute.png" alt=3D"the Pascal Institute"></center> </td> </tr> </tbod=
+y></table></center> <center><h3>Felix J COLIBRI</h3></center> </td> </tr> <=
+tr> <td bgcolor=3D"#CCFFFF">
++ <a href=3D"http://www.felix-colibri.com/index.html">Home</a><br> <table c=
+ellspacing=3D"0" cellpadding=3D"0" border=3D"1" width=3D"100%"> <tbody><tr>=
+ <td> &nbsp;&nbsp;+ <a href=3D"http://www.felix-colibri.com/papers/papers.h=
+tml">articles_with_sources</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <a href=3D"http://www.felix-colibri.com/papers/db=
+/db.html">database</a><br> <table border=3D"0" cellpadding=3D"0" cellspacin=
+g=3D"1" width=3D"100%" bgcolor=3D"#80FFFF"> <tbody><tr> <td> </td> </tr> </=
+tbody></table>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <a href=3D"http://www.felix-colibri.com/papers/we=
+b/web.html">web_internet_sockets</a><br> <table border=3D"0" cellpadding=3D=
+"0" cellspacing=3D"1" width=3D"100%" bgcolor=3D"#80FFFF"> <tbody><tr> <td> =
+</td> </tr> </tbody></table>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <a href=3D"http://www.felix-colibri.com/papers/oo=
+p_components/oop_components.html">oop_components</a><br> &nbsp;&nbsp;&nbsp;=
+&nbsp;+ <a href=3D"http://www.felix-colibri.com/papers/design_patterns/desi=
+gn_patterns.html">uml_design_patterns</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <a href=3D"http://www.felix-colibri.com/papers/de=
+bug_and_test/debug_and_test.html">debug_and_test</a><br> <table border=3D"0=
+" cellpadding=3D"0" cellspacing=3D"1" width=3D"100%" bgcolor=3D"#80FFFF"> <=
+tbody><tr> <td> </td> </tr> </tbody></table>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <a href=3D"http://www.felix-colibri.com/papers/gr=
+aphic/graphic.html">graphic</a><br> &nbsp;&nbsp;&nbsp;&nbsp;+ <a href=3D"ht=
+tp://www.felix-colibri.com/papers/controls/controls.html">controls</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <a href=3D"http://www.felix-colibri.com/papers/co=
+libri_utilities/colibri_utilities.html">colibri_utilities</a><br> &nbsp;&nb=
+sp;&nbsp;&nbsp;+ <a href=3D"http://www.felix-colibri.com/papers/colibri_hel=
+pers/colibri_helpers.html">colibri_helpers</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <a href=3D"http://www.felix-colibri.com/papers/de=
+lphi/delphi.html">delphi</a><br> &nbsp;&nbsp;&nbsp;&nbsp;+ <a href=3D"http:=
+//www.felix-colibri.com/papers/firemonkey/firemonkey.html">firemonkey</a><b=
+r>
+&nbsp;&nbsp;&nbsp;&nbsp;+ <a href=3D"http://www.felix-colibri.com/papers/co=
+mpilers/compilers.html">compilers</a><br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;=96 <a href=3D"http://www.felix-colibri.com/papers/compilers/pl0_grammar=
+/pl0_grammar.html">pl0_grammar</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=96 <a href=3D"http://www.felix-colibri=
+.com/papers/compilers/pascal_s_grammar/pascal_s_grammar.html">pascal_s_gram=
+mar</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=96 <a href=3D"http://www.felix-colibri=
+.com/papers/compilers/pascal_grammar/pascal_grammar.html">pascal_grammar</a=
+><br> <table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D"100%=
+" bgcolor=3D"#FFFFCC"> <tbody><tr> <td>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=96 <a href=3D"http://www.felix-colibri=
+.com/papers/compilers/delphi_5_grammar/delphi_5_grammar.html">delphi_5_gram=
+mar</a><br> </td> </tr> </tbody></table> </td> </tr> </tbody></table> <tabl=
+e cellspacing=3D"0" cellpadding=3D"0" border=3D"1" width=3D"100%"> <tbody><=
+tr>
+<td> &nbsp;&nbsp;+ <a href=3D"http://www.felix-colibri.com/training/trainin=
+g.html">delphi_training</a><br> </td> </tr> </tbody></table> <table cellspa=
+cing=3D"0" cellpadding=3D"0" border=3D"1" width=3D"100%"> <tbody><tr> <td>
+&nbsp;&nbsp;+ <a href=3D"http://www.felix-colibri.com/delphi_custom_develop=
+ments/delphi_custom_developments.html">delphi_developments</a><br> </td> </=
+tr> </tbody></table> <table cellspacing=3D"0" cellpadding=3D"0" border=3D"1=
+" width=3D"100%"> <tbody><tr> <td>
+&nbsp;&nbsp;+ <a href=3D"http://www.felix-colibri.com/sweet_home/sweet_home=
+.html">sweet_home</a><br> </td> </tr> </tbody></table> <table cellspacing=
+=3D"0" cellpadding=3D"0" border=3D"1" width=3D"100%"> <tbody><tr> <td>
+&nbsp;&nbsp;=96 <a href=3D"http://www.felix-colibri.com/download/download.h=
+tml">download_zip_sources</a><br> </td> </tr> </tbody></table> <table cells=
+pacing=3D"0" cellpadding=3D"0" border=3D"1" width=3D"100%"> <tbody><tr> <td=
+> &nbsp;&nbsp;+ <a href=3D"http://www.felix-colibri.com/links/links.html">l=
+inks</a><br> </td>
+</tr> </tbody></table> <form method=3D"POST" action=3D"http://www.felix-col=
+ibri.com/scripts/coligetu.exe"> =96 <a href=3D"http://www.felix-colibri.com=
+/sweet_home/contacts/contacts.html">Contacts</a><br>
+=96 <a href=3D"http://www.felix-colibri.com/site_map/site_map.html">Site Ma=
+p</a><br> =96 search : <input type=3D"text" name=3D"q" size=3D"25"> </form>=
+ </td> </tr> <tr> <td> <br> <table border=3D"0" cellpadding=3D"2" cellspaci=
+ng=3D"3" align=3D"center" width=3D"100%">
+<tbody><tr bgcolor=3D"#FFBBFF"> <td> <table valign=3D"center"> <tbody><tr> =
+<td> <a href=3D"http://www.felix-colibri.com/feed.rss" type=3D"application/=
+rss+xml"> RSS feed &nbsp;<img src=3D"http://www.felix-colibri.com/xml.png">=
+</a> </td> </tr> <tr> <td>
+<a href=3D"http://www.felix-colibri.com/blog/blog_felix_colibri_.html">Blog=
+</a> </td> </tr> </tbody></table> <br> </td> </tr> </tbody></table> </td> <=
+/tr> </tbody></table> </div> </div> =20
+</body></html>
+------MultipartBoundary--B4GHlZGR6W1PxxBBufAyAieOZ6BYhMV1v2ziKQU89A----
+Content-Type: text/html
+Content-Transfer-Encoding: quoted-printable
+Content-Location: http://www.felix-colibri.com/forward_3.png
+
+=89PNG
+=1A
+=00=00=00
+IHDR=00=00=00=10=00=00=00=10=08=02=00=00=00=90=91h6=00=00=00=01sRGB=00=AE=
+=CE=1C=E9=00=00=00=04gAMA=00=00=B1=8F=0B=FCa=05=00=00=00 cHRM=00=00z&=00=00=
+=80=84=00=00=FA=00=00=00=80=E8=00=00u0=00=00=EA`=00=00:=98=00=00=17p=9C=BAQ=
+<=00=00=00	pHYs=00=00=0E=C4=00=00=0E=C4=01=95+=0E=1B=00=00=00EIDAT8Oc<=F0=
+=FF?=03I=00=A8=81$=C4@=92j=90sF5 =051$n0=83=04_(=C1=E3=13Y=1B=81`EN=03=10m=
+=20
+=C4=A7=0C=C2=11=87=DD=06\=91M=9A=1F=C8	%=AC6=03=00:4=3D>m=A0=FA=82=00=00=00=
+=00IEND=AEB`=82
+------MultipartBoundary--B4GHlZGR6W1PxxBBufAyAieOZ6BYhMV1v2ziKQU89A----
+Content-Type: text/html
+Content-Transfer-Encoding: quoted-printable
+Content-Location: http://www.felix-colibri.com/pascal_institute.png
+
+=89PNG
+=1A
+=00=00=00
+IHDR=00=00=00U=00=00=00U=08=02=00=00=00=B7=97?
+=00=00=00=01sRGB=00=AE=CE=1C=E9=00=00=00=04gAMA=00=00=B1=8F=0B=FCa=05=00=00=
+=00 cHRM=00=00z&=00=00=80=84=00=00=FA=00=00=00=80=E8=00=00u0=00=00=EA`=00=
+=00:=98=00=00=17p=9C=BAQ<=00=00=00	pHYs=00=00=0E=C4=00=00=0E=C4=01=95+=0E=
+=1B=00=00-=85IDATx^=E5\uxTg=BE=EEv=B7=BD=BBw=EF=DE=95=BB[=A7Xi=D1=92=84=F8d=
+=FC=8C=1F=97q=8D=1Bq'=06=04=12$=04w+^=A0=05=8A=BB=B78=05=8A=15
+=05Z=B4=14=12=92=8C=CFw=BF=01J=91=00=A1=DB=DE=7F=EE<=E7=E1=99=843_=E6=FD=B9=
+=9E=DF=81#{J=AA=F6=D6=E5g=BD=E4z=E9=FF=E3=0B=AC=07`=17=00=1B=FF=9F^/=FD=DF!=
+=DF	=C0=E7=0F]=87=018=F2=D0=B5=F7=D1=FF=DD=F2=7F=C4=8F=DF=18?=84=011C=A8_=
+=03=90?=1D=D8=06=81=F8=A1=C1+c,x=F9e=F0=D2K?_=CAx=904=FC=FE=FF=1A=07=80=D5N=
+p=1C=00H=94=DFX6=7F=1B=FC=F0K=EF=06=E0=18=00+=9B=83=A8=1E=C6=F9B=EF=C5FP03H=
+;H=08x=E0o =14=BF6~=88=FC=14=00=D9=93A=E6=F8_=0E=FBI=1AIL=C01=04,=BF
+=0E=FE=CAT=F8=F5=F0=DFC^:=FF=D7=84=FD$!xdP=A6~=3D*=FC=1A=F8=A1a;
+=D5{=C6o=8B=FCaZ@*|v=07=1C=F8=15l=E4=BF=81=7F=F3]=E3t=04|=95=D5=D0=18=C1o
+=E5=B9=BB=F7	=FC=FE=0F=0F=A8=E0=7F=E5UO=97=EE=BEN=EF=FB;v=F3u=EC=E6}=B7=1B|=
+=E3=E9=F4=BE=ABk/=CF[=9D=9FK=AC=C0+=AFz{=87=BB>=8Ci	=17=04=FE=F8=9Fm=DC/=B7=
+=83=13=FF.	~)=FE=9D =B0=F2=8E'=BD=F6V=B4=F4=BA=9Ct=89=D5=0F=7F?=FF=9F=FF=DB=
+=D7=A3=9F=FB=FD=BE=EE=1E=FD=BC=3DB=FD=3DB=DD=3DC=DD=DDC=DD=3D=C2<=EF=BE=0F=
+=EF=0C<!=D8=EEw=BA:=DF=EC=E0=0E=D2=E5w=8FA=F5=FF=E9O=BE=7F=FCO=DB=F4R=C4=83=
+o=FE-=8B=F0=8B=F0=EF=05=BE1=DB=DCB=85=93'nU=A9[e=E4s=99=D9=C6
+=AF=FE=D1=C3=B0~=A5=A6=99=C1[q=D2=A7$=9D=1A=D2=ABd]
+=15=F8=D7k/v=E0=1A=F7/=D6=85=17=C4=0Fe=FE=08p=E7=8C=BE=13=1E=D5(U=DF=11jZ5=
+=CCc=DF=D5=FBF=07=EF;=9D=BDow=F6v=E8=EC}=A7=A3=EF=CD=8E=EE=B7:y=DF=EC=E4y=
+=A3s=A0cgO=F7=F7=AE=C5=F6=3DWl=3D=9C=96=B8>=95=DD=93=C5=9D-=A0=0F=96P=DBit=
+=BB=96=9E=CF=D1#8=DD@=15=DA F=BEy=E3=F5=17=A0=82=CC=1A=D4=05=F8=F5^0=90}=11=
+=FC0=92Y=E7=BE=13=A9=BC=C3=97=BBE=D8=1D	v[=885=CB=08g=B8=C0=FD=CF=B7[D=94=
+=1B=A1\"=BCE=AAoVh[e=DAV=B9=BEY=AEm=14S-=08=E7V0=CD=16zkRBe=96-3=9E=AD)=D2=
+=0F-s=F4O=B1=E6=E7=D9K=B2=ED=05=19=DA=F4t=03=AEgP=96=88=B7=C7=A7=A4=A6=E9=
+=ED=16=9DC=9F=C9=D1=E3=AC=86=AB=FD=FA=82=B7;=81=87,K=9Bt	=88=F4=1E=18 l=7F1=
+=12=B4=1B=FFA=E0=ED?=CA=15#h=15hn#d=B3=00w=8A07D=8B=A0=CDR=ACE=A9m=11=11.=
+=01=E7=92=92-=08=D3(en=8B)=A7=9Ck=11=B1=ADB=D4=8Fh=CE=C4s=15v*=C5f=1CQ=C0=
+=8D-=A4'=96=B1c=CB=F4=F5%=C6=D1y=FA1=A5L=A1=15=AD/=D2=8D=1Aj(=1B=C4=A8ex=B5=
+)iv=8D=B92S=97=AA=D5&=B3D=9E=D6x4=D1=0CB=FA=B6a=1A=FE=F0=8A=EB=1F=F7=95=05=
+=DA=94=A0YY=DD
+=BEx=01=12=B4=0F?=94=F9=F4=91=90=CF=8DB=CC=89=10=8Db=A2I=8C9E=A8WL4=0B0=A7=
+=02=F3J=B1V!=EE=12=93N=11=E9=14Rw=F8=98SH{%=A4WD6!=D8B=13=99=EA=D0&=E8=E9=
+=E2D]=A1=95=1E=9A=8E=8F+=E4=06=A7=90=C3=D2=99=99e\}:]=92J=8E(=D3=AD=9DbY;=
+=9DK=B5=C8=E5<=FE=D8=0Cv=E3=8C=C4=BA!=C6=B4\=06#=D0L=869=90=E8=00:=CE=D7=B1=
+=BB?4=CE%=A5]=DDz?=90=02=DF=FF<=AA)=E5=8B=83=99E=FB=14=A1=1D=F8=0F=81=E68Ek=
+=B4=B8=99=AF=BE%!Z=11=D2-"=9A=C5d=8BT=E7=91pN9uGF9E=B8G=80=B7
+=E8=16=84p=89	W,=E5=E4i=80=0C=FD=C1=A0=1F=AE=C1u6}N=92=AE<=99=AB=CE=D1f=98=
+=88=E2dbX=A2=A6<	=AB=B43=13=0B=D9=89=D9=EC=94<=DD=94\=C3=CC=1A=FB=A2:zR=BA=
+=B94=99=A8=B1=91=D7=E6[=F7=AFLX=B1<e=D8p
+=93=C8=1C=14=F5E5=EBO=D4=F8$=9A=16=81=A6Y=82=07~w?=83=08=BC=FAG=FFORp=9F(RK=
+;]=E3=F3=F0C?=D7=B0=A35BtC=886=8B=D1V=BE=A6EB=B8=85=04=E4<=14u=A7=84qI=98F=
+=01=D9$=C2!=DB]bM=8B=12=FE=1Es=C5=A0Mr=CD=0E;S=1D=AF+I0=94g=99=07=15=1A=AB=
+=06=1Aj=AB=F4=03+=D8=8AjSm
+7=B0=94+=1E`+=CD=D0=95=D8=B4%vc=A5	MB=B1=0C=03=B3b=A8c=F3=98=F8Qi=AAY=C9=EA=
+5=E3=CD=07''l=99n4=98=94=06\a=E743=B2=C9=AByZ/=8B=B5=F0=C9=D6=F7C=03/=FF=FE=
+=81=14x=EF=92=C0=FF=E7=BF=DE=FF
+bn=8F=14<=13=FFf=10X=EDt
+=D1=16	~C
+=05=9Er=F3q=17=1Fu	QH=02=A7=94=F5@=9D=17=12wDT=93=08=FE=8B6=0B4=ADb
+=BC=A1=C5J=AD=AC=E4j=8Bt=13j,k=E7=D8?=9E=9C=BCv=B1=E9=F0V=DD=9E=A5=EC=E7+=
+=8D=BB=E6Y7=8E=D0=7FR=A3=1F>=C0\=9CI=A4=EA=89=DC=14=BD=8D=93=C7=1B=A8]=13=
+=0CW=17e5}=92q~=BE=A5:Y3=D3=8A./6=AE=AA=B7=CE=1A=C4Z=A1=F90=91eVfD=96i=E7=
+=D0x=B7E=DB=C2=D7=B6=88=7Fv=BD=81W^q=E1=E6=1FE=F4=CF=D6=B1l!=D8=F3=1CEx&=FE=
+/=81=8FH=F7t=EA=EE=8D=92=B6*9=AF=10=F7=F0I=B7=84=F4=89	O=1C=E1=12Q=1E=84v!l=
+P=17D=90F=98K=A2=F6H=D4=DF[=A8e=B3=F4k=E7=EA=BFX=AD=BF=B8=8Du=EES=AC=9Bi=BC=
+x=D4q=FB=A0=FD=FCN=DD=17=F3=93=F6,1/=A8=D7=AE=A9ef=A4=E1=B3=07=D0=0B=ABU=93=
+=0B=D8=89=83=88=13=8B=CD=E0`=0E=D8V=06=D6=E6=835=D9=C7=E7=E8+=92=D4=A3=CD=
+=9A=86=04=C5=10+>4E=9Bi=A7=12=0Ch=12=C7=8D.=B0=DEY=1E=0F=8C=AC=93=8F=B7J(=
+=DF=DF=EF=9B=C0=D6>Q-R=FC=11=EF=00=F3=E8=1D=CF"=C1=D3=F1=C3=D86o=FA=83=B3=
+=1A=15=06=B7=84i=11=92=CD=08=ED=0E*9=E5=C2=B9V=E1]=83' \|=DC-=C6=9DbU#=81=
+=EFZ=CC=9C=DA=19=7FpM=7F=D7=99=1C=CF=B9=D4=93=0BL=C7=97=A5=9F=D8T=F0=D5=FAl=
+=CF9]=D3=9E=F8=B3=ABtK=87r=13=B2=B9=DD=B3U7=D7=18=FC_=D2=DECz=DF=979=E0"Lug=
+=80C=C3=C0=DE*=F0y)X_xf:S=9F=A3=D2=C8=84=A2=B8XT=10=8D=0Bc,=88=08S=A1=D9=16=
+=DD=0F=FB=8C=81B=D2=13=A1t	=D4=EE8u=E0^=D4=F8=BB=97]*=F6q=EF=08=3D=C2=D3=13=
+=E7=A7=E3?	=80H=FF=E0,=CF;=DD\r=DD=1D=C8y=11=E1=95C'G9e=9C[=06M=00T=01=B4=
+=15=06=02b=EC=B6D=B1#=9F=FEj=83=E5=D2=C6=84=EB{=F3=CE=AE=CD=05=FB+=0E=CDH=
+=BF=B9.=E7=F0=C7=B5W=B6=95=82kc=AE=EF/?=BA,aV=06qhR285=12=9C=1C	=BE=9F=07.=
+=CE=05WW=81=1B=9B=C0=F9=C5=E0=E4<=F0=E5Xp|$=D89=CC=FBY=C1=E91=DA=19%=94N&=
+=16=C5DE=85F=86=87D	=04R=9B=91=F8jv=B6W%u=C7=A8]|=8DG=A4=F1=C6i=EE}UO=CF=D0=
+6=A2=03=98=98>=C5=1D<=05?T=1B=18Q=3D=14=A5=FB=DE=E8=E0R=19\2=A2IJ8=15AC=E0=
+=81=B0%h=ABT=E3=94h\b=95=07Q=1EF=D1-=CB=E2OoM=BC=B2=C6pmY=EA=99E=D6=8B=D3=
+=1C=C7g=D9=BE]1l=EB=C4=FE=17WY=DC=07=B2=AE-+Z>=14=FF=A4=D8=0C=F6=8E=00g=D6=
+=80=8Bk=C0=95-=E0=E6=0Epc3=B8=BC=11\Z	=CE,=01=87=C7=82=FD=C3=C0=E6J=B0u=C0=
+=ADE=F9_O=B0=CF=C9=B6$i=CD=16=19=86DD=D89Y=8A=96=D8=9Dc=05=B8=D8)=90=BB=04=
+=A8/N=D1,%<=FF=F8W0=B3=F8=DD=E3=E9C=10E=C9=BC=A7=19=82=A7=E0=87=B5=A7=BB=E0=
+}=AF=BD=05=EE=9E=E8=92=E1=1E9=ED=97=E1~=19=E6F=A0=AB=87=FA=8F=B5J=A9V)=0E5=
+=DF)'=9B$=F2=C9=C9=EA=B3=EB=13=8F-4=B7.F=F7=8Fq|>=DBtf,=F5q=B1q=CFD=DD=EA:=
+=E6=EAr=FC=F4=0C|=DB8t=ED@=E6=CB=C99=E0=D0dpr%=B8=B8=05\Y=07n=EF=07?n=07?=
+=EC=02=DF=AD=03=A7=97=80=E3=1F=81Cc=C0=81=86=C0=D6=C1=B7=97V5=CFK=DB;=D0>=
+=D0a.63=14/<=83Bj=EC=EA=11i=DA=E6=12=D6#=94=B7=08=D4=AD=12=B5SJ=B7
+=1E=C9=C1=1E=97=02X;iK=0B=DA=C2=0F=EF=83=D9=F5C=CC=87=DA=D5=AAf\"=B5W=86=F9=
+=E4=B4KJ=DC=91=E2.	=ED=94=90=CD2=ACEFz=A4=D49=19Y=93=CC=EE=9Al=DF0V{l&=BBkn=
+=DA=97+=C8%U=CC=E0L=EB=8C"fF=B9=F6=F2z|~)9.Q=B3=A4=D2zmQ=15=D86=1E=1C=FB=18=
+\Y=03=AE=AF=05?l=01=B7=B6=80=AB=EB=C1=E5=95=E0=DCR=F0=F5=12pl:=D89=1A=AC=AB=
+	l(=05=CB=FB=9F=AF=8F_Ph=18=94=E0(=86=9A=10'=AC=B3=A1=0E=03=B1q=A0=01p=A8W=
+=A0i=826=EF=BF=FE=EA=85=19d=F7=90=A7=A6=0C=B1D=B0j=F2=84=16=B4=85=1F=DE=07=
+=0B=0C=0F=E1wI8=E8=E7=A1c=F7h=E8=00=C2y=C4=F0=AF=120=BC=F3H=C9V	=0C=84h=9F=
+=94=DA=A8=C4=0B=13-=B3k=92=17Vh=CFN=A2=0F=8D2=1E=9D=A4=AD=B5i8BU=95IN=ADd=
+=D6=D7=11=95=A9x=A1=1E=9B=9D=17=7FeA=95=7F=E7=14p~=1D=B8=B2=11=DC=DC=15=14=
+=81=9B=1B=C0=F5=1D=E0=F2&pu=0B8=B5=08=1C=98=06=F6O=04;k=C1=AE=91=9EO=D2=AFM=
+=B4l,3
+K=D5=D6=C4S=FC=D8=F0=14=14=19[=C0=AC=9Bf=075=B43=0Ew	T=F7=BEm=F3c=C6=FF=B1,=
+=1B2=F5	=11x=02?=BC=03=16=98=1E=FD=A4=0B=9A:	yG=84=B9=10=C2=0F=93=1C=05=0Cl=
+=19=0F=C2x=D4:=18=F6@=13=D8=AC =EAP</=D5<=A9B7!G7=B9=90YX=C5=CE=CD=A6=E3Q=
+=CCj=C0=F3=92=B0=BA=01=D4=D8=1C=B2=C8J=E9=11=C9=84"K=E3=C2R=B0a28=BA=02\X
+=AEo=07W=D6=82=CB=EB=C0=E5=9D=E0=FAfpc+8=F318=F4=11=D8?	=1C=A8=07=9B=EAn=CC=
+/=BC=D0=90=B4o=A0=B1!]=D7=90=AC=A7e=D1=D1=1FFd=EB=889=B5=F6=C69v?Jy=F9=F7=
+=8D=9F=EF=CDw=9F=952=B6%=02O=E0=7F=82=F9=F0D=B7=C6=E0Q=C2P=0Fs=0Bp=AF=88=F2=
+JI=B7=90r=CBX=8F=9C=84=8A=E7B=E8kj:=97#-f*7=9E=1B=9A=C9=D58=A8a)=D40=AB=C6=
+=C0=E0=83=8A=F4
+=C5=EC=B4RlH&Se@U=12A}=8E=E1=E2G%=E0=D3=A1`=CF=1C=F0=ED=DA 	.=AD=01=D76=80k=
+=DB=82V=10z=81K=CB=C1=D19`=DF=04=F0=C5=08=DF=DA=AA=ABs=0B=CE=8D=B0n/3=8EJ6=
+=0FO1=17=18=F0=B8=C8XL&=CAN2|<=C0=D4l=C1a=14=E0=FF=E7=1B=EDJ=96W=B6<&=02=8F=
+=E2=87=CC_=D5=FA=E4A=DE=8E=1F=B8Tf=97=8C=F2=CA=08=BF=90=F2@=F0A=B6=93n=98=
+=0B=C8=19=A8=11KP:!^Wd=C7=B2=EDd=A9=83=AD=CD`=C7'=D3I
+EQ*=B1o*7=A9=D2\=9CBU=F67=94d0=89=06r=90C;=B30=EB=9B)=F5=E0=8B=C5=E0=C2=E6=
+=C07=CB=02_=AF=00?@=FC{=C1=A5=CD=E0=D2=E7=E0=DC*plv=F0=DA2=C4=B3,=FF=FA=C4=
+=F4=1D=15=D6=05=B9=E6AV}=A5=C18(Y/=8F	=CD=D5=CB=1D:=D5=00;s=99E[x=A8=F7=1F=
+=ED+=16<!=02=8F=E2=87e=F6G5=FF=BE=17x=AB=93K=A1s=CB=087L=F5=840=ED%=9Db*=18=
+=F0=C8=19=8F=8C=F4K=B1=A1jyY=12;2_=9Fd=A6=B2tde"3*=87K!=95	(6%=95=99=9A=C2=
+=94=C5=EB=D2=E3=99=81=19=BA=9A,c=8D=99^Sk=F8~q	=D8>=13=9CY	=AE=EC=04=C7>s=
+=AF=9Cyv=F8=D8=BD=05=B5=C7+F6=CD=1C=07v=8C=06=9F=0F=07=CB
+=DD=F3=B3=CE
+K_=92a=C8D)=16=D3=B0=88=CC=8A=B2=18/Z=AB=A2=EB3=B4=83,L=93X=E3=14i=9CBi=BB=
+=F8=0F=F5zy=E3=C3"=F0(=FE=9F=DC=DEcg=F9a=3DG=A5=838=BD=88=06=9Az/T=04=11=E6=
+=94=B1=AD2=CA=05=A5@=85=D5;=C8=D1=F9=C6=C5y=BAj=1B=AEE=D1=B2<=C3=E4
+*=D7=8E=E2rE=92=81=C90=93I=8C=DAJ=A1=05=A9=DAj;;)=83=BE43=DB=BB=BA=0C=EC=9C=
+=0E=0E,=F0=AF[=F8yQy=83#=A50=9E+2=D2I=A42Mm=DB_?=00l=AA=00=DB=06]=9F=9E=BD"=
+_=97=A7=94=AAe=8A=EAD=E3=C2L}=16=83=C6=C4!=1A=99,=C3J=D63=98K=80y=84=1A=9F=
+=90=08=FC=E1=E7=D2=EB=B3h=01{P=B0=90=F3=93#x=08=FF=13n=EF=C1)=BE=B7=BBx=94z=
+=9F=08w!x=AB=18u=F2UM"=B45=98=02=B2=01	=F9=A5=96s=18=99=B2=02}m=AE>=9BB=AB
+
+=0B=EA=8D3+=0C=E5il=12=8D=A6=DB=F0=82=14.=3D=C1``=C8=0C+7=B9=84^4=D6=BE>/=
+=3D=B0=A6=1Cl=1B=E6]Z=F7iq=FF=C55=EC=D9=89I7=07=1B=D7&i'=D9=A8
+=1B]=96=94zu*=8C=7FF=9C_P8=C4bR(=95E9	%=8E=84=E1:{=B9=CD!=91=CA=92m\=8EM=B8=
+,N=13=E0+=9D=02=953=84=DF^=FE=C3=9E=12=14=F36=F0C=AA<=A5W=E5=7F=AB=A3O=AD=
+=F5*	7=CCm=E5=1A=A7=02=86=1C=B0=E6Kx$=C4=8F2bv=BA)=DF@=CE=ADe=86=F4=B7d9=D8=
+=1D=1B=1DGVP=1B=06=EB=F3=12=E33=93u=D3j8=C8=FCr=8B=B6<=D7R=D1=DF0.=81=ADw=
+=10=95=99=E6=EB=CBj=C0=E6=AA=83C=D3=96=D6gz=97W,=CFK=9B=90m=9C4=DCR=96=A2=
+=B5=E2=C6=8A=04=DB=9A=D1=03=BC+=87__S=98F=AB=86=DA=A9
+Y=D8$=9D=CAF =A4=06=93=F0=E2t
+=05#=8D=D9=C7W=05=A0=F0Kp=DF?_=A4d
+=1Bjm=E0=87=ED=BA=A74=E7=02oC=FC,=8C=F6=DC0=D4S=E2=AD2=DC=1DL~I=BF=10?*D=B2=
+R-6#=BBh=84=A5=DABN,=B0=9EXi98Q[n=E7=C6V=1Af=8C=D6=CE=19b=B0=92H=06=8D=16=
+=DB=89=0CNU=C4=E0=CBK=98m#=D3Z=96=0E=05=AB+=F6=0F=EB=7Fld=19=04?=A7=DEt}k.X=
+U|=B2=C1T=A857$=18v=8E(lY5=06=1C=AD=1C=96=15=C9=0F
+=93=C4D=0C,5=A4=C4=CB=94B=B10=AA=1F/:.%=8EwG
+kP=1A?=02=ED=FF=9B=ED=E5?=C4=98?=F3A[=F5'=F9=7F=8A=E5=BFo=FF:tqcf=8F=84uCo'=
+=A1=9C*=C6=8B=D0^1=0B(=FAd:=95	=8B=1CvnA=99=BE=C4@=CE=1Bn;<=DD2'[=B7x=8C=F1=
+=E8:=C3=C6=B1=BA<Zi=B4=EA=D2m=94=95S%=98=F1	%=B6=03=15=B6=EF=C6=A5=07=E6W6/=
+=CE=FDr=8C}Vzj=8D=01=9F7H_=89=D2=A3=93S=17V=A7=A4r=F8=94=A1Igg=E4=046=8D=06=
+=87F]=DE=A8=D6=92=12=99=84*K=ABb=95*=94=17=1D=D2=F5=B5=C8~=91=8Be2 T;=C5j=
+=B7T=EDy=B7=DB=0B=E0=17=19=1E=A8=C0O=F8=A1=F0[=AA=9Fv=04,=B0=B5hX=9F=8Ci=16=
+=C3=B2=07=E5T@=FCZ=8F=CEt=AE=C0:=B7=88=19=98f=C8=D03=B59=86=EADjz=9E~b
+=3D"=11;6=CFxn=85mr=06=D5=DFL=19=0Cl=9E=9D=C81)s=AC=EC=94=D1=86=E5cl=C7KSnO=
+.=06K=D3Z?I=DA5=C64=C4N=A8%=F2=EE=BD=FAU=0C=AC=DE=F0=D1=B0=92d=F3=D9]9=CE=
+=9D=19=BE=8DC=C0=A6=8F=C1=CDI=DB=162=C9=9AT+=97=9C=92=CCL(=C3=F9}=FF&=89=E0=
+=1FDp=8FX=05=8B.=B7=E2Tn=FE=FD=10=B0=BDT=80=96=FE=AE
+=FC=84=1F=9A=04=E4=91=84=EF=B1=83=9CJ=0E=96=B4=9B=11=E2=0EBx=E4D=80=A0V;=98=
+=11=85=FAq=03,=F5I=84=95=C4f=D6=E8G=97R=05=F1=DA=14N=9DL=ABw=8F=D0n=AF=C5K2=
+=D9=819&=BB=95=B6=B3x=B2	O%=B0=A1=19=D6=F1=B9=EC=8C=04=E3=B9=DA=AC=C0=E2|=
+=B0=BA=C0=BB<=F5=AB=F9)K=EA=F5=03=8A=E3?=19=B1hQ=F9=A8=D9
+=A9?=9EY=06=F6=0C=F2=AC*=04[?=05_=EF=FE=F1=AB=DCb#2=BE=CCxdQ=C2=C5)=96=14u=
+=84I=ACh=81=D1=17l@H(=97=00=F7=F0^=10?=AC=8B=DC=8D=85=7F=C2=0F=1B=98O=EF=CC=
+=C3J=A3=9B0=B7=CAi'L=FB=11=DC+!=AE=C9=D1AFn=E9=08=DB=88t=DAJ=A9tj=E5=A8<jR*=
+=91a=A5=92=F5=A4=96=D4=0C7=ABs=F5=C4=902=AE&SW=93B=E6=C4=B3f\M=8B=85I$[`e=
+=07=E9=AD=FB+=F3=EEL=CB=07=9FV=83=D5U`}=19XW=EA=DCT=F9=F5=D2=D2o=D7=17=80=
+=A3=A3=C1=E9
+=E0=E0d=B0m=14=D88
+l^=06.L=9F=3D=D80=BF8=F1=9B1=D9=9B=CB=93=8B1=9EQ$u=97Z=DC=84
+=96=1E|0$=89}A=FC=FA=92{^=B0]=F8a'=C7=FF=A7=FFl=8DC=02r=C6+=C2=81=95>=91D%=
+=99=B4=0BrL=B5)=B8=8D#=93
+=E4=90=14=CA=C1=AA=F2l=F4=C0|rB=15WQ=A6O=C9=D6=97f=E9=E3)=BC<=99=C9=A2iR&=
+=11=C9=F8
+)=92=80=B3=E9f=D3=D2=14=C7=D9=EA=A4=96=E9=03=FC=8B=07=825=D0=D5=0F=06=BB=07=
+=83=FDC=C1=A1i=E0=D0B=F0=F9l=B0k=14X7=D0=BB=AE6=B0q
+8=B5=FE=ECJ=AE=CA=A2=9F=99=92=B4=B4(%=9F=ED=D6=AF=E7{CL\=E3=10=CE=A7=D3=B8=
+=E2T=B0=04=D0^=C9=BF=C7f=FB=E0=17=C0=7F=EF=E8=C0?_=F7*=B8V=03=F9y=99v=9CE=
+=9Bg&=D39,O=8F=95e=12S=C6i=A7=16Ao=AF=AAH$=C6=E7=E96=8E4=AFn=D0=EF\=EA=98VH=
+=A4=9A
+=A5=19=86=8A=1C=B24=99=1B=9Cm(dqB&'QfX=82a}=8E=ED=E2=F0=1C=DF=B4|=FF=82R=B0=
+q8X=DF=00=93=E2=C0=C6i=00^=9F=8D=F0=CF/=BB=F5=D1=D0=C6=F5=B5=CE=F5C=C1=AEO=
+=BC=1B=E3=EBR=B0=E1=0E=E3=AC=DC=CC<&=EC=83=DE=A1*=8C=9A>=C0=E2=1Bo=F2=C4)=
+=9D|$=F8%_=FE=BD=B7K=8Fv=11=E2q=FC_=3DK=FE=EF=9D=D8"Py=B2=A8=E9iX=1ACq*=D4=
+=84+=93(Mi2=B9=BD=81=BB8=D50=B7=80=B3=D0X=91=83]P=A6[X=990/O{lA=DA=B0=0C6=
+=C3l=9F=99o=9F=9EN=0F=D4=91=B9jU
+=8D=D9U=1A-G=0Ev=18&=DB=F5=DB=B2=93/W$=B7=8C(=F5L*=F7M=AB=BC3=BE=BAen=ADsV=
+=F5=95=EA=B4c=83=FA=7F;o=C8=ED
+=C3~=DC4=D8=BF=7F=0E=D8[=B3b=B02=0B=D5N=CCO=C4=85=3D=04=02dh
+;=B6R=F7=FD`=CC=C7S:=EF=F2=1F=F6=7FZPC=BB=F0'=D4=3D=C4=7F=D86\=EF=7F=EE=C7~=
+=C4=E8=CD=03q=B3=99=D4Q4=86=AATR=18=93=AA=F2u=F8D=ABqn:[a=C62m=9C=11=A5jR=
+=B9=D1=99=F4=A4BzIYJm=9E=B6=CC=AA+=B5=E8=D20=82Vj=10=854N=C0C5=8Ax=16=CF7r=
+=B56n=9A=95]=95e8P=98x=A4=08^=8E=E3=E5=C9'k=B2O=0EL=DD=98g_7&=F3=DB)u=E7=87=
+U~[Y=D84=A6=E6=F6=EC=EA=19=89d=9EN75=D3&=FA=B0kdxL=7F;3&=DFx=C0=A8t=F1=94=
+=1Eq=B0=EC=0B=F1;5=BA=E7=02	=DE=A0p=DCs=81w=F5=1FZ=02h=0F=9E7=99=F4=83XZk%M=
+:=A3=9EfSiR,Q=C6=F0=85*)B=A0=9A4=02=1F=90D=C4=9B8=91Tf=C1I=ABR
+[=97=95=0E]=7F=1DQ=95j=CC`=15=B4H"=15
+=A5R=B9T=A1=E1h=BC=D8=C2
+v=90=C3-=DC=E4,v=AC=95Z=9A=A6[=9EN=AF.=D4=EF=AA=B0=1E=1Ad=DA=9Eg=D9]o>=BD+}=
+\=99=BD*=C5=9C=CCh=D3=D5=86=86=94=C4d\Sl=D6=8D2=93=A1=3D"Q=95=C0=C4=CA=AB=
+=0C=F4u5=EA=13=E30C	=E2=7F=F9e=A7=F2=F1~=F4SqA=93=FF3~=A8=0F=CF=C3=DF=F2=F6=
+=DBV=9A=D3=9A=8C=0E=8AM!PZ*=E5=F3=E2=FA~=D8/*2=A6(=87=9E=3D=D8bR=C9qTM)=94:=
+=1D=C5Q=A4Y!=C2=15R=1C=11J=E3b"z=F7
+=8B=E0=8B$JB=8D=A5=D0=CC(=9BvB=8AiN=96qQ=BAqq=96n^=9EaQ=1A=B7=BE=C0=B0=B3=
+=D4=B4=BB=C4=BAm=90=B6is58:=F0=C2=D6=A4=F3=9B=12fWi=F8=88=CA=ACR=91
+u]=8A=A9=80=8E=ED=D7+<M=AF=92=F2#V"=8A=00l=B7=C0zT=84=F8=1E=FF=1F=1E@y=0E=
+=A2=F6=E0=0F=FC=C7=1F=1F=9Cr=E1=83=9EZ=06vc=B9=D2D=8B=0E=C3=18=B5Z.=C7=C2=
+=05J=85D5+=9B=AA=8EWj
+t=BA=91.J=A5jrlI=1C=A1=D3(=FB'=B2E6Z%=12=8BCCc=C2b=E4"D=ADD=A0=83,K0=8EM4=
+=AC=C83=AD-=B1=AD*0,=C8q,/4l*=B4=EC+4=9D=1Ac=BA<=BF?XR=1FX5=05=1C=1D=05=0E=
+=96=7F>=8A=9EY@=18=10=D4=C2i=C7gs=8C=E0=BD=0F=C3BY=A5F=C9=8B=FAF"=F7=F2P=97=
+=08=F5=8B=D1=E7=F2=EF=F1=1B=1E=C1=FF=94=E0=CF=DF=A9;L0=EF=B5=D9v=93=9C=81@9=
+=16=1D=92g=B3=91(=ABP'=9At:=9C=C0=A4=D2=C1I=D4`=07a7=E0=95=19lC=1E7$=DD=90`=
+=A5=0Br=E9%S=AD=D3*=F4v=9A=91D=C6=F2=F9=02=95D!=15=C9L=0C]=A0=D7
+sp=0B=D3L=EBr=EDk=0B=E27W$l,t|>=C8q=B8=DA=FA=FD=B4=C2=ABu=99'rm7G=17_=AE+=
+=FD,=3D=7F=AE=DD:=96V=F7'=B1=81=A9=CC=F8|}T=EF>=A1Q=D12=01?;=1Ai=11=12=AD=
+=02=CC
+=9B=EE=CA'=DA=1E=CF=13=E7=E0=CC=D6}=F9=87=03\=05=B3=DA=A4=1F=D4+=0Fj=81=BD}=
+?_5=15A=19Z=CB=90=C4=C8T=BD]=A3@=11q"M1*=A5B.=B6+=A5=B5	L=A9=83=18=9EAW=D9=
+=F0|=83=A2=D0B=8F=CFc=F6=8Ddf=95=E19=A9X8O=1C#@=C4B=95Z=8E=D2jM=92=91-=B6=
+=E8=86=C3|>=DB=B8=A1=CC=BA=BDP=F7yu=C2=CE2=C7=CE=F2=C4-C
+>J'=87=E8=D1Q=C9=D6J=83.=9D=D5=14=B2J=07=A6=18odf=E4=98=CAmx\H?=B9T =8A=8D=
+=DB=88@=CD=C7=9C=B0=01/%=3D=EFtza=FE=C3=A9=D4=9F=E3=1F=98=12=B6E0=7FG=98=F9=
+=1B\=08=E5Q=D1c=E5=A8R=A9=A0=A5=B2=0C=1D=93L=E1=90=ED4J$=9A=99$B-=E3=C5p=A4=
+*=C1=80=A5=EB=D4=F9V=8AA=E4=89=14
++=82=83LT=B9=95=CAR=8B=BAt=FEG=8F=90=8E=88P=89#*R=89X9=FD=00+W=9B`=9C=99hX=
+=9A=CDl.2=AD+=B6l(s=AC(=D7=AF-=D2m=AD=D1=1F=18=1F=7F=EC=A3=FE=E7=C79=0E=97=
+=D8>=CB"=C6=9B=B8=86D=E3G=FDu&YddT=84=80=17=D3 Vy%j7T=FE8=A2=E9=D9=95=FF6=
+=05!
+=D6=97=DA=11=FF=05 =FFeL@J6=E1h=1E=AER=CA=A4=98L=AC=C75v=96@UJL=AD.Jg=8B=1D=
+8*
+'	MV
+=C7=A9=14=89=14e=E0=A8=84=04C=B2=91=C5=942=15_=10=DB=B3=EB=EB=3D:=BC=D5=EB=
+=83=0F=A3=A2=E4b9.=97=E9P=DCA2=05Zfb=86~^=AAye=99qE=89e}=A5yK=91ak=AD=E1=F8=
+=C8=AC=DB3=AA.O=AB8><}=A4->=17U=1Bp=A2=C0=A2=9D=98h=C2=FA=85=A0J=A1U=AC=FAZ=
+H=01=18=FC=F3=89F)=D1(y=B4=E7=F9\=C9o=7F=FC=E7=EF=D0=B9U=CE=00	=BE=96=C6s=
+=92=8D=C9=A8F%=96i=B5=9CY=8B+=C4B=16G=AA3,=FD=AD=FAxZ	=CB=12=85:=CAl=A2=AD6=
+mf=8A=A1=AA=BF-G=AB
+=E9=D7+=AC_8_=8A=F4P=18{h=B8=DE"iD=B4@!=92=E8i=DCJ=A29=16m=AD=95=9B=98=AA]Z=
+h\=95m\_`=DB^n=DEY=96t|L=FE7=E3=F3=BE=9E=90=B7}x=C2=C4R=A6:=DDP=E0=E0=86=A5=
+=18&dRq=BDBcx=F2q0=07=11c>=91=1A=CE=E0=B8=D4=9C=EF=17=08=7F;=E3=DF=00=CC=FC=
+=D54=10=E1=ABX=AA$=C9hS+9=99<=D3N'B=BB'=87=9E_=99k=A4S(=18=F9=B1J=A5=D2=AEV=
+$Sdj=BC=B1&	=D6j=E9=14=13=D2=B7odO=9E,
+s=C4=EA=B2=84=8E=02yb>b=B1=C4
+#=15*=89=1EC3,=DA\=A3qh=BCnB=AAia=BEie=7F=EB=B62=FB=86=01I=BB=06e=1C=1C=9C{=
+zl=F6=B5yI=FE=CF=EC=DE=15I[j=AD=13=FA=1B
+=18$N=823B=E4=BC=126=DDT=B0=00=0B=15=D3=07G=A3=DA=C3=F0=C7=EE=B1V?*=FF=D0=
+=18=B4=A9=FF=1D=BA=B6=AA=F4@Do4=EA=0C=B8Z&=95=A2=12=C4L=A8h=B9=CAJ=93=F1z=
+=A2=C4A%c:=BD=12=91=CB=A4"=01O=C6=E7=91j=B5=91 =B4=08"=EA=17=D1=3DB=DA=0Ba=
+=A4=B8Ai=CDQ=A4U=DB=86M=C9=1A;5kt%=9B=02=C3'=9E=0EQ&j=B5=A9=06=E3=00=ABaT=
+=82qJ=B6aV^=C2=B2"=EB=BE=B2=A4Su=E9=17=C6=178g=0C
+=CC=AEh=9CS|j=A4}Y!m=82=85=9F8a
+=89=9E=D3=12=1E=A9=ACE=A4n=E1?=B3=E7=F7=0C=BA=E4L=B9W=02z=A8=FE=01M=C2=13=
+=1F=F0=BD=DB=C5=8B=1A=8F=C7=9B=AB=D2,f=12=D3=EBM:-=1BO=D1$=AAJ60=0E-=9A=C2r=
+$=E4=A6\=92`=A3=12=18Z=83=E0&=02=D3=B2=9C=82dy=BC~=EFE=C6D*=18%=A1=97=D8=07=
+=10Y
+y
+=8B=C7.=DD<o=EB=FE9=AB?=AA=9EX=8A=DA=18=85Z=ACU=B3=99=AC=B1=D2=AC=1D=94=9AP=
+=9Fl=9A=96=E5X=91=9F=FAEY=CA=FE=9A=C2=13=F5YG=AB=0B=97ge=AF=CA1=0F=B1aq=E11=
+=B0=F3!F=901=A4=D6)S4=89`=D8=7F=BF=F3=F3=C2"p=E6=B1=FA=07$=06$=C9=93=F8=DF=
+=EC=D2=92=A0=1F=91f.I=A1I)=92=C8=12u=D9=A6=BA=01=B6j;=93=A8=C5=B4:B=81 =911=
+=A2T=0B>=BDToC=94(=AA=8E=D7=92U=C9=86=9C4m=8EE=DD=9D'
+=97i=85=A4Cm.Ud=D6=9B=06/nX=BAo=D1=D6=D3=BB=0F=9E:=FE=CD=89=D5_,=1B5=BB=8C=
+=CD2J=18R%R=A4=A2=AAr=13Sg=D1=D5=A7=C5=8F=CEMhH=B2MI=B14d=C4=D7:t=83l8%=8C=
+=E5=F3x=82X^Hxd=B6=92j=B9=DBtw=0B=B0=17F~=0F=E3]=E7=F7=10=FF=E1=0Fm=BA=C07;=
+=1FCu=A9f=D6nc=D5=928#=A5=AA=CA=B3=0C=EC=AFoH=E4L=14f=A21^=0C=AFw\\=B6=85=
+=19=95=84=93=C1=80WN`=9A=F1ElE2[hV=F7=8EC=C3TF>i=950=F1r=C7=A0=E4=8A=E9=83=
+=A6n=FFt=C3=D1=EDG=BF;=F5]=E3=B5=1Fn=9C=BF=F6=F5=DA=03=ABF,=1Ce=A8=C8=E5=B1=
+*=B9<=8ERH=E3=C5B=83X`'U=A9=84&A%=8B'e8/4$<,.*F=10=1D=1D=12=DA=BBH=C5=00=86=
+=0B=F0U=AD2=CE=FB=FA=DB/L=82=9F=92=BFG=F1=C3|H=F8x=F2=04M=EBe=84=C8=C34=19f=
+=AD=81=D2=A4&=E8=87g=B0=03=B4d=BE=03W=89=F9Q=B11=02=01=BFo=DF=9EB=A1(U=87%0=
+=1A\=A1=80=91o=B9=95=18=9EkH=C4=A3=FB=84=F2"=14:>=17/3g=C8=92=06=A1=B93r=07=
+/=99=F6=C9=BE5=07=AE=1C>{=EB=CC=95;7=9A=BC?47~=FF=C3=D9=AD=C7v=8C=FExjF=FD@=
+=A5=DD=1E=ABAC=05B	=A1=0CW=F2=FB=F4=EE+=E0=C5=85=F7=EB=D5=A9=FB=BB=3D#=E2=
+=F8<=D9=87=DD=DF=97=F1T=9F=C5=B37=95j8}=EA=EE=01=E7"=1F=DA=A3i=CF=FB=87=1A=
+=C1=0F=F5?=1E=1D=F8=B9w=A8=EB=9D=CE=CD2z#=A22=E2=AA=02Z=9DM=AB=F4=12=11*=E0=
+=8B=F8=91=11=E11b=B1=94=A3p=99@=DA=BB{o=B5H=C2=91(=A6=D6=E0J=D2=AE=A3=B2T=
+=02aTx8=8F=C7S=9A=F8=BA|UB
+]4=9A=1B0=D5P57u=E8=AA=89=9F~=B9=E7=CB=9B=C7=CF5=9F=B9=EE=BD=D1=E4=03=00=B4=
+=F8=9C?6_=DFsr=EF=90=C5=8B=1C55TJ=EA=D8=A2=D2=CDK=0BK*=99(=99!=1A5=F1=A5=F2=
+=D7=BBt=8B=EE=D5=B3[=D7=BFv}=FD5^d=DC|=94>B=E8|=FF=F3"=95=FF{=D4=81=95=FE6=
+=EA=FFm=A9=80=F7=ADNn=8D=D6=ADAg=ABI=92=80=D2=AD=C0=94rB=85=99=B5=1A=03M=E6=
+9=D8=82$F=AF=91=F6=FA=B0=B7X-=D7=D1t=92=81=88=D7rvR=1D=D6/*=96K=D2=17=15=8A=
+83=0FMP:=CA=F5=A5S=12=06=CF/=1A=FDq=F1=D4=A5=C5=93=B7=8D]=FC=D5=D6]=DF=9F=
+=B8=E8=FC=E6=AA=E7ZS=00=92=E0=EE=EB=CE=B7=D7=BE=9A=B7}U=C9=D4=89=B2=A2=05=
+=D3=C7m=FA=F6=E8=CC=05=8BJ=E5=A9=D5:{6N
+{t|=F9=F57=FF=FB=CD=BF=BF=FAA=C7=BF=E4=D0=D8f=05=F5=C2=CC=87=ABWm=F7=BF =FE=
+'=BC=A0=E7=ED=CEN=95=16h=D4=8B=042=A3=DE=90i3=96=A7=9A=AA=1D=FA=EA4=B6,=91=
+=A9=83}N=07]d=E0=92=94=B11q"=8DRAjp=1B=013?1/26VfN=AE=1E;=18=D6h=D2=EC"c=B6=
+*=A9=96.=9E=95]=BFb=D8=DC=AD=13V=EF=1E=F1=D9=DE1=ABO=AC=D8=F5=FD=9E=137=8E=
+=9F=BBu=F1=FA=9D;N/=00~=E0=BD}=A3=F1=FC=8E=13=BBF,]=944b=DD=BC=8FO}=BEg=D7=
+=D4=19=C3e)=E5=E6=DC=C1=F1=F1L=C7>=A1=9D=FF=F5=97=8E]:r*=F2=14N=83=BF=FF=EB=
+=05r^=C8=FC=FE=13=1E=DE){=B4=FF	U=A0d=EE=C3=14u=BF=DD=B9I=AE=F5I=88=D5=D1R=
+=B1=1A=CD5j=F3=B4x2=A5)=8Bg=EBR=88=FE=0C=91NQ6(=1A
+IX8O=A4fY=8C=B1=AA=14=D2=88=C8=B0=88=C8=F7>=8C=88=8E%=0B=13=CB=E7L=18=FB=E9=
+=92=D1y
+=E3=92',L=1F=F7IZ=FD=D6QSw=AFX=BFw=FB=C1=03=B36=1D=9F=BD=FE=EB
+=87=AE|=F5M=E3=CDF=9F=0BR =F8r=F9=BC7=BE=BB=BA=FF=93=DD=1B=AA=16=1D^=B6`=EB=
+=B6mk=17M=1BM=14OM=1E0-=DD=C1=F4=ED=FA_=9D=DE|U#C=F7=EA=88V=A5=A1E=F1"=C9=
+=DF=E9G=A6`=9E=98=7F=80=A3b=0F=99=10=FF[=9D[dz=97=94;=C7S=B1|!=A7=C6J=1Dt"=
+=8B=B3r=B9A*7b=18=A5=94E=0B%a!=A1o=BD=DF9$,<=A4oXDX=88=82/=0C=0B=89=EA=F0A=
+=EF=BFw=FA "=84=AFQ%=D5=14=8E=F8x=F2=BC#=1Bf=9C;=F8=E9=B6=03=BB=E7=AC=DE;c=
+=F5=F1=95k=BF>y=E6=FC=E7=A7=AE=EC>=7F=E7=F4U=EF=D7?=F8/=DD=06.=8F=CF=EBu=02=
+=00=8DBss=CB=E5=8D=87=0F=0C[|=E4=C2=89/=D7,=FFd=C6=C7=B3=D4%=8B
+=EB>Jv=A8=C3=C3z=F7=EE=19:C=8B=DF=E28=9F=8C=82R=D0.E(=9E=FB=D8B=E1=13=F8=1F=
+=15=01=CF=9B]Z=E5p=EC=8D=01R=EA=00O=9C=CC=8BI=D1=C8,=A8=82=90H=14=12)=8F/=
+=88=08=EB=D7=3D2N=D8=ABs=D77_=EA=DB=E9O]=DF}G)=97=C1@=B1{=8F=9E=AF=F7	{=A7O=
+h=A7.=DD=BBtx?=A2GdT=98=D2=8C=98=07X=CBW6,:=BDe=CF=9D=9B=17=F7=9C=FDz=DE=DA=
+o=BE8x=F9=EC=A5=C6s=97o=9D=B8=D4t=F6G=7F=8B=C7=D3=D2=DA=F2=939=80t=B8=B9=FB=
+=CC=A9M_=9E?~=EC=CC=81=1D=1B&=CDYl=1E=B8=A2~=FC=C2=82"=B6w=9F=CE1!=913ml3=
+=C5=C2$=DD=D7=A1=1D=81=F0=A3=CC=7F=D4=FF=3D=98=8DzH=04=BCouiU=B1=B0=F3=0F[=
+=9D@D]=17=A1=8B=A3=11EDHXT=14/2Z=D1/=C2=16#=12=C7=89=A2B?=EC=FCZ=D7=0F=BB=
+=F5=ED=D9=ED=AF0=08tHE=FD=FAt=B2j=A2=90=A8=D0=D7=DE=FE=DB=DB=FF=FCKH=B7=B0^=
+=BDB=95=FC8y,/<T=84=0B=13f=8F=DE|=F5=D2=953=DF_X=B2=FD=EC=B6/=AE\=FE=A1=E5=
+=FC5=E7=D9=1B=EEk=B7=BC=1E=9F=FF.=FF=E1=EB=9E]l=DDw=EE=EA=EE=937=F7=1F=BA=
+=F2=D9=CA=DD=93>=DB=9C4ru=CD=B4=85=E5=83=E3#x=BDB=A3=91y=9C=F6=16=AEm}=E3=
+=99=C3?P=A8=8B=E7<=B9M=DA=D6=FC=D7C"=E0}=AB=B3=8B=D0y=A0=9BU2~=05	=84D=A3=
+=02=B3E=C7=1A=E2=90=85b=F4+=91z=9D=82=AESSc=C5=945RD=C5=08D=A1=D1=92=98=98=
+=02)"=0C	=C9=E5d=B39*-4=AEG=A7W{=FF=ED?B=DEyC,=14=98e=12B(=17D=C4=AA=A2=F1=
+=D5=A3=B7=06\=CEM=FB=8F=D4-=FC=EA=D8=05=CF=B9=EB=AESW=3D=DF^=F3=04=BC=10=B6=
+=17=04 =15=EE=BD=E0=8FMG=AF=DF=D8=FD=F5=ED=ED;/=EE=DE=B0=E3=F0=F6UC7=9C=1F=
+=B1q=FF=9C=F9Y=18=CD=93I=D5=DBu=BA=CB=FF|=9E
+<=C1=FC=A7=F0=1F
+=02=BC=F5=AE=15=F0=BD=FB=9EO=C9=F9=E1=90=8B=92=06=C1=99?=CDd=0C=1B-'=CF#=18=
+=90=A0=E7=A5=E4=17J=FC=1B=85=FA=BA=9C8 =D2=EC@=88m
+|=8DB^=8AH3=A4r=BD\5PA=0FSP=83y=B1=C8k=FF=EA=F1=C6k=BD=DF{=87=17=CDOW=E93im=
+h=DFH>=CF=B8=EC=D3=D3=D7=9B=BE=9F=BDm=CF=8C=15=E7=BE<w=E7=ECU=F7=D7=D7=BCM=
+=AD=10=F0=BD=EB=01~=F8=DEs=F2=CA=E59k=BE=D9=BDw=EF=BA=EAQ=A7=86M8<j=D6=9E)
+=DB=E7'(=E4=82=A9=A4=DE=F9=F63=F9=DF=16=F3=9F=8E=1F.=DB=F6=0F.=B0=FA=FF=F0=
+=8A=17a}R2=00=F1K=88=0B
+l=B7=94=84?=02)=01D=9Af=11sE=84=1E=96=A8=F7=C8=88=C3J=EA=00=A6=DF=A2=D1=ED=
+=95C=B9P=15=C7I=8B)=F5A3=F3=15I-=962=D3=C5=98=BE7=BFg=AF=88>=EF=F5=16=84E:p=
+=B5A=18=D9=F3=FD=0Ft\=C5=853wn=BB=BE=1F=F6=F1=91ek.=1C=FF=D6u=EC=9A=EF=D8=
+=C5=C6=EFn=DF=93=FFG^^=7F=E3=B7M-'=8F=ECPEG)=A3=84=8A>}=A3=84=19=D5=93=D7=
+=B1=1C:C=86=B7h=B4=BE=FF=FA[=DBV0=16=7F8=E6yx
+=F2)=F3=AF[=01Xr=ED=DEY=FE=9E=E1~=85=0E(=E9=1F%=D4i	=06=94=14$=04=10C=FC=94=
+=17N=81=C1=8D=00=D8=81V=E2' i=D4=D4f=05qJ=82]P=D0{=A5X=B9=00=99a5=DF=D2=EA=
+=9Bd=D4q=11=BEEA=8F=92=A8=E5]:u{=FF=AD=0F{=84Hb=A2x=E1=FDB{=C4=8C=CC=9Av=FB=
+=07=F7=F1=CB=97=EAV^=F8l=CB=F7{O=B5=1C=BD=D4|=A9=C9=E7} =FE=0F=11=E1=F6=D9=
+=E3=19$=1B-g=B1=8C\!.=8A=C3S=B8=E2i*%=BAONzdZ=18=AD=B5=8D=7F=F9-=00=11=B55=
+=02=FD=F4=F9=EFC=00=C4=DCm=AA=BC=FA=C7@=8F~@=C55=8B)=80h=81=94=81=E5=00=80=
+=C0=A2=10=9C=FF =DCb2 &=02=B0#.=C5|=08=E6=81	=99=0C=83=9A=02=ED=E57Bb^=9C|=
+=A0TsR=AF=078{[=8C=9F=92i=16=F2=E5=C9a=B1a=11=82=DE=FD=C2=FA=F5=09
+=E9=DD'2L=3Dc=F0'W=BE=BBq=FC=EA=B7=E3=D6=9F^w=E8=E6=B1=EF=3Dg=AF7_=B8=EEr=
+=FB=1FX=C1=A0.=FCx=E5=AC=9DT=C6=C0=82=BB=B1=C8X=B7=A0jDYJ=AA=A5o=84=D8=AAP=
+=EECI=17j=04=EFvi=03?=DC=9D~=FA=A6=EC=D3=F1C=82}r=F3=C1q=DE=9E=FD=80Z=0Fd=
+=1C=900A=F0R=C6/=D0=C0-=08=80=D0p=04=CA'c=FD0=15=93=12=01=01=014$P0@=8C=01=
+=E82=84=E8=96hI=7F=91|=9B=85=F2=D0=B8=0F=C1OJ=D0m=88j=A8=0C=91=C7=C6=F5=ED=
+=DE=A3=CF=07!}z=F5=8C=88`=E7T-=BFq=F1=EA=A1=EF=BF=DBt=EE=CE=FE=8B=AE#=97Z=
+=8F=9Co=BE=D0=E4s=06=81=DF5=04>gu^^_Sv=CA=D8=11=FA=AC=F2=FC=8F=8F=CC=9B=BB=
+=B2=D4=AE=EB=DA=E5=9D=12=94=F9B=CD=DDT=E8=C1+=AF>=8E=1F=82=7F=E6=8E=EC3=F7?=
+`]=FC=D3=9B=80=1F=8C=AE=02p=B4=14=B3=009=C4O=01=11=D4=7F=CA=1BG=C2=11  '=FC=
+R=C2'=A7=02
+:=00=8D=828X,=03p-=85=0F=FD=E5=DDK=8C~'Q=7F=AC@=C7)=A9=0B2hDT-=88f=17=82N=
+=D6h
+$*i4=0C=1C=05=A1=A1=E1=BCHbX=E1=ACKg=AE=9Cmt=7Fy=C5=7F=EA=B2=E7=CCu=CF=E9=
+=1F|=8D=EE=FBVp=DD=82=A9=88=B98{=FC=9A=E1=F3=D7=E9rF=E5=0F^6`=F0
+=B9=10=FB=F0=83Ns)n=8F=8Ak=14?=D1=F9=E2Q=00n1<s=11=ECy=FBOp=11 =EF=A7=C5n=
+=B8o=85=99=81R=0B=E4=14=94=F0=00=EC=BAI)=BF=94=F4=CA(=88=DF=0FS=11=D8=84=11=
+Q =0E=05=02=1C=08H=A8 @=88=01=84=08=C80=B88=B7=13A=E7 =F8a=05=DA=84=A0=B7%=
+=E4E=11=B9A=C2L=97Qu=12=05=0Bs=CA=E8=A8=B0h=B2:}=C6=89m=97~=F4=80=93W\_=9Ch=
+>=FD=BD=F7Js=10=FF=953_=91(G=0E_>z=F4=AA=82=81K%=FAr=11W-B,=3D?x'.=A4=E7z=
+=94jFH=18=A4=FB=1F[=93=FE=E4=87=A7=A9=FDS=F2=BF6I=05=FB$=E2=9F=16A=DE=EE=08=
+=DE=EC=00=E0=8E=85R=07g!=02=08,=8D3P=DA=03ou=08t=EB=ED=87q8=02=CB=D2,=10=A1=
+=00=86=8Cr<H=82=A0=08@=A3@=02=84=BC"=C1=8FJ=C8=EF=A0=ED=94=B0=C0=A1=BD=85=
+=E0=DBd=E4=14L7T=C3=96=AApF"=8E=8E3e=D3=C3=BEZw=FA=9A=17l:=F6=E3=EE=E3=8D=
+=D7=9CA=E9o(-=88$22=07.=B1e=8Eg=A8=FE=11<UH=B8 =BCG=AFx=91=A2=8E`=96=12=D8=
+=1DX=11=B9=BB=FF=F0=F3=B5=AA=05@=F9}=DE=16=E0=F3=F8=7F=EF=F3P=8A=84?=EF=C2=
+=04=FF=C6=EF_=F6=86D=B81.=A01=F8>=F8=A9=02=D1=BD70;=C0=BDQ=B4=AE=3DA=B0p=0C=
+=FD=05=1B4=1C=B0-=AD=E0`=F8=E4=13S=DF=C1%=CA=FE=1CX=9B
+2X=C0S=9F=16=93+=15x=05M=E7=189J,=E7=C7=91:=AC|=EF=EAS=97[=BC=DB=BEu_=BCxk=
+=EE=A0a=BC=1E=11qd=A1=86=CA=8E=14a!=A1=B1=1D_=EF =8F=0BM=95+=96=90=D4J=86=
+=DC=87=C1I\=D2=17=C6=0B=EA=E9=3D=12=C09=E7v=80=7F=BA=FF=7F=92lp.=1C.=12=3DQ=
+]	=BC=F4{?E=05^=F9y=0F=EF=FE=3D=F0=F1&P=16`=EE=DC=F5=03=F0vg=F0F=07=10=AB=
+=0E
+=85=94	(q`=D4=F9=07=9Ao=91p=95=06=05=1A=CC=83hV=89=D5=99=08=CE"J=15=9F=D7=
+=BBWt=B2=B1=E6=C4=A7;=B7
+=9DX=A8=D4~=D8=E9=9D=F7;=F7=E8=FBaD=8F.=DD=DE=7F=FD=0F=DD=FF=F2Rd=DF=10=A5L=
+=A1S=90u=08=FE=A9=02=FD=12=C1|b=95KAy=FBF=C1=150=F0=E9=8F=ED=04=FF"=F8!E E=
+=A1P=B5U`=BA=D3=A9=1D=E3=E7=7F=FE=0B =ECA=F3=11t=90=D0S=A0=AE8=AC=D9L=01=12=
+=0B=1A=0E1=D6"E=E7J=B0$=91=86=0B=0B=E9=DB=AB=9F=A0Gd=C8=FB=EF=F7=EC=1D*
+
+=C3=FAF=D8=C2#U}ya=1D=DE=95=87IY=04=AB=84=C8%=9Amr=FC=B0PsC=84z$=A8O=A8=F4G=
+=F2=C1:=EF=0B=AD@=B7O=FE=1F=88=C3=D3I=D0=AE=F4=13=AA=06=84
+=CD'=0C=9F=A5=D0AB=03=89=03=BE=12=C0=E9
+=E8J=108\H=1E=95=91=8B=05jS=BF=88=C8X^=B6R3YIo=94=D2=C7=A5=E4U)=B5FIoQh?=97=
+`;=A4=CAc=12=F5%	zM=AE=BE!W=C1=00=AC%V=E1=89=91=82=86-=ED=E7=FC=13=F5=DF=E7=
+=99=8A=FB=B6$H=826=14=A1]=F8=EF=05=94=1D=BB=06Tt=B0c=0F=E3H!=0EC=06=0F=14=
+=071\=AB=84=91%
+=F7=CBn*=E8=8Dr=A2V=AA9=A7=C6=3DPY$=C1h
+.=DD=9CUa=17=15=EA=1F=A5*g=B0=F3=A5=F1=04=9D=8B=C6=8DA=E4=12_=B4=D8=BF=C6=
+=F9=A2=E0_P=FE=FF
+)=F0=F7=EE=19x=F7=FE3?=02=FF=F9g=80=E9=E1=EE=A8G=C1=F8`=F8(=A2=FDR. =A5=02=
+=C1=CD=12=18D=D0p=BF=E4=A2=94=BC=15\1C=83=B9=86=84=82=C1=A5=1F=CAH=1C=E6=93=
+=A2A=D9=81m=0F=F8=C4
+!=E6=85+Y=FD=A2AR
+Xy=07l{=BE=B5o=DF=FES{=04=01F=870G=CC=1C=07r=A7=B6=87=F3=AE>!>6=C1=CF=A4=81=
+>=D1-r=DA=A36=00=B5=D1=A36=C2=81:=BFR=EF=97=EB=03J=83Wi=80=F1=B5[=C5=F9a=C6=
+=A5=D0za=DDUN=FA=E5=AC_=A3=F7=A34=90=9B=80=CC=E8=85=01=A8Z=0B=10=DC'P=06b=
+=11O=B44=B0=CE=13\=F8=7F=F1'?=FCR=F9=7F=98:=B0R=00=BB=060Sj=ABw=D6=1E=BA=FC=
+=F2{B=11=B0=E8J0=B0=FF=A5=C8=7F
+=FC=F7h=01=07ia=BE=0C=C5=01V=D7=DA=D3~=F87=EF=89=C1=C0gM=BF=D6#=90^=D0=FE?[=
+5=A08=FC=A6T=88=C6~=DD=87?=FDR=FB=F7\*=1C=06=006X=E1=FA=F8=13
+=B5_" =89u`Ec=F0qp=FB=FE=ADG=FD=BC`=FE=DF=1E+=F8\B@=EB=00	=01;=CB=A9=F5/=86=
+\j=02=E6=CA`=18=0B{U=B0]=F3=1B<=F9=ED=D7=D3=FF=E7R
+=EA=C5=BD=A7=00=C2T=EA=DE=05{=CD=F0=C1v=10!=DC=C6=82=97=AE=08=AC=F3=059=FC=
+=E0=86{=8FC=FC=CD`=BFH=FE=F7\x=BF=EC=86=C7=1E=07=F9=DBCmS=FE=FF=17m=A1.=DB=
+=9D=B5nk=00=00=00=00IEND=AEB`=82
+------MultipartBoundary--B4GHlZGR6W1PxxBBufAyAieOZ6BYhMV1v2ziKQU89A----
+Content-Type: text/html
+Content-Transfer-Encoding: quoted-printable
+Content-Location: http://www.felix-colibri.com/xml.png
+
+=89PNG
+=1A
+=00=00=00
+IHDR=00=00=00$=00=00=00=0E=08=03=00=00=00p=E9N=FA=00=00=00=99PLTE=D5X=04=F1=
+=D4=C0=E1]=04=FF=F6=F0=FFr=15=E0=A7=82=F7=E9=E0=E5^=04=F4d=05=ED=C9=B1=F0c=
+=05=FA=F4=EF=DF=9Er=FF=ABs=F7=E0=D0=D0r3=E7=BD=A1=FF=E3=D1=9FA=03=FF=E6=D5=
+=E5=84C=FF=854=FF=DA=C1=CEU=04=CDg#=FF=ED=E1=E7=B3=91=E8=AB=82=D4a=14=F0l=
+=14=E4w.=DDn$=F0=C1=A1=F8=D7=C1=FF|$=E6{3=F3=C2=A1=FA=96S=F0=AE=82!=0E=01=
+=F9=B2=82=FF=D1=B2=FF=8FD=FF=B4=82}3=02=FF=9AW=C2P=04?=1A=01=FF=C8=A4=FF=FF=
+=FF=FFf=00=80=E2|=C7=00=00=00=01bKGD=00=88=05=1DH=00=00=00	pHYs=00=00=0B=12=
+=00=00=0B=12=01=D2=DD~=FC=00=00=00=07tIME=07=D2=06=10=15/=02=AA=84=8Da=00=
+=00=00=AAIDATx=9C=95=D0=E9=0E=820=10=04`=A0=95[=C0=FB=BE=EFVW=A6=EF=FFpn=F9=
+=A5=04=83N=B2I7=F92i=D6=19=94=ADY;=0F=D3=9A=FB=1F=A8=0B!=8DBOj`dL	=F06=AE7=
+=ED=10=C9=19=F2	=A3"=94=00H=C1ujh=9F CJ=A1F=82=8D=16=CD=C8=9C=00=97=02=A3Q =
+=12=C7/H=01=FE=D20=EAl=81i3=92Bd=98W=E8=80=88=9A=D1
+i=0E=0C-=F2Br*=E4/=B4V=1F'=E0=0F]=E1=AF,=E2=BDB6=E7=F8=AD) =EE=F6=88x,2=FC=
+=8A=C9=C6=FB=FD=E2=FDgk./=B0=85S=99=CBi=11%=00=00=00=00IEND=AEB`=82
+------MultipartBoundary--B4GHlZGR6W1PxxBBufAyAieOZ6BYhMV1v2ziKQU89A------

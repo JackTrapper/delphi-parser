@@ -1,0 +1,168 @@
+$C
+COMPILER Win32Only
+
+DELPHI
+GLOBAL
+  
+TARGETDIRECTORY
+  {PB}\Output\Delphi
+COMPILERFRAME
+  {PB}\Frames\pbCompiler.frm
+PARSERFRAME
+  {PB}\Frames\pbParser.frm
+SCANNERFRAME
+  {PB}\Frames\pbScanner.frm
+PRIVATE
+fOutputStream : TStringStream;
+ fCollectStart : Integer;
+ fCollectLength : Integer;
+ procedure Init;
+ procedure Final;
+ Function CalcLength : Integer;
+ procedure SetStart;
+ function CopySourceToCurrent : String;
+ procedure WriteStr(S : string);
+ Function GetLexString : String;
+ procedure ReportError(nr, line, col, pos: integer);
+PROTECTED
+
+PUBLIC
+
+CREATE
+fOutputStream := TStringStream.Create('' );
+ Error := ReportError;
+DESTROY
+fOutputStream.Free;
+ERRORS
+
+PUBLISHED
+
+END_DELPHI
+
+Procedure T-->GrammarParser.SetStart;
+Begin
+ fCollectStart := nextPos+1;
+End;
+
+procedure T-->GrammarParser.Init;
+begin
+ fOutputStream.Size := 0;
+ fCollectStart := 0;
+ fCollectLength := 0;
+ lst.Size := 0;
+end;
+
+Function T-->GrammarParser.CopySourceToCurrent : String;
+Begin
+ CalcLength;
+ Result := Copy(src.DataString, FCollectStart, fCollectLength);
+End;
+
+Function T-->GrammarParser.CalcLength : Integer;
+Begin
+ Result := nextPos - fCollectStart+1;
+ fCollectLength := Result;
+End;
+
+procedure T-->GrammarParser.Final;
+begin
+ if Errors>0 then
+  lst.WriteString('*** Errors ***' );
+ lst.WriteString(fOutputStream.DataString);
+ fOutputStream.Size := 0;
+end;
+
+procedure T-->GrammarParser.WriteStr(S : string);
+begin
+ fOutputStream.WriteBuffer(S[1],length(S));
+end;
+
+Function T-->GrammarParser.GetLexString : String;
+Begin
+ LexString(Result);
+end;
+
+procedure T-->GrammarParser.ReportError(nr, line, col, pos: integer);
+Var
+ S, S1 : String;
+ SL : TStringList;
+begin
+ Case nr of
+ {$I  -->Grammar.err}
+ End; // Case
+ S := CRLF +S+CRLF + 'Line ' +IntToStr(line)+CRLF+'Column ' +
+   IntToStr(col)+CRLF+'................................' +CRLF;
+ SL := TStringList.Create;
+ SL.Text := src.DataString;
+ if Line<SL.Count then
+   S1 := SL[Line-1]
+  else S1 := '[End Of Source File]' ;
+ SL.Free;
+ Insert(' ERROR->' ,S1,Col-1);
+ Inc(fErrors);
+ WriteStr(S+S1+CRLF);
+end;
+
+
+IGNORE CASE
+
+CHARACTERS
+letter="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_".
+digit="0123456789".
+special = ";.{}/:()%@*-,".
+ctrl=CHR(1)..CHR(31).
+tab=CHR(9).
+eol=CHR(13).
+lf=CHR(10).
+noquote1=ANY-'"' -ctrl.
+noquote2=ANY-"'" -ctrl.
+
+TOKENS
+ident = (letter | digit) {letter | digit}.
+string = '"' {noquote1| "'" } '"' | "'" {noquote2|'"' }"'".
+Special = special.
+
+NAMES
+
+IGNORE CHR(1)..CHR(31)
+PRAGMAS
+
+COMMENTS FROM "(*" TO "*)" NESTED
+
+PRODUCTIONS
+Win32Only =
+                                                  (. Init ; .)
+         {                                        (. SetStart ; .)
+        ANY 
+                                                  (. WriteStr( CopySourceToCurrent ) ; .)
+        
+        | LINUX  } 
+        EOF 
+                                                  (. Final ; .)
+        .
+LINUX =
+        "{$IFDEF" 
+         (                                        (. WriteStr( ' (*  {$IFDEF LINUX}  *) ' ) ; .)
+        "LINUX}" 
+                                                  (. WriteStr( '(* ' ) ; .)
+                                                  (. SetStart ; .)
+         { ANY  } 
+                                                  (. WriteStr( CopySourceToCurrent ) ; .)
+                                                  (. WriteStr( ' *) ' ) ; .)
+         [                                        (. WriteStr( '(* ' ) ; .)
+        "{$ELSE}" 
+                                                  (. WriteStr( ' *) ' ) ; .)
+                                                  (. SetStart ; .)
+         { ANY  } 
+                                                  (. WriteStr( CopySourceToCurrent ) ; .) ] 
+                                                  (. WriteStr( '(* ' ) ; .)
+        "{$ENDIF}" 
+                                                  (. WriteStr( ' {$ENDIF}  *) ' ) ; .)
+
+        |                                        (. SetStart ; .)
+        ident 
+        "}" 
+                                                  (. WriteStr( ' {$IFDEF ' +CopySourceToCurrent  ) ; .) )
+        .
+
+END Win32Only.

@@ -1,0 +1,509 @@
+#name
+Expression.IdentifierName
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  X := Y;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntAssign
+							ntParticle
+								ntIdentifier anName="X"
+							ntParticle
+								ntIdentifier anName="Y"
+
+#name
+Expression.LiteralNumeric
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  X := 42;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntAssign
+							ntParticle
+								ntIdentifier anName="X"
+							ntParticle							
+
+#name
+Expression.LiteralString
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  X := 'hello';
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntAssign
+							ntParticle
+								ntIdentifier anName="X"
+							ntParticle
+
+#name
+Expression.NilLiteral
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  X := nil;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntAssign
+							ntParticle
+								ntIdentifier anName="X"
+							ntParticle
+
+#name
+Expression.Parenthesized
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  X := (Y);
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntAssign
+							ntParticle
+								ntIdentifier anName="X"
+							ntParticle
+								ntParticle
+									ntIdentifier anName="Y"
+
+#name
+Expression.SetLiteralValues
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  X := [1, 2, 3];
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntAssign
+							ntParticle
+								ntIdentifier anName="X"
+							ntParticle
+								ntExpressionOrRange
+									ntExpressionOrRange
+										ntParticle
+									ntExpressionOrRange
+										ntParticle
+									ntExpressionOrRange
+										ntParticle
+
+#name
+Expression.SetLiteralRange
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  X := [1..3];
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntAssign
+							ntParticle
+								ntIdentifier anName="X"
+							ntParticle
+								ntExpressionOrRange
+									ntExpressionOrRange
+										ntParticle
+										ntParticle
+
+#name
+Expression.UnaryNot
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  X := not Flag;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntAssign
+							ntParticle
+								ntIdentifier anName="X"
+							ntUnaryOperator
+								ntParticle
+									ntIdentifier anName="Flag"
+
+#name
+Expression.UnaryMinus
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  X := -N;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntAssign
+							ntParticle
+								ntIdentifier anName="X"
+							ntUnaryOperator
+								ntParticle
+									ntIdentifier anName="N"
+
+#name
+Expression.UnaryAddressOf
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  X := @Y;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntAssign
+							ntParticle
+								ntIdentifier anName="X"
+							ntUnaryOperator
+								ntParticle
+									ntIdentifier anName="Y"
+
+#name
+Expression.BinaryAddMultiply
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  X := A + B * C;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntAssign
+							ntParticle
+								ntIdentifier anName="X"
+							ntBinaryExpression
+								ntParticle
+									ntIdentifier anName="A"
+								ntAdd
+								ntTerm
+									ntParticle
+										ntIdentifier anName="B"
+									ntMul
+									ntParticle
+										ntIdentifier anName="C"
+
+#name
+Expression.BinaryRelational
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  X := A >= B;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntAssign
+							ntParticle
+								ntIdentifier anName="X"
+							ntExpression
+								ntParticle
+									ntIdentifier anName="A"
+								ntGreaterEqual
+								ntParticle
+									ntIdentifier anName="B"
+
+#name
+Expression.MemberAccess
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  X := Obj.Name;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntAssign
+							ntParticle
+								ntIdentifier anName="X"
+							ntParticle
+								ntIdentifier anName="Obj"
+								ntIdentifier anName="Name"
+
+#name
+Expression.Invocation
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  X := F(A, B);
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntAssign
+							ntParticle
+								ntIdentifier anName="X"
+							ntParticle
+								ntIdentifier anName="F"
+								ntParticle
+									ntIdentifier anName="A"
+								ntParticle
+									ntIdentifier anName="B"
+
+#name
+Expression.ElementAccess
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  X := Arr[I];
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntAssign
+							ntParticle
+								ntIdentifier anName="X"
+							ntParticle
+								ntIdentifier anName="Arr"
+								ntParticle
+									ntIdentifier anName="I"
+
+#name
+Expression.PointerDereference
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  X := Ptr^;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntAssign
+							ntParticle
+								ntIdentifier anName="X"
+							ntParticle
+								ntIdentifier anName="Ptr"
+
+#name
+Expression.PostfixChain
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  X := F(A)[I].Name^;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntAssign
+							ntParticle
+								ntIdentifier anName="X"
+							ntParticle
+								ntIdentifier anName="F"
+								ntParticle
+									ntIdentifier anName="A"
+								ntParticle
+									ntIdentifier anName="I"
+								ntIdentifier anName="Name"

@@ -7453,7 +7453,7 @@ ntCompilationUnit
 				ntParticle
 
 #name
-Empty case else generates empty ntCaseElse nodefault
+Empty case else generates empty ntCaseElse
 #data
 unit U;
 interface
@@ -7490,3 +7490,37 @@ ntCompilationUnit
 										ntParticle
 											ntIdentifier anName="s"
 							ntCaseElse
+
+#name 
+Case Else Semicolon Handling
+#data
+case i of
+0: if a then b
+; //<----- illegal, optional or required?
+else c
+end;
+#document
+ntCompilationUnit
+	ntStatementList
+		ntStatement
+			ntCaseStatement
+				ntParticle
+					ntIdentifier anName="i"
+				ntCaseSelector
+					ntCaseLabels
+						ntCaseLabel
+							ntExpression
+								ntParticle
+					ntStatement
+						ntIf
+							ntParticle
+								ntIdentifier anName="a"
+							ntThen
+								ntStatement
+									ntParticle
+										ntIdentifier anName="b"
+				ntCaseElse
+					ntStatementList
+						ntStatement
+							ntParticle
+								ntIdentifier anName="c"

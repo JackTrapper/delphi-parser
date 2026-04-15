@@ -1,0 +1,19 @@
+Delphi 6 Parser
+----------------------------------------
+THis Delphi grammar is not finished yet but you are welcome to play with it.
+
+Note: Use the Frame file "pbParser_Delphi.frm" for the parser frame.
+
+It has been copied from the Delphi 6 Help File and then modified to be LL(1).
+
+This modification has taken it from being an easy read to a bloody mess.
+
+Drag all the PAS files from the Delphi Source folder into the test harness to see what it can parse well and what it falls apart on.
+
+It now parses the VCL with the exception of FMTBcd.pas.
+
+I plan to keep working on this and use it as the basis for source metrics tools etc.
+If you make any good modifications, please send them through.
+
+-Pat Connors
+pat_connors@hotmail.com

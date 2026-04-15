@@ -1,0 +1,1290 @@
+From: <Saved by Blink>
+Snapshot-Content-Location: https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Configuration
+Subject: Delphi Grammar
+Date: Sun, 1 Mar 2026 10:26:00 -0500
+MIME-Version: 1.0
+Content-Type: multipart/related;
+	type="text/html";
+	boundary="----MultipartBoundary--zpqGw7CQQjjJYXwQGAEKXe80K5z83mWI1ENb9jUys5----"
+
+
+------MultipartBoundary--zpqGw7CQQjjJYXwQGAEKXe80K5z83mWI1ENb9jUys5----
+Content-Type: text/html
+Content-ID: <frame-B5457DA3E9654F8E095BE6B683413638@mhtml.blink>
+Content-Transfer-Encoding: quoted-printable
+Content-Location: https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Configuration
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.=
+w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html lang=3D"en" xmlns=3D"ht=
+tp://www.w3.org/1999/xhtml" class=3D" yxqrsamc idc0_350"><head><meta http-e=
+quiv=3D"Content-Type" content=3D"text/html; charset=3Dwindows-1252">
+  <link href=3D"http://fonts.googleapis.com/css?family=3DAudiowide" rel=3D"=
+stylesheet" type=3D"text/css">
+  <link href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/grammars.=
+css" rel=3D"stylesheet" type=3D"text/css">
+  <meta name=3D"viewport" content=3D"width=3Ddevice-width, initial-scale=3D=
+1">
+  <title>Delphi Grammar</title>
+</head>
+<body>
+<center><h1>Eagle Legacy Modernization, LLC</h1></center>
+<center><h1>Delphi Grammar</h1></center>
+<p>Main programs: <a href=3D"https://www.eaglegacy.com/Romanamor/EagleGramm=
+ars/Grammar_Delphi.html#Delphi_Configuration">Delphi_Configuration</a> <a h=
+ref=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.htm=
+l#Delphi_Program">Delphi_Program</a></p>
+<p>Delphi Config syntax:</p><ul>
+  <li>Case sensitive? no
+  </li><li>Auto advance? no (cannot use this if end-of-line matters)
+  </li><li>Continuation character: \ (usually needed if end-of-line matters=
+)
+  </li><li>Extra characters: none (allowed in identifiers)
+</li></ul>
+<p>Delphi syntax:</p><ul>
+  <li>Case sensitive? no
+  </li><li>Auto advance? yes (cannot use this if end-of-line matters)
+  </li><li>Continuation character: none (usually needed if end-of-line matt=
+ers)
+  </li><li>Extra characters: none (allowed in identifiers)
+</li><li>Multichar Punctuation:<tt> &lt;&gt; &lt;=3D &gt;=3D :=3D ..</tt>
+</li></ul>
+<center><table border=3D"1"><tbody><tr>
+<td align=3D"center" class=3D"hdr">&nbsp;<i>Count</i>&nbsp;</td>
+<td class=3D"hdr" colspan=3D"2"><i>Terminals:</i></td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"val" colspan=3D"2"><a name=3D"Delphi_Character"><b>Delphi_Char=
+acter</b>: <i>character</i></a></td></tr>
+<tr>
+<td class=3D"cnt">6</td>
+<td class=3D"val" colspan=3D"2"><a name=3D"Delphi_Comment"><b>Delphi_Commen=
+t</b>: <i>{ comment } or (* comment *) or // comment to end of line</i></a>=
+</td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"val" colspan=3D"2"><a name=3D"Delphi_Config_EndOfLine"><b>Delp=
+hi_Config_EndOfLine</b>: <i>End of line</i></a></td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"val" colspan=3D"2"><a name=3D"Delphi_Config_Value"><b>Delphi_C=
+onfig_Value</b>: <i>configuration value</i></a></td></tr>
+<tr>
+<td class=3D"cnt">2</td>
+<td class=3D"val" colspan=3D"2"><a name=3D"Delphi_Function_Definition"><b>D=
+elphi_Function_Definition</b>: <i>An identifier</i></a></td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"val" colspan=3D"2"><a name=3D"Delphi_HexNumber"><b>Delphi_HexN=
+umber</b>: <i>A hex number</i></a></td></tr>
+<tr>
+<td class=3D"cnt">360</td>
+<td class=3D"val" colspan=3D"2"><a name=3D"Delphi_Identifier_Reference"><b>=
+Delphi_Identifier_Reference</b>: <i>An identifier</i></a></td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"val" colspan=3D"2"><a name=3D"Delphi_Include"><b>Delphi_Includ=
+e</b>: <i>{$I include }</i></a></td></tr>
+<tr>
+<td class=3D"cnt">116</td>
+<td class=3D"val" colspan=3D"2"><a name=3D"Delphi_Literal"><b>Delphi_Litera=
+l</b>: <i>quotes:' escape:none doubled:yes multiline:no</i></a></td></tr>
+<tr>
+<td class=3D"cnt">237</td>
+<td class=3D"val" colspan=3D"2"><a name=3D"Delphi_Number"><b>Delphi_Number<=
+/b>: <i>exponent_chars:Ee suffix_chars:none trailing_period:yes ignore_char=
+:none</i></a></td></tr>
+<tr>
+<td class=3D"cnt">2</td>
+<td class=3D"val" colspan=3D"2"><a name=3D"Delphi_Procedure_Definition"><b>=
+Delphi_Procedure_Definition</b>: <i>An identifier</i></a></td></tr>
+<tr>
+<td class=3D"cnt">3</td>
+<td class=3D"val" colspan=3D"2"><a name=3D"Delphi_Program_Definition"><b>De=
+lphi_Program_Definition</b>: <i>An identifier</i></a></td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"val" colspan=3D"2"><a name=3D"Delphi_Property_Definition"><b>D=
+elphi_Property_Definition</b>: <i>An identifier</i></a></td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"val" colspan=3D"2"><a name=3D"Delphi_Type_Definition"><b>Delph=
+i_Type_Definition</b>: <i>An identifier</i></a></td></tr>
+<tr>
+<td class=3D"cnt">24</td>
+<td class=3D"val" colspan=3D"2"><a name=3D"Delphi_Variable_Definition"><b>D=
+elphi_Variable_Definition</b>: <i>An identifier</i></a></td></tr>
+<tr>
+<td align=3D"center" class=3D"hdr">&nbsp;<i>Count</i>&nbsp;</td>
+<td class=3D"hdr"><i>Statistics(<a href=3D"https://www.eaglegacy.com/Romana=
+mor/EagleGrammars/Grammar_Delphi.html#stats">*</a>)</i></td>
+<td class=3D"hdr"><i>Tokens:</i></td></tr>
+<tr>
+<td class=3D"cnt">13</td>
+<td class=3D"stat">
+all all 4.08(all) all
+</td><td class=3D"val"><a name=3D"Delphi_Argument_List"><b>Delphi_Argument_=
+List</b>:  '(' ["Inherited"] [</a><a href=3D"https://www.eaglegacy.com/Roma=
+namor/EagleGrammars/Grammar_Delphi.html#Delphi_Expression">Delphi_Expressio=
+n</a>]* ')'</td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val"><a name=3D"Delphi_Class"><b>Delphi_Class</b>:  "Clas=
+s" [</a><a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Gramma=
+r_Delphi.html#Delphi_SuperClass">Delphi_SuperClass</a>] [<a href=3D"https:/=
+/www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Class=
+_Entry">Delphi_Class_Entry</a>]* [<a href=3D"https://www.eaglegacy.com/Roma=
+namor/EagleGrammars/Grammar_Delphi.html#Delphi_PrivateEntries">Delphi_Priva=
+teEntries</a>] [<a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammar=
+s/Grammar_Delphi.html#Delphi_ProtectedEntries">Delphi_ProtectedEntries</a>]=
+ [<a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delp=
+hi.html#Delphi_PublicEntries">Delphi_PublicEntries</a>] "End"</td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;<a name=3D"Delphi_Class_Entry"><b=
+>Delphi_Class_Entry</b>: (</a><a href=3D"https://www.eaglegacy.com/Romanamo=
+r/EagleGrammars/Grammar_Delphi.html#Delphi_Field">Delphi_Field</a> | <a hre=
+f=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#=
+Delphi_Comment">Delphi_Comment</a> | <a href=3D"https://www.eaglegacy.com/R=
+omanamor/EagleGrammars/Grammar_Delphi.html#Delphi_ProcedureForward">Delphi_=
+ProcedureForward</a> | <a href=3D"https://www.eaglegacy.com/Romanamor/Eagle=
+Grammars/Grammar_Delphi.html#Delphi_FunctionForward">Delphi_FunctionForward=
+</a> | <a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar=
+_Delphi.html#Delphi_Property">Delphi_Property</a>)</td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<a name=3D"Del=
+phi_Field"><b>Delphi_Field</b>:  </a><a href=3D"https://www.eaglegacy.com/R=
+omanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Variable_Definition">Delp=
+hi_Variable_Definition</a>* ':' <a href=3D"https://www.eaglegacy.com/Romana=
+mor/EagleGrammars/Grammar_Delphi.html#Delphi_Type">Delphi_Type</a> ';'</td>=
+</tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;<a name=3D"Delphi_PrivateEntries"=
+><b>Delphi_PrivateEntries</b>:  "Private" </a><a href=3D"https://www.eagleg=
+acy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Class_Entry">Del=
+phi_Class_Entry</a>*</td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;<a name=3D"Delphi_ProtectedEntrie=
+s"><b>Delphi_ProtectedEntries</b>:  "Protected" </a><a href=3D"https://www.=
+eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Class_Entr=
+y">Delphi_Class_Entry</a>*</td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;<a name=3D"Delphi_PublicEntries">=
+<b>Delphi_PublicEntries</b>:  "Public" </a><a href=3D"https://www.eaglegacy=
+.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Class_Entry">Delphi=
+_Class_Entry</a>*</td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;<a name=3D"Delphi_SuperClass"><b>=
+Delphi_SuperClass</b>:  '(' </a><a href=3D"https://www.eaglegacy.com/Romana=
+mor/EagleGrammars/Grammar_Delphi.html#Delphi_Type">Delphi_Type</a> ')'</td>=
+</tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val"><a name=3D"Delphi_Configuration"><b>Delphi_Configura=
+tion</b>:  [</a><a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammar=
+s/Grammar_Delphi.html#Delphi_Config_EndOfLine">Delphi_Config_EndOfLine</a>]=
+ <a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delph=
+i.html#Delphi_Config_Block">Delphi_Config_Block</a>*</td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;<a name=3D"Delphi_Config_Block"><=
+b>Delphi_Config_Block</b>:  '[' [</a><a href=3D"https://www.eaglegacy.com/R=
+omanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Config_Value">Delphi_Conf=
+ig_Value</a>] ']' <a href=3D"https://www.eaglegacy.com/Romanamor/EagleGramm=
+ars/Grammar_Delphi.html#Delphi_Config_EndOfLine">Delphi_Config_EndOfLine</a=
+> <a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delp=
+hi.html#Delphi_Config_Line">Delphi_Config_Line</a>*</td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<a name=3D"Del=
+phi_Config_Line"><b>Delphi_Config_Line</b>:  [</a><a href=3D"https://www.ea=
+glegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Config_Value=
+">Delphi_Config_Value</a>] '=3D' [<a href=3D"https://www.eaglegacy.com/Roma=
+namor/EagleGrammars/Grammar_Delphi.html#Delphi_Config_Value">Delphi_Config_=
+Value</a>] <a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Gra=
+mmar_Delphi.html#Delphi_Config_EndOfLine">Delphi_Config_EndOfLine</a></td><=
+/tr>
+<tr>
+<td class=3D"cnt">1</td>
+<td class=3D"stat">
+all none 4.00
+</td><td class=3D"val"><a name=3D"Delphi_Consts"><b>Delphi_Consts</b>:  "Co=
+nst" [</a><a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Gram=
+mar_Delphi.html#Delphi_Comment">Delphi_Comment</a>]* <a href=3D"https://www=
+.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Const">De=
+lphi_Const</a>*</td></tr>
+<tr>
+<td class=3D"cnt">4</td>
+<td class=3D"stat">
+all all all all all none
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;<a name=3D"Delphi_Const"><b>Delph=
+i_Const</b>:  </a><a href=3D"https://www.eaglegacy.com/Romanamor/EagleGramm=
+ars/Grammar_Delphi.html#Delphi_Variable_Definition">Delphi_Variable_Definit=
+ion</a> [<a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Gramm=
+ar_Delphi.html#Delphi_ConstType">Delphi_ConstType</a>] '=3D' <a href=3D"htt=
+ps://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_E=
+xpression">Delphi_Expression</a> ';' [<a href=3D"https://www.eaglegacy.com/=
+Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Comment">Delphi_Comment<=
+/a>]*</td></tr>
+<tr>
+<td class=3D"cnt">4</td>
+<td class=3D"stat">
+all all
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<a name=3D"Del=
+phi_ConstType"><b>Delphi_ConstType</b>:  ':' </a><a href=3D"https://www.eag=
+legacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Type">Delphi_=
+Type</a></td></tr>
+<tr>
+<td class=3D"cnt">933</td>
+<td class=3D"stat">
+(25% | none | 12% | none | 6% | 9% | none | 1% | none | 1% | none | none | =
+none | 1% | none | 21% | 0% | 0% | none | 2% | 11% | 9% | 0%)
+</td><td class=3D"val"><a name=3D"Delphi_Expression"><b>Delphi_Expression</=
+b>: (</a><a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Gramm=
+ar_Delphi.html#Delphi_Number">Delphi_Number</a> | <a href=3D"https://www.ea=
+glegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_HexNumber">D=
+elphi_HexNumber</a> | <a href=3D"https://www.eaglegacy.com/Romanamor/EagleG=
+rammars/Grammar_Delphi.html#Delphi_Literal">Delphi_Literal</a> | <a href=3D=
+"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delp=
+hi_Character">Delphi_Character</a> | <a href=3D"https://www.eaglegacy.com/R=
+omanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Builtins">Delphi_Builtins=
+</a> | <a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar=
+_Delphi.html#Delphi_Parentheses">Delphi_Parentheses</a> | <a href=3D"https:=
+//www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Brac=
+kets">Delphi_Brackets</a> | <a href=3D"https://www.eaglegacy.com/Romanamor/=
+EagleGrammars/Grammar_Delphi.html#Delphi_Copy_Function">Delphi_Copy_Functio=
+n</a> | <a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Gramma=
+r_Delphi.html#Delphi_Format_Function">Delphi_Format_Function</a> | <a href=
+=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#D=
+elphi_Length_Function">Delphi_Length_Function</a> | <a href=3D"https://www.=
+eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Odd_Functi=
+on">Delphi_Odd_Function</a> | <a href=3D"https://www.eaglegacy.com/Romanamo=
+r/EagleGrammars/Grammar_Delphi.html#Delphi_Pred_Function">Delphi_Pred_Funct=
+ion</a> | <a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Gram=
+mar_Delphi.html#Delphi_Succ_Function">Delphi_Succ_Function</a> | <a href=3D=
+"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delp=
+hi_Function_Call">Delphi_Function_Call</a> | <a href=3D"https://www.eaglega=
+cy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Cast">Delphi_Cast=
+</a> | <a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar=
+_Delphi.html#Delphi_Variable_Expression">Delphi_Variable_Expression</a> | <=
+a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.=
+html#Delphi_UnarySign">Delphi_UnarySign</a> | <a href=3D"https://www.eagleg=
+acy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Not_Operator">De=
+lphi_Not_Operator</a> | <a href=3D"https://www.eaglegacy.com/Romanamor/Eagl=
+eGrammars/Grammar_Delphi.html#Delphi_Dot_Expression">Delphi_Dot_Expression<=
+/a> | <a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_=
+Delphi.html#Delphi_Multiplicative_Expression">Delphi_Multiplicative_Express=
+ion</a> | <a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Gram=
+mar_Delphi.html#Delphi_Additive_Expression">Delphi_Additive_Expression</a> =
+| <a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delp=
+hi.html#Delphi_Relational_Expression">Delphi_Relational_Expression</a> | <a=
+ href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.h=
+tml#Delphi_DotDot_Expression">Delphi_DotDot_Expression</a>)</td></tr>
+<tr>
+<td class=3D"cnt">3</td>
+<td class=3D"stat">
+1.33(all) all all all 3.00(all) all all all none
+</td><td class=3D"val"><a name=3D"Delphi_Full"><b>Delphi_Full</b>:  [</a><a=
+ href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.h=
+tml#Delphi_Comment">Delphi_Comment</a>]* ("Program"|"Unit") <a href=3D"http=
+s://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Pr=
+ogram_Definition">Delphi_Program_Definition</a> ';' [<a href=3D"https://www=
+.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Header">D=
+elphi_Header</a>]* [<a href=3D"https://www.eaglegacy.com/Romanamor/EagleGra=
+mmars/Grammar_Delphi.html#Delphi_BeginEnd">Delphi_BeginEnd</a>] ["End"] '.'=
+ [<a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delp=
+hi.html#Delphi_Comment">Delphi_Comment</a>]*</td></tr>
+<tr>
+<td class=3D"cnt">2</td>
+<td class=3D"stat">
+all 1.00(all) all none all
+</td><td class=3D"val"><a name=3D"Delphi_Function"><b>Delphi_Function</b>: =
+ </a><a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_D=
+elphi.html#Delphi_FunctionForward">Delphi_FunctionForward</a> [<a href=3D"h=
+ttps://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi=
+_Header">Delphi_Header</a>]* <a href=3D"https://www.eaglegacy.com/Romanamor=
+/EagleGrammars/Grammar_Delphi.html#Delphi_BeginEnd">Delphi_BeginEnd</a> [<a=
+ href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.h=
+tml#Delphi_Comment">Delphi_Comment</a>]* ';'</td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;<a name=3D"Delphi_FunctionClass">=
+<b>Delphi_FunctionClass</b>:  </a><a href=3D"https://www.eaglegacy.com/Roma=
+namor/EagleGrammars/Grammar_Delphi.html#Delphi_Identifier_Reference">Delphi=
+_Identifier_Reference</a> '.'</td></tr>
+<tr>
+<td class=3D"cnt">2</td>
+<td class=3D"stat">
+all none all all all all all
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;<a name=3D"Delphi_FunctionForward=
+"><b>Delphi_FunctionForward</b>:  "Function" [</a><a href=3D"https://www.ea=
+glegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_FunctionClas=
+s">Delphi_FunctionClass</a>]* <a href=3D"https://www.eaglegacy.com/Romanamo=
+r/EagleGrammars/Grammar_Delphi.html#Delphi_Function_Definition">Delphi_Func=
+tion_Definition</a> [<a href=3D"https://www.eaglegacy.com/Romanamor/EagleGr=
+ammars/Grammar_Delphi.html#Delphi_Parameter_List">Delphi_Parameter_List</a>=
+] ':' <a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_=
+Delphi.html#Delphi_Type">Delphi_Type</a> ';'</td></tr>
+<tr>
+<td class=3D"cnt">13</td>
+<td class=3D"stat">
+(none | none | none | 8% | none | 8% | 54% | 15% | 15% | none)
+</td><td class=3D"val"><a name=3D"Delphi_Header"><b>Delphi_Header</b>: (</a=
+><a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delph=
+i.html#Delphi_Initialization">Delphi_Initialization</a> | ("Interface"|"Imp=
+lementation") | <a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammar=
+s/Grammar_Delphi.html#Delphi_Comment">Delphi_Comment</a> | <a href=3D"https=
+://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Use=
+s">Delphi_Uses</a> | <a href=3D"https://www.eaglegacy.com/Romanamor/EagleGr=
+ammars/Grammar_Delphi.html#Delphi_Types">Delphi_Types</a> | <a href=3D"http=
+s://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Co=
+nsts">Delphi_Consts</a> | <a href=3D"https://www.eaglegacy.com/Romanamor/Ea=
+gleGrammars/Grammar_Delphi.html#Delphi_Vars">Delphi_Vars</a> | <a href=3D"h=
+ttps://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi=
+_Procedure">Delphi_Procedure</a> | <a href=3D"https://www.eaglegacy.com/Rom=
+anamor/EagleGrammars/Grammar_Delphi.html#Delphi_Function">Delphi_Function</=
+a> | <a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_D=
+elphi.html#Delphi_Include">Delphi_Include</a>)</td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;<a name=3D"Delphi_Initialization"=
+><b>Delphi_Initialization</b>:  ("Initialization"|"Finalization") </a><a hr=
+ef=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html=
+#Delphi_Statement">Delphi_Statement</a> ';'</td></tr>
+<tr>
+<td class=3D"cnt">4</td>
+<td class=3D"stat">
+all all 2.00(50%) all
+</td><td class=3D"val"><a name=3D"Delphi_Parameter_List"><b>Delphi_Paramete=
+r_List</b>:  '(' [</a><a href=3D"https://www.eaglegacy.com/Romanamor/EagleG=
+rammars/Grammar_Delphi.html#Delphi_Parameter">Delphi_Parameter</a>] [<a hre=
+f=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#=
+Delphi_MoreParameters">Delphi_MoreParameters</a>]* ')'</td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;<a name=3D"Delphi_InitialValue"><=
+b>Delphi_InitialValue</b>:  '=3D' </a><a href=3D"https://www.eaglegacy.com/=
+Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Expression">Delphi_Expre=
+ssion</a></td></tr>
+<tr>
+<td class=3D"cnt">4</td>
+<td class=3D"stat">
+all all
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;<a name=3D"Delphi_MoreParameters"=
+><b>Delphi_MoreParameters</b>:  ';' [</a><a href=3D"https://www.eaglegacy.c=
+om/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Parameter">Delphi_Par=
+ameter</a>]</td></tr>
+<tr>
+<td class=3D"cnt">8</td>
+<td class=3D"stat">
+all 1.00 all all none
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;<a name=3D"Delphi_Parameter"><b>D=
+elphi_Parameter</b>:  ["Var"] </a><a href=3D"https://www.eaglegacy.com/Roma=
+namor/EagleGrammars/Grammar_Delphi.html#Delphi_Variable">Delphi_Variable</a=
+>* ':' <a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar=
+_Delphi.html#Delphi_Type">Delphi_Type</a> [<a href=3D"https://www.eaglegacy=
+.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_InitialValue">Delph=
+i_InitialValue</a>]</td></tr>
+<tr>
+<td class=3D"cnt">2</td>
+<td class=3D"stat">
+all 1.00(all) all none all
+</td><td class=3D"val"><a name=3D"Delphi_Procedure"><b>Delphi_Procedure</b>=
+:  </a><a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar=
+_Delphi.html#Delphi_ProcedureForward">Delphi_ProcedureForward</a> [<a href=
+=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#D=
+elphi_Header">Delphi_Header</a>]* [<a href=3D"https://www.eaglegacy.com/Rom=
+anamor/EagleGrammars/Grammar_Delphi.html#Delphi_BeginEnd">Delphi_BeginEnd</=
+a>] [<a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_D=
+elphi.html#Delphi_Comment">Delphi_Comment</a>]* [';']</td></tr>
+<tr>
+<td class=3D"cnt">2</td>
+<td class=3D"stat">
+all none all all all none
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;<a name=3D"Delphi_ProcedureForwar=
+d"><b>Delphi_ProcedureForward</b>:  ("Procedure"|"Constructor"|"Destructor"=
+) [</a><a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar=
+_Delphi.html#Delphi_ProcedureClass">Delphi_ProcedureClass</a>]* <a href=3D"=
+https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delph=
+i_Procedure_Definition">Delphi_Procedure_Definition</a> [<a href=3D"https:/=
+/www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Param=
+eter_List">Delphi_Parameter_List</a>] ';' [<a href=3D"https://www.eaglegacy=
+.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Override">Delphi_Ov=
+erride</a>]</td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<a name=3D"Del=
+phi_Override"><b>Delphi_Override</b>:  "Override" ';'</a></td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<a name=3D"Del=
+phi_ProcedureClass"><b>Delphi_ProcedureClass</b>:  </a><a href=3D"https://w=
+ww.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Identif=
+ier_Reference">Delphi_Identifier_Reference</a> '.'</td></tr>
+<tr>
+<td class=3D"cnt">3</td>
+<td class=3D"stat">
+all
+</td><td class=3D"val"><a name=3D"Delphi_Program"><b>Delphi_Program</b>:  <=
+/a><a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Del=
+phi.html#Delphi_Full_or_Partial">Delphi_Full_or_Partial</a></td></tr>
+<tr>
+<td class=3D"cnt">3</td>
+<td class=3D"stat">
+(none | all)
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;<a name=3D"Delphi_Full_or_Partial=
+"><b>Delphi_Full_or_Partial</b>: (</a><a href=3D"https://www.eaglegacy.com/=
+Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Partial">Delphi_Partial<=
+/a> | <a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_=
+Delphi.html#Delphi_Full">Delphi_Full</a>)</td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<a name=3D"Del=
+phi_Partial"><b>Delphi_Partial</b>:  </a><a href=3D"https://www.eaglegacy.c=
+om/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Header">Delphi_Header=
+</a>*</td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val"><a name=3D"Delphi_Property"><b>Delphi_Property</b>: =
+ "Property" </a><a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammar=
+s/Grammar_Delphi.html#Delphi_Property_Definition">Delphi_Property_Definitio=
+n</a> [<a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar=
+_Delphi.html#Delphi_PropertySubscript">Delphi_PropertySubscript</a>] ':' <a=
+ href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.h=
+tml#Delphi_Type">Delphi_Type</a> <a href=3D"https://www.eaglegacy.com/Roman=
+amor/EagleGrammars/Grammar_Delphi.html#Delphi_PropertyReadWrite">Delphi_Pro=
+pertyReadWrite</a>* ';'</td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;<a name=3D"Delphi_PropertyReadWri=
+te"><b>Delphi_PropertyReadWrite</b>: (</a><a href=3D"https://www.eaglegacy.=
+com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_PropertyRead">Delphi=
+_PropertyRead</a> | <a href=3D"https://www.eaglegacy.com/Romanamor/EagleGra=
+mmars/Grammar_Delphi.html#Delphi_PropertyWrite">Delphi_PropertyWrite</a>)</=
+td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<a name=3D"Del=
+phi_PropertyRead"><b>Delphi_PropertyRead</b>:  "Read" </a><a href=3D"https:=
+//www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Iden=
+tifier_Reference">Delphi_Identifier_Reference</a></td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<a name=3D"Del=
+phi_PropertyWrite"><b>Delphi_PropertyWrite</b>:  "Write" </a><a href=3D"htt=
+ps://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_I=
+dentifier_Reference">Delphi_Identifier_Reference</a></td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;<a name=3D"Delphi_PropertySubscri=
+pt"><b>Delphi_PropertySubscript</b>:  '[' </a><a href=3D"https://www.eagleg=
+acy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Variable_Definit=
+ion">Delphi_Variable_Definition</a> ':' <a href=3D"https://www.eaglegacy.co=
+m/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Type">Delphi_Type</a> =
+']'</td></tr>
+<tr>
+<td class=3D"cnt">390</td>
+<td class=3D"stat">
+(none | 34% | 28% | 1% | none | none | 2% | none | none | 17% | none | none=
+ | none | none | none | none | 1% | none | 15% | 3%)
+</td><td class=3D"val"><a name=3D"Delphi_Statement"><b>Delphi_Statement</b>=
+: (';' | </a><a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/G=
+rammar_Delphi.html#Delphi_Assignment">Delphi_Assignment</a> | <a href=3D"ht=
+tps://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_=
+BeginEnd">Delphi_BeginEnd</a> | <a href=3D"https://www.eaglegacy.com/Romana=
+mor/EagleGrammars/Grammar_Delphi.html#Delphi_Break_Statement">Delphi_Break_=
+Statement</a> | <a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammar=
+s/Grammar_Delphi.html#Delphi_Case_Statement">Delphi_Case_Statement</a> | <a=
+ href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.h=
+tml#Delphi_Close_Statement">Delphi_Close_Statement</a> | <a href=3D"https:/=
+/www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_For_S=
+tatement">Delphi_For_Statement</a> | <a href=3D"https://www.eaglegacy.com/R=
+omanamor/EagleGrammars/Grammar_Delphi.html#Delphi_GetDateTime_Statement">De=
+lphi_GetDateTime_Statement</a> | <a href=3D"https://www.eaglegacy.com/Roman=
+amor/EagleGrammars/Grammar_Delphi.html#Delphi_Halt_Statement">Delphi_Halt_S=
+tatement</a> | <a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars=
+/Grammar_Delphi.html#Delphi_If_Statement">Delphi_If_Statement</a> | <a href=
+=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#D=
+elphi_Inherited_Statement">Delphi_Inherited_Statement</a> | <a href=3D"http=
+s://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Ra=
+ise_Statement">Delphi_Raise_Statement</a> | <a href=3D"https://www.eaglegac=
+y.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Readln_Statement">=
+Delphi_Readln_Statement</a> | <a href=3D"https://www.eaglegacy.com/Romanamo=
+r/EagleGrammars/Grammar_Delphi.html#Delphi_Repeat_Statement">Delphi_Repeat_=
+Statement</a> | <a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammar=
+s/Grammar_Delphi.html#Delphi_Rewrite_Statement">Delphi_Rewrite_Statement</a=
+> | <a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_De=
+lphi.html#Delphi_Try_Statement">Delphi_Try_Statement</a> | <a href=3D"https=
+://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Whi=
+le_Statement">Delphi_While_Statement</a> | <a href=3D"https://www.eaglegacy=
+.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_With_Statement">Del=
+phi_With_Statement</a> | <a href=3D"https://www.eaglegacy.com/Romanamor/Eag=
+leGrammars/Grammar_Delphi.html#Delphi_Writeln_Statement">Delphi_Writeln_Sta=
+tement</a> | <a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/G=
+rammar_Delphi.html#Delphi_ExpressionStatement">Delphi_ExpressionStatement</=
+a>)</td></tr>
+<tr>
+<td class=3D"cnt">115</td>
+<td class=3D"stat">
+none all 5.35(23%) none 27% none
+</td><td class=3D"val"><a name=3D"Delphi_Statement_List"><b>Delphi_Statemen=
+t_List</b>:  [</a><a href=3D"https://www.eaglegacy.com/Romanamor/EagleGramm=
+ars/Grammar_Delphi.html#Delphi_Comment">Delphi_Comment</a>]* <a href=3D"htt=
+ps://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_S=
+tatement">Delphi_Statement</a> [<a href=3D"https://www.eaglegacy.com/Romana=
+mor/EagleGrammars/Grammar_Delphi.html#Delphi_NextStatement">Delphi_NextStat=
+ement</a>]* [<a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/G=
+rammar_Delphi.html#Delphi_Comment">Delphi_Comment</a>]* [';'] [<a href=3D"h=
+ttps://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi=
+_Comment">Delphi_Comment</a>]*</td></tr>
+<tr>
+<td class=3D"cnt">139</td>
+<td class=3D"stat">
+all 1.00(1%) all none
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;<a name=3D"Delphi_NextStatement">=
+<b>Delphi_NextStatement</b>:  ';' [</a><a href=3D"https://www.eaglegacy.com=
+/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Comment">Delphi_Comment=
+</a>]* <a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar=
+_Delphi.html#Delphi_Statement">Delphi_Statement</a> [<a href=3D"https://www=
+.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Comment">=
+Delphi_Comment</a>]*</td></tr>
+<tr>
+<td class=3D"cnt">28</td>
+<td class=3D"stat">
+all all
+</td><td class=3D"val"><a name=3D"Delphi_Type"><b>Delphi_Type</b>:  ['^'] <=
+/a><a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Del=
+phi.html#Delphi_BaseType">Delphi_BaseType</a></td></tr>
+<tr>
+<td class=3D"cnt">4</td>
+<td class=3D"stat">
+all all all all
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;<a name=3D"Delphi_Array"><b>Delph=
+i_Array</b>:  "Array" [</a><a href=3D"https://www.eaglegacy.com/Romanamor/E=
+agleGrammars/Grammar_Delphi.html#Delphi_ArraySize">Delphi_ArraySize</a>] "O=
+f" <a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Del=
+phi.html#Delphi_Type">Delphi_Type</a></td></tr>
+<tr>
+<td class=3D"cnt">4</td>
+<td class=3D"stat">
+all 1.00 all
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<a name=3D"Del=
+phi_ArraySize"><b>Delphi_ArraySize</b>:  '[' </a><a href=3D"https://www.eag=
+legacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Expression">D=
+elphi_Expression</a>* ']'</td></tr>
+<tr>
+<td class=3D"cnt">28</td>
+<td class=3D"stat">
+(86% | none | none | none | 14% | none | none | none)
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;<a name=3D"Delphi_BaseType"><b>De=
+lphi_BaseType</b>: (("Boolean"|"Byte"|"Integer"|"LongInt"|"Int64"|"String"|=
+"Text") | </a><a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/=
+Grammar_Delphi.html#Delphi_Identifier_Reference">Delphi_Identifier_Referenc=
+e</a> | <a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Gramma=
+r_Delphi.html#Delphi_Class">Delphi_Class</a> | <a href=3D"https://www.eagle=
+gacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Enum">Delphi_En=
+um</a> | <a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Gramm=
+ar_Delphi.html#Delphi_Array">Delphi_Array</a> | <a href=3D"https://www.eagl=
+egacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Range">Delphi_=
+Range</a> | <a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Gr=
+ammar_Delphi.html#Delphi_Type_Record">Delphi_Type_Record</a> | <a href=3D"h=
+ttps://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi=
+_String">Delphi_String</a>)</td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;<a name=3D"Delphi_Enum"><b>Delphi=
+_Enum</b>:  '(' </a><a href=3D"https://www.eaglegacy.com/Romanamor/EagleGra=
+mmars/Grammar_Delphi.html#Delphi_EnumValue">Delphi_EnumValue</a>* ')'</td><=
+/tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<a name=3D"Del=
+phi_EnumValue"><b>Delphi_EnumValue</b>:  </a><a href=3D"https://www.eaglega=
+cy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Variable_Definiti=
+on">Delphi_Variable_Definition</a> ['=3D'] [<a href=3D"https://www.eaglegac=
+y.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Expression">Delphi=
+_Expression</a>]</td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;<a name=3D"Delphi_Range"><b>Delph=
+i_Range</b>:  </a><a href=3D"https://www.eaglegacy.com/Romanamor/EagleGramm=
+ars/Grammar_Delphi.html#Delphi_Number">Delphi_Number</a> ".." <a href=3D"ht=
+tps://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_=
+Number">Delphi_Number</a></td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;<a name=3D"Delphi_String"><b>Delp=
+hi_String</b>:  "String" '[' </a><a href=3D"https://www.eaglegacy.com/Roman=
+amor/EagleGrammars/Grammar_Delphi.html#Delphi_Expression">Delphi_Expression=
+</a> ']'</td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;<a name=3D"Delphi_Type_Record"><b=
+>Delphi_Type_Record</b>:  "Record" </a><a href=3D"https://www.eaglegacy.com=
+/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_RecordEntry">Delphi_Rec=
+ordEntry</a>* "End" [<a href=3D"https://www.eaglegacy.com/Romanamor/EagleGr=
+ammars/Grammar_Delphi.html#Delphi_Comment">Delphi_Comment</a>]</td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<a name=3D"Del=
+phi_RecordEntry"><b>Delphi_RecordEntry</b>:  </a><a href=3D"https://www.eag=
+legacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Variable_Defi=
+nition">Delphi_Variable_Definition</a>* ':' <a href=3D"https://www.eaglegac=
+y.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Type">Delphi_Type<=
+/a> ';'</td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val"><a name=3D"Delphi_Types"><b>Delphi_Types</b>:  "Type=
+" [</a><a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar=
+_Delphi.html#Delphi_MoreTypes">Delphi_MoreTypes</a>]*</td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;<a name=3D"Delphi_MoreTypes"><b>D=
+elphi_MoreTypes</b>:  </a><a href=3D"https://www.eaglegacy.com/Romanamor/Ea=
+gleGrammars/Grammar_Delphi.html#Delphi_Type_Definition">Delphi_Type_Definit=
+ion</a> '=3D' <a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/=
+Grammar_Delphi.html#Delphi_Type">Delphi_Type</a> ';'</td></tr>
+<tr>
+<td class=3D"cnt">1</td>
+<td class=3D"stat">
+all 1.00 all
+</td><td class=3D"val"><a name=3D"Delphi_Uses"><b>Delphi_Uses</b>:  "Uses" =
+</a><a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_De=
+lphi.html#Delphi_UseItem">Delphi_UseItem</a>* ';'</td></tr>
+<tr>
+<td class=3D"cnt">1</td>
+<td class=3D"stat">
+all none
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;<a name=3D"Delphi_UseItem"><b>Del=
+phi_UseItem</b>:  </a><a href=3D"https://www.eaglegacy.com/Romanamor/EagleG=
+rammars/Grammar_Delphi.html#Delphi_Identifier_Reference">Delphi_Identifier_=
+Reference</a> [<a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars=
+/Grammar_Delphi.html#Delphi_UseItemIn">Delphi_UseItemIn</a>]</td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<a name=3D"Del=
+phi_UseItemIn"><b>Delphi_UseItemIn</b>:  "In" </a><a href=3D"https://www.ea=
+glegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Literal">Del=
+phi_Literal</a> [<a href=3D"https://www.eaglegacy.com/Romanamor/EagleGramma=
+rs/Grammar_Delphi.html#Delphi_UseItemInBraces">Delphi_UseItemInBraces</a>]<=
+/td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&=
+nbsp;<a name=3D"Delphi_UseItemInBraces"><b>Delphi_UseItemInBraces</b>:  '{'=
+ </a><a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_D=
+elphi.html#Delphi_Identifier_Reference">Delphi_Identifier_Reference</a> '}'=
+</td></tr>
+<tr>
+<td class=3D"cnt">351</td>
+<td class=3D"stat">
+all 1.00(3%)
+</td><td class=3D"val"><a name=3D"Delphi_Variable"><b>Delphi_Variable</b>: =
+ </a><a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_D=
+elphi.html#Delphi_Identifier_Reference">Delphi_Identifier_Reference</a> [<a=
+ href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.h=
+tml#Delphi_Extended_Variable">Delphi_Extended_Variable</a>]*</td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;<a name=3D"Delphi_DotName"><b>Del=
+phi_DotName</b>:  ['^'] '.' </a><a href=3D"https://www.eaglegacy.com/Romana=
+mor/EagleGrammars/Grammar_Delphi.html#Delphi_Identifier_Reference">Delphi_I=
+dentifier_Reference</a></td></tr>
+<tr>
+<td class=3D"cnt">12</td>
+<td class=3D"stat">
+(none | all)
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;<a name=3D"Delphi_Extended_Variab=
+le"><b>Delphi_Extended_Variable</b>: (</a><a href=3D"https://www.eaglegacy.=
+com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_DotName">Delphi_DotN=
+ame</a> | <a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Gram=
+mar_Delphi.html#Delphi_Subscript">Delphi_Subscript</a>)</td></tr>
+<tr>
+<td class=3D"cnt">12</td>
+<td class=3D"stat">
+all 1.00 all
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;<a name=3D"Delphi_Subscript"><b>D=
+elphi_Subscript</b>:  '[' </a><a href=3D"https://www.eaglegacy.com/Romanamo=
+r/EagleGrammars/Grammar_Delphi.html#Delphi_Expression">Delphi_Expression</a=
+>* ']'</td></tr>
+<tr>
+<td class=3D"cnt">7</td>
+<td class=3D"stat">
+all 1.43
+</td><td class=3D"val"><a name=3D"Delphi_Vars"><b>Delphi_Vars</b>:  "Var" <=
+/a><a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Del=
+phi.html#Delphi_Var">Delphi_Var</a>*</td></tr>
+<tr>
+<td class=3D"cnt">10</td>
+<td class=3D"stat">
+3.00 all all all none
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;<a name=3D"Delphi_Var"><b>Delphi_=
+Var</b>:  </a><a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/=
+Grammar_Delphi.html#Delphi_Variable_Definition">Delphi_Variable_Definition<=
+/a>* ':' <a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Gramm=
+ar_Delphi.html#Delphi_Type">Delphi_Type</a> ';' [<a href=3D"https://www.eag=
+legacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Comment">Delp=
+hi_Comment</a>]*</td></tr>
+<tr>
+<td class=3D"cnt">98</td>
+<td class=3D"stat">
+all all all
+</td><td class=3D"val"><a name=3D"Delphi_Additive_Expression"><b>Delphi_Add=
+itive_Expression</b>:  </a><a href=3D"https://www.eaglegacy.com/Romanamor/E=
+agleGrammars/Grammar_Delphi.html#Delphi_Expression">Delphi_Expression</a> <=
+a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.=
+html#Delphi_Additive_Operator">Delphi_Additive_Operator</a> <a href=3D"http=
+s://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Ex=
+pression">Delphi_Expression</a></td></tr>
+<tr>
+<td class=3D"cnt">98</td>
+<td class=3D"stat">
+(92% | 8%)
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;<a name=3D"Delphi_Additive_Operat=
+or"><b>Delphi_Additive_Operator</b>: (("+"|"-") | ("Or"|"Xor"))</a></td></t=
+r>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val"><a name=3D"Delphi_Brackets"><b>Delphi_Brackets</b>: =
+ '[' </a><a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Gramm=
+ar_Delphi.html#Delphi_Expression">Delphi_Expression</a>* ']'</td></tr>
+<tr>
+<td class=3D"cnt">54</td>
+<td class=3D"stat">
+all
+</td><td class=3D"val"><a name=3D"Delphi_Builtins"><b>Delphi_Builtins</b>: =
+ ("False"|"True"|"Nil")</a></td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val"><a name=3D"Delphi_Cast"><b>Delphi_Cast</b>:  </a><a =
+href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.ht=
+ml#Delphi_Type">Delphi_Type</a> '(' <a href=3D"https://www.eaglegacy.com/Ro=
+manamor/EagleGrammars/Grammar_Delphi.html#Delphi_Expression">Delphi_Express=
+ion</a> ')'</td></tr>
+<tr>
+<td class=3D"cnt">4</td>
+<td class=3D"stat">
+all all all
+</td><td class=3D"val"><a name=3D"Delphi_DotDot_Expression"><b>Delphi_DotDo=
+t_Expression</b>:  </a><a href=3D"https://www.eaglegacy.com/Romanamor/Eagle=
+Grammars/Grammar_Delphi.html#Delphi_Expression">Delphi_Expression</a> ".." =
+<a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi=
+.html#Delphi_Expression">Delphi_Expression</a></td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val"><a name=3D"Delphi_Dot_Expression"><b>Delphi_Dot_Expr=
+ession</b>:  </a><a href=3D"https://www.eaglegacy.com/Romanamor/EagleGramma=
+rs/Grammar_Delphi.html#Delphi_Expression">Delphi_Expression</a> ['^'] '.' <=
+a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.=
+html#Delphi_Expression">Delphi_Expression</a></td></tr>
+<tr>
+<td class=3D"cnt">13</td>
+<td class=3D"stat">
+all all
+</td><td class=3D"val"><a name=3D"Delphi_Function_Call"><b>Delphi_Function_=
+Call</b>:  </a><a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars=
+/Grammar_Delphi.html#Delphi_Variable">Delphi_Variable</a> <a href=3D"https:=
+//www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Argu=
+ment_List">Delphi_Argument_List</a></td></tr>
+<tr>
+<td class=3D"cnt">21</td>
+<td class=3D"stat">
+all all all
+</td><td class=3D"val"><a name=3D"Delphi_Multiplicative_Expression"><b>Delp=
+hi_Multiplicative_Expression</b>:  </a><a href=3D"https://www.eaglegacy.com=
+/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Expression">Delphi_Expr=
+ession</a> <a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Gra=
+mmar_Delphi.html#Delphi_Multiplicative_Operator">Delphi_Multiplicative_Oper=
+ator</a> <a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Gramm=
+ar_Delphi.html#Delphi_Expression">Delphi_Expression</a></td></tr>
+<tr>
+<td class=3D"cnt">21</td>
+<td class=3D"stat">
+(38% | 62%)
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;<a name=3D"Delphi_Multiplicative_=
+Operator"><b>Delphi_Multiplicative_Operator</b>: (("*"|"/") | ("Div"|"Mod"|=
+"And"|"Shl"|"Shr"|"As"))</a></td></tr>
+<tr>
+<td class=3D"cnt">2</td>
+<td class=3D"stat">
+all all
+</td><td class=3D"val"><a name=3D"Delphi_Not_Operator"><b>Delphi_Not_Operat=
+or</b>:  "Not" </a><a href=3D"https://www.eaglegacy.com/Romanamor/EagleGram=
+mars/Grammar_Delphi.html#Delphi_Expression">Delphi_Expression</a></td></tr>
+<tr>
+<td class=3D"cnt">88</td>
+<td class=3D"stat">
+all 1.68 all
+</td><td class=3D"val"><a name=3D"Delphi_Parentheses"><b>Delphi_Parentheses=
+</b>:  '(' </a><a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars=
+/Grammar_Delphi.html#Delphi_Expression">Delphi_Expression</a>* ')'</td></tr=
+>
+<tr>
+<td class=3D"cnt">88</td>
+<td class=3D"stat">
+all all none all
+</td><td class=3D"val"><a name=3D"Delphi_Relational_Expression"><b>Delphi_R=
+elational_Expression</b>:  </a><a href=3D"https://www.eaglegacy.com/Romanam=
+or/EagleGrammars/Grammar_Delphi.html#Delphi_Expression">Delphi_Expression</=
+a> <a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Del=
+phi.html#Delphi_Relational_Operator">Delphi_Relational_Operator</a> [<a hre=
+f=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#=
+Delphi_Comment">Delphi_Comment</a>] <a href=3D"https://www.eaglegacy.com/Ro=
+manamor/EagleGrammars/Grammar_Delphi.html#Delphi_Expression">Delphi_Express=
+ion</a></td></tr>
+<tr>
+<td class=3D"cnt">88</td>
+<td class=3D"stat">
+(all | none)
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;<a name=3D"Delphi_Relational_Oper=
+ator"><b>Delphi_Relational_Operator</b>: (("=3D"|"&lt;&gt;"|"&lt;"|"&gt;"|"=
+&lt;=3D"|"&gt;=3D") | ("In"|"Is"))</a></td></tr>
+<tr>
+<td class=3D"cnt">2</td>
+<td class=3D"stat">
+all all
+</td><td class=3D"val"><a name=3D"Delphi_UnarySign"><b>Delphi_UnarySign</b>=
+:  ("-"|"+") </a><a href=3D"https://www.eaglegacy.com/Romanamor/EagleGramma=
+rs/Grammar_Delphi.html#Delphi_Expression">Delphi_Expression</a></td></tr>
+<tr>
+<td class=3D"cnt">198</td>
+<td class=3D"stat">
+all
+</td><td class=3D"val"><a name=3D"Delphi_Variable_Expression"><b>Delphi_Var=
+iable_Expression</b>:  </a><a href=3D"https://www.eaglegacy.com/Romanamor/E=
+agleGrammars/Grammar_Delphi.html#Delphi_Variable">Delphi_Variable</a></td><=
+/tr>
+<tr>
+<td class=3D"cnt">6</td>
+<td class=3D"stat">
+all all all all all all all all
+</td><td class=3D"val"><a name=3D"Delphi_Copy_Function"><b>Delphi_Copy_Func=
+tion</b>:  "Copy" '(' </a><a href=3D"https://www.eaglegacy.com/Romanamor/Ea=
+gleGrammars/Grammar_Delphi.html#Delphi_Expression">Delphi_Expression</a> ',=
+' <a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delp=
+hi.html#Delphi_Expression">Delphi_Expression</a> ',' <a href=3D"https://www=
+.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Expressio=
+n">Delphi_Expression</a> ')'</td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val"><a name=3D"Delphi_Format_Function"><b>Delphi_Format_=
+Function</b>:  "Format" </a><a href=3D"https://www.eaglegacy.com/Romanamor/=
+EagleGrammars/Grammar_Delphi.html#Delphi_Argument_List">Delphi_Argument_Lis=
+t</a></td></tr>
+<tr>
+<td class=3D"cnt">6</td>
+<td class=3D"stat">
+all all all all
+</td><td class=3D"val"><a name=3D"Delphi_Length_Function"><b>Delphi_Length_=
+Function</b>:  "Length" '(' </a><a href=3D"https://www.eaglegacy.com/Romana=
+mor/EagleGrammars/Grammar_Delphi.html#Delphi_Expression">Delphi_Expression<=
+/a> ')'</td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val"><a name=3D"Delphi_Odd_Function"><b>Delphi_Odd_Functi=
+on</b>:  "Odd" '(' </a><a href=3D"https://www.eaglegacy.com/Romanamor/Eagle=
+Grammars/Grammar_Delphi.html#Delphi_Expression">Delphi_Expression</a> ')'</=
+td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val"><a name=3D"Delphi_Pred_Function"><b>Delphi_Pred_Func=
+tion</b>:  "Pred" '(' </a><a href=3D"https://www.eaglegacy.com/Romanamor/Ea=
+gleGrammars/Grammar_Delphi.html#Delphi_Expression">Delphi_Expression</a> ')=
+'</td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val"><a name=3D"Delphi_Succ_Function"><b>Delphi_Succ_Func=
+tion</b>:  "Succ" '(' </a><a href=3D"https://www.eaglegacy.com/Romanamor/Ea=
+gleGrammars/Grammar_Delphi.html#Delphi_Expression">Delphi_Expression</a> ')=
+'</td></tr>
+<tr>
+<td class=3D"cnt">132</td>
+<td class=3D"stat">
+all all all none
+</td><td class=3D"val"><a name=3D"Delphi_Assignment"><b>Delphi_Assignment</=
+b>:  </a><a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Gramm=
+ar_Delphi.html#Delphi_Variable">Delphi_Variable</a> ":=3D" <a href=3D"https=
+://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Exp=
+ression">Delphi_Expression</a> [<a href=3D"https://www.eaglegacy.com/Romana=
+mor/EagleGrammars/Grammar_Delphi.html#Delphi_Comment">Delphi_Comment</a>]</=
+td></tr>
+<tr>
+<td class=3D"cnt">115</td>
+<td class=3D"stat">
+all none all all
+</td><td class=3D"val"><a name=3D"Delphi_BeginEnd"><b>Delphi_BeginEnd</b>: =
+ "Begin" [</a><a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/=
+Grammar_Delphi.html#Delphi_Comment">Delphi_Comment</a>]* [<a href=3D"https:=
+//www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Stat=
+ement_List">Delphi_Statement_List</a>] "End"</td></tr>
+<tr>
+<td class=3D"cnt">4</td>
+<td class=3D"stat">
+all
+</td><td class=3D"val"><a name=3D"Delphi_Break_Statement"><b>Delphi_Break_S=
+tatement</b>:  "Break"</a></td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val"><a name=3D"Delphi_Case_Statement"><b>Delphi_Case_Sta=
+tement</b>:  "Case" </a><a href=3D"https://www.eaglegacy.com/Romanamor/Eagl=
+eGrammars/Grammar_Delphi.html#Delphi_Expression">Delphi_Expression</a> "Of"=
+ <a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delph=
+i.html#Delphi_CaseClause">Delphi_CaseClause</a>* [<a href=3D"https://www.ea=
+glegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_CaseElseClau=
+se">Delphi_CaseElseClause</a>] "End" [<a href=3D"https://www.eaglegacy.com/=
+Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Comment">Delphi_Comment<=
+/a>]</td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;<a name=3D"Delphi_CaseClause"><b>=
+Delphi_CaseClause</b>:  </a><a href=3D"https://www.eaglegacy.com/Romanamor/=
+EagleGrammars/Grammar_Delphi.html#Delphi_Expression">Delphi_Expression</a> =
+':' [<a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_D=
+elphi.html#Delphi_Statement">Delphi_Statement</a>] [<a href=3D"https://www.=
+eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Comment">D=
+elphi_Comment</a>] ';'</td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;<a name=3D"Delphi_CaseElseClause"=
+><b>Delphi_CaseElseClause</b>:  "Else" [</a><a href=3D"https://www.eaglegac=
+y.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Statement">Delphi_=
+Statement</a>] [<a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammar=
+s/Grammar_Delphi.html#Delphi_Comment">Delphi_Comment</a>] ';'</td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val"><a name=3D"Delphi_Close_Statement"><b>Delphi_Close_S=
+tatement</b>:  "Close" [</a><a href=3D"https://www.eaglegacy.com/Romanamor/=
+EagleGrammars/Grammar_Delphi.html#Delphi_CloseParams">Delphi_CloseParams</a=
+>]</td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;<a name=3D"Delphi_CloseParams"><b=
+>Delphi_CloseParams</b>:  '(' </a><a href=3D"https://www.eaglegacy.com/Roma=
+namor/EagleGrammars/Grammar_Delphi.html#Delphi_Identifier_Reference">Delphi=
+_Identifier_Reference</a> ')'</td></tr>
+<tr>
+<td class=3D"cnt">10</td>
+<td class=3D"stat">
+all none
+</td><td class=3D"val"><a name=3D"Delphi_ExpressionStatement"><b>Delphi_Exp=
+ressionStatement</b>:  </a><a href=3D"https://www.eaglegacy.com/Romanamor/E=
+agleGrammars/Grammar_Delphi.html#Delphi_Expression">Delphi_Expression</a> [=
+<a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi=
+.html#Delphi_Comment">Delphi_Comment</a>]</td></tr>
+<tr>
+<td class=3D"cnt">8</td>
+<td class=3D"stat">
+all all all all all all all none all
+</td><td class=3D"val"><a name=3D"Delphi_For_Statement"><b>Delphi_For_State=
+ment</b>:  "For" </a><a href=3D"https://www.eaglegacy.com/Romanamor/EagleGr=
+ammars/Grammar_Delphi.html#Delphi_Identifier_Reference">Delphi_Identifier_R=
+eference</a> ":=3D" <a href=3D"https://www.eaglegacy.com/Romanamor/EagleGra=
+mmars/Grammar_Delphi.html#Delphi_Expression">Delphi_Expression</a> ("To"|"D=
+ownTo") <a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Gramma=
+r_Delphi.html#Delphi_Expression">Delphi_Expression</a> "Do" [<a href=3D"htt=
+ps://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_C=
+omment">Delphi_Comment</a>]* <a href=3D"https://www.eaglegacy.com/Romanamor=
+/EagleGrammars/Grammar_Delphi.html#Delphi_Statement">Delphi_Statement</a></=
+td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val"><a name=3D"Delphi_GetDateTime_Statement"><b>Delphi_G=
+etDateTime_Statement</b>:  "GetDateTime" '(' </a><a href=3D"https://www.eag=
+legacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Variable">Del=
+phi_Variable</a> ')'</td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val"><a name=3D"Delphi_Halt_Statement"><b>Delphi_Halt_Sta=
+tement</b>:  "Halt"</a></td></tr>
+<tr>
+<td class=3D"cnt">67</td>
+<td class=3D"stat">
+all all none all none all 87%
+</td><td class=3D"val"><a name=3D"Delphi_If_Statement"><b>Delphi_If_Stateme=
+nt</b>:  "If" </a><a href=3D"https://www.eaglegacy.com/Romanamor/EagleGramm=
+ars/Grammar_Delphi.html#Delphi_Expression">Delphi_Expression</a> [<a href=
+=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#D=
+elphi_Comment">Delphi_Comment</a>]* "Then" [<a href=3D"https://www.eaglegac=
+y.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Comment">Delphi_Co=
+mment</a>]* [<a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/G=
+rammar_Delphi.html#Delphi_Statement">Delphi_Statement</a>] [<a href=3D"http=
+s://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_If=
+_Else">Delphi_If_Else</a>]</td></tr>
+<tr>
+<td class=3D"cnt">58</td>
+<td class=3D"stat">
+none all all
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;<a name=3D"Delphi_If_Else"><b>Del=
+phi_If_Else</b>:  [</a><a href=3D"https://www.eaglegacy.com/Romanamor/Eagle=
+Grammars/Grammar_Delphi.html#Delphi_Comment">Delphi_Comment</a>]* "Else" <a=
+ href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.h=
+tml#Delphi_Statement">Delphi_Statement</a></td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val"><a name=3D"Delphi_Inherited_Statement"><b>Delphi_Inh=
+erited_Statement</b>:  "Inherited" [</a><a href=3D"https://www.eaglegacy.co=
+m/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Variable">Delphi_Varia=
+ble</a>] [<a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Gram=
+mar_Delphi.html#Delphi_Argument_List">Delphi_Argument_List</a>]</td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val"><a name=3D"Delphi_Raise_Statement"><b>Delphi_Raise_S=
+tatement</b>:  "Raise" </a><a href=3D"https://www.eaglegacy.com/Romanamor/E=
+agleGrammars/Grammar_Delphi.html#Delphi_Expression">Delphi_Expression</a></=
+td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val"><a name=3D"Delphi_Readln_Statement"><b>Delphi_Readln=
+_Statement</b>:  "ReadLn" [</a><a href=3D"https://www.eaglegacy.com/Romanam=
+or/EagleGrammars/Grammar_Delphi.html#Delphi_Readln_What">Delphi_Readln_What=
+</a>]</td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;<a name=3D"Delphi_Readln_FromFile=
+"><b>Delphi_Readln_FromFile</b>:  '(' </a><a href=3D"https://www.eaglegacy.=
+com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Identifier_Reference=
+">Delphi_Identifier_Reference</a> ',' <a href=3D"https://www.eaglegacy.com/=
+Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Identifier_Reference">De=
+lphi_Identifier_Reference</a> ')'</td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;<a name=3D"Delphi_Readln_NoFile">=
+<b>Delphi_Readln_NoFile</b>:  '(' </a><a href=3D"https://www.eaglegacy.com/=
+Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Identifier_Reference">De=
+lphi_Identifier_Reference</a> ')'</td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;<a name=3D"Delphi_Readln_What"><b=
+>Delphi_Readln_What</b>: (</a><a href=3D"https://www.eaglegacy.com/Romanamo=
+r/EagleGrammars/Grammar_Delphi.html#Delphi_Readln_NoFile">Delphi_Readln_NoF=
+ile</a> | <a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Gram=
+mar_Delphi.html#Delphi_Readln_FromFile">Delphi_Readln_FromFile</a>)</td></t=
+r>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val"><a name=3D"Delphi_Repeat_Statement"><b>Delphi_Repeat=
+_Statement</b>:  "Repeat" </a><a href=3D"https://www.eaglegacy.com/Romanamo=
+r/EagleGrammars/Grammar_Delphi.html#Delphi_Statement_List">Delphi_Statement=
+_List</a> "Until" <a href=3D"https://www.eaglegacy.com/Romanamor/EagleGramm=
+ars/Grammar_Delphi.html#Delphi_Expression">Delphi_Expression</a></td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val"><a name=3D"Delphi_Rewrite_Statement"><b>Delphi_Rewri=
+te_Statement</b>:  "ReWrite" '(' </a><a href=3D"https://www.eaglegacy.com/R=
+omanamor/EagleGrammars/Grammar_Delphi.html#Delphi_Identifier_Reference">Del=
+phi_Identifier_Reference</a> ',' <a href=3D"https://www.eaglegacy.com/Roman=
+amor/EagleGrammars/Grammar_Delphi.html#Delphi_Literal">Delphi_Literal</a> '=
+)'</td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val"><a name=3D"Delphi_Try_Statement"><b>Delphi_Try_State=
+ment</b>:  "Try" </a><a href=3D"https://www.eaglegacy.com/Romanamor/EagleGr=
+ammars/Grammar_Delphi.html#Delphi_Statement_List">Delphi_Statement_List</a>=
+ ["Except"] [<a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/G=
+rammar_Delphi.html#Delphi_Statement_List">Delphi_Statement_List</a>] ["Fina=
+lly"] [<a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar=
+_Delphi.html#Delphi_Statement_List">Delphi_Statement_List</a>] "End"</td></=
+tr>
+<tr>
+<td class=3D"cnt">3</td>
+<td class=3D"stat">
+all all all all
+</td><td class=3D"val"><a name=3D"Delphi_While_Statement"><b>Delphi_While_S=
+tatement</b>:  "While" </a><a href=3D"https://www.eaglegacy.com/Romanamor/E=
+agleGrammars/Grammar_Delphi.html#Delphi_Expression">Delphi_Expression</a> "=
+Do" <a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_De=
+lphi.html#Delphi_Statement">Delphi_Statement</a></td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val"><a name=3D"Delphi_With_Statement"><b>Delphi_With_Sta=
+tement</b>:  "With" </a><a href=3D"https://www.eaglegacy.com/Romanamor/Eagl=
+eGrammars/Grammar_Delphi.html#Delphi_Expression">Delphi_Expression</a> ['^'=
+] "Do" <a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar=
+_Delphi.html#Delphi_Statement">Delphi_Statement</a></td></tr>
+<tr>
+<td class=3D"cnt">58</td>
+<td class=3D"stat">
+all all
+</td><td class=3D"val"><a name=3D"Delphi_Writeln_Statement"><b>Delphi_Write=
+ln_Statement</b>:  ("Write"|"WriteLn") [</a><a href=3D"https://www.eaglegac=
+y.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_WriteLn_Something"=
+>Delphi_WriteLn_Something</a>]</td></tr>
+<tr>
+<td class=3D"cnt">84</td>
+<td class=3D"stat">
+all none none
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;<a name=3D"Delphi_WriteLn_Piece">=
+<b>Delphi_WriteLn_Piece</b>:  </a><a href=3D"https://www.eaglegacy.com/Roma=
+namor/EagleGrammars/Grammar_Delphi.html#Delphi_Expression">Delphi_Expressio=
+n</a> [<a href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar=
+_Delphi.html#Delphi_Writeln_ColonWidth">Delphi_Writeln_ColonWidth</a>] [<a =
+href=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.ht=
+ml#Delphi_Writeln_ColonWidth">Delphi_Writeln_ColonWidth</a>]</td></tr>
+<tr>
+<td class=3D"cnt">&nbsp;</td>
+<td class=3D"stat">
+&nbsp;
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<a name=3D"Del=
+phi_Writeln_ColonWidth"><b>Delphi_Writeln_ColonWidth</b>:  ':' </a><a href=
+=3D"https://www.eaglegacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#D=
+elphi_Expression">Delphi_Expression</a></td></tr>
+<tr>
+<td class=3D"cnt">58</td>
+<td class=3D"stat">
+all 1.90(all) all
+</td><td class=3D"val">|&nbsp;&nbsp;&nbsp;<a name=3D"Delphi_WriteLn_Somethi=
+ng"><b>Delphi_WriteLn_Something</b>:  '(' [</a><a href=3D"https://www.eagle=
+gacy.com/Romanamor/EagleGrammars/Grammar_Delphi.html#Delphi_WriteLn_Piece">=
+Delphi_WriteLn_Piece</a>]* ')'</td></tr>
+</tbody></table></center>
+<p><small><i>
+Terminals =3D 15 (instances=3D750)
+<br>Tokens =3D 113 (instances=3D3,487)
+<br><br><a name=3D"stats">(*) Statistics are shown in the same order as the=
+ Tokens.
+<br>Percentages are rounded; 'all' and 'none' mean 100% and 0% before round=
+ing.
+<br>For lists, it shows the average number of occurrences, excluding empty =
+lists.
+</a></i></small></p><a name=3D"stats">
+
+
+</a></body></html>
+------MultipartBoundary--zpqGw7CQQjjJYXwQGAEKXe80K5z83mWI1ENb9jUys5----
+Content-Type: text/css
+Content-Transfer-Encoding: quoted-printable
+Content-Location: https://www.eaglegacy.com/Romanamor/EagleGrammars/grammars.css
+
+@charset "windows-1252";
+
+td.hdr { background-color: lightgrey; }
+
+td.cnt { text-align: right; }
+
+td.stat { font-family: courier; font-size: 10px; }
+
+td.val { font-family: courier; font-size: 12px; }
+------MultipartBoundary--zpqGw7CQQjjJYXwQGAEKXe80K5z83mWI1ENb9jUys5----
+Content-Type: text/css
+Content-Transfer-Encoding: quoted-printable
+Content-Location: http://fonts.googleapis.com/css?family=Audiowide
+
+@charset "windows-1252";
+=0A
+------MultipartBoundary--zpqGw7CQQjjJYXwQGAEKXe80K5z83mWI1ENb9jUys5------

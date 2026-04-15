@@ -1,0 +1,12 @@
+ 0 : S := S + 'EOF expected';
+ 1 : S := S + 'ident expected';
+ 2 : S := S + 'string expected';
+ 3 : S := S + 'Special expected';
+ 4 : S := S + '"{$IFDEF" expected';
+ 5 : S := S + '"LINUX}" expected';
+ 6 : S := S + '"{$ELSE}" expected';
+ 7 : S := S + '"{$ENDIF}" expected';
+ 8 : S := S + '"}" expected';
+ 9 : S := S + 'not expected';
+ 10 : S := S + 'invalid LINUX';
+

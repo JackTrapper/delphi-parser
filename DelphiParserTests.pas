@@ -53,6 +53,9 @@ type
 		procedure Test_ParseClassType;
 		procedure Test_ParseConstructorMethodHeading;
 
+		procedure Test_EmptyCase;
+		procedure Test_CaseElseSemicolonHandling;
+
 		procedure Test_DatFiles;
 	end;
 
@@ -149,33 +152,33 @@ begin
 	for i := 0 to Length(lines)-1 do
 	begin
 		line := lines[i];
+		line := TrimRight(line); //remove trailing whitespace
 		if SameText(line, '#name') then
 		begin
 			// New case boundary: finalize the previous case before reading the next name.
 			FlushCurrent;
 			section := 'name';
-			continue;
+			Continue;
 		end;
 		if SameText(line, '#data') then
 		begin
 			section := 'data';
-			continue;
+			Continue;
 		end;
 		if SameText(line, '#errors') then
 		begin
 			section := 'errors';
-			continue;
+			Continue;
 		end;
 		if SameText(line, '#document') then
 		begin
 			section := 'document';
-			continue;
+			Continue;
 		end;
+
 		payload := line;
 		if section = 'document' then
-		begin
-			AppendLine(cur.ExpectedTree, payload);
-		end
+			AppendLine(cur.ExpectedTree, payload)
 		else if section = 'data' then
 			AppendLine(cur.SourceCode, payload)
 		else if section = 'errors' then
@@ -1010,7 +1013,7 @@ var
 			work := StripLeadingTabs(line, indent);
 			work := TrimLeft(work);
 			if Copy(work, 1, 2) <> 'nt' then
-				raise Exception.CreateFmt('Expected line %d to start with "nt"', [i+1]);
+				raise Exception.CreateFmt('Expected line %d:"%s" to start with "nt"', [i+1, line]);
 
 			// Ensure no multi-level jump without intermediate parent line
 			if indent > prevIndent + 1 then
@@ -1072,6 +1075,7 @@ var
 //	failures: TStringList;
 	nTest: Integer;
 	nFailures: Integer;
+	continueOnFailure: Boolean;
 const
 	// We're trying to find which test case is exposing the leak.
 	MAX_TESTS: Integer = 0;
@@ -1081,6 +1085,8 @@ begin
 
 	nTest := 0;
 	nFailures := 0;
+
+	continueOnFailure := True; //FindCmdLineSwitch('continueOnFailure');
 
 	//1. List of files
 	files := EnumerateDatFiles;
@@ -1104,7 +1110,10 @@ begin
 				on E:Exception do
 					begin
 						Inc(nFailures);
-						Fail('[TEST ERROR] '+testCase.Name+' ('+E.Message+')');
+						if continueOnFailure then
+							Status('[TEST ERROR] '+testCase.Name+' ('+E.Message+')')
+						else
+							Fail('[TEST ERROR] '+testCase.Name+' ('+E.Message+')');
 						Continue;
 					end;
 			end;
@@ -1766,6 +1775,191 @@ ntCompilationUnit
 ''';
 
 	CompareSource(sourceCode, expectedTree, 'Test_UnitPortabilityDirectives');
+end;
+
+procedure TDelphiParserTests.Test_EmptyCase;
+var
+	sourceCode: string;
+	expectedTree: string;
+begin
+{
+The case ELSE block uses a special ntCaseElse rather than ntElse or ntStatementList.
+}
+	sourceCode := '''
+unit U;
+interface
+implementation
+procedure P;
+begin
+	case FErrorLevel of
+	1: LogError(s);
+	else
+	end;
+end;
+end.
+''';
+
+	expectedTree := '''
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntCaseStatement
+							ntParticle
+								ntIdentifier anName="FErrorLevel"
+							ntCaseSelector
+								ntCaseLabels
+									ntCaseLabel
+										ntExpression
+											ntParticle
+								ntStatement
+									ntParticle
+										ntIdentifier anName="LogError"
+										ntParticle
+											ntIdentifier anName="s"
+							ntCaseElse
+''';
+
+	CompareSource(sourceCode, expectedTree, 'Test_CaseElseSemicolonHandling');
+end;
+
+
+
+procedure TDelphiParserTests.Test_CaseElseSemicolonHandling;
+var
+	sourceCode: string;
+	expectedTree: string;
+begin
+{
+From:
+BNF notation for Delphi Grammar
+https://comp.compilers.narkive.com/x5k5JSG1/bnf-notation-for-delphi-grammar#post5
+
+Hans-Peter Diettrich		6/8/2005 19:59:36 UTC
+
+> Post by George Neuner
+>
+> The Borland Pascal's used to contain the language BNF in the manual
+appendixes. Did they discontinue this practice with Delphi?
+
+The practice is continued, but the grammar is neither complete nor valid
+nor up-to-date since the introduction of case-else.
+
+I found railroad diagrams supplied with Delphi 2, that already differed
+from what the compiler accepts. Later versions come with some kind of
+extended BNF syntax, with the same problems and a missing description
+for the grammar syntax or semantics.
+
+Some people have tried to construct EBNF grammars for various Delphi
+versions in the past, but the results are questionable, for several
+reasons:
+
+- "directives" are reserved words in specific context.
+- the semantics are too far away from the syntax, in detail
+- semicolons can have unexpected (context sensitive) effects.
+
+My favorite example:
+
+	case i of
+	0: if a then b
+	; //<----- illegal, optional or required?
+	else c
+	end;
+
+Normally a semicolon is illegal in this place, because it's intended to
+only separate multiple case-labels. In this special case the marked
+semicolon is not optional, in fact it indicates whether the following
+dangling "else" is part of the "if" or of the "case" statement.
+
+Now try to construct an according context-free grammar :-(
+
+DoDi
+}
+	sourceCode := '''
+unit U;
+interface
+implementation
+procedure A;
+var
+	i: Integer;
+	b: Boolean;
+	procedure c;
+	begin
+	end;
+begin
+	i := 0;
+	b := False;
+	case i of
+	0: if b then c
+	; //<----- illegal, optional or required?
+	else c
+	end;
+end;
+end.
+''';
+
+	expectedTree := '''
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="A"
+				ntVarSection
+					ntVariable
+						ntIdentifierList
+							ntIdentifier anName="i"
+						ntType anName="Integer"
+					ntVariable
+						ntIdentifierList
+							ntIdentifier anName="b"
+						ntType anName="Boolean"
+				ntMethod anKind="avProcedure"
+					ntQualifiedIdentifier anName="c"
+					ntStatementList
+				ntStatementList
+					ntStatement
+						ntAssign
+							ntParticle
+								ntIdentifier anName="i"
+							ntParticle
+					ntStatement
+						ntAssign
+							ntParticle
+								ntIdentifier anName="b"
+							ntParticle
+								ntIdentifier anName="False"
+					ntStatement
+						ntCaseStatement
+							ntParticle
+								ntIdentifier anName="i"
+							ntCaseSelector
+								ntCaseLabels
+									ntCaseLabel
+										ntExpression
+											ntParticle
+								ntStatement
+									ntIf
+										ntParticle
+											ntIdentifier anName="b"
+										ntThen
+											ntStatement
+												ntParticle
+													ntIdentifier anName="c"
+							ntCaseElse
+								ntStatementList
+									ntStatement
+										ntParticle
+											ntIdentifier anName="c"
+''';
+
+	CompareSource(sourceCode, expectedTree, 'Test_CaseElseSemicolonHandling');
 end;
 
 initialization

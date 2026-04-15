@@ -1,0 +1,1207 @@
+COMPILER Delphi
+USES Win32OnlyComponent;
+DELPHI
+GLOBAL
+  // This is a test of the backup system
+TARGETDIRECTORY
+  {PB}\Output\Delphi
+COMPILERFRAME
+  {PB}\Frames\pbCompiler.frm
+PARSERFRAME
+  {PB}\Output\Delphi\pbParser_Delphi.frm
+SCANNERFRAME
+  {PB}\Frames\pbScanner.frm
+PRIVATE
+fOutputStream : TStringStream;
+ fCollectStart : Integer;
+ fCollectLength : Integer;
+ procedure Init;
+ procedure Final;
+ Function CalcLength : Integer;
+ procedure SetStart;
+ function CopySourceToCurrent : String;
+ procedure WriteStr(S : string);
+ Function GetLexString : String;
+ procedure ReportError(nr, line, col, pos: integer);
+PROTECTED
+
+PUBLIC
+
+CREATE
+fOutputStream := TStringStream.Create('' );
+ Error := ReportError;
+DESTROY
+fOutputStream.Free;
+ERRORS
+
+PUBLISHED
+
+END_DELPHI
+
+Procedure T-->GrammarParser.SetStart;
+Begin
+ fCollectStart := nextPos+1;
+End;
+
+procedure T-->GrammarParser.Init;
+begin
+ fOutputStream.Size := 0;
+ fCollectStart := 0;
+ fCollectLength := 0;
+ lst.Size := 0;
+end;
+
+Function T-->GrammarParser.CopySourceToCurrent : String;
+Begin
+ CalcLength;
+ Result := Copy(src.DataString, FCollectStart, fCollectLength);
+End;
+
+Function T-->GrammarParser.CalcLength : Integer;
+Begin
+ Result := nextPos - fCollectStart+1;
+ fCollectLength := Result;
+End;
+
+procedure T-->GrammarParser.Final;
+begin
+ if Errors>0 then
+  lst.WriteString('*** Errors ***' +#13#10 );
+ lst.WriteString(fOutputStream.DataString);
+ fOutputStream.Size := 0;
+end;
+
+procedure T-->GrammarParser.WriteStr(S : string);
+begin
+ fOutputStream.WriteBuffer(S[1],length(S));
+end;
+
+Function T-->GrammarParser.GetLexString : String;
+Begin
+ LexString(Result);
+end;
+
+procedure T-->GrammarParser.ReportError(nr, line, col, pos: integer);
+Var
+ S, S1 : String;
+ SL : TStringList;
+begin
+ Case nr of
+ {$I  -->Grammar.err}
+ End; // Case
+ S := CRLF +S+CRLF + 'Line ' +IntToStr(line)+CRLF+'Column ' +
+   IntToStr(col)+CRLF+'................................' +CRLF;
+ SL := TStringList.Create;
+ SL.Text := src.DataString;
+ if Line<SL.Count then
+   S1 := SL[Line-1]
+  else S1 := '[End Of Source File]' ;
+ SL.Free;
+ Insert(' ERROR->' ,S1,Col-1);
+ Inc(fErrors);
+ WriteStr(S+S1+CRLF);
+end;
+
+
+IGNORE CASE
+
+CHARACTERS
+letter="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_".
+digit="0123456789".
+hexdigit = digit + "ABCDEFabcdef".
+special = "*@,()%:".
+ctrl=CHR(1)..CHR(31).
+tab=CHR(9).
+eol=CHR(13).
+lf=CHR(10).
+noquote1=ANY-'"' -ctrl.
+noquote2=ANY-"'" -ctrl.
+
+TOKENS
+ident = letter{letter|digit}.
+number = digit{digit} | digit { digit } CONTEXT ( ".." ).
+_string = "'" {noquote2|'"' }"'".
+float = digit{["_" ]digit}("." digit{["_" ]digit}[("E" |"e" )["+" |"-" ]digit{["_" ]digit}]|("E" |"e" )["+" |"-" ]digit{["_" ]digit}).
+hexnumber = "$" hexdigit {hexdigit}.
+charnumber = "#" digit{digit} | "#" digit{digit} CONTEXT ( ".." ).
+
+NAMES
+
+IGNORE tab+lf+eol
+PRAGMAS
+
+COMMENTS FROM "(*" TO "*)"
+COMMENTS FROM "//" TO eol
+COMMENTS FROM "{" TO "}"
+
+PRODUCTIONS
+Delphi =
+                                                  (. Init ; .)
+        SourceFile 
+                                                  (. //WriteStr(CopySourceToCurrent) ; .)
+        EOF 
+                                                  (. Final ; .)
+        .
+SourceFile =
+        Unit 
+        .
+Unit =
+        "UNIT" 
+         ( Ident 
+        
+        | BadNames  ) 
+         [ Directive  ] 
+        ";" 
+        InterfaceSection 
+        ImplementationSection
+        .
+InterfaceSection =
+        "INTERFACE" 
+         [ UsesClause  ] 
+         { InterfaceDecl  }
+        .
+InterfaceDecl =
+                                                  (. //WriteStr( 'ConstSection ->' +#13#10) ; .)
+        ConstSection         | 
+                                                  (. //WriteStr( 'TypeSection ->' +#13#10) ; .)
+        TypeSection         | 
+                                                  (. //WriteStr( 'VarSection  ->' +#13#10) ; .)
+        VarSection         | 
+        ExportedHeading         | 
+        ResourceString 
+        .
+TypeSection =
+        "TYPE" 
+         {                                        (. //WriteStr( 'New TypeDecl ->' +#13#10) ; .)
+        TypeDecl 
+                                                  (. //WriteStr( 'Closing Semi-Coloon ->' +#13#10) ; .)
+        ";" 
+         { Directive 
+        ";"  } }
+        .
+TypeDecl
+               (. //var S : String ; .)
+ =
+         ( Ident 
+        
+        | BadNames  ) 
+                                                  (. //S := GetLexString ;
+                                                      // WriteStr( 'TypeName =' +S+#13#10) ; .)
+        "=" 
+         [ "TYPE"  ] 
+         (                                        (. WriteStr( 'Entering TypeId ' +#13#10) ; .)
+        TypeId 
+        
+        | RestrictedType 
+        
+        | ClassTypeGroup 
+        
+        | NumberTypes 
+
+        |                                        (. //WriteStr( 'In Const Expr Hunt ' ) ; .)
+        ConstExpr 
+         [ ".." 
+        ConstExpr  ] ) 
+                                                  (. //WriteStr( 'End of Type =' +S+#13#10) ; .)
+        .
+RestrictedType =
+        ObjectType         | 
+        InterfaceType 
+        .
+InterfaceType =
+         ( "INTERFACE" 
+        
+        | "DISPINTERFACE"  ) 
+         [  [ InterfaceHeritage  ] 
+         [ GUID  ] 
+         { ClassMethodList 
+        
+        | ClassPropertyList  } 
+        "END"  ]
+        .
+GUID =
+        "[" 
+        _string 
+        "]" 
+        .
+InterfaceHeritage =
+        "(" 
+        IdentList 
+        ")" 
+        .
+ClassTypeBody =
+         [ ClassHeritage  ] 
+         [  [                                        (. //WriteStr( 'Private Form Fields ->' +#13#10) ; .)
+        ClassFieldList  ] 
+         [                                        (. //WriteStr( 'Private Form Methods ->' +#13#10) ; .)
+        ClassMethodList  ] 
+         [                                        (. //WriteStr( 'Private Form Properties ->' +#13#10) ; .)
+        ClassPropertyList  ] 
+         (  {  ( "PRIVATE" 
+        
+        | "PROTECTED" 
+        
+        | "PUBLIC" 
+        
+        | "PUBLISHED"  ) 
+                                                  (. //WriteStr( 'In ClassVisibility ' +GetLexString+#13#10) ; .)
+         {                                        (. //WriteStr( 'Fields ->' +#13#10) ; .)
+        ClassFieldList 
+
+        |                                        (. //WriteStr( 'Methods ->' +#13#10) ; .)
+        ClassMethodList 
+
+        |                                        (. //WriteStr( 'Properties ->' +#13#10) ; .)
+        ClassPropertyList  } } ) 
+        "END"  ] 
+                                                  (. //WriteStr( 'End of Class Decl' +#13#10 ) ; .)
+        .
+ClassMethodList =
+        MethodList 
+        .
+ClassFieldList =
+        ObjFieldList 
+        .
+PropertySpecifiers =
+         [ "INDEX" 
+        ConstExpr  ] 
+         [ "READ" 
+        Ident 
+         [ "." 
+        Ident  ] ] 
+         [ "WRITE" 
+        Ident 
+         [ "." 
+        Ident  ] ] 
+         [ "STORED" 
+         ( Ident 
+        
+        | NumberTypes  ) ] 
+         [ "DEFAULT" 
+         [ NumberTypes 
+        
+        | ConstExpr  ] 
+        
+        | "NODEFAULT"  ] 
+         [ "IMPLEMENTS" 
+        TypeId 
+         { "," 
+        TypeId  } ]
+        .
+ObjHeritage =
+        "(" 
+        TypeId 
+        ")" 
+        .
+PropertyParameterList =
+        "[" 
+        FormalParm 
+         { ";" 
+        FormalParm  } 
+        "]"
+        .
+PropertyInterface =
+         [ PropertyParameterList  ] 
+        ":" 
+        Type
+        .
+PropertyList =
+        Property 
+        ";" 
+         [ "DEFAULT" 
+        ";"  ] 
+         { Property 
+        ";" 
+         [ "DEFAULT" 
+        ";"  ] }
+        .
+Property =
+        "PROPERTY" 
+        ANY 
+                                                  (. //WriteStr( 'PROPERTY' +GetLexString+ ' ->' +#13#10) ; .)
+         [ PropertyInterface  ] 
+        PropertySpecifiers 
+         [ AccessSettings  ] 
+         [ "DISPID" 
+         ( NumberTypes 
+        
+        | Ident  ) ]
+        .
+MethodList =
+        Method 
+         { Method  }
+        .
+Method =
+         [ "CLASS"  ] 
+        MethodHeading 
+         [ ";"  ] 
+         { Directive 
+         [ Ident  ] 
+        ";"  } 
+         [ "ABSTRACT" 
+        ";"  ]
+        .
+MethodHeading =
+        ProcedureHeading         | 
+        FunctionHeading         | 
+        ConstructorHeading         | 
+        DestructorHeading 
+        .
+StrucType =
+         [ "PACKED"  ] 
+         ( ArrayType 
+        
+        | SetType 
+        
+        | FileType 
+        
+        | RecType  )
+        .
+ArrayType =
+                                                  (. WriteStr( 'In ArrayType ->' +#13#10) ; .)
+        "ARRAY" 
+         [ "[" 
+         ( Type 
+        
+        |  ( ConstantDeclBody 
+        
+        | Number  ) 
+         [                                        (. WriteStr( 'In .. section ->' +#13#10) ; .)
+        ".." 
+         ( ConstantDeclBody 
+        
+        | Number 
+        
+        | charnumber  ) 
+         {                                        (. WriteStr( 'In extended section ->' +#13#10) ; .)
+         ( AddOp 
+        
+        | MulOp  ) 
+         ( Ident 
+        
+        | Number  ) } ] ) 
+        "]"  ] 
+        "OF" 
+         ( "CONST" 
+        
+        | Type  )
+        .
+RecType =
+        "RECORD" 
+                                                  (. // WriteStr( 'RECORD ->' +#13#10) ; .)
+         [ RecItem 
+         { ";" 
+         ( RecItem 
+        
+        |   ) } ] 
+        "END" 
+                                                  (. //WriteStr( 'End RECORD' +#13#10) ; .)
+        .
+RecItem =
+                                                  (. //WriteStr( 'In RecItem' +#13#10 ) ; .)
+        CaseItem         | 
+        "CASE" 
+                                                  (. //WriteStr( 'REC CASE Start' +#13#10 ) ; .)
+         ( TypeId 
+        
+        |  ( Ident 
+        
+        | BadNames  ) 
+        ":" 
+        TypeId  ) 
+        "OF" 
+        RecItem        | 
+                                                  (. //SetStart ; .)
+        RecField 
+                                                  (. //WriteStr( CopySourceToCurrent +#13#10) ; .)
+        .
+CaseItem =
+                                                  (. //WriteStr( 'REC CASE ITEM Start' +#13#10 ) ; .)
+        number 
+         {  ( "," 
+        
+        | ".."  ) 
+        number  } 
+        ":" 
+        "(" 
+         ( RecItem 
+        
+        | VarDecl  ) 
+         { ";" 
+         ( RecItem 
+        
+        | VarDecl  ) } 
+        ")"
+        .
+SetType =
+                                                  (. //WriteStr( 'Set Type ->' +#13#10) ; .)
+        "SET" 
+        "OF" 
+         ( Type 
+        
+        | SubrangeType  )
+        .
+FileType =
+        "FILE" 
+         [ "OF" 
+        TypeId  ]
+        .
+PointerType =
+        "^" 
+        TypeId 
+        .
+ConstructorHeading =
+        "CONSTRUCTOR" 
+        Ident 
+         [ FormalParameters  ]
+        .
+DestructorHeading =
+        "DESTRUCTOR" 
+        Ident 
+         [ FormalParameters  ]
+        .
+ObjFieldList =
+                                                  (. //SetStart ; .)
+        ObjField 
+         { ObjField  } 
+                                                  (. //WriteStr( 'ObjFieldList  ' +CopySourceToCurrent+ ' ->' +#13#10) ; .)
+        .
+ObjField =
+        IdentList 
+        ":" 
+        Type 
+         [ "PLATFORM"  ] 
+        ";"
+        .
+RecField =
+         ( BadNames 
+        
+        | IdentList  ) 
+        ":" 
+         ( "(" 
+        VarDecl 
+         { ";" 
+        VarDecl  } 
+        ")" 
+        
+        | Type  )
+        .
+ClassHeritage =
+        "(" 
+                                                  (. SetStart ; .)
+        IdentList 
+                                                  (. //WriteStr( 'Inherits from ' +CopySourceToCurrent+#13#10) ; .)
+        ")" 
+        .
+ClassPropertyList =
+        PropertyList 
+        .
+ObjectType =
+        "OBJECT" 
+         [ ObjHeritage  ] 
+         [ ObjFieldList  ] 
+         [ MethodList  ] 
+        "END"
+        .
+Type =
+         [ "SYSTEM" 
+        "."  ] 
+         (                                        (. WriteStr( ' EnumeratedType ' +#13#10 ) ; .)
+        EnumeratedType 
+
+        |                                        (. WriteStr( ' OrdIdent ' +#13#10 ) ; .)
+        OrdIdent 
+
+        |                                        (. WriteStr( ' RealType ' +#13#10 ) ; .)
+        RealType 
+
+        |                                        (. WriteStr( '  StrucType  ' +#13#10 ) ; .)
+        StrucType 
+
+        |                                        (. WriteStr( '   PointerType ' +#13#10 ) ; .)
+        PointerType 
+
+        |                                        (. WriteStr( '   StringType  ' +#13#10 ) ; .)
+        StringType 
+
+        |                                        (. WriteStr( '   ProcedureType   ' +#13#10 ) ; .)
+        ProcedureType 
+
+        |                                        (. WriteStr( '    VariantType  ' +#13#10 ) ; .)
+        VariantType 
+
+        |                                        (. WriteStr( '  IdentTypes ' +#13#10 ) ; .)
+        IdentTypes 
+
+        |                                        (. WriteStr( '  NumberTypes ' +#13#10 ) ; .)
+        NumberTypes  ) 
+         [ "PLATFORM" 
+        
+        | "DEPRECATED"  ]
+        .
+IdentTypes =
+        Ident 
+         [ "(" 
+         ( ConstExpr 
+         {  ( AddOp 
+        
+        | MulOp 
+        
+        | "OR" 
+        
+        | "AND"  ) 
+        ConstExpr  } 
+        
+        | Type  ) 
+        ")"  ] 
+         [  ( "." 
+        Ident 
+        
+        | ".." 
+         ( Ident 
+         [ "(" 
+         ( ConstExpr 
+        
+        | Type  ) 
+        ")"  ] 
+        
+        | Number  ) ) ]
+        .
+NumberTypes =
+         [ "+" 
+        
+        | "-"  ] 
+         ( HexNumber 
+         [  ( AddOp 
+        
+        | MulOp  ) 
+        ConstExpr  ] 
+         [ ".." 
+        ConstExpr 
+         [  ( AddOp 
+        
+        | MulOp  ) 
+        ConstExpr  ] ] 
+        
+        | Number 
+         [ ".." 
+                                                  (. WriteStr( 'Entering NumberTypes ConstExpr' +#13#10) ; .)
+        ConstExpr 
+         {  ( AddOp 
+        
+        | MulOp  ) 
+        ConstExpr  } ] ) 
+                                                  (. //WriteStr( 'Leaving NUmberTypes' +#13#10) ; .)
+        .
+NumberList =
+        NumberTypes 
+         {  ( "," 
+        
+        | "OR"  ) 
+         ( NumberTypes 
+        
+        | ConstExpr  ) }
+        .
+VarSection =
+        "VAR" 
+         { VarDecl 
+         [ Directive  ] 
+        ";" 
+         [ Directive 
+        ";"  ] }
+        .
+VarDecl =
+                                                  (. WriteStr( 'VarDecl--------->' +#13#10) ; .)
+        IdentList 
+        ":" 
+         ( Type 
+        
+        | String  ) 
+         [  ( "ABSOLUTE" 
+         ( ConstExpr  ) ) 
+        
+        | "=" 
+         [ "@"  ] 
+        TypedConstant  ] 
+                                                  (. //WriteStr( 'END VarDecl---------<' +#13#10) ; .)
+        .
+ExportedHeading =
+         ( ProcedureHeading 
+        
+        | FunctionHeading  ) 
+        ";" 
+         { Directive 
+        ";"  }
+        .
+ProcedureHeading =
+        "PROCEDURE" 
+         ( Ident 
+         [ "." 
+        Ident  ] 
+                                                  (. //WriteStr( 'PROCEDURE ->' +GetLexString+#13#10) ; .)
+         (  [ FormalParameters  ] 
+        
+        | "=" 
+        Ident  ) 
+        
+        | "REGISTER"  )
+        .
+FunctionHeading =
+        "FUNCTION" 
+        Ident 
+         [ "." 
+        Ident  ] 
+                                                  (. //WriteStr( 'FUNCTION ->' +GetLexString+#13#10) ; .)
+         (  [ FormalParameters  ] 
+        ':' 
+        Type 
+         [ "STDCALL" 
+        
+        | "CDECL"  ] 
+        
+        | "=" 
+        Ident  )
+        .
+FormalParameters =
+        "(" 
+         ( ")" 
+        
+        | FormalParm 
+         { ";" 
+        FormalParm  } 
+        ")"  )
+        .
+FormalParm =
+         [ "VAR" 
+        
+        | "CONST" 
+        
+        | "OUT"  ] 
+        Parameter
+        .
+Parameter =
+                                                  (. //WriteStr( ' In Parameter ->' +#13#10) ; .)
+        IdentList 
+         [ ":" 
+         (  [ "ARRAY" 
+        "OF"  ] 
+         ( Type 
+        
+        | "CONST"  ) ) ] 
+         [ "=" 
+        ConstExpr  ]
+        .
+ProcedureType =
+         ( "PROCEDURE" 
+         [ FormalParameters  ] 
+        
+        | "FUNCTION" 
+         [ FormalParameters  ] 
+        ":" 
+        Type  ) 
+         [ "OF" 
+        "OBJECT"  ] 
+         [ "STDCALL" 
+        
+        | "CDECL"  ]
+        .
+VariantType =
+        "VARIANT"         | 
+        "OLEVARIANT" 
+        .
+ClassRefBody =
+        "OF" 
+        TypeId 
+        .
+ClassTypeGroup =
+        "CLASS" 
+         ( ClassRefBody 
+        
+        | ClassTypeBody  )
+        .
+StringType =
+        "STRING" 
+         [ "[" 
+        ConstExpr 
+         {  ( AddOp 
+        
+        | MulOp  ) 
+        ConstExpr  } 
+        "]"  ]        | 
+        "ANSISTRING"         | 
+        "WIDESTRING" 
+        .
+SubrangeType =
+         [ AddOp  ] 
+        ConstExpr 
+        ".." 
+        ConstExpr 
+         {  ( MulOp 
+        
+        | AddOp  ) 
+        ConstExpr  }
+        .
+AddOp =
+        "+"         | 
+        "-"         | 
+        "OR"         | 
+        "XOR" 
+        .
+MulOp =
+        "*"         | 
+        "/"         | 
+        "DIV"         | 
+        "MOD"         | 
+        "AND"         | 
+        "SHL"         | 
+        "SHR" 
+        .
+EnumeratedType =
+        "(" 
+        EnumeratedTypeElement 
+         {  ( "," 
+        
+        | "OR"  ) 
+        EnumeratedTypeElement  } 
+        ")"
+        .
+EnumeratedTypeElement =
+        "SIZEOF" 
+        "(" 
+         ( Ident 
+        
+        | String  ) 
+        ")" 
+         {  ( AddOp 
+        
+        | MulOp  ) 
+        ConstExpr  }        | 
+        Ident 
+         [ "=" 
+        ConstExpr  ]
+        .
+OrdIdent =
+        "SHORTINT"         | 
+        "SMALLINT"         | 
+        "INTEGER"         | 
+        "BYTE"         | 
+        "LONGINT"         | 
+        "INT64"         | 
+        "WORD"         | 
+        "BOOLEAN"         | 
+        "CHAR"         | 
+        "WIDECHAR"         | 
+        "PCHAR"         | 
+        "HRESULT" 
+        .
+RealType =
+        "REAL48"         | 
+        "REAL"         | 
+        "SINGLE"         | 
+        "DOUBLE"         | 
+        "EXTENDED"         | 
+        "CURRENCY"         | 
+        "COMP" 
+        .
+Directive =
+        "CDECL"         | 
+        "REGISTER"         | 
+        "DYNAMIC"         | 
+        "VIRTUAL"         | 
+        "EXPORT"         | 
+        "EXTERNAL"         | 
+        "FAR"         | 
+        "FORWARD"         | 
+        "MESSAGE"         | 
+        "OVERRIDE"         | 
+        "OVERLOAD"         | 
+        "PASCAL"         | 
+        "DEPRECATED"         | 
+        "PLATFORM"         | 
+        "REINTRODUCE"         | 
+        "SAFECALL"         | 
+        "STDCALL"         | 
+         [ "READONLY" 
+        
+        | "WRITEONLY"  ] 
+        "DISPID" 
+        NumberTypes
+        .
+ConstSection =
+        "CONST" 
+                                                  (. //WriteStr( 'In "CONST" ' +#13#10) ; .)
+        ConstantDecl 
+        ";" 
+         { ConstantDecl 
+        ";"  }
+        .
+ConstantDecl =
+         ( BadNames 
+        
+        | Ident  ) 
+                                                  (. //WriteStr( 'Constant Name = ' +GetLexString+#13#10) ; .)
+         ( "=" 
+         [ "@"  ] 
+        ConstantDeclBody 
+        
+        | ":" 
+        Type 
+        "=" 
+         [ "@"  ] 
+         ( String 
+        
+        |  ( "SIZEOF" 
+        
+        | "BYTE" 
+        
+        | "ORD"  ) 
+        "(" 
+        TypedConstant 
+        ")" 
+        
+        | "[" 
+                                                  (. WriteStr( 'Entering TypedConstant 0 from ConstDecl' +#13#10) ; .)
+        ConstExpr 
+         {  ( AddOp 
+        
+        | MulOp  ) 
+        ConstExpr  } 
+        "]" 
+         [ AddOp 
+        "[" 
+        ConstExpr 
+         {  ( AddOp 
+        
+        | MulOp  ) 
+        ConstExpr  } 
+        "]"  ] 
+
+        |                                        (. WriteStr( 'Entering TypedConstant 1 from ConstDecl' +#13#10) ; .)
+        TypedConstant  ) )
+        .
+ConstantDeclBody =
+                                                  (. //WriteStr( 'In ConstantDeclBody' +#13#10) ; .)
+         [ "NOT"  ] 
+         [  [                                        (. //WriteStr( 'In ->OrdIdent->' +#13#10) ; .)
+        OrdIdent  ] 
+                                                  (. //WriteStr( 'Writing Bracket' +#13#10) ; .)
+        "("  ] 
+                                                  (. //WriteStr( 'Entering ConstExpr ' +#13#10) ; .)
+         (                                        (. //WriteStr( 'Entering ->GUIDDef ' +#13#10) ; .)
+        GUIDDef 
+
+        |                                        (. WriteStr( 'Entering ->Type' +#13#10) ; .)
+        Type 
+
+        |                                        (. //WriteStr( 'Entering ->NumberList ' +#13#10) ; .)
+        NumberList 
+
+        |                                        (. //WriteStr( 'Entering ->ConstExpr  ' +#13#10) ; .)
+        ConstExpr  ) 
+         {  ( AddOp 
+        
+        | MulOp  ) 
+        ConstExpr  } 
+         [ ")" 
+         {  ( AddOp 
+        
+        | MulOp  ) 
+        ConstExpr  } ]
+        .
+TypedConstant =
+                                                  (. //WriteStr( 'In Typed Constant ->' +#13#10) ; .)
+        "(" 
+        TypedConstantBody 
+         {  ( ";" 
+        
+        | "OR" 
+        
+        | "," 
+        
+        | AddOp 
+        
+        | MulOp  ) 
+        TypedConstantBody  } 
+        ")"        | 
+        "[" 
+        ConstExpr 
+        "]" 
+         {  ( ";" 
+        
+        | "OR"  ) 
+        "[" 
+        ConstExpr 
+        "]"  }        | 
+        TypedConstantBody 
+        .
+TypedConstantBody =
+                                                  (. //WriteStr( 'In Typed ConstantBody ->' +#13#10) ; .)
+        "(" 
+         ( NumberList 
+        
+        | VarDecl 
+         { ";" 
+        VarDecl  } ) 
+        ")"        | 
+         ( NumberList 
+        
+        | "[" 
+        IdentList 
+        "]" 
+         {  ( "," 
+        
+        | "OR"  ) 
+        "[" 
+        IdentList 
+        "]"  } 
+        
+        | GUIDDef 
+        
+        | String 
+         {  ( "," 
+        
+        | "OR"  ) 
+        ConstExpr  } 
+        
+        | IdentList  ) 
+         [ ":" 
+         ( ConstExpr 
+        
+        | String  ) ]
+        .
+ImplementationSection =
+        "IMPLEMENTATION" 
+         { ANY  }
+        .
+UsesClause =
+        "USES" 
+        IdentList 
+        ";" 
+        .
+IdentList =
+         ( BadNames 
+        
+        | Ident 
+        
+        | charnumber  ) 
+         {  ( "," 
+        
+        | "OR"  ) 
+         ( BadNames 
+        
+        | Ident 
+        
+        | charnumber  ) }
+        .
+TypeId =
+        Type         | 
+         ( UnitId 
+        "." 
+        Type  )
+        .
+ConstExpr =
+                                                  (. WriteStr( 'In ConstExpr  ->' +#13#10) ; .)
+         ( "SIZEOF" 
+        
+        | "BYTE" 
+        
+        | "ORD" 
+        
+        | "LONGINT" 
+        
+        | "INTEGER" 
+        
+        | "LOW" 
+        
+        | "HIGH"  ) 
+        "(" 
+         ( Type 
+        
+        | String 
+        
+        | ConstExpr  ) 
+        ")" 
+         {  ( AddOp 
+        
+        | MulOp  ) 
+        ConstExpr 
+        
+        | NumberList  }        | 
+         [ "NOT"  ] 
+         (  (  [ "@"  ] 
+        Ident 
+         [  ( "(" 
+         (                                        (. WriteStr( 'Here  ->' +#13#10) ; .)
+        ConstExpr 
+         {  ( AddOp 
+        
+        | MulOp  ) 
+        ConstExpr 
+        
+        | NumberList  } 
+        
+        | Type  ) 
+        ")"  ) ] 
+        
+        | NumberTypes  ) )        | 
+        String 
+         [ ".." 
+        String  ] 
+         { "," 
+        String 
+         [ ".." 
+        String  ] }        | 
+        "[" 
+         [                                        (. WriteStr( 'IdentList  Here  ->' +#13#10) ; .)
+        IdentList 
+         [ ".." 
+        ConstExpr  ] ] 
+        "]"        | 
+        charnumber 
+         [ charnumber  ] 
+         [ ".." 
+        ConstExpr  ]        | 
+        "(" 
+         ( ConstExpr 
+         {  ( AddOp 
+        
+        | MulOp  ) 
+        ConstExpr  } 
+        
+        | NumberList 
+        
+        | GUIDDef  ) 
+         [ ":" 
+        ConstExpr  ] 
+        ")"
+        .
+UnitId =
+        Ident 
+        .
+Ident =
+        ident         | 
+        ReusableWords 
+        .
+Number =
+         ( number 
+        
+        | float  )
+        .
+HexNumber =
+         [ "+" 
+        
+        | "-"  ] 
+        hexnumber
+        .
+ReusableWords =
+        "READ"         | 
+        "WRITE"         | 
+        Directive         | 
+        "INDEX"         | 
+        "DEFAULT" 
+        .
+AccessSettings =
+        "READONLY"         | 
+        "WRITEONLY" 
+        .
+ResourceString =
+        "resourcestring" 
+         { Ident 
+        "=" 
+        String 
+         [ "deprecated"  ] 
+        ";"  }
+        .
+String =
+        _string 
+         { _string 
+        
+        | charnumber 
+         { charnumber  } 
+        
+        | "+" 
+         [ Ident  ] }        | 
+        "#" 
+        number 
+        .
+BadNames =
+                                                  (. //WriteStr( 'BadNames' +#13#10) ; .)
+        "DISPID"         | 
+        "ULPROPID"         | 
+        "GUID"         | 
+        "UGUID"         | 
+        "EKIND"         | 
+        "UNAME"         | 
+        "HRESULT"         | 
+        "READONLY"         | 
+        "ABSOLUTE"         | 
+        "D1"         | 
+        "D2"         | 
+        "D3"         | 
+        "D4"         | 
+        "VARIANT"         | 
+        "SYSTEM" 
+        .
+GUIDDef =
+                                                  (. //WriteStr( 'In GUIDDef' +#13#10) ; .)
+         (  [ "uguid" 
+        ":" 
+        "(" 
+        "guid" 
+        ":" 
+        "(" 
+        "D1" 
+        ":" 
+        NumberTypes 
+        ";" 
+        "D2" 
+        ":" 
+        NumberTypes 
+        ";" 
+        "D3" 
+        ":" 
+        NumberTypes 
+        ";" 
+        "D4" 
+        ":" 
+        "(" 
+        NumberTypes 
+         { "," 
+        NumberTypes  } 
+        ")" 
+        ")" 
+        ")" 
+        ";" 
+        "ekind" 
+        ":" 
+        Ident 
+        ";" 
+        "uname" 
+        ":" 
+        "(" 
+        "ulpropid" 
+        ":" 
+        NumberTypes 
+        ")"  ] )        | 
+        "D1" 
+        ":" 
+        NumberTypes 
+        ";" 
+        "D2" 
+        ":" 
+        NumberTypes 
+        ";" 
+        "D3" 
+        ":" 
+        NumberTypes 
+        ";" 
+        "D4" 
+        ":" 
+        "(" 
+        NumberTypes 
+         { "," 
+        NumberTypes  } 
+        ")"
+        .
+
+END Delphi.

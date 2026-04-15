@@ -1229,7 +1229,6 @@ begin
 	Wrap the stream up in the ISequentialStream you were going to ideally provide,
 	and call the other constructor.
 }
-
 	stm := CreateStreamOnMemory(Pointer(SourceCode), Length(SourceCode)*sizeof(WideChar));
 
 	Self.Create(stm, CP_UTF16);

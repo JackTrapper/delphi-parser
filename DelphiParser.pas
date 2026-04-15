@@ -190,6 +190,8 @@ type
 		ntPortabilityDirective,	// PLATFORM | DEPRECATED <String> | LIBRARY | EXPERIMENTAL
 
 		ntInterfaceSection,
+		ntImplementation,
+
 
 		ntTypeSection,				// type TSpecial =
 		ntTypeDecl,					// TSpecial = ...
@@ -271,7 +273,6 @@ type
 		ntGuid,
 		ntHelper,
 		ntIf,
-		ntImplementation,
 		ntImplements,
 		ntIn,
 		ntIndex,
@@ -513,6 +514,36 @@ type
 		property AsToken: TSyntaxToken	read get_AsToken;
 	end;
 
+{
+This is what the parser returns to you. It contains the tree (.Root),
+and a memory area for all the nodes and tokens.
+
+   Compilation
+   │
+   ├─ SyntaxTree (one per source file)
+   │  ├─ Node Arena
+   │  ├─ Token Arena
+   │  └─ Root SyntaxNode
+   │
+   ├─ SemanticModel (per SyntaxTree)
+   │  ├─ BindingTable
+   │  ├─ TypeTable
+   │  ├─ ConstantTable
+   │  └─ ConversionTable
+   │
+   └─ FlowAnalysis (per method or region)
+        └─ FlowTable
+}
+	TSyntaxTree = class
+	private
+		FRoot: TSyntaxNode2;
+		FTokenArena: TObjectList; // owns the list of TSyntaxToken objects
+		FNodeArena:  TObjectList; // owns the list of TSyntaxNode2 objects
+	public
+		constructor Create;
+		destructor Destroy; override;
+	end;
+
 
 	// It's called TSyntaxNode2 because TSyntaxNode is already taken by DelphiAST
 	TSyntaxNode2 = class
@@ -544,6 +575,7 @@ type
 		function ToString: string; override;
 
 		class function DumpTree(Node: TSyntaxNode2): string;
+		class function DumpPascal(Node: TSyntaxNode2; ShowParserTags: Boolean=False): string;
 
 		property NodeType: TSyntaxNodeType read FNodeType;
 		property Value: string read get_Value;    // alias of anName attribute
@@ -868,7 +900,6 @@ type
 		function ParseMultiplicativeOperator: TSyntaxNode2;
 		function ParseObjectNameOfMethod: TSyntaxNode2;
 		function ParsePointerSymbol: TSyntaxNode2;
-		function ParseProcedureDeclarationSection: TSyntaxNode2;
 		function ParseRaiseStatement: TSyntaxNode2;
 
 		function ParseRelOp: TSyntaxNode2;
@@ -934,6 +965,8 @@ type
 		property CurrentToken:             TSyntaxToken read get_CurrentToken;		// read-only
 		property CurrentTokenKind:         TptTokenKind read get_CurrentTokenKind;	// the CurrentToken.TokenKind
 		property CurrentTokenGenID:        TptTokenKind read get_CurrentContentualKind;	// ExID, or TokenID if ExID is empty
+	protected
+		function ParseProcedureDeclarationSection: TSyntaxNode2; deprecated 'Not used';
 	public
 		constructor Create;
 		destructor Destroy; override;
@@ -8304,7 +8337,7 @@ begin
 	// Fall back to declaration parsing only when the first token is a known
 	// declaration-start keyword.
 	if not (CurrentTokenKind in [ptClass, ptConst, ptConstructor, ptDestructor, ptExports,
-		ptFunction, ptLabel, ptProcedure, ptResourceString, ptType, ptThreadVar, ptVar]) then
+		ptFunction, ptLabel, ptOperator, ptProcedure, ptResourceString, ptType, ptThreadVar, ptVar]) then
 	begin
 		Result := ParseStatementList;
 		Exit;
@@ -8315,14 +8348,17 @@ begin
 	while CurrentTokenKind <> ptEof do
 	begin
 		case CurrentTokenKind of
-		ptClass:				Result.AddChild(ParseProcedureDeclarationSection);
+		// In script mode, method starters should parse full implementations
+		// (header + optional directives + body), not declaration-only sections.
+		ptClass:				Result.AddChild(ParseMethodImplementation);
 		ptConst:				Result.AddChild(ParseConstSection);
-		ptConstructor:		Result.AddChild(ParseProcedureDeclarationSection);
-		ptDestructor:		Result.AddChild(ParseProcedureDeclarationSection);
+		ptConstructor:		Result.AddChild(ParseMethodImplementation);
+		ptDestructor:		Result.AddChild(ParseMethodImplementation);
 		ptExports:			Result.AddChild(ParseExportsStatement);
-		ptFunction:			Result.AddChild(ParseProcedureDeclarationSection);
+		ptFunction:			Result.AddChild(ParseMethodImplementation);
 		ptLabel:				Result.AddChild(ParseLabelDeclSection);
-		ptProcedure:		Result.AddChild(ParseProcedureDeclarationSection);
+		ptOperator:			Result.AddChild(ParseMethodImplementation);
+		ptProcedure:		Result.AddChild(ParseMethodImplementation);
 		ptResourceString:	Result.AddChild(ParseConstSection);
 		ptType:				Result.AddChild(ParseTypeSection);
 		ptThreadVar:		Result.AddChild(ParseVarSection);
@@ -8734,6 +8770,59 @@ begin
 	inherited;
 end;
 
+class function TSyntaxNode2.DumpPascal(Node: TSyntaxNode2; ShowParserTags: Boolean=False): string;
+
+	function DumpToken(const Token: TSyntaxToken): string;
+	var
+		i: Integer;
+		trivia: TSyntaxToken;
+	begin
+		Result := '';
+
+		// Add leading trivia
+		for i := 0 to token.LeadingTriviaCount-1 do
+		begin
+			trivia := token.LeadingTrivia[i];
+			Result := Result + trivia.Text;
+		end;
+
+		// Add token
+		Result := Result + token.Text;
+
+		// Add trailing trivia
+		for i := 0 to token.TrailingTriviaCount-1 do
+		begin
+			trivia := token.TrailingTrivia[i];
+			Result := Result + trivia.Text;
+		end;
+	end;
+
+	function DumpTrivia(const Current: TSyntaxNode2): string;
+	var
+		i: Integer;
+		child: TSyntaxNodeOrToken;
+		token: TSyntaxToken;
+		run: TSyntaxNodeOrToken;
+	begin
+		Result := '';
+
+		if ShowParserTags then
+			Result := Result+#13#10+'{['+Current.DisplayName+']}';
+
+		// it's a node; iterate the children recursively
+		for child in Current.ChildNodes do
+		begin
+			if child.IsToken then
+				Result := Result+DumpToken(child.AsToken)
+			else
+				Result := Result+DumpTrivia(child.AsNode);
+		end;
+	end;
+begin
+	// We're dumping the trivia, which are the actual artifacts of the source code text.
+	Result := DumpTrivia(Node);
+end;
+
 class function TSyntaxNode2.DumpTree(Node: TSyntaxNode2): string;
 
 const
@@ -9136,5 +9225,25 @@ begin
 	Result := TypInfo.GetEnumName(TypeInfo(TAttributeValue), Ord(AttributeValue));
 end;
 
+
+{ TSyntaxTree }
+
+constructor TSyntaxTree.Create;
+begin
+	inherited Create;
+
+	FRoot := nil;
+	FTokenArena := TObjectList.Create(True); //
+	FNodeArena := TObjectList.Create(True);
+end;
+
+destructor TSyntaxTree.Destroy;
+begin
+	FreeAndNil(FRoot);
+	FreeAndNil(FTokenArena);
+	FreeAndNil(FNodeArena);
+
+	inherited;
+end;
 
 end.

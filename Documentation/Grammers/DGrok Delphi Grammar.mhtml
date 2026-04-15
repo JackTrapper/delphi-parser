@@ -1,0 +1,2055 @@
+From: <Saved by Blink>
+Snapshot-Content-Location: http://dgrok.excastle.com/Grammar.html#PortabilityDirective
+Subject: Delphi Grammar
+Date: Sat, 6 Sep 2025 12:52:55 -0400
+MIME-Version: 1.0
+Content-Type: multipart/related;
+	type="text/html";
+	boundary="----MultipartBoundary--iJshc6oh8o8eVcyIactbQFqEZ65d9hrhSokT55NOaL----"
+
+
+------MultipartBoundary--iJshc6oh8o8eVcyIactbQFqEZ65d9hrhSokT55NOaL----
+Content-Type: text/html
+Content-ID: <frame-5805DC1CEAAB7EF30C871312572AEA97@mhtml.blink>
+Content-Transfer-Encoding: quoted-printable
+Content-Location: http://dgrok.excastle.com/Grammar.html#PortabilityDirective
+
+<html class=3D" bivysvxag idc0_350"><head><meta http-equiv=3D"Content-Type"=
+ content=3D"text/html; charset=3Dwindows-1252"><title>Delphi Grammar</title=
+><link rel=3D"stylesheet" href=3D"http://dgrok.excastle.com/Grammar.css"></=
+head>
+
+<body>
+<h1>DGrok Delphi Grammar</h1>
+<p>DGrok is my project to write a parser for the Delphi
+language, and then to build interesting tools on top of
+that parser. For more information on DGrok, see the
+<a href=3D"http://excastle.com/blog/category/2.aspx?Show=3DAll">
+DGrok posts on my blog</a>.</p>
+<p>This page shows the Delphi grammar as I've
+<a href=3D"http://excastle.com/blog/archive/2007/08/28/48084.aspx">
+puzzled it out</a> so far, and indicates how much of it
+I've written a working parser for. Solid underline means
+that rule is completely implemented in my parser; broken
+underline means partly implemented; no underline means
+something I haven't started yet.</p>
+<p><b>Current status:</b> Completed 98 rules of 98 =3D 100% complete.</p>
+<p>Last updated Wed Oct 03 22:48:00 Central Daylight Time 2007.</p>
+<p>=97 <a href=3D"http://www.excastle.com/blog/">Joe White</a></p>
+<h2><a name=3D"toc">Table of Contents</a></h2>
+<div class=3D"toc">
+<table cellspacing=3D"0" cellpadding=3D"0" border=3D"0" width=3D"100%">
+<tbody><tr><td><a href=3D"http://dgrok.excastle.com/Grammar.html#AddOp" cla=
+ss=3D"complete">AddOp</a></td><td><a href=3D"http://dgrok.excastle.com/Gram=
+mar.html#ExceptionItem" class=3D"complete">ExceptionItem</a></td><td><a hre=
+f=3D"http://dgrok.excastle.com/Grammar.html#GotoStatement" class=3D"complet=
+e">GotoStatement</a></td><td><a href=3D"http://dgrok.excastle.com/Grammar.h=
+tml#OpenArray" class=3D"complete">OpenArray</a></td><td><a href=3D"http://d=
+grok.excastle.com/Grammar.html#RecordType" class=3D"complete">RecordType</a=
+></td><td><a href=3D"http://dgrok.excastle.com/Grammar.html#UnaryOperator" =
+class=3D"complete">UnaryOperator</a></td></tr>
+<tr><td><a href=3D"http://dgrok.excastle.com/Grammar.html#ArrayType" class=
+=3D"complete">ArrayType</a></td><td><a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#ExportsItem" class=3D"complete">ExportsItem</a></td><td><a href=
+=3D"http://dgrok.excastle.com/Grammar.html#Ident" class=3D"complete">Ident<=
+/a></td><td><a href=3D"http://dgrok.excastle.com/Grammar.html#Package" clas=
+s=3D"complete">Package</a></td><td><a href=3D"http://dgrok.excastle.com/Gra=
+mmar.html#RelOp" class=3D"complete">RelOp</a></td><td><a href=3D"http://dgr=
+ok.excastle.com/Grammar.html#Unit" class=3D"complete">Unit</a></td></tr>
+<tr><td><a href=3D"http://dgrok.excastle.com/Grammar.html#AssemblerStatemen=
+t" class=3D"complete">AssemblerStatement</a></td><td><a href=3D"http://dgro=
+k.excastle.com/Grammar.html#ExportsSpecifier" class=3D"complete">ExportsSpe=
+cifier</a></td><td><a href=3D"http://dgrok.excastle.com/Grammar.html#IdentL=
+ist" class=3D"complete">IdentList</a></td><td><a href=3D"http://dgrok.excas=
+tle.com/Grammar.html#PackedType" class=3D"complete">PackedType</a></td><td>=
+<a href=3D"http://dgrok.excastle.com/Grammar.html#RepeatStatement" class=3D=
+"complete">RepeatStatement</a></td><td><a href=3D"http://dgrok.excastle.com=
+/Grammar.html#UsedUnit" class=3D"complete">UsedUnit</a></td></tr>
+<tr><td><a href=3D"http://dgrok.excastle.com/Grammar.html#AssemblyAttribute=
+" class=3D"complete">AssemblyAttribute</a></td><td><a href=3D"http://dgrok.=
+excastle.com/Grammar.html#ExportsStatement" class=3D"complete">ExportsState=
+ment</a></td><td><a href=3D"http://dgrok.excastle.com/Grammar.html#IfStatem=
+ent" class=3D"complete">IfStatement</a></td><td><a href=3D"http://dgrok.exc=
+astle.com/Grammar.html#Parameter" class=3D"complete">Parameter</a></td><td>=
+<a href=3D"http://dgrok.excastle.com/Grammar.html#RequiresClause" class=3D"=
+complete">RequiresClause</a></td><td><a href=3D"http://dgrok.excastle.com/G=
+rammar.html#UsesClause" class=3D"complete">UsesClause</a></td></tr>
+<tr><td><a href=3D"http://dgrok.excastle.com/Grammar.html#Atom" class=3D"co=
+mplete">Atom</a></td><td><a href=3D"http://dgrok.excastle.com/Grammar.html#=
+Expression" class=3D"complete">Expression</a></td><td><a href=3D"http://dgr=
+ok.excastle.com/Grammar.html#ImplementationDecl" class=3D"complete">Impleme=
+ntationDecl</a></td><td><a href=3D"http://dgrok.excastle.com/Grammar.html#P=
+arameterExpression" class=3D"complete">ParameterExpression</a></td><td><a h=
+ref=3D"http://dgrok.excastle.com/Grammar.html#SetLiteral" class=3D"complete=
+">SetLiteral</a></td><td><a href=3D"http://dgrok.excastle.com/Grammar.html#=
+VarDecl" class=3D"complete">VarDecl</a></td></tr>
+<tr><td><a href=3D"http://dgrok.excastle.com/Grammar.html#BareInherited" cl=
+ass=3D"complete">BareInherited</a></td><td><a href=3D"http://dgrok.excastle=
+.com/Grammar.html#ExpressionList" class=3D"complete">ExpressionList</a></td=
+><td><a href=3D"http://dgrok.excastle.com/Grammar.html#ImplementationSectio=
+n" class=3D"complete">ImplementationSection</a></td><td><a href=3D"http://d=
+grok.excastle.com/Grammar.html#ParameterType" class=3D"complete">ParameterT=
+ype</a></td><td><a href=3D"http://dgrok.excastle.com/Grammar.html#SetType" =
+class=3D"complete">SetType</a></td><td><a href=3D"http://dgrok.excastle.com=
+/Grammar.html#VariantGroup" class=3D"complete">VariantGroup</a></td></tr>
+<tr><td><a href=3D"http://dgrok.excastle.com/Grammar.html#Block" class=3D"c=
+omplete">Block</a></td><td><a href=3D"http://dgrok.excastle.com/Grammar.htm=
+l#ExpressionOrAssignment" class=3D"complete">ExpressionOrAssignment</a></td=
+><td><a href=3D"http://dgrok.excastle.com/Grammar.html#InitSection" class=
+=3D"complete">InitSection</a></td><td><a href=3D"http://dgrok.excastle.com/=
+Grammar.html#ParenthesizedExpression" class=3D"complete">ParenthesizedExpre=
+ssion</a></td><td><a href=3D"http://dgrok.excastle.com/Grammar.html#SimpleE=
+xpression" class=3D"complete">SimpleExpression</a></td><td><a href=3D"http:=
+//dgrok.excastle.com/Grammar.html#VariantSection" class=3D"complete">Varian=
+tSection</a></td></tr>
+<tr><td><a href=3D"http://dgrok.excastle.com/Grammar.html#CaseSelector" cla=
+ss=3D"complete">CaseSelector</a></td><td><a href=3D"http://dgrok.excastle.c=
+om/Grammar.html#ExpressionOrRange" class=3D"complete">ExpressionOrRange</a>=
+</td><td><a href=3D"http://dgrok.excastle.com/Grammar.html#InterfaceDecl" c=
+lass=3D"complete">InterfaceDecl</a></td><td><a href=3D"http://dgrok.excastl=
+e.com/Grammar.html#Particle" class=3D"complete">Particle</a></td><td><a hre=
+f=3D"http://dgrok.excastle.com/Grammar.html#SimpleStatement" class=3D"compl=
+ete">SimpleStatement</a></td><td><a href=3D"http://dgrok.excastle.com/Gramm=
+ar.html#VarSection" class=3D"complete">VarSection</a></td></tr>
+<tr><td><a href=3D"http://dgrok.excastle.com/Grammar.html#CaseStatement" cl=
+ass=3D"complete">CaseStatement</a></td><td><a href=3D"http://dgrok.excastle=
+.com/Grammar.html#ExpressionOrRangeList" class=3D"complete">ExpressionOrRan=
+geList</a></td><td><a href=3D"http://dgrok.excastle.com/Grammar.html#Interf=
+aceSection" class=3D"complete">InterfaceSection</a></td><td><a href=3D"http=
+://dgrok.excastle.com/Grammar.html#PointerType" class=3D"complete">PointerT=
+ype</a></td><td><a href=3D"http://dgrok.excastle.com/Grammar.html#Statement=
+" class=3D"complete">Statement</a></td><td><a href=3D"http://dgrok.excastle=
+.com/Grammar.html#Visibility" class=3D"complete">Visibility</a></td></tr>
+<tr><td><a href=3D"http://dgrok.excastle.com/Grammar.html#ClassHelperType" =
+class=3D"complete">ClassHelperType</a></td><td><a href=3D"http://dgrok.exca=
+stle.com/Grammar.html#ExtendedIdent" class=3D"complete">ExtendedIdent</a></=
+td><td><a href=3D"http://dgrok.excastle.com/Grammar.html#InterfaceType" cla=
+ss=3D"complete">InterfaceType</a></td><td><a href=3D"http://dgrok.excastle.=
+com/Grammar.html#PortabilityDirective" class=3D"complete">PortabilityDirect=
+ive</a></td><td><a href=3D"http://dgrok.excastle.com/Grammar.html#Statement=
+List" class=3D"complete">StatementList</a></td><td><a href=3D"http://dgrok.=
+excastle.com/Grammar.html#VisibilitySection" class=3D"complete">VisibilityS=
+ection</a></td></tr>
+<tr><td><a href=3D"http://dgrok.excastle.com/Grammar.html#ClassOfType" clas=
+s=3D"complete">ClassOfType</a></td><td><a href=3D"http://dgrok.excastle.com=
+/Grammar.html#Factor" class=3D"complete">Factor</a></td><td><a href=3D"http=
+://dgrok.excastle.com/Grammar.html#LabelDeclSection" class=3D"complete">Lab=
+elDeclSection</a></td><td><a href=3D"http://dgrok.excastle.com/Grammar.html=
+#ProcedureType" class=3D"complete">ProcedureType</a></td><td><a href=3D"htt=
+p://dgrok.excastle.com/Grammar.html#StringType" class=3D"complete">StringTy=
+pe</a></td><td><a href=3D"http://dgrok.excastle.com/Grammar.html#Visibility=
+SectionContent" class=3D"complete">VisibilitySectionContent</a></td></tr>
+<tr><td><a href=3D"http://dgrok.excastle.com/Grammar.html#ClassType" class=
+=3D"complete">ClassType</a></td><td><a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#FancyBlock" class=3D"complete">FancyBlock</a></td><td><a href=3D=
+"http://dgrok.excastle.com/Grammar.html#LabelId" class=3D"complete">LabelId=
+</a></td><td><a href=3D"http://dgrok.excastle.com/Grammar.html#Program" cla=
+ss=3D"complete">Program</a></td><td><a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#Term" class=3D"complete">Term</a></td><td><a href=3D"http://dgro=
+k.excastle.com/Grammar.html#WhileStatement" class=3D"complete">WhileStateme=
+nt</a></td></tr>
+<tr><td><a href=3D"http://dgrok.excastle.com/Grammar.html#ConstantDecl" cla=
+ss=3D"complete">ConstantDecl</a></td><td><a href=3D"http://dgrok.excastle.c=
+om/Grammar.html#FieldDecl" class=3D"complete">FieldDecl</a></td><td><a href=
+=3D"http://dgrok.excastle.com/Grammar.html#MethodHeading" class=3D"complete=
+">MethodHeading</a></td><td><a href=3D"http://dgrok.excastle.com/Grammar.ht=
+ml#Property" class=3D"complete">Property</a></td><td><a href=3D"http://dgro=
+k.excastle.com/Grammar.html#TryStatement" class=3D"complete">TryStatement</=
+a></td><td><a href=3D"http://dgrok.excastle.com/Grammar.html#WithStatement"=
+ class=3D"complete">WithStatement</a></td></tr>
+<tr><td><a href=3D"http://dgrok.excastle.com/Grammar.html#ConstSection" cla=
+ss=3D"complete">ConstSection</a></td><td><a href=3D"http://dgrok.excastle.c=
+om/Grammar.html#FieldSection" class=3D"complete">FieldSection</a></td><td><=
+a href=3D"http://dgrok.excastle.com/Grammar.html#MethodImplementation" clas=
+s=3D"complete">MethodImplementation</a></td><td><a href=3D"http://dgrok.exc=
+astle.com/Grammar.html#PropertyDirective" class=3D"complete">PropertyDirect=
+ive</a></td><td><a href=3D"http://dgrok.excastle.com/Grammar.html#Type" cla=
+ss=3D"complete">Type</a></td></tr>
+<tr><td><a href=3D"http://dgrok.excastle.com/Grammar.html#Directive" class=
+=3D"complete">Directive</a></td><td><a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#FileType" class=3D"complete">FileType</a></td><td><a href=3D"htt=
+p://dgrok.excastle.com/Grammar.html#MethodOrProperty" class=3D"complete">Me=
+thodOrProperty</a></td><td><a href=3D"http://dgrok.excastle.com/Grammar.htm=
+l#QualifiedIdent" class=3D"complete">QualifiedIdent</a></td><td><a href=3D"=
+http://dgrok.excastle.com/Grammar.html#TypedConstant" class=3D"complete">Ty=
+pedConstant</a></td></tr>
+<tr><td><a href=3D"http://dgrok.excastle.com/Grammar.html#EnumeratedType" c=
+lass=3D"complete">EnumeratedType</a></td><td><a href=3D"http://dgrok.excast=
+le.com/Grammar.html#ForStatement" class=3D"complete">ForStatement</a></td><=
+td><a href=3D"http://dgrok.excastle.com/Grammar.html#MethodReturnType" clas=
+s=3D"complete">MethodReturnType</a></td><td><a href=3D"http://dgrok.excastl=
+e.com/Grammar.html#RaiseStatement" class=3D"complete">RaiseStatement</a></t=
+d><td><a href=3D"http://dgrok.excastle.com/Grammar.html#TypeDecl" class=3D"=
+complete">TypeDecl</a></td></tr>
+<tr><td><a href=3D"http://dgrok.excastle.com/Grammar.html#EnumeratedTypeEle=
+ment" class=3D"complete">EnumeratedTypeElement</a></td><td><a href=3D"http:=
+//dgrok.excastle.com/Grammar.html#Goal" class=3D"complete">Goal</a></td><td=
+><a href=3D"http://dgrok.excastle.com/Grammar.html#MulOp" class=3D"complete=
+">MulOp</a></td><td><a href=3D"http://dgrok.excastle.com/Grammar.html#Recor=
+dHelperType" class=3D"complete">RecordHelperType</a></td><td><a href=3D"htt=
+p://dgrok.excastle.com/Grammar.html#TypeSection" class=3D"complete">TypeSec=
+tion</a></td></tr>
+</tbody></table>
+</div>
+<h2>Likely Targets (0)</h2>
+<p>These rules look like their dependencies are met,
+and are likely targets to be implemented next. Numbers
+in parentheses show how many places the rule is used.</p>
+<div class=3D"toc">
+<table cellspacing=3D"0" cellpadding=3D"0" border=3D"0" width=3D"100%">
+<tbody><tr></tr>
+</tbody></table>
+</div>
+<h2 class=3D"complete"><a name=3D"AddOp"></a><a href=3D"http://dgrok.excast=
+le.com/Grammar.html#AddOp" class=3D"black">AddOp</a> <a href=3D"http://dgro=
+k.excastle.com/Grammar.html#toc" class=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#SimpleExpression" class=3D"complete">SimpleExpression</a></div><=
+/h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> '<tt class=3D"literal"><b>+</b></tt>'</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> '<tt class=3D"literal"><b>-</b></tt>'</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> OR</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> XOR</div>
+<h2 class=3D"complete"><a name=3D"ArrayType"></a><a href=3D"http://dgrok.ex=
+castle.com/Grammar.html#ArrayType" class=3D"black">ArrayType</a> <a href=3D=
+"http://dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#Type" class=3D"complete">Type</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> ARRAY ['<tt class=3D"literal"><b>[</b></tt>' (<a hre=
+f=3D"http://dgrok.excastle.com/Grammar.html#Type" class=3D"complete">Type</=
+a> ['<tt class=3D"literal"><b>,</b></tt>'])+ '<tt class=3D"literal"><b>]</b=
+></tt>'] OF <a href=3D"http://dgrok.excastle.com/Grammar.html#Type" class=
+=3D"complete">Type</a></div>
+<h2 class=3D"complete"><a name=3D"AssemblerStatement"></a><a href=3D"http:/=
+/dgrok.excastle.com/Grammar.html#AssemblerStatement" class=3D"black">Assemb=
+lerStatement</a> <a href=3D"http://dgrok.excastle.com/Grammar.html#toc" cla=
+ss=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#Block" class=3D"complete">Block</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> ASM</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> &lt;assemblylanguage&gt;</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> END</div>
+<h2 class=3D"complete"><a name=3D"AssemblyAttribute"></a><a href=3D"http://=
+dgrok.excastle.com/Grammar.html#AssemblyAttribute" class=3D"black">Assembly=
+Attribute</a> <a href=3D"http://dgrok.excastle.com/Grammar.html#toc" class=
+=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#ImplementationDecl" class=3D"complete">ImplementationDecl</a>, <=
+a href=3D"http://dgrok.excastle.com/Grammar.html#Package" class=3D"complete=
+">Package</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> '<tt class=3D"literal"><b>[</b></tt>' ASSEMBLY '<tt =
+class=3D"literal"><b>:</b></tt>' <a href=3D"http://dgrok.excastle.com/Gramm=
+ar.html#Expression" class=3D"complete">Expression</a> '<tt class=3D"literal=
+"><b>]</b></tt>'</div>
+<h2 class=3D"complete"><a name=3D"Atom"></a><a href=3D"http://dgrok.excastl=
+e.com/Grammar.html#Atom" class=3D"black">Atom</a> <a href=3D"http://dgrok.e=
+xcastle.com/Grammar.html#toc" class=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#Factor" class=3D"complete">Factor</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Pa=
+rticle" class=3D"complete">Particle</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> ( '<tt class=3D"literal"><b>.</b></tt>' <a hr=
+ef=3D"http://dgrok.excastle.com/Grammar.html#ExtendedIdent" class=3D"comple=
+te">ExtendedIdent</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt>   | '<tt class=3D"literal"><b>[</b></tt>' <a =
+href=3D"http://dgrok.excastle.com/Grammar.html#ExpressionList" class=3D"com=
+plete">ExpressionList</a> '<tt class=3D"literal"><b>]</b></tt>'</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt>   | '<tt class=3D"literal"><b>^</b></tt>'</di=
+v>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt>   | '<tt class=3D"literal"><b>(</b></tt>' (<a=
+ href=3D"http://dgrok.excastle.com/Grammar.html#ParameterExpression" class=
+=3D"complete">ParameterExpression</a> ['<tt class=3D"literal"><b>,</b></tt>=
+'])* '<tt class=3D"literal"><b>)</b></tt>'</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> )*</div>
+<h2 class=3D"complete"><a name=3D"BareInherited"></a><a href=3D"http://dgro=
+k.excastle.com/Grammar.html#BareInherited" class=3D"black">BareInherited</a=
+> <a href=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop=
+">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#SimpleStatement" class=3D"complete">SimpleStatement</a></div></h=
+2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> INHERITED</div>
+<h2 class=3D"complete"><a name=3D"Block"></a><a href=3D"http://dgrok.excast=
+le.com/Grammar.html#Block" class=3D"black">Block</a> <a href=3D"http://dgro=
+k.excastle.com/Grammar.html#toc" class=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#FancyBlock" class=3D"complete">FancyBlock</a>, <a href=3D"http:/=
+/dgrok.excastle.com/Grammar.html#InitSection" class=3D"complete">InitSectio=
+n</a>, <a href=3D"http://dgrok.excastle.com/Grammar.html#SimpleStatement" c=
+lass=3D"complete">SimpleStatement</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> BEGIN [<a href=3D"http://dgrok.excastle.com/Grammar.=
+html#StatementList" class=3D"complete">StatementList</a>] END</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#As=
+semblerStatement" class=3D"complete">AssemblerStatement</a></div>
+<h2 class=3D"complete"><a name=3D"CaseSelector"></a><a href=3D"http://dgrok=
+.excastle.com/Grammar.html#CaseSelector" class=3D"black">CaseSelector</a> <=
+a href=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop">[=
+^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#CaseStatement" class=3D"complete">CaseStatement</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> (<a href=3D"http://dgrok.excastle.com/Grammar.html#E=
+xpressionOrRange" class=3D"complete">ExpressionOrRange</a> ['<tt class=3D"l=
+iteral"><b>,</b></tt>'])+</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> '<tt class=3D"literal"><b>:</b></tt>' [<a hre=
+f=3D"http://dgrok.excastle.com/Grammar.html#Statement" class=3D"complete">S=
+tatement</a>] ['<tt class=3D"literal"><b>;</b></tt>']</div>
+<h2 class=3D"complete"><a name=3D"CaseStatement"></a><a href=3D"http://dgro=
+k.excastle.com/Grammar.html#CaseStatement" class=3D"black">CaseStatement</a=
+> <a href=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop=
+">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#SimpleStatement" class=3D"complete">SimpleStatement</a></div></h=
+2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> CASE <a href=3D"http://dgrok.excastle.com/Grammar.ht=
+ml#Expression" class=3D"complete">Expression</a> OF</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> (<a href=3D"http://dgrok.excastle.com/Grammar=
+.html#CaseSelector" class=3D"complete">CaseSelector</a>)+</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> [ELSE [<a href=3D"http://dgrok.excastle.com/G=
+rammar.html#StatementList" class=3D"complete">StatementList</a>]]</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> END</div>
+<h2 class=3D"complete"><a name=3D"ClassHelperType"></a><a href=3D"http://dg=
+rok.excastle.com/Grammar.html#ClassHelperType" class=3D"black">ClassHelperT=
+ype</a> <a href=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"bac=
+ktotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#Type" class=3D"complete">Type</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> CLASS HELPER</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> ['<tt class=3D"literal"><b>(</b></tt>' <a hre=
+f=3D"http://dgrok.excastle.com/Grammar.html#QualifiedIdent" class=3D"comple=
+te">QualifiedIdent</a> '<tt class=3D"literal"><b>)</b></tt>']</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> FOR <a href=3D"http://dgrok.excastle.com/Gram=
+mar.html#QualifiedIdent" class=3D"complete">QualifiedIdent</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> (<a href=3D"http://dgrok.excastle.com/Grammar=
+.html#VisibilitySection" class=3D"complete">VisibilitySection</a>)*</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> END</div>
+<h2 class=3D"complete"><a name=3D"ClassOfType"></a><a href=3D"http://dgrok.=
+excastle.com/Grammar.html#ClassOfType" class=3D"black">ClassOfType</a> <a h=
+ref=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop">[^]<=
+/a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#Type" class=3D"complete">Type</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> CLASS OF <a href=3D"http://dgrok.excastle.com/Gramma=
+r.html#QualifiedIdent" class=3D"complete">QualifiedIdent</a></div>
+<h2 class=3D"complete"><a name=3D"ClassType"></a><a href=3D"http://dgrok.ex=
+castle.com/Grammar.html#ClassType" class=3D"black">ClassType</a> <a href=3D=
+"http://dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#Type" class=3D"complete">Type</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> CLASS</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> [ABSTRACT | SEALED]</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> ['<tt class=3D"literal"><b>(</b></tt>' (<a hr=
+ef=3D"http://dgrok.excastle.com/Grammar.html#QualifiedIdent" class=3D"compl=
+ete">QualifiedIdent</a> ['<tt class=3D"literal"><b>,</b></tt>'])+ '<tt clas=
+s=3D"literal"><b>)</b></tt>']</div>
+<p>The remainder is optional, but only if the base class is specified and l=
+ookahead shows that the next token is a semicolon</p>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> (<a href=3D"http://dgrok.excastle.com/Grammar=
+.html#VisibilitySection" class=3D"complete">VisibilitySection</a>)*</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> END</div>
+<h2 class=3D"complete"><a name=3D"ConstantDecl"></a><a href=3D"http://dgrok=
+.excastle.com/Grammar.html#ConstantDecl" class=3D"black">ConstantDecl</a> <=
+a href=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop">[=
+^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#ConstSection" class=3D"complete">ConstSection</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Id=
+ent" class=3D"complete">Ident</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> ['<tt class=3D"literal"><b>:</b></tt>' <a hre=
+f=3D"http://dgrok.excastle.com/Grammar.html#Type" class=3D"complete">Type</=
+a>]</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> '<tt class=3D"literal"><b>=3D</b></tt>' <a hr=
+ef=3D"http://dgrok.excastle.com/Grammar.html#TypedConstant" class=3D"comple=
+te">TypedConstant</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> (<a href=3D"http://dgrok.excastle.com/Grammar=
+.html#PortabilityDirective" class=3D"complete">PortabilityDirective</a>)*</=
+div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> '<tt class=3D"literal"><b>;</b></tt>'</div>
+<h2 class=3D"complete"><a name=3D"ConstSection"></a><a href=3D"http://dgrok=
+.excastle.com/Grammar.html#ConstSection" class=3D"black">ConstSection</a> <=
+a href=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop">[=
+^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#ImplementationDecl" class=3D"complete">ImplementationDecl</a>, <=
+a href=3D"http://dgrok.excastle.com/Grammar.html#InterfaceDecl" class=3D"co=
+mplete">InterfaceDecl</a>, <a href=3D"http://dgrok.excastle.com/Grammar.htm=
+l#VisibilitySectionContent" class=3D"complete">VisibilitySectionContent</a>=
+</div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> (CONST|RESOURCESTRING)</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> (<a href=3D"http://dgrok.excastle.com/Grammar=
+.html#ConstantDecl" class=3D"complete">ConstantDecl</a>)+</div>
+<h2 class=3D"complete"><a name=3D"Directive"></a><a href=3D"http://dgrok.ex=
+castle.com/Grammar.html#Directive" class=3D"black">Directive</a> <a href=3D=
+"http://dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#MethodHeading" class=3D"complete">MethodHeading</a>, <a href=3D"=
+http://dgrok.excastle.com/Grammar.html#ProcedureType" class=3D"complete">Pr=
+ocedureType</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> ['<tt class=3D"literal"><b>;</b></tt>'] ABSTRACT</di=
+v>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> ['<tt class=3D"literal"><b>;</b></tt>'] ASSEMBLER</d=
+iv>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> ['<tt class=3D"literal"><b>;</b></tt>'] CDECL</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> ['<tt class=3D"literal"><b>;</b></tt>'] DISPID <a hr=
+ef=3D"http://dgrok.excastle.com/Grammar.html#Expression" class=3D"complete"=
+>Expression</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> ['<tt class=3D"literal"><b>;</b></tt>'] DYNAMIC</div=
+>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> ['<tt class=3D"literal"><b>;</b></tt>'] EXPORT</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> ['<tt class=3D"literal"><b>;</b></tt>'] EXTERNAL [<a=
+ href=3D"http://dgrok.excastle.com/Grammar.html#Expression" class=3D"comple=
+te">Expression</a> (<a href=3D"http://dgrok.excastle.com/Grammar.html#Expor=
+tsSpecifier" class=3D"complete">ExportsSpecifier</a>)*]</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> ['<tt class=3D"literal"><b>;</b></tt>'] FAR</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> ['<tt class=3D"literal"><b>;</b></tt>'] FINAL</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> ['<tt class=3D"literal"><b>;</b></tt>'] FORWARD</div=
+>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> ['<tt class=3D"literal"><b>;</b></tt>'] INLINE</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> ['<tt class=3D"literal"><b>;</b></tt>'] LOCAL</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> ['<tt class=3D"literal"><b>;</b></tt>'] MESSAGE <a h=
+ref=3D"http://dgrok.excastle.com/Grammar.html#Expression" class=3D"complete=
+">Expression</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> ['<tt class=3D"literal"><b>;</b></tt>'] NEAR</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> ['<tt class=3D"literal"><b>;</b></tt>'] OVERLOAD</di=
+v>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> ['<tt class=3D"literal"><b>;</b></tt>'] OVERRIDE</di=
+v>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> ['<tt class=3D"literal"><b>;</b></tt>'] PASCAL</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> ['<tt class=3D"literal"><b>;</b></tt>'] REGISTER</di=
+v>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> ['<tt class=3D"literal"><b>;</b></tt>'] REINTRODUCE<=
+/div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> ['<tt class=3D"literal"><b>;</b></tt>'] SAFECALL</di=
+v>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> ['<tt class=3D"literal"><b>;</b></tt>'] STATIC</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> ['<tt class=3D"literal"><b>;</b></tt>'] STDCALL</div=
+>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> ['<tt class=3D"literal"><b>;</b></tt>'] VARARGS</div=
+>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> ['<tt class=3D"literal"><b>;</b></tt>'] VIRTUAL</div=
+>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> ['<tt class=3D"literal"><b>;</b></tt>'] <a href=3D"h=
+ttp://dgrok.excastle.com/Grammar.html#PortabilityDirective" class=3D"comple=
+te">PortabilityDirective</a></div>
+<h2 class=3D"complete"><a name=3D"EnumeratedType"></a><a href=3D"http://dgr=
+ok.excastle.com/Grammar.html#EnumeratedType" class=3D"black">EnumeratedType=
+</a> <a href=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"backto=
+top">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#Type" class=3D"complete">Type</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> '<tt class=3D"literal"><b>(</b></tt>' (<a href=3D"ht=
+tp://dgrok.excastle.com/Grammar.html#EnumeratedTypeElement" class=3D"comple=
+te">EnumeratedTypeElement</a> ['<tt class=3D"literal"><b>,</b></tt>'])+ '<t=
+t class=3D"literal"><b>)</b></tt>'</div>
+<h2 class=3D"complete"><a name=3D"EnumeratedTypeElement"></a><a href=3D"htt=
+p://dgrok.excastle.com/Grammar.html#EnumeratedTypeElement" class=3D"black">=
+EnumeratedTypeElement</a> <a href=3D"http://dgrok.excastle.com/Grammar.html=
+#toc" class=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#EnumeratedType" class=3D"complete">EnumeratedType</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Id=
+ent" class=3D"complete">Ident</a> [ '<tt class=3D"literal"><b>=3D</b></tt>'=
+ <a href=3D"http://dgrok.excastle.com/Grammar.html#Expression" class=3D"com=
+plete">Expression</a> ]</div>
+<h2 class=3D"complete"><a name=3D"ExceptionItem"></a><a href=3D"http://dgro=
+k.excastle.com/Grammar.html#ExceptionItem" class=3D"black">ExceptionItem</a=
+> <a href=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop=
+">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#TryStatement" class=3D"complete">TryStatement</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> ON</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> [<a href=3D"http://dgrok.excastle.com/Grammar=
+.html#Ident" class=3D"complete">Ident</a> '<tt class=3D"literal"><b>:</b></=
+tt>']</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.=
+html#QualifiedIdent" class=3D"complete">QualifiedIdent</a> DO</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> [<a href=3D"http://dgrok.excastle.com/Grammar=
+.html#Statement" class=3D"complete">Statement</a>]</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> ['<tt class=3D"literal"><b>;</b></tt>']</div>
+<h2 class=3D"complete"><a name=3D"ExportsItem"></a><a href=3D"http://dgrok.=
+excastle.com/Grammar.html#ExportsItem" class=3D"black">ExportsItem</a> <a h=
+ref=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop">[^]<=
+/a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#ExportsStatement" class=3D"complete">ExportsStatement</a></div><=
+/h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Id=
+ent" class=3D"complete">Ident</a> (<a href=3D"http://dgrok.excastle.com/Gra=
+mmar.html#ExportsSpecifier" class=3D"complete">ExportsSpecifier</a>)*</div>
+<h2 class=3D"complete"><a name=3D"ExportsSpecifier"></a><a href=3D"http://d=
+grok.excastle.com/Grammar.html#ExportsSpecifier" class=3D"black">ExportsSpe=
+cifier</a> <a href=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"=
+backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#Directive" class=3D"complete">Directive</a>, <a href=3D"http://d=
+grok.excastle.com/Grammar.html#ExportsItem" class=3D"complete">ExportsItem<=
+/a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> (INDEX | NAME) <a href=3D"http://dgrok.excastle.com/=
+Grammar.html#Expression" class=3D"complete">Expression</a></div>
+<h2 class=3D"complete"><a name=3D"ExportsStatement"></a><a href=3D"http://d=
+grok.excastle.com/Grammar.html#ExportsStatement" class=3D"black">ExportsSta=
+tement</a> <a href=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"=
+backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#ImplementationDecl" class=3D"complete">ImplementationDecl</a></d=
+iv></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> EXPORTS (<a href=3D"http://dgrok.excastle.com/Gramma=
+r.html#ExportsItem" class=3D"complete">ExportsItem</a> ['<tt class=3D"liter=
+al"><b>,</b></tt>'])+ '<tt class=3D"literal"><b>;</b></tt>'</div>
+<h2 class=3D"complete"><a name=3D"Expression"></a><a href=3D"http://dgrok.e=
+xcastle.com/Grammar.html#Expression" class=3D"black">Expression</a> <a href=
+=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#AssemblyAttribute" class=3D"complete">AssemblyAttribute</a>, <a =
+href=3D"http://dgrok.excastle.com/Grammar.html#CaseStatement" class=3D"comp=
+lete">CaseStatement</a>, <a href=3D"http://dgrok.excastle.com/Grammar.html#=
+Directive" class=3D"complete">Directive</a>, <a href=3D"http://dgrok.excast=
+le.com/Grammar.html#EnumeratedTypeElement" class=3D"complete">EnumeratedTyp=
+eElement</a>, <a href=3D"http://dgrok.excastle.com/Grammar.html#ExportsSpec=
+ifier" class=3D"complete">ExportsSpecifier</a>, <a href=3D"http://dgrok.exc=
+astle.com/Grammar.html#ExpressionList" class=3D"complete">ExpressionList</a=
+>, <a href=3D"http://dgrok.excastle.com/Grammar.html#ExpressionOrAssignment=
+" class=3D"complete">ExpressionOrAssignment</a>, <a href=3D"http://dgrok.ex=
+castle.com/Grammar.html#ForStatement" class=3D"complete">ForStatement</a>, =
+<a href=3D"http://dgrok.excastle.com/Grammar.html#IfStatement" class=3D"com=
+plete">IfStatement</a>, <a href=3D"http://dgrok.excastle.com/Grammar.html#I=
+nterfaceType" class=3D"complete">InterfaceType</a>, <a href=3D"http://dgrok=
+.excastle.com/Grammar.html#Parameter" class=3D"complete">Parameter</a>, <a =
+href=3D"http://dgrok.excastle.com/Grammar.html#ParameterExpression" class=
+=3D"complete">ParameterExpression</a>, <a href=3D"http://dgrok.excastle.com=
+/Grammar.html#ParenthesizedExpression" class=3D"complete">ParenthesizedExpr=
+ession</a>, <a href=3D"http://dgrok.excastle.com/Grammar.html#PropertyDirec=
+tive" class=3D"complete">PropertyDirective</a>, <a href=3D"http://dgrok.exc=
+astle.com/Grammar.html#RaiseStatement" class=3D"complete">RaiseStatement</a=
+>, <a href=3D"http://dgrok.excastle.com/Grammar.html#RepeatStatement" class=
+=3D"complete">RepeatStatement</a>, <a href=3D"http://dgrok.excastle.com/Gra=
+mmar.html#StringType" class=3D"complete">StringType</a>, <a href=3D"http://=
+dgrok.excastle.com/Grammar.html#TypedConstant" class=3D"complete">TypedCons=
+tant</a>, <a href=3D"http://dgrok.excastle.com/Grammar.html#VarDecl" class=
+=3D"complete">VarDecl</a>, <a href=3D"http://dgrok.excastle.com/Grammar.htm=
+l#WhileStatement" class=3D"complete">WhileStatement</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Si=
+mpleExpression" class=3D"complete">SimpleExpression</a> (<a href=3D"http://=
+dgrok.excastle.com/Grammar.html#RelOp" class=3D"complete">RelOp</a> <a href=
+=3D"http://dgrok.excastle.com/Grammar.html#SimpleExpression" class=3D"compl=
+ete">SimpleExpression</a>)*</div>
+<h2 class=3D"complete"><a name=3D"ExpressionList"></a><a href=3D"http://dgr=
+ok.excastle.com/Grammar.html#ExpressionList" class=3D"black">ExpressionList=
+</a> <a href=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"backto=
+top">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#Atom" class=3D"complete">Atom</a>, <a href=3D"http://dgrok.excas=
+tle.com/Grammar.html#VariantGroup" class=3D"complete">VariantGroup</a>, <a =
+href=3D"http://dgrok.excastle.com/Grammar.html#WithStatement" class=3D"comp=
+lete">WithStatement</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> (<a href=3D"http://dgrok.excastle.com/Grammar.html#E=
+xpression" class=3D"complete">Expression</a> ['<tt class=3D"literal"><b>,</=
+b></tt>'])+</div>
+<h2 class=3D"complete"><a name=3D"ExpressionOrAssignment"></a><a href=3D"ht=
+tp://dgrok.excastle.com/Grammar.html#ExpressionOrAssignment" class=3D"black=
+">ExpressionOrAssignment</a> <a href=3D"http://dgrok.excastle.com/Grammar.h=
+tml#toc" class=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#SimpleStatement" class=3D"complete">SimpleStatement</a></div></h=
+2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Ex=
+pression" class=3D"complete">Expression</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Ex=
+pression" class=3D"complete">Expression</a> ':=3D' <a href=3D"http://dgrok.=
+excastle.com/Grammar.html#Expression" class=3D"complete">Expression</a></di=
+v>
+<h2 class=3D"complete"><a name=3D"ExpressionOrRange"></a><a href=3D"http://=
+dgrok.excastle.com/Grammar.html#ExpressionOrRange" class=3D"black">Expressi=
+onOrRange</a> <a href=3D"http://dgrok.excastle.com/Grammar.html#toc" class=
+=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#CaseSelector" class=3D"complete">CaseSelector</a>, <a href=3D"ht=
+tp://dgrok.excastle.com/Grammar.html#ExpressionOrRangeList" class=3D"comple=
+te">ExpressionOrRangeList</a>, <a href=3D"http://dgrok.excastle.com/Grammar=
+.html#Type" class=3D"complete">Type</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Si=
+mpleExpression" class=3D"complete">SimpleExpression</a> ['..' <a href=3D"ht=
+tp://dgrok.excastle.com/Grammar.html#SimpleExpression" class=3D"complete">S=
+impleExpression</a>]</div>
+<h2 class=3D"complete"><a name=3D"ExpressionOrRangeList"></a><a href=3D"htt=
+p://dgrok.excastle.com/Grammar.html#ExpressionOrRangeList" class=3D"black">=
+ExpressionOrRangeList</a> <a href=3D"http://dgrok.excastle.com/Grammar.html=
+#toc" class=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#SetLiteral" class=3D"complete">SetLiteral</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> (<a href=3D"http://dgrok.excastle.com/Grammar.html#E=
+xpressionOrRange" class=3D"complete">ExpressionOrRange</a> ['<tt class=3D"l=
+iteral"><b>,</b></tt>'])+</div>
+<h2 class=3D"complete"><a name=3D"ExtendedIdent"></a><a href=3D"http://dgro=
+k.excastle.com/Grammar.html#ExtendedIdent" class=3D"black">ExtendedIdent</a=
+> <a href=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop=
+">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#Atom" class=3D"complete">Atom</a>, <a href=3D"http://dgrok.excas=
+tle.com/Grammar.html#QualifiedIdent" class=3D"complete">QualifiedIdent</a><=
+/div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Id=
+ent" class=3D"complete">Ident</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> &lt;keyword&gt;</div>
+<h2 class=3D"complete"><a name=3D"Factor"></a><a href=3D"http://dgrok.excas=
+tle.com/Grammar.html#Factor" class=3D"black">Factor</a> <a href=3D"http://d=
+grok.excastle.com/Grammar.html#toc" class=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#Factor" class=3D"complete">Factor</a>, <a href=3D"http://dgrok.e=
+xcastle.com/Grammar.html#Term" class=3D"complete">Term</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#At=
+om" class=3D"complete">Atom</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Un=
+aryOperator" class=3D"complete">UnaryOperator</a> <a href=3D"http://dgrok.e=
+xcastle.com/Grammar.html#Factor" class=3D"complete">Factor</a></div>
+<h2 class=3D"complete"><a name=3D"FancyBlock"></a><a href=3D"http://dgrok.e=
+xcastle.com/Grammar.html#FancyBlock" class=3D"black">FancyBlock</a> <a href=
+=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#MethodImplementation" class=3D"complete">MethodImplementation</a=
+></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> (<a href=3D"http://dgrok.excastle.com/Grammar.html#I=
+mplementationDecl" class=3D"complete">ImplementationDecl</a>)*</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.=
+html#Block" class=3D"complete">Block</a></div>
+<h2 class=3D"complete"><a name=3D"FieldDecl"></a><a href=3D"http://dgrok.ex=
+castle.com/Grammar.html#FieldDecl" class=3D"black">FieldDecl</a> <a href=3D=
+"http://dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#FieldSection" class=3D"complete">FieldSection</a>, <a href=3D"ht=
+tp://dgrok.excastle.com/Grammar.html#VariantGroup" class=3D"complete">Varia=
+ntGroup</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Id=
+entList" class=3D"complete">IdentList</a> '<tt class=3D"literal"><b>:</b></=
+tt>' <a href=3D"http://dgrok.excastle.com/Grammar.html#Type" class=3D"compl=
+ete">Type</a> (<a href=3D"http://dgrok.excastle.com/Grammar.html#Portabilit=
+yDirective" class=3D"complete">PortabilityDirective</a>)* ['<tt class=3D"li=
+teral"><b>;</b></tt>']</div>
+<h2 class=3D"complete"><a name=3D"FieldSection"></a><a href=3D"http://dgrok=
+.excastle.com/Grammar.html#FieldSection" class=3D"black">FieldSection</a> <=
+a href=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop">[=
+^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#VisibilitySectionContent" class=3D"complete">VisibilitySectionCo=
+ntent</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> [[CLASS] VAR]</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> (<a href=3D"http://dgrok.excastle.com/Grammar=
+.html#FieldDecl" class=3D"complete">FieldDecl</a>)*</div>
+<h2 class=3D"complete"><a name=3D"FileType"></a><a href=3D"http://dgrok.exc=
+astle.com/Grammar.html#FileType" class=3D"black">FileType</a> <a href=3D"ht=
+tp://dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#Type" class=3D"complete">Type</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> FILE</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> FILE OF <a href=3D"http://dgrok.excastle.com/Grammar=
+.html#QualifiedIdent" class=3D"complete">QualifiedIdent</a></div>
+<h2 class=3D"complete"><a name=3D"ForStatement"></a><a href=3D"http://dgrok=
+.excastle.com/Grammar.html#ForStatement" class=3D"black">ForStatement</a> <=
+a href=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop">[=
+^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#SimpleStatement" class=3D"complete">SimpleStatement</a></div></h=
+2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> FOR <a href=3D"http://dgrok.excastle.com/Grammar.htm=
+l#Ident" class=3D"complete">Ident</a> ':=3D' <a href=3D"http://dgrok.excast=
+le.com/Grammar.html#Expression" class=3D"complete">Expression</a> (TO | DOW=
+NTO) <a href=3D"http://dgrok.excastle.com/Grammar.html#Expression" class=3D=
+"complete">Expression</a> DO [<a href=3D"http://dgrok.excastle.com/Grammar.=
+html#Statement" class=3D"complete">Statement</a>]</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> FOR <a href=3D"http://dgrok.excastle.com/Grammar.htm=
+l#Ident" class=3D"complete">Ident</a> IN <a href=3D"http://dgrok.excastle.c=
+om/Grammar.html#Expression" class=3D"complete">Expression</a> DO [<a href=
+=3D"http://dgrok.excastle.com/Grammar.html#Statement" class=3D"complete">St=
+atement</a>]</div>
+<h2 class=3D"complete"><a name=3D"Goal"></a><a href=3D"http://dgrok.excastl=
+e.com/Grammar.html#Goal" class=3D"black">Goal</a> <a href=3D"http://dgrok.e=
+xcastle.com/Grammar.html#toc" class=3D"backtotop">[^]</a></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Pr=
+ogram" class=3D"complete">Program</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Pa=
+ckage" class=3D"complete">Package</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Un=
+it" class=3D"complete">Unit</a></div>
+<h2 class=3D"complete"><a name=3D"GotoStatement"></a><a href=3D"http://dgro=
+k.excastle.com/Grammar.html#GotoStatement" class=3D"black">GotoStatement</a=
+> <a href=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop=
+">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#SimpleStatement" class=3D"complete">SimpleStatement</a></div></h=
+2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> GOTO <a href=3D"http://dgrok.excastle.com/Grammar.ht=
+ml#LabelId" class=3D"complete">LabelId</a></div>
+<h2 class=3D"complete"><a name=3D"Ident"></a><a href=3D"http://dgrok.excast=
+le.com/Grammar.html#Ident" class=3D"black">Ident</a> <a href=3D"http://dgro=
+k.excastle.com/Grammar.html#toc" class=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#ConstantDecl" class=3D"complete">ConstantDecl</a>, <a href=3D"ht=
+tp://dgrok.excastle.com/Grammar.html#EnumeratedTypeElement" class=3D"comple=
+te">EnumeratedTypeElement</a>, <a href=3D"http://dgrok.excastle.com/Grammar=
+.html#ExceptionItem" class=3D"complete">ExceptionItem</a>, <a href=3D"http:=
+//dgrok.excastle.com/Grammar.html#ExportsItem" class=3D"complete">ExportsIt=
+em</a>, <a href=3D"http://dgrok.excastle.com/Grammar.html#ExtendedIdent" cl=
+ass=3D"complete">ExtendedIdent</a>, <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#ForStatement" class=3D"complete">ForStatement</a>, <a href=3D"ht=
+tp://dgrok.excastle.com/Grammar.html#IdentList" class=3D"complete">IdentLis=
+t</a>, <a href=3D"http://dgrok.excastle.com/Grammar.html#LabelId" class=3D"=
+complete">LabelId</a>, <a href=3D"http://dgrok.excastle.com/Grammar.html#Me=
+thodHeading" class=3D"complete">MethodHeading</a>, <a href=3D"http://dgrok.=
+excastle.com/Grammar.html#Particle" class=3D"complete">Particle</a>, <a hre=
+f=3D"http://dgrok.excastle.com/Grammar.html#Program" class=3D"complete">Pro=
+gram</a>, <a href=3D"http://dgrok.excastle.com/Grammar.html#Property" class=
+=3D"complete">Property</a>, <a href=3D"http://dgrok.excastle.com/Grammar.ht=
+ml#QualifiedIdent" class=3D"complete">QualifiedIdent</a>, <a href=3D"http:/=
+/dgrok.excastle.com/Grammar.html#TypeDecl" class=3D"complete">TypeDecl</a>,=
+ <a href=3D"http://dgrok.excastle.com/Grammar.html#Unit" class=3D"complete"=
+>Unit</a>, <a href=3D"http://dgrok.excastle.com/Grammar.html#UsedUnit" clas=
+s=3D"complete">UsedUnit</a>, <a href=3D"http://dgrok.excastle.com/Grammar.h=
+tml#VariantSection" class=3D"complete">VariantSection</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> &lt;identifier&gt;</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> &lt;semikeyword&gt;</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> '&amp;' &lt;identifier&gt;</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> '&amp;' &lt;semikeyword&gt;</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> '&amp;' &lt;keyword&gt;</div>
+<h2 class=3D"complete"><a name=3D"IdentList"></a><a href=3D"http://dgrok.ex=
+castle.com/Grammar.html#IdentList" class=3D"black">IdentList</a> <a href=3D=
+"http://dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#FieldDecl" class=3D"complete">FieldDecl</a>, <a href=3D"http://d=
+grok.excastle.com/Grammar.html#Parameter" class=3D"complete">Parameter</a>,=
+ <a href=3D"http://dgrok.excastle.com/Grammar.html#Program" class=3D"comple=
+te">Program</a>, <a href=3D"http://dgrok.excastle.com/Grammar.html#VarDecl"=
+ class=3D"complete">VarDecl</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> (<a href=3D"http://dgrok.excastle.com/Grammar.html#I=
+dent" class=3D"complete">Ident</a> ['<tt class=3D"literal"><b>,</b></tt>'])=
++</div>
+<h2 class=3D"complete"><a name=3D"IfStatement"></a><a href=3D"http://dgrok.=
+excastle.com/Grammar.html#IfStatement" class=3D"black">IfStatement</a> <a h=
+ref=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop">[^]<=
+/a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#SimpleStatement" class=3D"complete">SimpleStatement</a></div></h=
+2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> IF <a href=3D"http://dgrok.excastle.com/Grammar.html=
+#Expression" class=3D"complete">Expression</a> THEN [<a href=3D"http://dgro=
+k.excastle.com/Grammar.html#Statement" class=3D"complete">Statement</a>]</d=
+iv>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> [ELSE [<a href=3D"http://dgrok.excastle.com/G=
+rammar.html#Statement" class=3D"complete">Statement</a>]]</div>
+<h2 class=3D"complete"><a name=3D"ImplementationDecl"></a><a href=3D"http:/=
+/dgrok.excastle.com/Grammar.html#ImplementationDecl" class=3D"black">Implem=
+entationDecl</a> <a href=3D"http://dgrok.excastle.com/Grammar.html#toc" cla=
+ss=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#FancyBlock" class=3D"complete">FancyBlock</a>, <a href=3D"http:/=
+/dgrok.excastle.com/Grammar.html#ImplementationSection" class=3D"complete">=
+ImplementationSection</a>, <a href=3D"http://dgrok.excastle.com/Grammar.htm=
+l#Program" class=3D"complete">Program</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#La=
+belDeclSection" class=3D"complete">LabelDeclSection</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Co=
+nstSection" class=3D"complete">ConstSection</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Ty=
+peSection" class=3D"complete">TypeSection</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Va=
+rSection" class=3D"complete">VarSection</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Me=
+thodImplementation" class=3D"complete">MethodImplementation</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Ex=
+portsStatement" class=3D"complete">ExportsStatement</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#As=
+semblyAttribute" class=3D"complete">AssemblyAttribute</a></div>
+<h2 class=3D"complete"><a name=3D"ImplementationSection"></a><a href=3D"htt=
+p://dgrok.excastle.com/Grammar.html#ImplementationSection" class=3D"black">=
+ImplementationSection</a> <a href=3D"http://dgrok.excastle.com/Grammar.html=
+#toc" class=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#Unit" class=3D"complete">Unit</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> IMPLEMENTATION</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> [<a href=3D"http://dgrok.excastle.com/Grammar=
+.html#UsesClause" class=3D"complete">UsesClause</a>]</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> (<a href=3D"http://dgrok.excastle.com/Grammar=
+.html#ImplementationDecl" class=3D"complete">ImplementationDecl</a>)*</div>
+<h2 class=3D"complete"><a name=3D"InitSection"></a><a href=3D"http://dgrok.=
+excastle.com/Grammar.html#InitSection" class=3D"black">InitSection</a> <a h=
+ref=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop">[^]<=
+/a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#Program" class=3D"complete">Program</a>, <a href=3D"http://dgrok=
+.excastle.com/Grammar.html#Unit" class=3D"complete">Unit</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> END</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Bl=
+ock" class=3D"complete">Block</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> INITIALIZATION</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> [<a href=3D"http://dgrok.excastle.com/Grammar=
+.html#StatementList" class=3D"complete">StatementList</a>]</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> [FINALIZATION</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> [<a href=3D"http://dgrok.excastle.com/Grammar=
+.html#StatementList" class=3D"complete">StatementList</a>]]</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> END</div>
+<h2 class=3D"complete"><a name=3D"InterfaceDecl"></a><a href=3D"http://dgro=
+k.excastle.com/Grammar.html#InterfaceDecl" class=3D"black">InterfaceDecl</a=
+> <a href=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop=
+">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#InterfaceSection" class=3D"complete">InterfaceSection</a></div><=
+/h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Co=
+nstSection" class=3D"complete">ConstSection</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Ty=
+peSection" class=3D"complete">TypeSection</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Va=
+rSection" class=3D"complete">VarSection</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Me=
+thodHeading" class=3D"complete">MethodHeading</a></div>
+<h2 class=3D"complete"><a name=3D"InterfaceSection"></a><a href=3D"http://d=
+grok.excastle.com/Grammar.html#InterfaceSection" class=3D"black">InterfaceS=
+ection</a> <a href=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"=
+backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#Unit" class=3D"complete">Unit</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> INTERFACE</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> [<a href=3D"http://dgrok.excastle.com/Grammar=
+.html#UsesClause" class=3D"complete">UsesClause</a>]</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> (<a href=3D"http://dgrok.excastle.com/Grammar=
+.html#InterfaceDecl" class=3D"complete">InterfaceDecl</a>)*</div>
+<h2 class=3D"complete"><a name=3D"InterfaceType"></a><a href=3D"http://dgro=
+k.excastle.com/Grammar.html#InterfaceType" class=3D"black">InterfaceType</a=
+> <a href=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop=
+">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#Type" class=3D"complete">Type</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> (INTERFACE | DISPINTERFACE)</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> ['<tt class=3D"literal"><b>(</b></tt>' <a hre=
+f=3D"http://dgrok.excastle.com/Grammar.html#QualifiedIdent" class=3D"comple=
+te">QualifiedIdent</a> '<tt class=3D"literal"><b>)</b></tt>']</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> ['<tt class=3D"literal"><b>[</b></tt>' <a hre=
+f=3D"http://dgrok.excastle.com/Grammar.html#Expression" class=3D"complete">=
+Expression</a> '<tt class=3D"literal"><b>]</b></tt>']</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> (<a href=3D"http://dgrok.excastle.com/Grammar=
+.html#MethodOrProperty" class=3D"complete">MethodOrProperty</a>)*</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> END</div>
+<h2 class=3D"complete"><a name=3D"LabelDeclSection"></a><a href=3D"http://d=
+grok.excastle.com/Grammar.html#LabelDeclSection" class=3D"black">LabelDeclS=
+ection</a> <a href=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"=
+backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#ImplementationDecl" class=3D"complete">ImplementationDecl</a></d=
+iv></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> LABEL (<a href=3D"http://dgrok.excastle.com/Grammar.=
+html#LabelId" class=3D"complete">LabelId</a> ['<tt class=3D"literal"><b>,</=
+b></tt>'])+ '<tt class=3D"literal"><b>;</b></tt>'</div>
+<h2 class=3D"complete"><a name=3D"LabelId"></a><a href=3D"http://dgrok.exca=
+stle.com/Grammar.html#LabelId" class=3D"black">LabelId</a> <a href=3D"http:=
+//dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#GotoStatement" class=3D"complete">GotoStatement</a>, <a href=3D"=
+http://dgrok.excastle.com/Grammar.html#LabelDeclSection" class=3D"complete"=
+>LabelDeclSection</a>, <a href=3D"http://dgrok.excastle.com/Grammar.html#St=
+atement" class=3D"complete">Statement</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> &lt;number&gt;</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Id=
+ent" class=3D"complete">Ident</a></div>
+<h2 class=3D"complete"><a name=3D"MethodHeading"></a><a href=3D"http://dgro=
+k.excastle.com/Grammar.html#MethodHeading" class=3D"black">MethodHeading</a=
+> <a href=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop=
+">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#InterfaceDecl" class=3D"complete">InterfaceDecl</a>, <a href=3D"=
+http://dgrok.excastle.com/Grammar.html#MethodImplementation" class=3D"compl=
+ete">MethodImplementation</a>, <a href=3D"http://dgrok.excastle.com/Grammar=
+.html#MethodOrProperty" class=3D"complete">MethodOrProperty</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> [CLASS]</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> (PROCEDURE | FUNCTION | CONSTRUCTOR | DESTRUC=
+TOR | OPERATOR)</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.=
+html#QualifiedIdent" class=3D"complete">QualifiedIdent</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> (</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt>   ['<tt class=3D"literal"><b>(</b></tt>' (<a =
+href=3D"http://dgrok.excastle.com/Grammar.html#Parameter" class=3D"complete=
+">Parameter</a> ['<tt class=3D"literal"><b>;</b></tt>'])* '<tt class=3D"lit=
+eral"><b>)</b></tt>']</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt>   ['<tt class=3D"literal"><b>:</b></tt>' <a h=
+ref=3D"http://dgrok.excastle.com/Grammar.html#MethodReturnType" class=3D"co=
+mplete">MethodReturnType</a>]</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt>   (<a href=3D"http://dgrok.excastle.com/Gramm=
+ar.html#Directive" class=3D"complete">Directive</a>)*</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> | '<tt class=3D"literal"><b>=3D</b></tt>' <a =
+href=3D"http://dgrok.excastle.com/Grammar.html#Ident" class=3D"complete">Id=
+ent</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> )</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> ['<tt class=3D"literal"><b>;</b></tt>']</div>
+<h2 class=3D"complete"><a name=3D"MethodImplementation"></a><a href=3D"http=
+://dgrok.excastle.com/Grammar.html#MethodImplementation" class=3D"black">Me=
+thodImplementation</a> <a href=3D"http://dgrok.excastle.com/Grammar.html#to=
+c" class=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#ImplementationDecl" class=3D"complete">ImplementationDecl</a></d=
+iv></h2>
+<p>If the MethodHeading does not include 'external' or 'forward':</p>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Me=
+thodHeading" class=3D"complete">MethodHeading</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.=
+html#FancyBlock" class=3D"complete">FancyBlock</a> '<tt class=3D"literal"><=
+b>;</b></tt>'</div>
+<p>If the MethodHeading does include 'external' or 'forward':</p>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Me=
+thodHeading" class=3D"complete">MethodHeading</a></div>
+<h2 class=3D"complete"><a name=3D"MethodOrProperty"></a><a href=3D"http://d=
+grok.excastle.com/Grammar.html#MethodOrProperty" class=3D"black">MethodOrPr=
+operty</a> <a href=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"=
+backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#InterfaceType" class=3D"complete">InterfaceType</a>, <a href=3D"=
+http://dgrok.excastle.com/Grammar.html#VisibilitySectionContent" class=3D"c=
+omplete">VisibilitySectionContent</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Me=
+thodHeading" class=3D"complete">MethodHeading</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Pr=
+operty" class=3D"complete">Property</a></div>
+<h2 class=3D"complete"><a name=3D"MethodReturnType"></a><a href=3D"http://d=
+grok.excastle.com/Grammar.html#MethodReturnType" class=3D"black">MethodRetu=
+rnType</a> <a href=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"=
+backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#MethodHeading" class=3D"complete">MethodHeading</a>, <a href=3D"=
+http://dgrok.excastle.com/Grammar.html#ProcedureType" class=3D"complete">Pr=
+ocedureType</a>, <a href=3D"http://dgrok.excastle.com/Grammar.html#Property=
+" class=3D"complete">Property</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Qu=
+alifiedIdent" class=3D"complete">QualifiedIdent</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> STRING</div>
+<h2 class=3D"complete"><a name=3D"MulOp"></a><a href=3D"http://dgrok.excast=
+le.com/Grammar.html#MulOp" class=3D"black">MulOp</a> <a href=3D"http://dgro=
+k.excastle.com/Grammar.html#toc" class=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#Term" class=3D"complete">Term</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> '<tt class=3D"literal"><b>*</b></tt>'</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> '<tt class=3D"literal"><b>/</b></tt>'</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> DIV</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> MOD</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> AND</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> SHL</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> SHR</div>
+<h2 class=3D"complete"><a name=3D"OpenArray"></a><a href=3D"http://dgrok.ex=
+castle.com/Grammar.html#OpenArray" class=3D"black">OpenArray</a> <a href=3D=
+"http://dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#ParameterType" class=3D"complete">ParameterType</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> ARRAY OF <a href=3D"http://dgrok.excastle.com/Gramma=
+r.html#QualifiedIdent" class=3D"complete">QualifiedIdent</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> ARRAY OF STRING</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> ARRAY OF FILE</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> ARRAY OF CONST</div>
+<h2 class=3D"complete"><a name=3D"Package"></a><a href=3D"http://dgrok.exca=
+stle.com/Grammar.html#Package" class=3D"black">Package</a> <a href=3D"http:=
+//dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#Goal" class=3D"complete">Goal</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> PACKAGE <a href=3D"http://dgrok.excastle.com/Grammar=
+.html#QualifiedIdent" class=3D"complete">QualifiedIdent</a> '<tt class=3D"l=
+iteral"><b>;</b></tt>'</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> [<a href=3D"http://dgrok.excastle.com/Grammar=
+.html#RequiresClause" class=3D"complete">RequiresClause</a>]</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> [<a href=3D"http://dgrok.excastle.com/Grammar=
+.html#UsesClause" class=3D"complete">UsesClause</a>]</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> (<a href=3D"http://dgrok.excastle.com/Grammar=
+.html#AssemblyAttribute" class=3D"complete">AssemblyAttribute</a>)*</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> END '<tt class=3D"literal"><b>.</b></tt>'</di=
+v>
+<h2 class=3D"complete"><a name=3D"PackedType"></a><a href=3D"http://dgrok.e=
+xcastle.com/Grammar.html#PackedType" class=3D"black">PackedType</a> <a href=
+=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#Type" class=3D"complete">Type</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> PACKED <a href=3D"http://dgrok.excastle.com/Grammar.=
+html#Type" class=3D"complete">Type</a></div>
+<h2 class=3D"complete"><a name=3D"Parameter"></a><a href=3D"http://dgrok.ex=
+castle.com/Grammar.html#Parameter" class=3D"black">Parameter</a> <a href=3D=
+"http://dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#MethodHeading" class=3D"complete">MethodHeading</a>, <a href=3D"=
+http://dgrok.excastle.com/Grammar.html#ProcedureType" class=3D"complete">Pr=
+ocedureType</a>, <a href=3D"http://dgrok.excastle.com/Grammar.html#Property=
+" class=3D"complete">Property</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> [VAR | CONST | OUT]</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.=
+html#IdentList" class=3D"complete">IdentList</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> ['<tt class=3D"literal"><b>:</b></tt>' <a hre=
+f=3D"http://dgrok.excastle.com/Grammar.html#ParameterType" class=3D"complet=
+e">ParameterType</a>]</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> ['<tt class=3D"literal"><b>=3D</b></tt>' <a h=
+ref=3D"http://dgrok.excastle.com/Grammar.html#Expression" class=3D"complete=
+">Expression</a>]</div>
+<h2 class=3D"complete"><a name=3D"ParameterExpression"></a><a href=3D"http:=
+//dgrok.excastle.com/Grammar.html#ParameterExpression" class=3D"black">Para=
+meterExpression</a> <a href=3D"http://dgrok.excastle.com/Grammar.html#toc" =
+class=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#Atom" class=3D"complete">Atom</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Ex=
+pression" class=3D"complete">Expression</a> ['<tt class=3D"literal"><b>:</b=
+></tt>' <a href=3D"http://dgrok.excastle.com/Grammar.html#Expression" class=
+=3D"complete">Expression</a> ['<tt class=3D"literal"><b>:</b></tt>' <a href=
+=3D"http://dgrok.excastle.com/Grammar.html#Expression" class=3D"complete">E=
+xpression</a>]]</div>
+<h2 class=3D"complete"><a name=3D"ParameterType"></a><a href=3D"http://dgro=
+k.excastle.com/Grammar.html#ParameterType" class=3D"black">ParameterType</a=
+> <a href=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop=
+">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#Parameter" class=3D"complete">Parameter</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Qu=
+alifiedIdent" class=3D"complete">QualifiedIdent</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> STRING</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> FILE</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Op=
+enArray" class=3D"complete">OpenArray</a></div>
+<h2 class=3D"complete"><a name=3D"ParenthesizedExpression"></a><a href=3D"h=
+ttp://dgrok.excastle.com/Grammar.html#ParenthesizedExpression" class=3D"bla=
+ck">ParenthesizedExpression</a> <a href=3D"http://dgrok.excastle.com/Gramma=
+r.html#toc" class=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#Particle" class=3D"complete">Particle</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> '<tt class=3D"literal"><b>(</b></tt>' <a href=3D"htt=
+p://dgrok.excastle.com/Grammar.html#Expression" class=3D"complete">Expressi=
+on</a> '<tt class=3D"literal"><b>)</b></tt>'</div>
+<h2 class=3D"complete"><a name=3D"Particle"></a><a href=3D"http://dgrok.exc=
+astle.com/Grammar.html#Particle" class=3D"black">Particle</a> <a href=3D"ht=
+tp://dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#Atom" class=3D"complete">Atom</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> &lt;number&gt;</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> &lt;stringliteral&gt;</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Id=
+ent" class=3D"complete">Ident</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> NIL</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Pa=
+renthesizedExpression" class=3D"complete">ParenthesizedExpression</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Se=
+tLiteral" class=3D"complete">SetLiteral</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> STRING</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> FILE</div>
+<h2 class=3D"complete"><a name=3D"PointerType"></a><a href=3D"http://dgrok.=
+excastle.com/Grammar.html#PointerType" class=3D"black">PointerType</a> <a h=
+ref=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop">[^]<=
+/a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#Type" class=3D"complete">Type</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> '<tt class=3D"literal"><b>^</b></tt>' <a href=3D"htt=
+p://dgrok.excastle.com/Grammar.html#Type" class=3D"complete">Type</a></div>
+<h2 class=3D"complete"><a name=3D"PortabilityDirective"></a><a href=3D"http=
+://dgrok.excastle.com/Grammar.html#PortabilityDirective" class=3D"black">Po=
+rtabilityDirective</a> <a href=3D"http://dgrok.excastle.com/Grammar.html#to=
+c" class=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#ConstantDecl" class=3D"complete">ConstantDecl</a>, <a href=3D"ht=
+tp://dgrok.excastle.com/Grammar.html#Directive" class=3D"complete">Directiv=
+e</a>, <a href=3D"http://dgrok.excastle.com/Grammar.html#FieldDecl" class=
+=3D"complete">FieldDecl</a>, <a href=3D"http://dgrok.excastle.com/Grammar.h=
+tml#TypeDecl" class=3D"complete">TypeDecl</a>, <a href=3D"http://dgrok.exca=
+stle.com/Grammar.html#Unit" class=3D"complete">Unit</a>, <a href=3D"http://=
+dgrok.excastle.com/Grammar.html#VarDecl" class=3D"complete">VarDecl</a></di=
+v></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> platform</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> deprecated</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> library</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> experimental</div>
+<h2 class=3D"complete"><a name=3D"ProcedureType"></a><a href=3D"http://dgro=
+k.excastle.com/Grammar.html#ProcedureType" class=3D"black">ProcedureType</a=
+> <a href=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop=
+">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#Type" class=3D"complete">Type</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> (PROCEDURE | FUNCTION)</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> ['<tt class=3D"literal"><b>(</b></tt>' (<a hr=
+ef=3D"http://dgrok.excastle.com/Grammar.html#Parameter" class=3D"complete">=
+Parameter</a> ['<tt class=3D"literal"><b>;</b></tt>'])* '<tt class=3D"liter=
+al"><b>)</b></tt>']</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> ['<tt class=3D"literal"><b>:</b></tt>' <a hre=
+f=3D"http://dgrok.excastle.com/Grammar.html#MethodReturnType" class=3D"comp=
+lete">MethodReturnType</a>]</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> (<a href=3D"http://dgrok.excastle.com/Grammar=
+.html#Directive" class=3D"complete">Directive</a>)*</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> [OF OBJECT]</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> (<a href=3D"http://dgrok.excastle.com/Grammar=
+.html#Directive" class=3D"complete">Directive</a>)*</div>
+<h2 class=3D"complete"><a name=3D"Program"></a><a href=3D"http://dgrok.exca=
+stle.com/Grammar.html#Program" class=3D"black">Program</a> <a href=3D"http:=
+//dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#Goal" class=3D"complete">Goal</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> (PROGRAM | LIBRARY) <a href=3D"http://dgrok.excastle=
+.com/Grammar.html#Ident" class=3D"complete">Ident</a> ['<tt class=3D"litera=
+l"><b>(</b></tt>' <a href=3D"http://dgrok.excastle.com/Grammar.html#IdentLi=
+st" class=3D"complete">IdentList</a> '<tt class=3D"literal"><b>)</b></tt>']=
+ '<tt class=3D"literal"><b>;</b></tt>'</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> [<a href=3D"http://dgrok.excastle.com/Grammar.html#U=
+sesClause" class=3D"complete">UsesClause</a>]</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> (<a href=3D"http://dgrok.excastle.com/Grammar=
+.html#ImplementationDecl" class=3D"complete">ImplementationDecl</a>)*</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.=
+html#InitSection" class=3D"complete">InitSection</a> '<tt class=3D"literal"=
+><b>.</b></tt>'</div>
+<h2 class=3D"complete"><a name=3D"Property"></a><a href=3D"http://dgrok.exc=
+astle.com/Grammar.html#Property" class=3D"black">Property</a> <a href=3D"ht=
+tp://dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#MethodOrProperty" class=3D"complete">MethodOrProperty</a></div><=
+/h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> [CLASS]</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> PROPERTY <a href=3D"http://dgrok.excastle.com=
+/Grammar.html#Ident" class=3D"complete">Ident</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> ['<tt class=3D"literal"><b>[</b></tt>' (<a hr=
+ef=3D"http://dgrok.excastle.com/Grammar.html#Parameter" class=3D"complete">=
+Parameter</a> ['<tt class=3D"literal"><b>;</b></tt>'])+ '<tt class=3D"liter=
+al"><b>]</b></tt>']</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> ['<tt class=3D"literal"><b>:</b></tt>' <a hre=
+f=3D"http://dgrok.excastle.com/Grammar.html#MethodReturnType" class=3D"comp=
+lete">MethodReturnType</a>]</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> (<a href=3D"http://dgrok.excastle.com/Grammar=
+.html#PropertyDirective" class=3D"complete">PropertyDirective</a>)*</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> '<tt class=3D"literal"><b>;</b></tt>'</div>
+<h2 class=3D"complete"><a name=3D"PropertyDirective"></a><a href=3D"http://=
+dgrok.excastle.com/Grammar.html#PropertyDirective" class=3D"black">Property=
+Directive</a> <a href=3D"http://dgrok.excastle.com/Grammar.html#toc" class=
+=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#Property" class=3D"complete">Property</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> '<tt class=3D"literal"><b>;</b></tt>' DEFAULT</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> DEFAULT <a href=3D"http://dgrok.excastle.com/Grammar=
+.html#Expression" class=3D"complete">Expression</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> DISPID <a href=3D"http://dgrok.excastle.com/Grammar.=
+html#Expression" class=3D"complete">Expression</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> IMPLEMENTS (<a href=3D"http://dgrok.excastle.com/Gra=
+mmar.html#QualifiedIdent" class=3D"complete">QualifiedIdent</a> ['<tt class=
+=3D"literal"><b>,</b></tt>'])+</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> INDEX <a href=3D"http://dgrok.excastle.com/Grammar.h=
+tml#Expression" class=3D"complete">Expression</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> NODEFAULT</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> READ <a href=3D"http://dgrok.excastle.com/Grammar.ht=
+ml#Expression" class=3D"complete">Expression</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> READONLY</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> STORED <a href=3D"http://dgrok.excastle.com/Grammar.=
+html#Expression" class=3D"complete">Expression</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> WRITE <a href=3D"http://dgrok.excastle.com/Grammar.h=
+tml#Expression" class=3D"complete">Expression</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> WRITEONLY</div>
+<h2 class=3D"complete"><a name=3D"QualifiedIdent"></a><a href=3D"http://dgr=
+ok.excastle.com/Grammar.html#QualifiedIdent" class=3D"black">QualifiedIdent=
+</a> <a href=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"backto=
+top">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#ClassHelperType" class=3D"complete">ClassHelperType</a>, <a href=
+=3D"http://dgrok.excastle.com/Grammar.html#ClassOfType" class=3D"complete">=
+ClassOfType</a>, <a href=3D"http://dgrok.excastle.com/Grammar.html#ClassTyp=
+e" class=3D"complete">ClassType</a>, <a href=3D"http://dgrok.excastle.com/G=
+rammar.html#ExceptionItem" class=3D"complete">ExceptionItem</a>, <a href=3D=
+"http://dgrok.excastle.com/Grammar.html#FileType" class=3D"complete">FileTy=
+pe</a>, <a href=3D"http://dgrok.excastle.com/Grammar.html#InterfaceType" cl=
+ass=3D"complete">InterfaceType</a>, <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#MethodHeading" class=3D"complete">MethodHeading</a>, <a href=3D"=
+http://dgrok.excastle.com/Grammar.html#MethodReturnType" class=3D"complete"=
+>MethodReturnType</a>, <a href=3D"http://dgrok.excastle.com/Grammar.html#Op=
+enArray" class=3D"complete">OpenArray</a>, <a href=3D"http://dgrok.excastle=
+.com/Grammar.html#Package" class=3D"complete">Package</a>, <a href=3D"http:=
+//dgrok.excastle.com/Grammar.html#ParameterType" class=3D"complete">Paramet=
+erType</a>, <a href=3D"http://dgrok.excastle.com/Grammar.html#PropertyDirec=
+tive" class=3D"complete">PropertyDirective</a>, <a href=3D"http://dgrok.exc=
+astle.com/Grammar.html#RecordHelperType" class=3D"complete">RecordHelperTyp=
+e</a>, <a href=3D"http://dgrok.excastle.com/Grammar.html#RequiresClause" cl=
+ass=3D"complete">RequiresClause</a>, <a href=3D"http://dgrok.excastle.com/G=
+rammar.html#TypedConstant" class=3D"complete">TypedConstant</a>, <a href=3D=
+"http://dgrok.excastle.com/Grammar.html#VariantSection" class=3D"complete">=
+VariantSection</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Id=
+ent" class=3D"complete">Ident</a> ('<tt class=3D"literal"><b>.</b></tt>' <a=
+ href=3D"http://dgrok.excastle.com/Grammar.html#ExtendedIdent" class=3D"com=
+plete">ExtendedIdent</a>)*</div>
+<h2 class=3D"complete"><a name=3D"RaiseStatement"></a><a href=3D"http://dgr=
+ok.excastle.com/Grammar.html#RaiseStatement" class=3D"black">RaiseStatement=
+</a> <a href=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"backto=
+top">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#SimpleStatement" class=3D"complete">SimpleStatement</a></div></h=
+2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> RAISE [<a href=3D"http://dgrok.excastle.com/Grammar.=
+html#Expression" class=3D"complete">Expression</a> [AT <a href=3D"http://dg=
+rok.excastle.com/Grammar.html#Expression" class=3D"complete">Expression</a>=
+]]</div>
+<h2 class=3D"complete"><a name=3D"RecordHelperType"></a><a href=3D"http://d=
+grok.excastle.com/Grammar.html#RecordHelperType" class=3D"black">RecordHelp=
+erType</a> <a href=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"=
+backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#Type" class=3D"complete">Type</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> RECORD HELPER FOR <a href=3D"http://dgrok.excastle.c=
+om/Grammar.html#QualifiedIdent" class=3D"complete">QualifiedIdent</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> (<a href=3D"http://dgrok.excastle.com/Grammar=
+.html#VisibilitySection" class=3D"complete">VisibilitySection</a>)*</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> END</div>
+<h2 class=3D"complete"><a name=3D"RecordType"></a><a href=3D"http://dgrok.e=
+xcastle.com/Grammar.html#RecordType" class=3D"black">RecordType</a> <a href=
+=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#Type" class=3D"complete">Type</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> RECORD</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> (<a href=3D"http://dgrok.excastle.com/Grammar=
+.html#VisibilitySection" class=3D"complete">VisibilitySection</a>)*</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> [<a href=3D"http://dgrok.excastle.com/Grammar=
+.html#VariantSection" class=3D"complete">VariantSection</a>]</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> END</div>
+<h2 class=3D"complete"><a name=3D"RelOp"></a><a href=3D"http://dgrok.excast=
+le.com/Grammar.html#RelOp" class=3D"black">RelOp</a> <a href=3D"http://dgro=
+k.excastle.com/Grammar.html#toc" class=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#Expression" class=3D"complete">Expression</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> '<tt class=3D"literal"><b>=3D</b></tt>'</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> '&gt;'</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> '&lt;'</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> '&lt;=3D'</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> '&gt;=3D'</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> '&lt;&gt;'</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> IN</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> IS</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> AS</div>
+<h2 class=3D"complete"><a name=3D"RepeatStatement"></a><a href=3D"http://dg=
+rok.excastle.com/Grammar.html#RepeatStatement" class=3D"black">RepeatStatem=
+ent</a> <a href=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"bac=
+ktotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#SimpleStatement" class=3D"complete">SimpleStatement</a></div></h=
+2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> REPEAT [<a href=3D"http://dgrok.excastle.com/Grammar=
+.html#StatementList" class=3D"complete">StatementList</a>] UNTIL <a href=3D=
+"http://dgrok.excastle.com/Grammar.html#Expression" class=3D"complete">Expr=
+ession</a></div>
+<h2 class=3D"complete"><a name=3D"RequiresClause"></a><a href=3D"http://dgr=
+ok.excastle.com/Grammar.html#RequiresClause" class=3D"black">RequiresClause=
+</a> <a href=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"backto=
+top">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#Package" class=3D"complete">Package</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> REQUIRES (<a href=3D"http://dgrok.excastle.com/Gramm=
+ar.html#QualifiedIdent" class=3D"complete">QualifiedIdent</a> ['<tt class=
+=3D"literal"><b>,</b></tt>'])+ '<tt class=3D"literal"><b>;</b></tt>'</div>
+<h2 class=3D"complete"><a name=3D"SetLiteral"></a><a href=3D"http://dgrok.e=
+xcastle.com/Grammar.html#SetLiteral" class=3D"black">SetLiteral</a> <a href=
+=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#Particle" class=3D"complete">Particle</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> '<tt class=3D"literal"><b>[</b></tt>' [<a href=3D"ht=
+tp://dgrok.excastle.com/Grammar.html#ExpressionOrRangeList" class=3D"comple=
+te">ExpressionOrRangeList</a>] '<tt class=3D"literal"><b>]</b></tt>'</div>
+<h2 class=3D"complete"><a name=3D"SetType"></a><a href=3D"http://dgrok.exca=
+stle.com/Grammar.html#SetType" class=3D"black">SetType</a> <a href=3D"http:=
+//dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#Type" class=3D"complete">Type</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> SET OF <a href=3D"http://dgrok.excastle.com/Grammar.=
+html#Type" class=3D"complete">Type</a></div>
+<h2 class=3D"complete"><a name=3D"SimpleExpression"></a><a href=3D"http://d=
+grok.excastle.com/Grammar.html#SimpleExpression" class=3D"black">SimpleExpr=
+ession</a> <a href=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"=
+backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#Expression" class=3D"complete">Expression</a>, <a href=3D"http:/=
+/dgrok.excastle.com/Grammar.html#ExpressionOrRange" class=3D"complete">Expr=
+essionOrRange</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Te=
+rm" class=3D"complete">Term</a> (<a href=3D"http://dgrok.excastle.com/Gramm=
+ar.html#AddOp" class=3D"complete">AddOp</a> <a href=3D"http://dgrok.excastl=
+e.com/Grammar.html#Term" class=3D"complete">Term</a>)*</div>
+<h2 class=3D"complete"><a name=3D"SimpleStatement"></a><a href=3D"http://dg=
+rok.excastle.com/Grammar.html#SimpleStatement" class=3D"black">SimpleStatem=
+ent</a> <a href=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"bac=
+ktotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#Statement" class=3D"complete">Statement</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Ba=
+reInherited" class=3D"complete">BareInherited</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Ex=
+pressionOrAssignment" class=3D"complete">ExpressionOrAssignment</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Go=
+toStatement" class=3D"complete">GotoStatement</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Bl=
+ock" class=3D"complete">Block</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#If=
+Statement" class=3D"complete">IfStatement</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Ca=
+seStatement" class=3D"complete">CaseStatement</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Re=
+peatStatement" class=3D"complete">RepeatStatement</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Wh=
+ileStatement" class=3D"complete">WhileStatement</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Fo=
+rStatement" class=3D"complete">ForStatement</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Wi=
+thStatement" class=3D"complete">WithStatement</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Tr=
+yStatement" class=3D"complete">TryStatement</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Ra=
+iseStatement" class=3D"complete">RaiseStatement</a></div>
+<h2 class=3D"complete"><a name=3D"Statement"></a><a href=3D"http://dgrok.ex=
+castle.com/Grammar.html#Statement" class=3D"black">Statement</a> <a href=3D=
+"http://dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#CaseSelector" class=3D"complete">CaseSelector</a>, <a href=3D"ht=
+tp://dgrok.excastle.com/Grammar.html#ExceptionItem" class=3D"complete">Exce=
+ptionItem</a>, <a href=3D"http://dgrok.excastle.com/Grammar.html#ForStateme=
+nt" class=3D"complete">ForStatement</a>, <a href=3D"http://dgrok.excastle.c=
+om/Grammar.html#IfStatement" class=3D"complete">IfStatement</a>, <a href=3D=
+"http://dgrok.excastle.com/Grammar.html#StatementList" class=3D"complete">S=
+tatementList</a>, <a href=3D"http://dgrok.excastle.com/Grammar.html#WhileSt=
+atement" class=3D"complete">WhileStatement</a>, <a href=3D"http://dgrok.exc=
+astle.com/Grammar.html#WithStatement" class=3D"complete">WithStatement</a><=
+/div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#La=
+belId" class=3D"complete">LabelId</a> '<tt class=3D"literal"><b>:</b></tt>'=
+ [<a href=3D"http://dgrok.excastle.com/Grammar.html#SimpleStatement" class=
+=3D"complete">SimpleStatement</a>]</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Si=
+mpleStatement" class=3D"complete">SimpleStatement</a></div>
+<h2 class=3D"complete"><a name=3D"StatementList"></a><a href=3D"http://dgro=
+k.excastle.com/Grammar.html#StatementList" class=3D"black">StatementList</a=
+> <a href=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop=
+">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#Block" class=3D"complete">Block</a>, <a href=3D"http://dgrok.exc=
+astle.com/Grammar.html#CaseStatement" class=3D"complete">CaseStatement</a>,=
+ <a href=3D"http://dgrok.excastle.com/Grammar.html#InitSection" class=3D"co=
+mplete">InitSection</a>, <a href=3D"http://dgrok.excastle.com/Grammar.html#=
+RepeatStatement" class=3D"complete">RepeatStatement</a>, <a href=3D"http://=
+dgrok.excastle.com/Grammar.html#TryStatement" class=3D"complete">TryStateme=
+nt</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> ([<a href=3D"http://dgrok.excastle.com/Grammar.html#=
+Statement" class=3D"complete">Statement</a>] ['<tt class=3D"literal"><b>;</=
+b></tt>'])+</div>
+<h2 class=3D"complete"><a name=3D"StringType"></a><a href=3D"http://dgrok.e=
+xcastle.com/Grammar.html#StringType" class=3D"black">StringType</a> <a href=
+=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#Type" class=3D"complete">Type</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> STRING</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> STRING '<tt class=3D"literal"><b>[</b></tt>' <a href=
+=3D"http://dgrok.excastle.com/Grammar.html#Expression" class=3D"complete">E=
+xpression</a> '<tt class=3D"literal"><b>]</b></tt>'</div>
+<h2 class=3D"complete"><a name=3D"Term"></a><a href=3D"http://dgrok.excastl=
+e.com/Grammar.html#Term" class=3D"black">Term</a> <a href=3D"http://dgrok.e=
+xcastle.com/Grammar.html#toc" class=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#SimpleExpression" class=3D"complete">SimpleExpression</a></div><=
+/h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Fa=
+ctor" class=3D"complete">Factor</a> (<a href=3D"http://dgrok.excastle.com/G=
+rammar.html#MulOp" class=3D"complete">MulOp</a> <a href=3D"http://dgrok.exc=
+astle.com/Grammar.html#Factor" class=3D"complete">Factor</a>)*</div>
+<h2 class=3D"complete"><a name=3D"TryStatement"></a><a href=3D"http://dgrok=
+.excastle.com/Grammar.html#TryStatement" class=3D"black">TryStatement</a> <=
+a href=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop">[=
+^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#SimpleStatement" class=3D"complete">SimpleStatement</a></div></h=
+2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> TRY</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt>   [<a href=3D"http://dgrok.excastle.com/Gramm=
+ar.html#StatementList" class=3D"complete">StatementList</a>]</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> ( FINALLY [<a href=3D"http://dgrok.excastle.c=
+om/Grammar.html#StatementList" class=3D"complete">StatementList</a>]</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> | EXCEPT (</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt>   [<a href=3D"http://dgrok.excastle.com/Gramm=
+ar.html#StatementList" class=3D"complete">StatementList</a>] |</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt>   (<a href=3D"http://dgrok.excastle.com/Gramm=
+ar.html#ExceptionItem" class=3D"complete">ExceptionItem</a>)* [ELSE [<a hre=
+f=3D"http://dgrok.excastle.com/Grammar.html#StatementList" class=3D"complet=
+e">StatementList</a>]]</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> )</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> END</div>
+<h2 class=3D"complete"><a name=3D"Type"></a><a href=3D"http://dgrok.excastl=
+e.com/Grammar.html#Type" class=3D"black">Type</a> <a href=3D"http://dgrok.e=
+xcastle.com/Grammar.html#toc" class=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#ArrayType" class=3D"complete">ArrayType</a>, <a href=3D"http://d=
+grok.excastle.com/Grammar.html#ConstantDecl" class=3D"complete">ConstantDec=
+l</a>, <a href=3D"http://dgrok.excastle.com/Grammar.html#FieldDecl" class=
+=3D"complete">FieldDecl</a>, <a href=3D"http://dgrok.excastle.com/Grammar.h=
+tml#PackedType" class=3D"complete">PackedType</a>, <a href=3D"http://dgrok.=
+excastle.com/Grammar.html#PointerType" class=3D"complete">PointerType</a>, =
+<a href=3D"http://dgrok.excastle.com/Grammar.html#SetType" class=3D"complet=
+e">SetType</a>, <a href=3D"http://dgrok.excastle.com/Grammar.html#TypeDecl"=
+ class=3D"complete">TypeDecl</a>, <a href=3D"http://dgrok.excastle.com/Gram=
+mar.html#VarDecl" class=3D"complete">VarDecl</a></div></h2>
+<p>Note: Delphi assumes that a Type starting with '(' is an enum, not an ex=
+pression.</p>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#En=
+umeratedType" class=3D"complete">EnumeratedType</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Ex=
+pressionOrRange" class=3D"complete">ExpressionOrRange</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Ar=
+rayType" class=3D"complete">ArrayType</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Se=
+tType" class=3D"complete">SetType</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Fi=
+leType" class=3D"complete">FileType</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Re=
+cordHelperType" class=3D"complete">RecordHelperType</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Re=
+cordType" class=3D"complete">RecordType</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Po=
+interType" class=3D"complete">PointerType</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#St=
+ringType" class=3D"complete">StringType</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Pr=
+ocedureType" class=3D"complete">ProcedureType</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Cl=
+assHelperType" class=3D"complete">ClassHelperType</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Cl=
+assOfType" class=3D"complete">ClassOfType</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Cl=
+assType" class=3D"complete">ClassType</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#In=
+terfaceType" class=3D"complete">InterfaceType</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Pa=
+ckedType" class=3D"complete">PackedType</a></div>
+<h2 class=3D"complete"><a name=3D"TypedConstant"></a><a href=3D"http://dgro=
+k.excastle.com/Grammar.html#TypedConstant" class=3D"black">TypedConstant</a=
+> <a href=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop=
+">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#ConstantDecl" class=3D"complete">ConstantDecl</a>, <a href=3D"ht=
+tp://dgrok.excastle.com/Grammar.html#TypedConstant" class=3D"complete">Type=
+dConstant</a>, <a href=3D"http://dgrok.excastle.com/Grammar.html#VarDecl" c=
+lass=3D"complete">VarDecl</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Ex=
+pression" class=3D"complete">Expression</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> '<tt class=3D"literal"><b>(</b></tt>' (<a href=3D"ht=
+tp://dgrok.excastle.com/Grammar.html#QualifiedIdent" class=3D"complete">Qua=
+lifiedIdent</a> '<tt class=3D"literal"><b>:</b></tt>' <a href=3D"http://dgr=
+ok.excastle.com/Grammar.html#TypedConstant" class=3D"complete">TypedConstan=
+t</a> ['<tt class=3D"literal"><b>;</b></tt>'])+ '<tt class=3D"literal"><b>)=
+</b></tt>'</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> '<tt class=3D"literal"><b>(</b></tt>' (<a href=3D"ht=
+tp://dgrok.excastle.com/Grammar.html#TypedConstant" class=3D"complete">Type=
+dConstant</a> ['<tt class=3D"literal"><b>,</b></tt>'])+ '<tt class=3D"liter=
+al"><b>)</b></tt>'</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> '<tt class=3D"literal"><b>(</b></tt>' '<tt class=3D"=
+literal"><b>)</b></tt>'</div>
+<h2 class=3D"complete"><a name=3D"TypeDecl"></a><a href=3D"http://dgrok.exc=
+astle.com/Grammar.html#TypeDecl" class=3D"black">TypeDecl</a> <a href=3D"ht=
+tp://dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#TypeSection" class=3D"complete">TypeSection</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Id=
+ent" class=3D"complete">Ident</a> '<tt class=3D"literal"><b>=3D</b></tt>' [=
+TYPE] <a href=3D"http://dgrok.excastle.com/Grammar.html#Type" class=3D"comp=
+lete">Type</a> (<a href=3D"http://dgrok.excastle.com/Grammar.html#Portabili=
+tyDirective" class=3D"complete">PortabilityDirective</a>)* '<tt class=3D"li=
+teral"><b>;</b></tt>'</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Id=
+ent" class=3D"complete">Ident</a> '<tt class=3D"literal"><b>=3D</b></tt>' C=
+LASS '<tt class=3D"literal"><b>;</b></tt>'</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Id=
+ent" class=3D"complete">Ident</a> '<tt class=3D"literal"><b>=3D</b></tt>' D=
+ISPINTERFACE '<tt class=3D"literal"><b>;</b></tt>'</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Id=
+ent" class=3D"complete">Ident</a> '<tt class=3D"literal"><b>=3D</b></tt>' I=
+NTERFACE '<tt class=3D"literal"><b>;</b></tt>'</div>
+<h2 class=3D"complete"><a name=3D"TypeSection"></a><a href=3D"http://dgrok.=
+excastle.com/Grammar.html#TypeSection" class=3D"black">TypeSection</a> <a h=
+ref=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop">[^]<=
+/a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#ImplementationDecl" class=3D"complete">ImplementationDecl</a>, <=
+a href=3D"http://dgrok.excastle.com/Grammar.html#InterfaceDecl" class=3D"co=
+mplete">InterfaceDecl</a>, <a href=3D"http://dgrok.excastle.com/Grammar.htm=
+l#VisibilitySectionContent" class=3D"complete">VisibilitySectionContent</a>=
+</div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> TYPE (<a href=3D"http://dgrok.excastle.com/Grammar.h=
+tml#TypeDecl" class=3D"complete">TypeDecl</a>)+</div>
+<h2 class=3D"complete"><a name=3D"UnaryOperator"></a><a href=3D"http://dgro=
+k.excastle.com/Grammar.html#UnaryOperator" class=3D"black">UnaryOperator</a=
+> <a href=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop=
+">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#Factor" class=3D"complete">Factor</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> NOT</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> '<tt class=3D"literal"><b>+</b></tt>'</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> '<tt class=3D"literal"><b>-</b></tt>'</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> '<tt class=3D"literal"><b>@</b></tt>'</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> INHERITED</div>
+<h2 class=3D"complete"><a name=3D"Unit"></a><a href=3D"http://dgrok.excastl=
+e.com/Grammar.html#Unit" class=3D"black">Unit</a> <a href=3D"http://dgrok.e=
+xcastle.com/Grammar.html#toc" class=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#Goal" class=3D"complete">Goal</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> UNIT <a href=3D"http://dgrok.excastle.com/Grammar.ht=
+ml#Ident" class=3D"complete">Ident</a> (<a href=3D"http://dgrok.excastle.co=
+m/Grammar.html#PortabilityDirective" class=3D"complete">PortabilityDirectiv=
+e</a>)* '<tt class=3D"literal"><b>;</b></tt>'</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.=
+html#InterfaceSection" class=3D"complete">InterfaceSection</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.=
+html#ImplementationSection" class=3D"complete">ImplementationSection</a></d=
+iv>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.=
+html#InitSection" class=3D"complete">InitSection</a> '<tt class=3D"literal"=
+><b>.</b></tt>'</div>
+<h2 class=3D"complete"><a name=3D"UsedUnit"></a><a href=3D"http://dgrok.exc=
+astle.com/Grammar.html#UsedUnit" class=3D"black">UsedUnit</a> <a href=3D"ht=
+tp://dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#UsesClause" class=3D"complete">UsesClause</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Id=
+ent" class=3D"complete">Ident</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Id=
+ent" class=3D"complete">Ident</a> IN &lt;stringliteral&gt;</div>
+<h2 class=3D"complete"><a name=3D"UsesClause"></a><a href=3D"http://dgrok.e=
+xcastle.com/Grammar.html#UsesClause" class=3D"black">UsesClause</a> <a href=
+=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#ImplementationSection" class=3D"complete">ImplementationSection<=
+/a>, <a href=3D"http://dgrok.excastle.com/Grammar.html#InterfaceSection" cl=
+ass=3D"complete">InterfaceSection</a>, <a href=3D"http://dgrok.excastle.com=
+/Grammar.html#Package" class=3D"complete">Package</a>, <a href=3D"http://dg=
+rok.excastle.com/Grammar.html#Program" class=3D"complete">Program</a></div>=
+</h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> (USES | CONTAINS)</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> (<a href=3D"http://dgrok.excastle.com/Grammar=
+.html#UsedUnit" class=3D"complete">UsedUnit</a> ['<tt class=3D"literal"><b>=
+,</b></tt>'])+ '<tt class=3D"literal"><b>;</b></tt>'</div>
+<h2 class=3D"complete"><a name=3D"VarDecl"></a><a href=3D"http://dgrok.exca=
+stle.com/Grammar.html#VarDecl" class=3D"black">VarDecl</a> <a href=3D"http:=
+//dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#VarSection" class=3D"complete">VarSection</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Id=
+entList" class=3D"complete">IdentList</a> '<tt class=3D"literal"><b>:</b></=
+tt>' <a href=3D"http://dgrok.excastle.com/Grammar.html#Type" class=3D"compl=
+ete">Type</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> (<a href=3D"http://dgrok.excastle.com/Grammar=
+.html#PortabilityDirective" class=3D"complete">PortabilityDirective</a>)*</=
+div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> [ABSOLUTE <a href=3D"http://dgrok.excastle.co=
+m/Grammar.html#Expression" class=3D"complete">Expression</a> | '<tt class=
+=3D"literal"><b>=3D</b></tt>' <a href=3D"http://dgrok.excastle.com/Grammar.=
+html#TypedConstant" class=3D"complete">TypedConstant</a>]</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> (<a href=3D"http://dgrok.excastle.com/Grammar=
+.html#PortabilityDirective" class=3D"complete">PortabilityDirective</a>)*</=
+div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> '<tt class=3D"literal"><b>;</b></tt>'</div>
+<h2 class=3D"complete"><a name=3D"VariantGroup"></a><a href=3D"http://dgrok=
+.excastle.com/Grammar.html#VariantGroup" class=3D"black">VariantGroup</a> <=
+a href=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop">[=
+^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#VariantSection" class=3D"complete">VariantSection</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Ex=
+pressionList" class=3D"complete">ExpressionList</a> '<tt class=3D"literal">=
+<b>:</b></tt>'</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> '<tt class=3D"literal"><b>(</b></tt>'</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> (<a href=3D"http://dgrok.excastle.com/Grammar.html#F=
+ieldDecl" class=3D"complete">FieldDecl</a>)*</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> [<a href=3D"http://dgrok.excastle.com/Grammar=
+.html#VariantSection" class=3D"complete">VariantSection</a>]</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> '<tt class=3D"literal"><b>)</b></tt>' ['<tt c=
+lass=3D"literal"><b>;</b></tt>']</div>
+<h2 class=3D"complete"><a name=3D"VariantSection"></a><a href=3D"http://dgr=
+ok.excastle.com/Grammar.html#VariantSection" class=3D"black">VariantSection=
+</a> <a href=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"backto=
+top">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#RecordType" class=3D"complete">RecordType</a>, <a href=3D"http:/=
+/dgrok.excastle.com/Grammar.html#VariantGroup" class=3D"complete">VariantGr=
+oup</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> CASE [<a href=3D"http://dgrok.excastle.com/Grammar.h=
+tml#Ident" class=3D"complete">Ident</a> '<tt class=3D"literal"><b>:</b></tt=
+>'] <a href=3D"http://dgrok.excastle.com/Grammar.html#QualifiedIdent" class=
+=3D"complete">QualifiedIdent</a> OF</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> (<a href=3D"http://dgrok.excastle.com/Grammar=
+.html#VariantGroup" class=3D"complete">VariantGroup</a>)+</div>
+<h2 class=3D"complete"><a name=3D"VarSection"></a><a href=3D"http://dgrok.e=
+xcastle.com/Grammar.html#VarSection" class=3D"black">VarSection</a> <a href=
+=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#ImplementationDecl" class=3D"complete">ImplementationDecl</a>, <=
+a href=3D"http://dgrok.excastle.com/Grammar.html#InterfaceDecl" class=3D"co=
+mplete">InterfaceDecl</a></div></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> (VAR | THREADVAR) (<a href=3D"http://dgrok.excastle.=
+com/Grammar.html#VarDecl" class=3D"complete">VarDecl</a>)+</div>
+<h2 class=3D"complete"><a name=3D"Visibility"></a><a href=3D"http://dgrok.e=
+xcastle.com/Grammar.html#Visibility" class=3D"black">Visibility</a> <a href=
+=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#VisibilitySection" class=3D"complete">VisibilitySection</a></div=
+></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> STRICT PRIVATE</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> STRICT PROTECTED</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> PRIVATE</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> PROTECTED</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> PUBLIC</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> PUBLISHED</div>
+<h2 class=3D"complete"><a name=3D"VisibilitySection"></a><a href=3D"http://=
+dgrok.excastle.com/Grammar.html#VisibilitySection" class=3D"black">Visibili=
+tySection</a> <a href=3D"http://dgrok.excastle.com/Grammar.html#toc" class=
+=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#ClassHelperType" class=3D"complete">ClassHelperType</a>, <a href=
+=3D"http://dgrok.excastle.com/Grammar.html#ClassType" class=3D"complete">Cl=
+assType</a>, <a href=3D"http://dgrok.excastle.com/Grammar.html#RecordHelper=
+Type" class=3D"complete">RecordHelperType</a>, <a href=3D"http://dgrok.exca=
+stle.com/Grammar.html#RecordType" class=3D"complete">RecordType</a></div></=
+h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> [<a href=3D"http://dgrok.excastle.com/Grammar.html#V=
+isibility" class=3D"complete">Visibility</a>]</div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">&nbsp;&nbsp;</tt> (<a href=3D"http://dgrok.excastle.com/Grammar=
+.html#VisibilitySectionContent" class=3D"complete">VisibilitySectionContent=
+</a>)*</div>
+<h2 class=3D"complete"><a name=3D"VisibilitySectionContent"></a><a href=3D"=
+http://dgrok.excastle.com/Grammar.html#VisibilitySectionContent" class=3D"b=
+lack">VisibilitySectionContent</a> <a href=3D"http://dgrok.excastle.com/Gra=
+mmar.html#toc" class=3D"backtotop">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#VisibilitySection" class=3D"complete">VisibilitySection</a></div=
+></h2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Fi=
+eldSection" class=3D"complete">FieldSection</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Me=
+thodOrProperty" class=3D"complete">MethodOrProperty</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Co=
+nstSection" class=3D"complete">ConstSection</a></div>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> <a href=3D"http://dgrok.excastle.com/Grammar.html#Ty=
+peSection" class=3D"complete">TypeSection</a></div>
+<h2 class=3D"complete"><a name=3D"WhileStatement"></a><a href=3D"http://dgr=
+ok.excastle.com/Grammar.html#WhileStatement" class=3D"black">WhileStatement=
+</a> <a href=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"backto=
+top">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#SimpleStatement" class=3D"complete">SimpleStatement</a></div></h=
+2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> WHILE <a href=3D"http://dgrok.excastle.com/Grammar.h=
+tml#Expression" class=3D"complete">Expression</a> DO [<a href=3D"http://dgr=
+ok.excastle.com/Grammar.html#Statement" class=3D"complete">Statement</a>]</=
+div>
+<h2 class=3D"complete"><a name=3D"WithStatement"></a><a href=3D"http://dgro=
+k.excastle.com/Grammar.html#WithStatement" class=3D"black">WithStatement</a=
+> <a href=3D"http://dgrok.excastle.com/Grammar.html#toc" class=3D"backtotop=
+">[^]</a>
+<div class=3D"backlinks">Backlinks: <a href=3D"http://dgrok.excastle.com/Gr=
+ammar.html#SimpleStatement" class=3D"complete">SimpleStatement</a></div></h=
+2>
+<div class=3D"normal"><span class=3D"completed">(Completed)</span> <tt clas=
+s=3D"arrow">-&gt;</tt> WITH <a href=3D"http://dgrok.excastle.com/Grammar.ht=
+ml#ExpressionList" class=3D"complete">ExpressionList</a> DO [<a href=3D"htt=
+p://dgrok.excastle.com/Grammar.html#Statement" class=3D"complete">Statement=
+</a>]</div>
+</body></html>
+------MultipartBoundary--iJshc6oh8o8eVcyIactbQFqEZ65d9hrhSokT55NOaL----
+Content-Type: text/css
+Content-Transfer-Encoding: quoted-printable
+Content-Location: http://dgrok.excastle.com/Grammar.css
+
+@charset "windows-1252";
+
+body, td, th, div.backlinks { font-family: Tahoma; font-size: 9pt; font-wei=
+ght: normal; }
+
+td { padding-right: 8pt; }
+
+th { background-color: rgb(187, 187, 212); }
+
+h2 { margin-top: 12pt; margin-bottom: 5pt; }
+
+tt { font-size: 11pt; }
+
+p, div { margin-left: 10pt; }
+
+p { margin-top: 5pt; margin-bottom: 5pt; }
+
+div { margin-top: 0pt; margin-bottom: 0pt; }
+
+.toc { border: 1px solid rgb(153, 153, 102); background-color: rgb(255, 255=
+, 224); padding: 4pt 6pt 6pt; }
+
+.grid { border-left: 1px solid rgb(153, 153, 102); border-top: 1px solid rg=
+b(153, 153, 102); }
+
+.grid td, .grid th { border-right: 1px solid rgb(153, 153, 102); border-bot=
+tom: 1px solid rgb(153, 153, 102); padding-left: 3px; padding-right: 2px; }
+
+a.complete:link, a.complete:visited, .backlinks a.complete:link, .backlinks=
+ a.complete:visited { color: rgb(153, 153, 204); text-decoration: none; bor=
+der-bottom: 1px solid rgb(153, 153, 204); }
+
+a.started:link, a.started:visited, .backlinks a.started:link, .backlinks a.=
+started:visited { color: rgb(102, 102, 255); text-decoration: none; border-=
+bottom: 1px dashed rgb(102, 102, 255); }
+
+.inprogress { color: rgb(208, 208, 208); }
+
+.completed { color: rgb(0, 0, 204); }
+
+a:link, a:visited, .backlinks a:link, .backlinks a:visited { color: rgb(153=
+, 187, 153); text-decoration: none; }
+
+a.black:link, a.black:visited { color: rgb(0, 0, 0); }
+
+a:hover, .backlinks a:hover { color: rgb(255, 0, 0); }
+
+a.complete:hover, .backlinks a.complete:hover { color: rgb(255, 0, 0); bord=
+er-bottom: 1px solid rgb(255, 0, 0); }
+
+a.started:hover, .backlinks a.started:hover { color: rgb(255, 0, 0); border=
+-bottom: 1px dashed rgb(255, 0, 0); }
+
+.literal { background-color: rgb(224, 224, 224); }
+
+.unknownRule, a.unknownRule:link, a.unknownRule:visited { background-color:=
+ rgb(255, 0, 0); color: rgb(255, 255, 255); }
+
+div.backlinks { margin-left: 0pt; margin-bottom: 5pt; color: rgb(0, 0, 0); =
+}
+
+.nocode { background-color: rgb(221, 221, 244); }
+
+.notests { background-color: rgb(255, 204, 0); }
+
+a.backtotop { text-decoration: none; }
+
+a.backtotop:link, a.backtotop:visited { color: rgb(244, 244, 244); }
+
+a.backtotop:hover { color: rgb(255, 0, 0); }
+------MultipartBoundary--iJshc6oh8o8eVcyIactbQFqEZ65d9hrhSokT55NOaL------

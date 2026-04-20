@@ -1,0 +1,204 @@
+#name
+IfDefInUsesClause
+#description
+{$IFDEF} wrapping a unit in a uses clause. UnitTests is not defined,
+so TestFramework should be removed by the preprocessor. The parser
+should see only SysUtils and Classes.
+#data
+unit U;
+interface
+uses
+  SysUtils,
+  {$IFDEF UnitTests}
+  TestFramework,
+  {$ENDIF}
+  Classes;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntUses
+				ntUsedUnit anName="SysUtils"
+					ntQualifiedIdentifier anName="SysUtils"
+				ntUsedUnit anName="Classes"
+					ntQualifiedIdentifier anName="Classes"
+		ntImplementation
+
+
+#name
+IfDefInStatementList
+#description
+{$IFDEF} wrapping a statement inside a begin/end block. Unlike {$I},
+{$IFDEF} CAN appear mid-statement-block because the code is still in
+the same source file. DEBUG is not defined, so the WriteLn is removed.
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  X := Y;
+  {$IFDEF DEBUG}
+  WriteLn('debug');
+  {$ENDIF}
+  A := B;
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntAssign
+							ntParticle
+								ntIdentifier anName="X"
+							ntParticle
+								ntIdentifier anName="Y"
+					ntStatement
+						ntAssign
+							ntParticle
+								ntIdentifier anName="A"
+							ntParticle
+								ntIdentifier anName="B"
+
+
+#name
+IfDefElseInStatementList
+#description
+{$IFDEF}/{$ELSE}/{$ENDIF} inside begin/end. DEBUG is not defined, so
+the ELSE branch is active. The parser should see only WriteLn('release').
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  {$IFDEF DEBUG}
+  WriteLn('debug');
+  {$ELSE}
+  WriteLn('release');
+  {$ENDIF}
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntParticle
+							ntIdentifier anName="WriteLn"
+							ntParticle
+
+
+#name
+IfNDefActiveInStatementList
+#description
+{$IFNDEF} with an undefined symbol. RELEASE is not in the default
+defines, so IFNDEF evaluates true and the content is kept. Unlike
+{$I}/{$INCLUDE}, {$IFDEF}/{$IFNDEF} may appear mid-statement-block
+because the code remains in the same source file.
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  {$IFNDEF RELEASE}
+  WriteLn('not release');
+  {$ENDIF}
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntParticle
+							ntIdentifier anName="WriteLn"
+							ntParticle
+
+
+#name
+NestedIfDefRemoved
+#description
+Nested {$IFDEF} blocks, both undefined. Only the non-conditional
+statement survives. Validates that the preprocessor correctly tracks
+nested conditional frames.
+#data
+unit U;
+interface
+implementation
+procedure P;
+begin
+  X := Y;
+  {$IFDEF DEBUG}
+  WriteLn('outer');
+  {$IFDEF VERBOSE}
+  WriteLn('inner');
+  {$ENDIF}
+  {$ENDIF}
+end;
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation
+			ntMethod anKind="avProcedure"
+				ntQualifiedIdentifier anName="P"
+				ntStatementList
+					ntStatement
+						ntAssign
+							ntParticle
+								ntIdentifier anName="X"
+							ntParticle
+								ntIdentifier anName="Y"
+
+
+#name
+IfDefAroundMethod
+#description
+Entire procedure wrapped in {$IFDEF DEBUG}. DEBUG is not defined, so
+the whole procedure is removed. The implementation section is empty.
+#data
+unit U;
+interface
+implementation
+{$IFDEF DEBUG}
+procedure DebugProc;
+begin
+  WriteLn('debug');
+end;
+{$ENDIF}
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+		ntImplementation

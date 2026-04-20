@@ -81,6 +81,9 @@ type
 		procedure TestUnterminatedAnsiCommentEOF;
 		procedure TestUnterminatedBorCommentEOF;
 		procedure TestIdentifierEscapedKeywordWithAmpersand;
+
+		// BOM handling
+		procedure TestBomIsSkippedOrTreatedAsTrivia;
 	end;
 
 	TInputStreamTests = class(TTestCase)
@@ -356,7 +359,7 @@ const
 var
 	parser: TDelphiParser;
 	tokens1, tokens2: TObjectList;
-	tree: TSyntaxNode2;
+	tree: TSyntaxTree;
 
    function ExtractUnitName(const Root: TSyntaxNode2): string;
    var
@@ -410,7 +413,7 @@ begin
 
 			tree := parser.Parse(tokens1);
 			try
-				CheckEqualsString(FIRST_UNIT_NAME, ExtractUnitName(tree),
+				CheckEqualsString(FIRST_UNIT_NAME, ExtractUnitName(tree.Root),
 					'First parse should capture the correct unit name');
 			finally
 				tree.Free;
@@ -418,7 +421,7 @@ begin
 
 			tree := parser.Parse(tokens2);
 			try
-				CheckEqualsString(SECOND_UNIT_NAME, ExtractUnitName(tree),
+				CheckEqualsString(SECOND_UNIT_NAME, ExtractUnitName(tree.Root),
 					'Reusing a parser instance should reset token state between parses');
 			finally
 				tree.Free;
@@ -2679,6 +2682,31 @@ begin
 		CheckTrue(foundString, 'Should find string literal with tab');
 	finally
 		tokens.Free; // TObjectList automatically frees owned objects
+	end;
+end;
+
+procedure TDelphiTokenizerTests.TestBomIsSkippedOrTreatedAsTrivia;
+var
+	tokens: TObjectList;
+	firstToken: TSyntaxToken;
+begin
+//	UTF-8 BOM decodes to U+FEFF in UTF-16. The tokenizer should handle it gracefully. 
+//		Either skip it, or attach it as trivia.
+//	Rather than, you know, crashing on the unknown chacters ?>'
+	tokens := TObjectList.Create(True);
+	try
+		TDelphiTokenizer.Tokenize(#$FEFF + 'unit Test;', tokens);
+
+		// Should produce at least: "unit", "Test", ";", EOF
+		Check(tokens.Count >= 4,
+				'BOM-prefixed source should tokenize normally, got ' + IntToStr(tokens.Count) + ' tokens');
+
+		firstToken := tokens[0] as TSyntaxToken;
+		// The first real token should be "unit", not a BOM error token
+		CheckEquals(Ord(ptUnit), Ord(firstToken.Kind),
+				'First token after BOM should be ptUnit');
+	finally
+		tokens.Free;
 	end;
 end;
 

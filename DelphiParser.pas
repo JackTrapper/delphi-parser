@@ -7,18 +7,38 @@ Sample Usage
 ============
 
 	var
-		root: TSyntaxNode2;
+		tree: TSyntaxTree;
 		tree: string;
 
 		root := TDelphiParser.ParseText(moCode.Text, '');
 
-		tree := TSyntaxNode2.DumpTree(root);
+		tree := TSyntaxNode2.DumpTree(tree.Root);
 
 
-
-
-Note: It is not an Abstract Syntax Tree (AST), as it preserves trivia, whitespace, and tokens.
+Note: It is not an Abstract Syntax Tree (AST). 
+		It is a Syntax Tree; as it preserves trivia, whitespace, and tokens.
 		This is useful for linters that want to read comments
+
+This is what the parser returns to you. It contains the tree (.Root),
+and a memory area for all the nodes and tokens.
+
+   Compilation
+   │
+   ├─ SyntaxTree (one per source file)
+   │  ├─ Node Arena
+   │  ├─ Token Arena
+   │  └─ Root SyntaxNode
+   │
+   ├─ SemanticModel (per SyntaxTree)
+   │  ├─ BindingTable
+   │  ├─ TypeTable
+   │  ├─ ConstantTable
+   │  └─ ConversionTable
+   │
+   └─ FlowAnalysis (per method or region)
+        └─ FlowTable
+
+
 
 Example
 =======
@@ -514,50 +534,16 @@ type
 		property AsToken: TSyntaxToken	read get_AsToken;
 	end;
 
-{
-This is what the parser returns to you. It contains the tree (.Root),
-and a memory area for all the nodes and tokens.
-
-   Compilation
-   │
-   ├─ SyntaxTree (one per source file)
-   │  ├─ Node Arena
-   │  ├─ Token Arena
-   │  └─ Root SyntaxNode
-   │
-   ├─ SemanticModel (per SyntaxTree)
-   │  ├─ BindingTable
-   │  ├─ TypeTable
-   │  ├─ ConstantTable
-   │  └─ ConversionTable
-   │
-   └─ FlowAnalysis (per method or region)
-        └─ FlowTable
-}
-	TSyntaxTree = class
-	private
-		FRoot: TSyntaxNode2;
-		FTokenArena: TObjectList; // owns the list of TSyntaxToken objects
-		FNodeArena:  TObjectList; // owns the list of TSyntaxNode2 objects
-	public
-		constructor Create;
-		destructor Destroy; override;
-	end;
-
-
 	// It's called TSyntaxNode2 because TSyntaxNode is already taken by DelphiAST
 	TSyntaxNode2 = class
 	private
 		FNodeType: TSyntaxNodeType;
-		FChildNodes: TObjectList<TSyntaxNodeOrToken>;
-		FAttributes: TDictionary<TAttributeName, string>;
+		FChildNodes: TObjectList<TSyntaxNodeOrToken>;		// owns the child objects
+		FAttributes: TDictionary<TAttributeName, string>;  // e.g. akKind="isdefault"
 		FFilename: string;
 
 		FWidth: Integer;
 		FFullWidth: Integer;
-
-		//FCurrentLine: Integer;
-		//FCurrentColumn: Integer;
 
 		procedure AddChild(ChildNode: TSyntaxNode2); overload;
 		procedure AddChild(ChildNode: TSyntaxToken); overload;
@@ -591,6 +577,18 @@ and a memory area for all the nodes and tokens.
 
 		property Width: Integer read FWidth;			// Full width minus trivia (just the token/node text)
 		property FullWidth: Integer read FFullWidth;	// Includes leading + trailing trivia
+	end;
+
+	TSyntaxTree = class
+	private
+		FRoot: TSyntaxNode2;
+		FTokenArena: TObjectList; // owns the list of TSyntaxToken objects
+		FNodeArena:  TObjectList; // owns the list of TSyntaxNode2 objects
+	public
+		constructor Create(const ARoot: TSyntaxNode2);
+		destructor Destroy; override;
+
+		property Root: TSyntaxNode2 read FRoot;
 	end;
 
 {
@@ -665,7 +663,7 @@ and a memory area for all the nodes and tokens.
 		// ***********************************************************************
 
 		// Main parsing function.
-		function ParseCore: TSyntaxNode2; virtual; //as a nice way to split plumbing from grammer
+		function ParseCore: TSyntaxTree; virtual; //as a nice way to split plumbing from grammer
 
 
 
@@ -971,15 +969,16 @@ and a memory area for all the nodes and tokens.
 		constructor Create;
 		destructor Destroy; override;
 
-		class function ParseText(const Text: UnicodeString; FilePath: string): TSyntaxNode2;
-
-		function ParseFile(FilePath: string): TSyntaxNode2;
-		function ParseStream(SourceStream: ISequentialStream; FilePath: string; CodePage: Word): TSyntaxNode2;
+		// The main way it will be used
+		class function ParseText(const Text: UnicodeString; FilePath: string): TSyntaxTree;
 
 		// Parse using the list of tokens. Note: the parser takes ownership of the tokens
-		function Parse(const Tokens: TList): TSyntaxNode2;
+		function Parse(const Tokens: TList): TSyntaxTree;
+		function ParseFile(FilePath: string): TSyntaxTree;
+		function ParseStream(SourceStream: ISequentialStream; FilePath: string; CodePage: Word): TSyntaxTree;
 
-		procedure ResetComplierDirectives;
+		procedure ResetComplierDirectives; //to that of the current compiler
+
 
 		property CompilerDirectives: TStrings read FCompilerDirectives;
 
@@ -1013,7 +1012,8 @@ uses
 	TypInfo,
 	Windows,
 {$IFDEF UnitTests}DelphiParserTests,{$ENDIF}
-	Avatar.Exceptions;
+	Avatar.Exceptions,
+	DelphiPreprocessor;
 
 resourcestring
 	SExpected	= '''%s'' expected found ''%s''';
@@ -1249,25 +1249,33 @@ ntPropertyDirective anKind=
 	end;
 end;
 
-function TDelphiParser.ParseStream(SourceStream: ISequentialStream; FilePath: string; CodePage: Word): TSyntaxNode2;
+function TDelphiParser.ParseStream(SourceStream: ISequentialStream; FilePath: string; CodePage: Word): TSyntaxTree;
 var
 	tokenizer: TDelphiTokenizer;
+	preprocessor: TDelphiPreprocessor;
 	currentToken: TSyntaxToken;
 	tokens: TObjectList;
 begin
 {
-	Assigns the source stream to the lexer, and calls the protected ParseFile method.
+	Pipeline:  parser  <--  preprocessor  <--  tokenizer  <--  stream
+
+	The tokenizer reads characters from the stream and emits tokens.
+	The preprocessor reads tokens from the tokenizer and handles conditional compilation
+	($IFDEF, $ELSE, $ENDIF, etc.), demoting directives and disabled
+	content to trivia before the parser sees them.
+	The parser collects the preprocessed tokens into FTokens and builds the tree.
 }
-	// Tokenize the input and put the tokens into our list
 	tokens := TObjectList.Create(False); //don't own them, they go into the tree
 	try
 		tokenizer := TDelphiTokenizer.Create(SourceStream, CodePage);
 		try
-			// Set the compiler defined (e.g. IFDEF $UNICODE)
-			tokenizer.CompilerDirectives.Assign(Self.FCompilerDirectives);
-
-			while tokenizer.NextToken({out}currentToken) do
-				tokens.Add(currentToken);
+			preprocessor := TDelphiPreprocessor.Create(tokenizer, Self.FCompilerDirectives);
+			try
+				while preprocessor.NextToken({out}currentToken) do
+					tokens.Add(currentToken);
+			finally
+				preprocessor.Free;
+			end;
 		finally
 			tokenizer.Free;
 		end;
@@ -1927,7 +1935,7 @@ begin
 //	DoMessage(Error, errToken.Width, errToken.FullWidth);
 end;
 
-function TDelphiParser.Parse(const Tokens: TList): TSyntaxNode2;
+function TDelphiParser.Parse(const Tokens: TList): TSyntaxTree;
 var
 	i: Integer;
 	token: TSyntaxToken;
@@ -1946,7 +1954,7 @@ begin
 		FTokens.Add(token);
 	end;
 
-	Result := ParseCore;
+	Result := Self.ParseCore;
 end;
 
 function TDelphiParser.ParseMethodOrProperty: TSyntaxNode2;
@@ -2043,60 +2051,100 @@ FieldDecl
 		Result.AddChild(EatToken(ptSemiColon));
 end;
 
-function TDelphiParser.ParseCore: TSyntaxNode2;
+function TDelphiParser.ParseCore: TSyntaxTree;
 var
+	root: TSyntaxNode2;
 	node: TSyntaxNode2;
 	trailing: TSyntaxNode2;
+
+	procedure CollectNodes(run: TSyntaxNode2);
+	var
+		nodeOrToken: TSyntaxNodeOrToken;
+	begin
+		{
+			Walk the tree:
+				put tokens in FTokenArena
+				put nodes  in FNodeArena
+		}
+
+		// We start by being passed a node
+		Result.FNodeArena.Add(run);
+
+		// Put children into the arena
+		for nodeOrToken in run.ChildNodes do
+		begin
+			if nodeOrToken.IsToken then
+				Result.FTokenArena.Add(nodeOrToken.AsToken)
+			else if nodeOrToken.IsNode then
+				CollectNodes(nodeOrToken.AsNode)
+			else
+   			raise Exception.Create('Neither node nor token');
+		end;
+	end;
 begin
 {
-	Parse the tokens contained in FTokens and returns it as a syntax Tree
+Parse the tokens contained in FTokens and returns it as a syntax Tree (TSyntaxTree)
 
-	- CompilationUnit
-		- unit
+SyntaxTree has to "arena" objects that hold, and own, the tokens and nodes in the tree.
+This way nodes can be removed from the tree, but still remain valid for any outstanding references.
+And it lets us graft trees later and not worry about memory management.
+And plus the tokens and nodes are cached and shared; so we can't let anyone else
+claim ownership of them, because we own them in the arena.
 
-	This part is oriented at the official grammar of Delphi 4
-	and parialy based on Robert Zierers Delphi grammar.
-	For more information about Delphi grammars take a look at:
-		http://www.stud.mw.tu-muenchen.de/~rz1/Grammar.html
-		https://archive.ph/2ytar
-}
+Result:
 
-	// The tree is rooted on a "CompilationUnit" node.
-	Result := TSyntaxNode2.Create(ntCompilationUnit);
+	tree: TSyntaxTree
+		- private FTokenArena: TObjectList(True)
+		- private FNodeArena:  TObjectList(True)
+		- property RootNode --> TSyntaxNode(ntCompilationUnit)
+			- ntUnitDeclaration
 
-	NextToken; // advance to the first token
+RootNode returns you the root node of the tree. The root node is of type ntComplationUnit.
 
-{
 ntCompilationUnit is the root container for whatever the parser produced.
+
+It is the unit of work you asked it to perform.
 
 This has a few features:
 
 - Uniform root: Every syntax tree, whether it's a full unit with interface/implementation,
-		or just a single expression—has one root node type.
+		or just a single expression with, both have just one root node type.
 		That means tools (traversals, visitors, rewriters) don’t need special cases
 		like "sometimes the root is a UnitDeclaration, sometimes it's just an Expression."
 - Global trivia: Roslyn sticks file-level comments, #pragmas, #if/#endif, extern alias,
 		and using directives at the root.
 		Delphi equivalents could be compiler directives, attributes,
 		or even stray comments before the unit keyword.
-- EndOfFile token: the EOF sentinel always lives under the compilation root.
+- EndOfFile token: the EOF sentinel always lives under the compilation root
 - Extensibility: When the language adds new top-level constructs
 		(e.g. top-level statements in C# 9, Delphi's program vs. unit headers),
 		you don’t have to change the concept of the root,
 		it just holds whatever is allowed at top level.
+
+This part is oriented at the official grammar of Delphi 4
+and parialy based on Robert Zierers Delphi grammar.
+For more information about Delphi grammars take a look at:
+		http://www.stud.mw.tu-muenchen.de/~rz1/Grammar.html
+		https://archive.ph/2ytar
 }
+
+
+	// The tree is rooted on a "CompilationUnit" node.
+	root := TSyntaxNode2.Create(ntCompilationUnit);
+
+	NextToken; // advance to the first token
 
 	// Check the file type directive
 	case CurrentTokenGenID of
-	ptUnit:		node := ParseUnit;		// e.g. unit SimpleParser;
-	ptProgram:	node := ParseProgramFile;			// e.g. program SimpleParser;
-	ptPackage:	node := ParsePackage;			// e.g. package SimpleParser;
-	ptLibrary:	node := ParseLibraryFile;			// e.g. library SimpleParser;
+	ptUnit:		node := ParseUnit;			// e.g. unit SimpleParser;
+	ptProgram:	node := ParseProgramFile;	// e.g. program SimpleParser;
+	ptPackage:	node := ParsePackage;		// e.g. package SimpleParser;
+	ptLibrary:	node := ParseLibraryFile;	// e.g. library SimpleParser;
 	else
 		node := ParseScriptFile; // for arbitrary expressions
 	end;
 
-	Result.AddChild(node);
+	root.AddChild(node);
 
 	// If parsing ended early, preserve ownership of all remaining real tokens.
 	if CurrentTokenKind <> ptEof then
@@ -2105,13 +2153,19 @@ This has a few features:
 		trailing.Attributes[anName] := 'Unexpected trailing tokens';
 		while CurrentTokenKind <> ptEof do
 			trailing.AddChild(EatToken); // consume real token, attach to tree
-		Result.AddChild(trailing);
+		root.AddChild(trailing);
 	end;
 
-	Result.AddChild(EatToken(ptEOF)); // consume/attach real EOF token
+	root.AddChild(EatToken(ptEOF)); // consume/attach real EOF token
+
+	// Prepare the SyntaxTree return (it holds the arenas)
+	Result := TSyntaxTree.Create(root);
+
+	// Collect all tokens and nodes into the arena.
+	CollectNodes(root);
 end;
 
-function TDelphiParser.ParseFile(FilePath: string): TSyntaxNode2;
+function TDelphiParser.ParseFile(FilePath: string): TSyntaxTree;
 
 	function DetectEncodingFromStream(AStream: TStream): TEncoding;
 	var
@@ -2122,7 +2176,7 @@ function TDelphiParser.ParseFile(FilePath: string): TSyntaxNode2;
 		// Remember the current stream position so we can restore it later
 		LPosition := AStream.Position;
 
-		// Read up to 4 bytes (max BOM length in Delphi’s detection logic)
+		// Read up to 4 bytes (max BOM length in Delphi's detection logic)
 		SetLength(LBuffer, 4);
 		FillChar(LBuffer[0], 4, 0);
 		AStream.ReadBuffer(LBuffer[0], 4);
@@ -2152,7 +2206,7 @@ begin
 	Result := Self.ParseStream(stm, FilePath, encoding.CodePage);
 end;
 
-class function TDelphiParser.ParseText(const Text: UnicodeString; FilePath: string): TSyntaxNode2;
+class function TDelphiParser.ParseText(const Text: UnicodeString; FilePath: string): TSyntaxTree;
 var
 	s: TStream;
 	stm: ISequentialStream;
@@ -6028,7 +6082,6 @@ function TDelphiParser.ParseTypeDeclaration: TSyntaxNode2;
 
 var
 	typeParams: TSyntaxNode2;
-	missingEquals: TSyntaxToken;
 	attributeNode: TSyntaxNode2;
 
 	function IsPortabilityDirectiveToken(k: TptTokenKind): Boolean;
@@ -6105,18 +6158,7 @@ ntTypeDecl(@anName="TSpecial")
 		Result.AddChild(typeParams);
 	end;
 
-	// ParseTypeParam might have eaten a ">=" for us, rather than the usual ">".
-	// Which means we require an "=" here, but no "=" token to eat.
-	// We need some way to know...that the previous token was a ptGreaterThanEquals
-	if PeekToken(-1).Kind = ptGreaterThanEquals then
-	begin
-		// TODO: Add a missing equals token
-		missingEquals := TSyntaxToken.Create(ptEquals, -1, -1, '=');
-		missingEquals.IsMissing := True;
-		Result.AddChild(missingEquals);
-	end
-	else
-		Result.AddChild(EatToken(ptEquals));
+	Result.AddChild(EatToken(ptEquals));
 
 	// Restricted forward forms: "= class ;" | "= interface ;" | "= dispinterface ;"
 	case CurrentTokenKind of
@@ -7590,6 +7632,9 @@ Example
 end;
 
 function TDelphiParser.ParseTypeParams: TSyntaxNode2;
+var
+	geToken: TSyntaxToken;
+	equalsToken: TSyntaxToken;
 begin
 {
 Returns
@@ -7661,9 +7706,17 @@ Example
 
 		ParseTypeParams reads up until the final > or >=
 }
-	// Handle the >= quirk
+	// Handle the >= quirk: the tokenizer's maximal-munch produces a single
+	// ptGreaterThanEquals when ">" is immediately followed by "=". In a generic
+	// declaration the ">" closes the type params and the "=" begins the type
+	// definition, so we split the token and inject the "=" back into the stream.
 	if CurrentTokenKind = ptGreaterThanEquals then
-		Result.AddChild(EatToken(ptGreaterThanEquals))
+	begin
+		geToken := EatToken(ptGreaterThanEquals);
+		TSyntaxToken.SplitGreaterThanEquals(geToken, {out}equalsToken);
+		Result.AddChild(geToken); // now ptGreaterThan
+		FTokens.Insert(FCurrent, equalsToken); // caller will see ptEquals
+	end
 	else
 	begin
 		// The normal syntax
@@ -8755,7 +8808,7 @@ begin
 
 	FNodeType := SyntaxNodeType;
 	FAttributes := TDictionary<TAttributeName, string>.Create;
-	FChildNodes := TObjectList<TSyntaxNodeOrToken>.Create(True);
+	FChildNodes := TObjectList<TSyntaxNodeOrToken>.Create(True); //owns the child objects
 end;
 
 destructor TSyntaxNode2.Destroy;
@@ -8799,10 +8852,7 @@ class function TSyntaxNode2.DumpPascal(Node: TSyntaxNode2; ShowParserTags: Boole
 
 	function DumpTrivia(const Current: TSyntaxNode2): string;
 	var
-		i: Integer;
 		child: TSyntaxNodeOrToken;
-		token: TSyntaxToken;
-		run: TSyntaxNodeOrToken;
 	begin
 		Result := '';
 
@@ -9173,7 +9223,7 @@ end;
 
 destructor TSyntaxNodeOrToken.Destroy;
 begin
-	FreeAndNil(FObject);
+//	FreeAndNil(FObject); now held in the areana
 
 	inherited;
 end;
@@ -9228,20 +9278,20 @@ end;
 
 { TSyntaxTree }
 
-constructor TSyntaxTree.Create;
+constructor TSyntaxTree.Create(const ARoot: TSyntaxNode2);
 begin
 	inherited Create;
 
-	FRoot := nil;
+	FRoot := ARoot;
 	FTokenArena := TObjectList.Create(True); //
 	FNodeArena := TObjectList.Create(True);
 end;
 
 destructor TSyntaxTree.Destroy;
 begin
-	FreeAndNil(FRoot);
-	FreeAndNil(FTokenArena);
+	FRoot := nil; // root is owned by FNodeArena; do not free separately
 	FreeAndNil(FNodeArena);
+	FreeAndNil(FTokenArena);
 
 	inherited;
 end;

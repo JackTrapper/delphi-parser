@@ -1,0 +1,1500 @@
+From: <Saved by Blink>
+Snapshot-Content-Location: https://rdambrosio016.github.io/rust/2020/09/18/pure-ast-based-linting-sucks.html
+Subject: Pure AST based linting sucks | RDambrosio
+Date: Sun, 10 Nov 2024 13:04:08 -0500
+MIME-Version: 1.0
+Content-Type: multipart/related;
+	type="text/html";
+	boundary="----MultipartBoundary--BvmhPnNuPDsRWi8duyuB78O5cdfaIcBCbwkRkxQsjR----"
+
+
+------MultipartBoundary--BvmhPnNuPDsRWi8duyuB78O5cdfaIcBCbwkRkxQsjR----
+Content-Type: text/html
+Content-ID: <frame-5139DDCCD98FBCAA285B301C58B6EF26@mhtml.blink>
+Content-Transfer-Encoding: quoted-printable
+Content-Location: https://rdambrosio016.github.io/rust/2020/09/18/pure-ast-based-linting-sucks.html
+
+<!DOCTYPE html><html lang=3D"en"><head><meta http-equiv=3D"Content-Type" co=
+ntent=3D"text/html; charset=3DUTF-8">
+ =20
+  <meta http-equiv=3D"X-UA-Compatible" content=3D"IE=3Dedge">
+  <meta name=3D"viewport" content=3D"width=3Ddevice-width, initial-scale=3D=
+1"><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Pure AST based linting sucks | RDambrosio</title>
+<meta name=3D"generator" content=3D"Jekyll v3.9.2">
+<meta property=3D"og:title" content=3D"Pure AST based linting sucks">
+<meta property=3D"og:locale" content=3D"en_US">
+<meta name=3D"description" content=3D"First blog post! For this blog post i=
+ would like to talk about various issues around linters which exclusively u=
+se ASTs (Abstract Syntax Tree) for linting source code, and a tree represen=
+tation you may not know about. Over many months of working on a JavaScript =
+linter in rust called rslint i have encountered numerous issues and have ex=
+plored many concepts which i feel i should share to offer insights into why=
+ i believe purely AST based linting is unfit for complex linters.">
+<meta property=3D"og:description" content=3D"First blog post! For this blog=
+ post i would like to talk about various issues around linters which exclus=
+ively use ASTs (Abstract Syntax Tree) for linting source code, and a tree r=
+epresentation you may not know about. Over many months of working on a Java=
+Script linter in rust called rslint i have encountered numerous issues and =
+have explored many concepts which i feel i should share to offer insights i=
+nto why i believe purely AST based linting is unfit for complex linters.">
+<link rel=3D"canonical" href=3D"https://rdambrosio016.github.io/rust/2020/0=
+9/18/pure-ast-based-linting-sucks.html">
+<meta property=3D"og:url" content=3D"https://rdambrosio016.github.io/rust/2=
+020/09/18/pure-ast-based-linting-sucks.html">
+<meta property=3D"og:site_name" content=3D"RDambrosio">
+<meta property=3D"og:type" content=3D"article">
+<meta property=3D"article:published_time" content=3D"2020-09-18T11:00:00+00=
+:00">
+<meta name=3D"twitter:card" content=3D"summary">
+<meta property=3D"twitter:title" content=3D"Pure AST based linting sucks">
+
+<!-- End Jekyll SEO tag -->
+<link rel=3D"stylesheet" href=3D"https://rdambrosio016.github.io/assets/mai=
+n.css"><link type=3D"application/atom+xml" rel=3D"alternate" href=3D"https:=
+//rdambrosio016.github.io/feed.xml" title=3D"RDambrosio"></head>
+<body><header class=3D"site-header" role=3D"banner">
+
+  <div class=3D"wrapper"><a class=3D"site-title" rel=3D"author" href=3D"htt=
+ps://rdambrosio016.github.io/">RDambrosio</a><nav class=3D"site-nav">
+        <input type=3D"checkbox" id=3D"nav-trigger" class=3D"nav-trigger">
+        <label for=3D"nav-trigger">
+          <span class=3D"menu-icon">
+            <svg viewBox=3D"0 0 18 15" width=3D"18px" height=3D"15px">
+              <path d=3D"M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.6=
+65,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.=
+665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0=
+,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6=
+.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.6=
+65,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12=
+.031,18,12.695,18,13.516L18,13.516z"></path>
+            </svg>
+          </span>
+        </label>
+
+        <div class=3D"trigger"><a class=3D"page-link" href=3D"https://rdamb=
+rosio016.github.io/about/">About</a></div>
+      </nav></div>
+</header>
+<main class=3D"page-content" aria-label=3D"Content">
+      <div class=3D"wrapper">
+        <article class=3D"post h-entry" itemscope=3D"" itemtype=3D"http://s=
+chema.org/BlogPosting">
+
+  <header class=3D"post-header">
+    <h1 class=3D"post-title p-name" itemprop=3D"name headline">Pure AST bas=
+ed linting sucks</h1>
+    <p class=3D"post-meta">
+      <time class=3D"dt-published" datetime=3D"2020-09-18T11:00:00+00:00" i=
+temprop=3D"datePublished">Sep 18, 2020
+      </time></p>
+  </header>
+
+  <div class=3D"post-content e-content" itemprop=3D"articleBody">
+    <p>First blog post! For this blog post i would like to talk about vario=
+us issues around linters which exclusively use ASTs (Abstract Syntax Tree) =
+for linting source code, and a tree representation you may not know about. =
+Over many months of working on a JavaScript linter in rust called <a href=
+=3D"https://github.com/RDambrosio016/RSLint/tree/dev">rslint</a> i have enc=
+ountered numerous issues and have explored many concepts which i feel i sho=
+uld share to offer insights into why i believe purely AST based linting is =
+unfit for complex linters.</p>
+
+<p>This post mostly refers to the issues with pure typed AST based linting =
+in statically typed languages such as rust, However, most of the issues occ=
+ur in dynamically typed languages too.</p>
+
+<p>I will be giving a small introduction to how linters work, feel free to =
+skip to the <a href=3D"https://rdambrosio016.github.io/rust/2020/09/18/pure=
+-ast-based-linting-sucks.html#problems-with-asts">Problems with ASTs</a> if=
+ you already know how linters work.</p>
+
+<h1 id=3D"table-of-contents">Table of contents</h1>
+
+<ul id=3D"markdown-toc">
+  <li><a href=3D"https://rdambrosio016.github.io/rust/2020/09/18/pure-ast-b=
+ased-linting-sucks.html#table-of-contents" id=3D"markdown-toc-table-of-cont=
+ents">Table of contents</a></li>
+  <li><a href=3D"https://rdambrosio016.github.io/rust/2020/09/18/pure-ast-b=
+ased-linting-sucks.html#so-how-does-a-linter-work" id=3D"markdown-toc-so-ho=
+w-does-a-linter-work">So how does a linter work?</a></li>
+  <li><a href=3D"https://rdambrosio016.github.io/rust/2020/09/18/pure-ast-b=
+ased-linting-sucks.html#problems-with-asts" id=3D"markdown-toc-problems-wit=
+h-asts">Problems with ASTs</a>    <ul>
+      <li><a href=3D"https://rdambrosio016.github.io/rust/2020/09/18/pure-a=
+st-based-linting-sucks.html#expensive-to-clone" id=3D"markdown-toc-expensiv=
+e-to-clone">Expensive to clone</a></li>
+      <li><a href=3D"https://rdambrosio016.github.io/rust/2020/09/18/pure-a=
+st-based-linting-sucks.html#complex-node-traversal-is-impossible" id=3D"mar=
+kdown-toc-complex-node-traversal-is-impossible">Complex node traversal is i=
+mpossible</a>        <ul>
+          <li><a href=3D"https://rdambrosio016.github.io/rust/2020/09/18/pu=
+re-ast-based-linting-sucks.html#need-for-visitors" id=3D"markdown-toc-need-=
+for-visitors">Need for visitors</a></li>
+          <li><a href=3D"https://rdambrosio016.github.io/rust/2020/09/18/pu=
+re-ast-based-linting-sucks.html#bottom-up-rule-checking" id=3D"markdown-toc=
+-bottom-up-rule-checking">Bottom-up rule checking</a></li>
+        </ul>
+      </li>
+      <li><a href=3D"https://rdambrosio016.github.io/rust/2020/09/18/pure-a=
+st-based-linting-sucks.html#no-easy-access-to-tokens-or-child-nodes" id=3D"=
+markdown-toc-no-easy-access-to-tokens-or-child-nodes">No easy access to tok=
+ens or child nodes</a></li>
+      <li><a href=3D"https://rdambrosio016.github.io/rust/2020/09/18/pure-a=
+st-based-linting-sucks.html#lossy" id=3D"markdown-toc-lossy">Lossy</a></li>
+      <li><a href=3D"https://rdambrosio016.github.io/rust/2020/09/18/pure-a=
+st-based-linting-sucks.html#require-explicit-handling-in-the-parser" id=3D"=
+markdown-toc-require-explicit-handling-in-the-parser">Require explicit hand=
+ling in the parser</a></li>
+      <li><a href=3D"https://rdambrosio016.github.io/rust/2020/09/18/pure-a=
+st-based-linting-sucks.html#mutable" id=3D"markdown-toc-mutable">Mutable</a=
+></li>
+      <li><a href=3D"https://rdambrosio016.github.io/rust/2020/09/18/pure-a=
+st-based-linting-sucks.html#next-to-no-error-recovery" id=3D"markdown-toc-n=
+ext-to-no-error-recovery">Next to no error recovery</a></li>
+    </ul>
+  </li>
+  <li><a href=3D"https://rdambrosio016.github.io/rust/2020/09/18/pure-ast-b=
+ased-linting-sucks.html#alternatives-to-the-standard-ast" id=3D"markdown-to=
+c-alternatives-to-the-standard-ast">Alternatives to the standard AST</a>   =
+ <ul>
+      <li><a href=3D"https://rdambrosio016.github.io/rust/2020/09/18/pure-a=
+st-based-linting-sucks.html#downsides" id=3D"markdown-toc-downsides">Downsi=
+des</a></li>
+    </ul>
+  </li>
+  <li><a href=3D"https://rdambrosio016.github.io/rust/2020/09/18/pure-ast-b=
+ased-linting-sucks.html#acknowledgements" id=3D"markdown-toc-acknowledgemen=
+ts">Acknowledgements</a></li>
+  <li><a href=3D"https://rdambrosio016.github.io/rust/2020/09/18/pure-ast-b=
+ased-linting-sucks.html#further-reading" id=3D"markdown-toc-further-reading=
+">Further reading</a></li>
+</ul>
+
+<h1 id=3D"so-how-does-a-linter-work">So how does a linter work?</h1>
+
+<p>Linters are programs which statically analyze code for semantic, stylist=
+ic, and potentially erroneous issues. Linters traditionally work by taking =
+source code, then running a parser on the source code, which yields an abst=
+ract representation of the program called an abstract syntax tree. Popular =
+examples of linters include ESLint for JavaScript, and Clippy for rust. Som=
+e linters further rely on typechecking information like clippy, however i w=
+ill not be focusing on that aspect for this post.</p>
+
+<p>Once an abstract syntax tree has been built, the linter crawls (visits) =
+the tree=E2=80=99s nodes (Items like an if statement, an if statement=E2=80=
+=99s condition, its body, etc) and runs specific =E2=80=9Crules=E2=80=9D on=
+ the node. An example of a rule may be ESLint=E2=80=99s <code class=3D"lang=
+uage-plaintext highlighter-rouge">no-empty</code>, which visits block state=
+ments and checks if they contain no nodes and no comments.</p>
+
+<p>Linters often offer autofix too, where the linter changes the source cod=
+e to fix the issue for you. Usually this relies on text transformations, bu=
+t many linters use AST transformations too.</p>
+
+<h1 id=3D"problems-with-asts">Problems with ASTs</h1>
+
+<p>Purely typed ASTs may appear to be the logical choice best choice when m=
+aking a linter, however, ASTs have many inherent flaws which can make writi=
+ng stylistic or more complex rules extremely inefficient or difficult. The =
+main issues with purely typed ASTs include the following:</p>
+
+<ul>
+  <li>Often expensive to clone and pass around</li>
+  <li>Complex Node traversal is impossible without runtime typing, and even=
+ with runtime typing it is extremely constrained.</li>
+  <li>No straightforward way to obtain individual tokens or child nodes</li=
+>
+  <li>Lossy, no way to cleanly and efficiently represent whitespace inside =
+of them, which is crucial for stylistic linting.</li>
+  <li>Require explicit handling of their structures in the parser</li>
+  <li>Mutable, which is fine for most cases but you really do not want muta=
+ble trees for static analysis in a language without a GC.</li>
+  <li>Makes error recovery for a parser very constrained</li>
+  <li>Incremental reparsing is impossible</li>
+</ul>
+
+<p>Let=E2=80=99s go through each of the issues one by one:</p>
+
+<h2 id=3D"expensive-to-clone">Expensive to clone</h2>
+
+<p>AST nodes usually hold a decently large amount of information, this mean=
+s if you want to pass around a node to an individual sub-analyzer (say, sco=
+pe analysis) you must either pass references (would likely get you into lif=
+etime hell very quickly), or clone the structure. Cloning the structure can=
+ often be relatively expensive due to the amount of information it holds, l=
+ets take a look at the <a href=3D"https://github.com/swc-project/swc">swc</=
+a> type definition for a Js/Ts class:</p>
+
+<div class=3D"language-rust highlighter-rouge"><div class=3D"highlight"><pr=
+e class=3D"highlight"><code><span class=3D"cm">/* Irrelevant serde attribut=
+es omitted */</span>
+<span class=3D"k">pub</span> <span class=3D"k">struct</span> <span class=3D=
+"n">Class</span> <span class=3D"p">{</span>
+    <span class=3D"k">pub</span> <span class=3D"n">span</span><span class=
+=3D"p">:</span> <span class=3D"n">Span</span><span class=3D"p">,</span>
+    <span class=3D"k">pub</span> <span class=3D"n">decorators</span><span c=
+lass=3D"p">:</span> <span class=3D"nb">Vec</span><span class=3D"o">&lt;</sp=
+an><span class=3D"n">Decorator</span><span class=3D"o">&gt;</span><span cla=
+ss=3D"p">,</span>
+    <span class=3D"k">pub</span> <span class=3D"n">body</span><span class=
+=3D"p">:</span> <span class=3D"nb">Vec</span><span class=3D"o">&lt;</span><=
+span class=3D"n">ClassMember</span><span class=3D"o">&gt;</span><span class=
+=3D"p">,</span>
+    <span class=3D"k">pub</span> <span class=3D"n">super_class</span><span =
+class=3D"p">:</span> <span class=3D"nb">Option</span><span class=3D"o">&lt;=
+</span><span class=3D"nb">Box</span><span class=3D"o">&lt;</span><span clas=
+s=3D"n">Expr</span><span class=3D"o">&gt;&gt;</span><span class=3D"p">,</sp=
+an>
+    <span class=3D"k">pub</span> <span class=3D"n">is_abstract</span><span =
+class=3D"p">:</span> <span class=3D"nb">bool</span><span class=3D"p">,</spa=
+n>
+    <span class=3D"k">pub</span> <span class=3D"n">type_params</span><span =
+class=3D"p">:</span> <span class=3D"nb">Option</span><span class=3D"o">&lt;=
+</span><span class=3D"n">TsTypeParamDecl</span><span class=3D"o">&gt;</span=
+><span class=3D"p">,</span>
+    <span class=3D"k">pub</span> <span class=3D"n">super_type_params</span>=
+<span class=3D"p">:</span> <span class=3D"nb">Option</span><span class=3D"o=
+">&lt;</span><span class=3D"n">TsTypeParamInstantiation</span><span class=
+=3D"o">&gt;</span><span class=3D"p">,</span>
+    <span class=3D"k">pub</span> <span class=3D"n">implements</span><span c=
+lass=3D"p">:</span> <span class=3D"nb">Vec</span><span class=3D"o">&lt;</sp=
+an><span class=3D"n">TsExprWithTypeArgs</span><span class=3D"o">&gt;</span>=
+<span class=3D"p">,</span>
+<span class=3D"p">}</span>
+</code></pre></div></div>
+
+<p>Now let=E2=80=99s say you made a scope analyzer, and you would like to b=
+e able to get the declared classes inside of a scope. You would have to exp=
+ensively clone the class, or store the span, which leaves out info you may =
+want such as the class=E2=80=99 body. This often constrains the info a sub-=
+analyzer can hold, and subsequently constrains complex error rendering.</p>
+
+<h2 id=3D"complex-node-traversal-is-impossible">Complex node traversal is i=
+mpossible</h2>
+
+<p>It is very common for a rule to want to know about the node=E2=80=99s pa=
+rent/sibling/children/descendants. However, that is impossible without runt=
+ime typing in a statically typed language. Why exactly? well, AST nodes are=
+ standalone, they do not know about parents or siblings, they can only trav=
+erse top-down using explicit visitors. This brings about a couple of issues=
+:</p>
+
+<h3 id=3D"need-for-visitors">Need for visitors</h3>
+
+<p>ASTs are typed, which means to visit each node you need to explicitly ha=
+ndle every single node and visit each of their children explicitly. Which m=
+eans you must either use a complex proc macro to generate a visit trait for=
+ you, or you need to implement it yourself, which is a gigantic pain and is=
+ impractical.</p>
+
+<p>Moreover, Visit traits work by offering the visit functions as provided =
+trait methods, but this means when you override them to check items you end=
+ up not visiting child nodes! This means you need must visit each child man=
+ually, which results in a ton of boilerplate code. A real world example of =
+why this is a problem is <a href=3D"https://github.com/denoland/deno_lint">=
+deno_lint</a>, deno lint is incapable of catching <code class=3D"language-p=
+laintext highlighter-rouge">no-unsafe-finally</code> for this code:</p>
+
+<div class=3D"language-js highlighter-rouge"><div class=3D"highlight"><pre =
+class=3D"highlight"><code><span class=3D"k">try</span> <span class=3D"p">{<=
+/span>
+  <span class=3D"cm">/* */</span>
+<span class=3D"p">}</span> <span class=3D"k">finally</span> <span class=3D"=
+p">{</span>
+  <span class=3D"k">try</span> <span class=3D"p">{</span>
+    <span class=3D"cm">/* */</span>
+  <span class=3D"p">}</span> <span class=3D"k">finally</span> <span class=
+=3D"p">{</span>
+    <span class=3D"k">throw</span> <span class=3D"dl">"</span><span class=
+=3D"s2">oh no</span><span class=3D"dl">"</span><span class=3D"p">;</span>
+  <span class=3D"p">}</span>
+<span class=3D"p">}</span>
+</code></pre></div></div>
+
+<p>This is because deno_lint=E2=80=99s <code class=3D"language-plaintext hi=
+ghlighter-rouge">no-unsafe-finally</code> rule overrides the try statement =
+visit method:</p>
+<div class=3D"language-rust highlighter-rouge"><div class=3D"highlight"><pr=
+e class=3D"highlight"><code><span class=3D"k">fn</span> <span class=3D"nf">=
+visit_try_stmt</span><span class=3D"p">(</span><span class=3D"o">&amp;</spa=
+n><span class=3D"k">mut</span> <span class=3D"k">self</span><span class=3D"=
+p">,</span> <span class=3D"n">try_stmt</span><span class=3D"p">:</span> <sp=
+an class=3D"o">&amp;</span><span class=3D"n">TryStmt</span><span class=3D"p=
+">,</span> <span class=3D"mi">_</span><span class=3D"n">parent</span><span =
+class=3D"p">:</span> <span class=3D"o">&amp;</span><span class=3D"n">dyn</s=
+pan> <span class=3D"n">Node</span><span class=3D"p">)</span> <span class=3D=
+"p">{</span> <span class=3D"cm">/* */</span> <span class=3D"p">}</span>
+</code></pre></div></div>
+<p>And does not recursively visit the body of the try statement, the catch =
+body, or the finalizer statements.</p>
+
+<p>To fix this major issue in many of deno_lint=E2=80=99s rules it would ha=
+ve to change every single visit function on every rule to include recursive=
+ly visiting the children manually.</p>
+
+<p>And finally, requiring a visitor introduces a big amount of boilerplate =
+into each rule definition, let=E2=80=99s use deno_lint as an example again:=
+</p>
+
+<div class=3D"language-rust highlighter-rouge"><div class=3D"highlight"><pr=
+e class=3D"highlight"><code><span class=3D"k">impl</span> <span class=3D"n"=
+>LintRule</span> <span class=3D"k">for</span> <span class=3D"n">NoUnsafeFin=
+ally</span> <span class=3D"p">{</span>
+  <span class=3D"k">fn</span> <span class=3D"nf">new</span><span class=3D"p=
+">()</span> <span class=3D"k">-&gt;</span> <span class=3D"nb">Box</span><sp=
+an class=3D"o">&lt;</span><span class=3D"n">Self</span><span class=3D"o">&g=
+t;</span> <span class=3D"p">{</span>
+    <span class=3D"nn">Box</span><span class=3D"p">::</span><span class=3D"=
+nf">new</span><span class=3D"p">(</span><span class=3D"n">NoUnsafeFinally</=
+span><span class=3D"p">)</span>
+  <span class=3D"p">}</span>
+
+  <span class=3D"k">fn</span> <span class=3D"nf">code</span><span class=3D"=
+p">(</span><span class=3D"o">&amp;</span><span class=3D"k">self</span><span=
+ class=3D"p">)</span> <span class=3D"k">-&gt;</span> <span class=3D"o">&amp=
+;</span><span class=3D"nv">'static</span> <span class=3D"nb">str</span> <sp=
+an class=3D"p">{</span>
+    <span class=3D"s">"no-unsafe-finally"</span>
+  <span class=3D"p">}</span>
+
+  <span class=3D"k">fn</span> <span class=3D"nf">lint_module</span><span cl=
+ass=3D"p">(</span><span class=3D"o">&amp;</span><span class=3D"k">self</spa=
+n><span class=3D"p">,</span> <span class=3D"n">context</span><span class=3D=
+"p">:</span> <span class=3D"nb">Arc</span><span class=3D"o">&lt;</span><spa=
+n class=3D"n">Context</span><span class=3D"o">&gt;</span><span class=3D"p">=
+,</span> <span class=3D"n">module</span><span class=3D"p">:</span> <span cl=
+ass=3D"o">&amp;</span><span class=3D"n">Module</span><span class=3D"p">)</s=
+pan> <span class=3D"p">{</span>
+    <span class=3D"k">let</span> <span class=3D"k">mut</span> <span class=
+=3D"n">visitor</span> <span class=3D"o">=3D</span> <span class=3D"nn">NoUns=
+afeFinallyVisitor</span><span class=3D"p">::</span><span class=3D"nf">new</=
+span><span class=3D"p">(</span><span class=3D"n">context</span><span class=
+=3D"p">);</span>
+    <span class=3D"n">visitor</span><span class=3D"nf">.visit_module</span>=
+<span class=3D"p">(</span><span class=3D"n">module</span><span class=3D"p">=
+,</span> <span class=3D"n">module</span><span class=3D"p">);</span>
+  <span class=3D"p">}</span>
+<span class=3D"p">}</span>
+
+<span class=3D"k">struct</span> <span class=3D"n">NoUnsafeFinallyVisitor</s=
+pan> <span class=3D"p">{</span>
+  <span class=3D"n">context</span><span class=3D"p">:</span> <span class=3D=
+"nb">Arc</span><span class=3D"o">&lt;</span><span class=3D"n">Context</span=
+><span class=3D"o">&gt;</span><span class=3D"p">,</span>
+<span class=3D"p">}</span>
+
+<span class=3D"k">impl</span> <span class=3D"n">NoUnsafeFinallyVisitor</spa=
+n> <span class=3D"p">{</span>
+  <span class=3D"k">fn</span> <span class=3D"nf">new</span><span class=3D"p=
+">(</span><span class=3D"n">context</span><span class=3D"p">:</span> <span =
+class=3D"nb">Arc</span><span class=3D"o">&lt;</span><span class=3D"n">Conte=
+xt</span><span class=3D"o">&gt;</span><span class=3D"p">)</span> <span clas=
+s=3D"k">-&gt;</span> <span class=3D"n">Self</span> <span class=3D"p">{</spa=
+n>
+    <span class=3D"n">Self</span> <span class=3D"p">{</span> <span class=3D=
+"n">context</span> <span class=3D"p">}</span>
+  <span class=3D"p">}</span>
+<span class=3D"p">}</span>
+
+<span class=3D"k">impl</span> <span class=3D"n">Visit</span> <span class=3D=
+"k">for</span> <span class=3D"n">NoUnsafeFinallyVisitor</span> <span class=
+=3D"p">{</span>
+  <span class=3D"nd">noop_visit_type!</span><span class=3D"p">();</span>
+
+  <span class=3D"k">fn</span> <span class=3D"nf">visit_try_stmt</span><span=
+ class=3D"p">(</span><span class=3D"o">&amp;</span><span class=3D"k">mut</s=
+pan> <span class=3D"k">self</span><span class=3D"p">,</span> <span class=3D=
+"n">try_stmt</span><span class=3D"p">:</span> <span class=3D"o">&amp;</span=
+><span class=3D"n">TryStmt</span><span class=3D"p">,</span> <span class=3D"=
+mi">_</span><span class=3D"n">parent</span><span class=3D"p">:</span> <span=
+ class=3D"o">&amp;</span><span class=3D"n">dyn</span> <span class=3D"n">Nod=
+e</span><span class=3D"p">)</span> <span class=3D"p">{</span>
+    <span class=3D"cm">/* rule checks omitted*/</span>
+  <span class=3D"p">}</span>
+<span class=3D"p">}</span>
+</code></pre></div></div>
+
+<p>Compared to rslint=E2=80=99s implementation (which is able to catch nest=
+ed errors) which uses bottom-up node checking:</p>
+
+<div class=3D"language-rust highlighter-rouge"><div class=3D"highlight"><pr=
+e class=3D"highlight"><code><span class=3D"nd">declare_lint!</span> <span c=
+lass=3D"p">{</span>
+    <span class=3D"cm">/* documentation omitted */</span>
+    <span class=3D"nd">#[derive(Default)]</span>
+    <span class=3D"n">NoUnsafeFinally</span><span class=3D"p">,</span>
+    <span class=3D"n">errors</span><span class=3D"p">,</span>
+    <span class=3D"s">"no-unsafe-finally"</span>
+<span class=3D"p">}</span>
+
+<span class=3D"k">pub</span> <span class=3D"k">const</span> <span class=3D"=
+n">CONTROL_FLOW_STMT</span><span class=3D"p">:</span> <span class=3D"p">[</=
+span><span class=3D"n">SyntaxKind</span><span class=3D"p">;</span> <span cl=
+ass=3D"mi">4</span><span class=3D"p">]</span> <span class=3D"o">=3D</span> =
+<span class=3D"p">[</span><span class=3D"n">BREAK_STMT</span><span class=3D=
+"p">,</span> <span class=3D"n">CONTINUE_STMT</span><span class=3D"p">,</spa=
+n> <span class=3D"n">THROW_STMT</span><span class=3D"p">,</span> <span clas=
+s=3D"n">RETURN_STMT</span><span class=3D"p">];</span>
+
+<span class=3D"nd">#[typetag::serde]</span>
+<span class=3D"k">impl</span> <span class=3D"n">CstRule</span> <span class=
+=3D"k">for</span> <span class=3D"n">NoUnsafeFinally</span> <span class=3D"p=
+">{</span>
+    <span class=3D"k">fn</span> <span class=3D"nf">check_node</span><span c=
+lass=3D"p">(</span><span class=3D"o">&amp;</span><span class=3D"k">self</sp=
+an><span class=3D"p">,</span> <span class=3D"n">node</span><span class=3D"p=
+">:</span> <span class=3D"o">&amp;</span><span class=3D"n">SyntaxNode</span=
+><span class=3D"p">,</span> <span class=3D"n">ctx</span><span class=3D"p">:=
+</span> <span class=3D"o">&amp;</span><span class=3D"k">mut</span> <span cl=
+ass=3D"n">RuleCtx</span><span class=3D"p">)</span> <span class=3D"k">-&gt;<=
+/span> <span class=3D"nb">Option</span><span class=3D"o">&lt;</span><span c=
+lass=3D"p">()</span><span class=3D"o">&gt;</span> <span class=3D"p">{</span=
+>
+        <span class=3D"k">if</span> <span class=3D"n">CONTROL_FLOW_STMT</sp=
+an><span class=3D"nf">.contains</span><span class=3D"p">(</span><span class=
+=3D"o">&amp;</span><span class=3D"n">node</span><span class=3D"nf">.kind</s=
+pan><span class=3D"p">())</span> <span class=3D"o">&amp;&amp;</span> <span =
+class=3D"n">node</span><span class=3D"nf">.parent</span><span class=3D"p">(=
+)</span><span class=3D"o">?</span><span class=3D"nf">.parent</span><span cl=
+ass=3D"p">()</span><span class=3D"o">?</span><span class=3D"py">.is</span><=
+span class=3D"p">::</span><span class=3D"o">&lt;</span><span class=3D"nn">a=
+st</span><span class=3D"p">::</span><span class=3D"n">Finalizer</span><span=
+ class=3D"o">&gt;</span><span class=3D"p">()</span> <span class=3D"p">{</sp=
+an>
+            <span class=3D"k">self</span><span class=3D"nf">.output</span><=
+span class=3D"p">(</span><span class=3D"n">node</span><span class=3D"p">,</=
+span> <span class=3D"n">ctx</span><span class=3D"p">);</span>
+        <span class=3D"p">}</span>
+        <span class=3D"nb">None</span>
+    <span class=3D"p">}</span>
+<span class=3D"p">}</span>
+
+<span class=3D"cm">/* self.output error rendering */</span>
+</code></pre></div></div>
+
+<p>This way of using a visitor means each rule is actually made up of two s=
+tructs, and the second struct needs to store an <code class=3D"language-pla=
+intext highlighter-rouge">Arc&lt;Context&gt;</code> to be able
+to add diagnostics. This further introduces more issues i won=E2=80=99t get=
+ deep into but they include requiring the diagnostics vector in the context=
+ to be locked (through a mutex) to add a diagnostic, and not being able to =
+cleanly refer to each rule=E2=80=99s diagnostics/outcome.</p>
+
+<h3 id=3D"bottom-up-rule-checking">Bottom-up rule checking</h3>
+
+<p>Bottom-up rule checking is impossible, which many rules benefit greatly =
+from, such as <a href=3D"https://eslint.org/docs/rules/no-await-in-loop"><c=
+ode class=3D"language-plaintext highlighter-rouge">no-await-in-loop</code><=
+/a>.
+This is because a node cannot know about its parent, swc=E2=80=99s visitor =
+attempts to slightly get around this with a <code class=3D"language-plainte=
+xt highlighter-rouge">_parent: &amp;dyn Node</code> on ever visitor functio=
+n which is a simple wrapper on top of <a href=3D"https://doc.rust-lang.org/=
+std/any/trait.Any.html"><code class=3D"language-plaintext highlighter-rouge=
+">Any</code></a>. This still does not allow for recursive bottom-up checkin=
+g, and it introduces the mess of needing to downcast the parent.</p>
+
+<p>The fact that bottom-up rule checking is impossible means every rule mus=
+t be a bottom-down check, which is usually ugly for the following reasons:<=
+/p>
+
+<ul>
+  <li>Oftentimes a rule wants to check a node, but only if its the child of=
+ a specific node, which requires explicit handling of each possible parent =
+(see: <code class=3D"language-plaintext highlighter-rouge">no-extra-boolean=
+-cast</code>)</li>
+  <li>It results in duplicate code for each parent</li>
+</ul>
+
+<p>Proof of this can be found in deno_lint=E2=80=99s <a href=3D"https://git=
+hub.com/denoland/deno_lint/blob/master/src/rules/no_await_in_loop.rs">imple=
+mentation</a> of <code class=3D"language-plaintext highlighter-rouge">no-aw=
+ait-in-loop</code>, which is 182 lines, versus rslint=E2=80=99s <a href=3D"=
+https://github.com/RDambrosio016/RSLint/blob/dev/rslint_core/src/groups/err=
+ors/no_await_in_loop.rs">implementation</a> which is 35 lines.</p>
+
+<h2 id=3D"no-easy-access-to-tokens-or-child-nodes">No easy access to tokens=
+ or child nodes</h2>
+
+<p>ASTs are lossy, like the name implies, this means that it is impossible =
+to straight from a node to its tokens. It may seem like a small issue but i=
+n reality it poses a ton of issues, these include, but are not limited to:<=
+/p>
+
+<ul>
+  <li>No lexical equality (counting <code class=3D"language-plaintext highl=
+ighter-rouge">foo. bar</code> and <code class=3D"language-plaintext highlig=
+hter-rouge">foo.bar</code> as the same expression)</li>
+  <li>No simple implementation of individual token based rules</li>
+  <li>No easy syntax highlighting without reinvoking the lexer</li>
+  <li>No easy way to refer to an individual token for pretty errors</li>
+</ul>
+
+<p>To get around this, tools like ESLint store the tokens in a store then h=
+ave methods on a context object to get the tokens. As you can probably gues=
+s, this brings about more issues:</p>
+
+<ul>
+  <li>No interning, which can make storing tokens expensive for things like=
+ <code class=3D"language-plaintext highlighter-rouge">let</code>, <code cla=
+ss=3D"language-plaintext highlighter-rouge">var</code>, etc.</li>
+  <li>Another thing to implement and maintain.</li>
+  <li>Tokens don=E2=80=99t know about their parent AST nodes .</li>
+  <li>cont: Tokens cannot traverse their siblings, next tokens, prev tokens=
+, etc.</li>
+  <li>No whitespace and comment tokens, which results in ugly handling of c=
+omments and comment directives.</li>
+</ul>
+
+<h2 id=3D"lossy">Lossy</h2>
+
+<p>ASTs are lossy, this makes stylistic linting pretty challenging, and it =
+often involves digging back into the source code to get whitespace. Not onl=
+y is this ugly, it is inefficient and impractical. With a lossless syntax t=
+ree we can simply crawl the tree and search for whitespace tokens (which in=
+clude all whitespace). As mentioned above, tokens also can crawl tokens bef=
+ore them, and even their parent. We can then refer back to these tokens in =
+pretty errors to make fixing errors even easier for the user.</p>
+
+<h2 id=3D"require-explicit-handling-in-the-parser">Require explicit handlin=
+g in the parser</h2>
+
+<p>This is a mostly minor thing, but needing to worry about the constructed=
+ nodes in the parser adds more boilerplate to the parser.
+As a practical example, lets take swc=E2=80=99s <a href=3D"https://github.c=
+om/swc-project/swc/blob/master/ecmascript/parser/src/parser/expr.rs">implem=
+entation</a> of array literal parsing:</p>
+
+<div class=3D"language-rust highlighter-rouge"><div class=3D"highlight"><pr=
+e class=3D"highlight"><code><span class=3D"k">fn</span> <span class=3D"nf">=
+parse_array_lit</span><span class=3D"p">(</span><span class=3D"o">&amp;</sp=
+an><span class=3D"k">mut</span> <span class=3D"k">self</span><span class=3D=
+"p">)</span> <span class=3D"k">-&gt;</span> <span class=3D"n">PResult</span=
+><span class=3D"o">&lt;</span><span class=3D"nb">Box</span><span class=3D"o=
+">&lt;</span><span class=3D"n">Expr</span><span class=3D"o">&gt;&gt;</span>=
+ <span class=3D"p">{</span>
+    <span class=3D"nd">trace_cur!</span><span class=3D"p">(</span><span cla=
+ss=3D"n">parse_array_lit</span><span class=3D"p">);</span>
+
+    <span class=3D"k">let</span> <span class=3D"n">start</span> <span class=
+=3D"o">=3D</span> <span class=3D"nd">cur_pos!</span><span class=3D"p">();</=
+span>
+
+    <span class=3D"nd">assert_and_bump!</span><span class=3D"p">(</span><sp=
+an class=3D"sc">'['</span><span class=3D"p">);</span>
+    <span class=3D"k">let</span> <span class=3D"k">mut</span> <span class=
+=3D"n">elems</span> <span class=3D"o">=3D</span> <span class=3D"nd">vec!</s=
+pan><span class=3D"p">[];</span>
+
+    <span class=3D"k">while</span> <span class=3D"o">!</span><span class=3D=
+"nd">eof!</span><span class=3D"p">()</span> <span class=3D"o">&amp;&amp;</s=
+pan> <span class=3D"o">!</span><span class=3D"nd">is!</span><span class=3D"=
+p">(</span><span class=3D"sc">']'</span><span class=3D"p">)</span> <span cl=
+ass=3D"p">{</span>
+        <span class=3D"k">if</span> <span class=3D"nd">is!</span><span clas=
+s=3D"p">(</span><span class=3D"sc">','</span><span class=3D"p">)</span> <sp=
+an class=3D"p">{</span>
+            <span class=3D"nd">expect!</span><span class=3D"p">(</span><spa=
+n class=3D"sc">','</span><span class=3D"p">);</span>
+            <span class=3D"n">elems</span><span class=3D"nf">.push</span><s=
+pan class=3D"p">(</span><span class=3D"nb">None</span><span class=3D"p">);<=
+/span>
+            <span class=3D"k">continue</span><span class=3D"p">;</span>
+        <span class=3D"p">}</span>
+        <span class=3D"n">elems</span><span class=3D"nf">.push</span><span =
+class=3D"p">(</span>
+            <span class=3D"k">self</span><span class=3D"nf">.include_in_exp=
+r</span><span class=3D"p">(</span><span class=3D"k">true</span><span class=
+=3D"p">)</span>
+                <span class=3D"nf">.parse_expr_or_spread</span><span class=
+=3D"p">()</span>
+                <span class=3D"nf">.map</span><span class=3D"p">(</span><sp=
+an class=3D"nb">Some</span><span class=3D"p">)</span><span class=3D"o">?</s=
+pan><span class=3D"p">,</span>
+        <span class=3D"p">);</span>
+        <span class=3D"k">if</span> <span class=3D"nd">is!</span><span clas=
+s=3D"p">(</span><span class=3D"sc">','</span><span class=3D"p">)</span> <sp=
+an class=3D"p">{</span>
+            <span class=3D"nd">expect!</span><span class=3D"p">(</span><spa=
+n class=3D"sc">','</span><span class=3D"p">);</span>
+        <span class=3D"p">}</span>
+    <span class=3D"p">}</span>
+
+    <span class=3D"nd">expect!</span><span class=3D"p">(</span><span class=
+=3D"sc">']'</span><span class=3D"p">);</span>
+
+    <span class=3D"k">let</span> <span class=3D"n">span</span> <span class=
+=3D"o">=3D</span> <span class=3D"nd">span!</span><span class=3D"p">(</span>=
+<span class=3D"n">start</span><span class=3D"p">);</span>
+    <span class=3D"nf">Ok</span><span class=3D"p">(</span><span class=3D"nn=
+">Box</span><span class=3D"p">::</span><span class=3D"nf">new</span><span c=
+lass=3D"p">(</span><span class=3D"nn">Expr</span><span class=3D"p">::</span=
+><span class=3D"nf">Array</span><span class=3D"p">(</span><span class=3D"n"=
+>ArrayLit</span> <span class=3D"p">{</span> <span class=3D"n">span</span><s=
+pan class=3D"p">,</span> <span class=3D"n">elems</span> <span class=3D"p">}=
+)))</span>
+<span class=3D"p">}</span>
+</code></pre></div></div>
+
+<p>And compare it with the rslint parser=E2=80=99s <a href=3D"https://githu=
+b.com/RDambrosio016/RSLint/blob/dev/rslint_parser/src/syntax/expr.rs">imple=
+mentation</a>:</p>
+
+<div class=3D"language-rust highlighter-rouge"><div class=3D"highlight"><pr=
+e class=3D"highlight"><code><span class=3D"k">pub</span> <span class=3D"k">=
+fn</span> <span class=3D"nf">array_expr</span><span class=3D"p">(</span><sp=
+an class=3D"n">p</span><span class=3D"p">:</span> <span class=3D"o">&amp;</=
+span><span class=3D"k">mut</span> <span class=3D"n">Parser</span><span clas=
+s=3D"p">)</span> <span class=3D"k">-&gt;</span> <span class=3D"n">Completed=
+Marker</span> <span class=3D"p">{</span>
+    <span class=3D"k">let</span> <span class=3D"n">m</span> <span class=3D"=
+o">=3D</span> <span class=3D"n">p</span><span class=3D"nf">.start</span><sp=
+an class=3D"p">();</span>
+    <span class=3D"n">p</span><span class=3D"nf">.expect</span><span class=
+=3D"p">(</span><span class=3D"nd">T!</span><span class=3D"p">[</span><span =
+class=3D"sc">'['</span><span class=3D"p">]);</span>
+
+    <span class=3D"k">while</span> <span class=3D"o">!</span><span class=3D=
+"n">p</span><span class=3D"nf">.at</span><span class=3D"p">(</span><span cl=
+ass=3D"n">EOF</span><span class=3D"p">)</span> <span class=3D"o">&amp;&amp;=
+</span> <span class=3D"o">!</span><span class=3D"n">p</span><span class=3D"=
+nf">.at</span><span class=3D"p">(</span><span class=3D"nd">T!</span><span c=
+lass=3D"p">[</span><span class=3D"sc">']'</span><span class=3D"p">])</span>=
+ <span class=3D"p">{</span>
+        <span class=3D"k">if</span> <span class=3D"n">p</span><span class=
+=3D"nf">.eat</span><span class=3D"p">(</span><span class=3D"nd">T!</span><s=
+pan class=3D"p">[,])</span> <span class=3D"p">{</span>
+            <span class=3D"k">continue</span><span class=3D"p">;</span>
+        <span class=3D"p">}</span>
+        <span class=3D"k">if</span> <span class=3D"n">p</span><span class=
+=3D"nf">.at</span><span class=3D"p">(</span><span class=3D"nd">T!</span><sp=
+an class=3D"p">[</span><span class=3D"o">...</span><span class=3D"p">])</sp=
+an> <span class=3D"p">{</span>
+            <span class=3D"nf">spread_element</span><span class=3D"p">(</sp=
+an><span class=3D"n">p</span><span class=3D"p">);</span>
+        <span class=3D"p">}</span> <span class=3D"k">else</span> <span clas=
+s=3D"p">{</span>
+            <span class=3D"nf">assign_expr</span><span class=3D"p">(</span>=
+<span class=3D"n">p</span><span class=3D"p">);</span>
+        <span class=3D"p">}</span>
+        <span class=3D"k">if</span> <span class=3D"o">!</span><span class=
+=3D"n">p</span><span class=3D"nf">.at</span><span class=3D"p">(</span><span=
+ class=3D"nd">T!</span><span class=3D"p">[</span><span class=3D"sc">']'</sp=
+an><span class=3D"p">])</span> <span class=3D"p">{</span>
+            <span class=3D"n">p</span><span class=3D"nf">.expect</span><spa=
+n class=3D"p">(</span><span class=3D"nd">T!</span><span class=3D"p">[,]);</=
+span>
+        <span class=3D"p">}</span>
+    <span class=3D"p">}</span>
+
+    <span class=3D"n">p</span><span class=3D"nf">.expect</span><span class=
+=3D"p">(</span><span class=3D"nd">T!</span><span class=3D"p">[</span><span =
+class=3D"sc">']'</span><span class=3D"p">]);</span>
+    <span class=3D"n">m</span><span class=3D"nf">.complete</span><span clas=
+s=3D"p">(</span><span class=3D"n">p</span><span class=3D"p">,</span> <span =
+class=3D"n">ARRAY_EXPR</span><span class=3D"p">)</span>
+<span class=3D"p">}</span>
+</code></pre></div></div>
+
+<p>The parser does not have to worry about the final AST node, it simply ca=
+lls functions which produce events in the parser, these events are then pro=
+cessed into a syntax tree.</p>
+
+<h2 id=3D"mutable">Mutable</h2>
+
+<p>ASTs are usually mutable, this is great for tools like transpilers, but =
+it is not fit for linters, which are for the most part static. This ties ba=
+ck to <a href=3D"https://rdambrosio016.github.io/rust/2020/09/18/pure-ast-b=
+ased-linting-sucks.html##Expensive-to-clone">Expensive to clone</a>, you ca=
+n=E2=80=99t just give out nodes without either cloning or taking a referenc=
+e to them.</p>
+
+<p>However, i should add, mutable ASTs are great for autofix, however, auto=
+fix is a relatively small part of linting, and it is not worth it to make r=
+ule checking a mess so autofix can work great. Additionally, autofix with i=
+mmutable trees is not impossible, it is just slightly harder than using mut=
+able trees.</p>
+
+<h2 id=3D"next-to-no-error-recovery">Next to no error recovery</h2>
+
+<p>Error recovery refers to a parser being able to take in incorrect source=
+ code, and still parse a mostly correct AST out of it. Most linters do not =
+attempt this at all, for example, espree, and swc_ecmascript (ESLint and de=
+no_lint=E2=80=99s parsers respectively) make no attempt at recovery. When t=
+he parsers encounter an error they return an Err result and quit parsing, p=
+roducing no AST.</p>
+
+<p>Why is that? well, you can=E2=80=99t just make an AST node field if you =
+have no data (duh). If the parser expected an expression which is a field i=
+n the AST node, then what are we going to put for the struct?, simple, we d=
+ont make the struct and stop parsing :)</p>
+
+<p>This means it is impossible for the linters to lint wrong code, which is=
+ an amazing feature for on-the-fly linting in things such as IDEs. Not havi=
+ng AST fields to worry about allows rslint to parse this invalid code:</p>
+
+<div class=3D"language-js highlighter-rouge"><div class=3D"highlight"><pre =
+class=3D"highlight"><code><span class=3D"k">if</span> <span class=3D"kc">tr=
+ue</span> <span class=3D"p">{</span>
+  <span class=3D"cm">/* */</span>
+<span class=3D"p">}</span> <span class=3D"k">else</span> <span class=3D"p">=
+{</span>
+  <span class=3D"cm">/* */</span>
+<span class=3D"p">}</span>
+</code></pre></div></div>
+
+<p>And lint it successfully:</p>
+
+<div class=3D"language-plaintext highlighter-rouge"><div class=3D"highlight=
+"><pre class=3D"highlight"><code>error[SyntaxError]: Expected token `L_PARE=
+N` but instead found `TRUE_KW`
+  =E2=94=8C=E2=94=80 tests\main.js:1:4
+  =E2=94=82
+1 =E2=94=82 if true {
+  =E2=94=82    ^^^^ Unexpected
+
+error[SyntaxError]: Expected token `R_PAREN` but instead found `L_CURLY`
+  =E2=94=8C=E2=94=80 tests\main.js:1:9
+  =E2=94=82
+1 =E2=94=82 if true {
+  =E2=94=82         ^ Unexpected
+
+error[no-constant-condition]: Unexpected constant condition
+  =E2=94=8C=E2=94=80 tests\main.js:1:4
+  =E2=94=82 =20
+1 =E2=94=82   if true {
+  =E2=94=82      ^^^^ this condition is always truthy...
+2 =E2=94=82     /* */
+3 =E2=94=82   } else {
+  =E2=94=82 =E2=94=8C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80'
+4 =E2=94=82 =E2=94=82   /* */
+5 =E2=94=82 =E2=94=82 }
+  =E2=94=82 =E2=94=94=E2=94=80' ...which makes this unreachable
+</code></pre></div></div>
+
+<p>RSLint=E2=80=99s parser can produce a syntax tree from any source code, =
+because the final output=E2=80=99s nodes are not required to have any data.=
+</p>
+
+<p>Note however that rslint_parser is still in early development, and error=
+ recovery can be buggy and explosive at times, this will get better in the =
+future however.</p>
+
+<h1 id=3D"alternatives-to-the-standard-ast">Alternatives to the standard AS=
+T</h1>
+
+<p>RSLint uses a library called <a href=3D"https://docs.rs/rowan/0.10.0/row=
+an/index.html">rowan</a>, which was developed for the <a href=3D"https://gi=
+thub.com/rust-analyzer/rust-analyzer">rust analyzer</a> project. Rowan mode=
+ls trees as immutable syntax trees called Green trees, which are composed o=
+f GreenNodes.</p>
+
+<p>Green nodes are dynamically sized types which use a single allocation fo=
+r the header and children as follows:</p>
+
+<div class=3D"language-plaintext highlighter-rouge"><div class=3D"highlight=
+"><pre class=3D"highlight"><code>*-----------+------+----------+-----------=
+-+--------+--------+-----+--------*
+| ref_count | kind | text_len | n_children | child1 | child2 | ... | childn=
+ |
+*-----------+------+----------+------------+--------+--------+-----+-------=
+-*
+</code></pre></div></div>
+
+<p>The trees are fully immutable, which allows the tree to use interning, t=
+herefore the tree is allowed to structurally share subtrees. This interning=
+ helps with memory usage a fair amount. Moreover, rowan uses <code class=3D=
+"language-plaintext highlighter-rouge">TextSize</code> and <code class=3D"l=
+anguage-plaintext highlighter-rouge">TextRange</code> for storing text leng=
+th, as opposed to usizes, this is fine because linting/parsing 4gb+ JavaScr=
+ipt files is not something rslint will ever support. Furthermore, tokens us=
+e <code class=3D"language-plaintext highlighter-rouge">SmolStr</code>, whic=
+h is a structure optimized for small strings.</p>
+
+<p>GreenNodes are not used manually, rowan provides structures called <code=
+ class=3D"language-plaintext highlighter-rouge">SyntaxNode</code> and <code=
+ class=3D"language-plaintext highlighter-rouge">SyntaxToken</code>. These s=
+tructures are simply an Rc around some node data which refers back to a non=
+ null pointer to the tree. Then AST nodes are modeled as structs which impl=
+ement <code class=3D"language-plaintext highlighter-rouge">AstNode</code>, =
+each struct has functions which try to find some data inside of the childre=
+n of the ast node=E2=80=99s untyped <code class=3D"language-plaintext highl=
+ighter-rouge">SyntaxNode</code>. Every single item on every ast node is opt=
+ional, this is to allow for 100% error recovery. The conversion between Ast=
+Node and untyped SyntaxNode is free.</p>
+
+<p>You might be asking why this is a game changer, well, we now have 4 laye=
+rs to each node ranging from high level to low level, and we can access eac=
+h one of them freely with little cost!</p>
+
+<p>Let=E2=80=99s take a look at what this layout looks like for If statemen=
+ts:</p>
+
+<p>AstNode:</p>
+
+<div class=3D"language-rust highlighter-rouge"><div class=3D"highlight"><pr=
+e class=3D"highlight"><code><span class=3D"k">pub</span> <span class=3D"k">=
+struct</span> <span class=3D"n">IfStmt</span> <span class=3D"p">{</span>
+    <span class=3D"k">pub</span><span class=3D"p">(</span><span class=3D"n"=
+>crate</span><span class=3D"p">)</span> <span class=3D"n">syntax</span><spa=
+n class=3D"p">:</span> <span class=3D"n">SyntaxNode</span><span class=3D"p"=
+>,</span>
+<span class=3D"p">}</span>
+<span class=3D"k">impl</span> <span class=3D"n">IfStmt</span> <span class=
+=3D"p">{</span>
+    <span class=3D"k">pub</span> <span class=3D"k">fn</span> <span class=3D=
+"nf">if_token</span><span class=3D"p">(</span><span class=3D"o">&amp;</span=
+><span class=3D"k">self</span><span class=3D"p">)</span> <span class=3D"k">=
+-&gt;</span> <span class=3D"nb">Option</span><span class=3D"o">&lt;</span><=
+span class=3D"n">SyntaxToken</span><span class=3D"o">&gt;</span> <span clas=
+s=3D"p">{</span> <span class=3D"cm">/* */</span> <span class=3D"p">}</span>
+    <span class=3D"k">pub</span> <span class=3D"k">fn</span> <span class=3D=
+"nf">condition</span><span class=3D"p">(</span><span class=3D"o">&amp;</spa=
+n><span class=3D"k">self</span><span class=3D"p">)</span> <span class=3D"k"=
+>-&gt;</span> <span class=3D"nb">Option</span><span class=3D"o">&lt;</span>=
+<span class=3D"n">Condition</span><span class=3D"o">&gt;</span> <span class=
+=3D"p">{</span> <span class=3D"cm">/* */</span> <span class=3D"p">}</span>
+    <span class=3D"k">pub</span> <span class=3D"k">fn</span> <span class=3D=
+"nf">cons</span><span class=3D"p">(</span><span class=3D"o">&amp;</span><sp=
+an class=3D"k">self</span><span class=3D"p">)</span> <span class=3D"k">-&gt=
+;</span> <span class=3D"nb">Option</span><span class=3D"o">&lt;</span><span=
+ class=3D"n">Stmt</span><span class=3D"o">&gt;</span> <span class=3D"p">{</=
+span> <span class=3D"cm">/* */</span> <span class=3D"p">}</span>
+    <span class=3D"k">pub</span> <span class=3D"k">fn</span> <span class=3D=
+"nf">else_token</span><span class=3D"p">(</span><span class=3D"o">&amp;</sp=
+an><span class=3D"k">self</span><span class=3D"p">)</span> <span class=3D"k=
+">-&gt;</span> <span class=3D"nb">Option</span><span class=3D"o">&lt;</span=
+><span class=3D"n">SyntaxToken</span><span class=3D"o">&gt;</span> <span cl=
+ass=3D"p">{</span> <span class=3D"cm">/* */</span> <span class=3D"p">}</spa=
+n>
+    <span class=3D"k">pub</span> <span class=3D"k">fn</span> <span class=3D=
+"nf">alt</span><span class=3D"p">(</span><span class=3D"o">&amp;</span><spa=
+n class=3D"k">self</span><span class=3D"p">)</span> <span class=3D"k">-&gt;=
+</span> <span class=3D"nb">Option</span><span class=3D"o">&lt;</span><span =
+class=3D"n">Stmt</span><span class=3D"o">&gt;</span> <span class=3D"p">{</s=
+pan> <span class=3D"cm">/* */</span> <span class=3D"p">}</span>
+<span class=3D"p">}</span>
+</code></pre></div></div>
+
+<p>SyntaxNode:</p>
+
+<div class=3D"language-js highlighter-rouge"><div class=3D"highlight"><pre =
+class=3D"highlight"><code><span class=3D"nx">IF_STMT</span><span class=3D"p=
+">@</span><span class=3D"nd">0</span><span class=3D"p">..</span><span class=
+=3D"mi">38</span>
+  <span class=3D"nx">IF_KW</span><span class=3D"p">@</span><span class=3D"n=
+d">0</span><span class=3D"p">..</span><span class=3D"mi">2</span> <span cla=
+ss=3D"dl">"</span><span class=3D"s2">if</span><span class=3D"dl">"</span>
+  <span class=3D"nx">WHITESPACE</span><span class=3D"p">@</span><span class=
+=3D"nd">2</span><span class=3D"p">..</span><span class=3D"mi">3</span> <spa=
+n class=3D"dl">"</span><span class=3D"s2"> </span><span class=3D"dl">"</spa=
+n>
+  <span class=3D"nx">CONDITION</span><span class=3D"p">@</span><span class=
+=3D"nd">3</span><span class=3D"p">..</span><span class=3D"mi">9</span>
+    <span class=3D"nx">L_PAREN</span><span class=3D"p">@</span><span class=
+=3D"nd">3</span><span class=3D"p">..</span><span class=3D"mi">4</span> <spa=
+n class=3D"dl">"</span><span class=3D"s2">(</span><span class=3D"dl">"</spa=
+n>
+    <span class=3D"nx">LITERAL</span><span class=3D"p">@</span><span class=
+=3D"nd">4</span><span class=3D"p">..</span><span class=3D"mi">8</span>
+      <span class=3D"nx">TRUE_KW</span><span class=3D"p">@</span><span clas=
+s=3D"nd">4</span><span class=3D"p">..</span><span class=3D"mi">8</span> <sp=
+an class=3D"dl">"</span><span class=3D"s2">true</span><span class=3D"dl">"<=
+/span>
+    <span class=3D"nx">R_PAREN</span><span class=3D"p">@</span><span class=
+=3D"nd">8</span><span class=3D"p">..</span><span class=3D"mi">9</span> <spa=
+n class=3D"dl">"</span><span class=3D"s2">)</span><span class=3D"dl">"</spa=
+n>
+  <span class=3D"nx">WHITESPACE</span><span class=3D"p">@</span><span class=
+=3D"nd">9</span><span class=3D"p">..</span><span class=3D"mi">10</span> <sp=
+an class=3D"dl">"</span><span class=3D"s2"> </span><span class=3D"dl">"</sp=
+an>
+  <span class=3D"nx">BLOCK_STMT</span><span class=3D"p">@</span><span class=
+=3D"nd">10</span><span class=3D"p">..</span><span class=3D"mi">21</span>
+    <span class=3D"nx">L_CURLY</span><span class=3D"p">@</span><span class=
+=3D"nd">10</span><span class=3D"p">..</span><span class=3D"mi">11</span> <s=
+pan class=3D"dl">"</span><span class=3D"s2">{</span><span class=3D"dl">"</s=
+pan>
+    <span class=3D"nx">WHITESPACE</span><span class=3D"p">@</span><span cla=
+ss=3D"nd">11</span><span class=3D"p">..</span><span class=3D"mi">14</span> =
+<span class=3D"dl">"</span><span class=3D"se">\n</span><span class=3D"s2"> =
+ </span><span class=3D"dl">"</span>
+    <span class=3D"nx">COMMENT</span><span class=3D"p">@</span><span class=
+=3D"nd">14</span><span class=3D"p">..</span><span class=3D"mi">19</span> <s=
+pan class=3D"dl">"</span><span class=3D"s2">/* */</span><span class=3D"dl">=
+"</span>
+    <span class=3D"nx">WHITESPACE</span><span class=3D"p">@</span><span cla=
+ss=3D"nd">19</span><span class=3D"p">..</span><span class=3D"mi">20</span> =
+<span class=3D"dl">"</span><span class=3D"se">\n</span><span class=3D"dl">"=
+</span>
+    <span class=3D"nx">R_CURLY</span><span class=3D"p">@</span><span class=
+=3D"nd">20</span><span class=3D"p">..</span><span class=3D"mi">21</span> <s=
+pan class=3D"dl">"</span><span class=3D"s2">}</span><span class=3D"dl">"</s=
+pan>
+  <span class=3D"nx">WHITESPACE</span><span class=3D"p">@</span><span class=
+=3D"nd">21</span><span class=3D"p">..</span><span class=3D"mi">22</span> <s=
+pan class=3D"dl">"</span><span class=3D"s2"> </span><span class=3D"dl">"</s=
+pan>
+  <span class=3D"nx">ELSE_KW</span><span class=3D"p">@</span><span class=3D=
+"nd">22</span><span class=3D"p">..</span><span class=3D"mi">26</span> <span=
+ class=3D"dl">"</span><span class=3D"s2">else</span><span class=3D"dl">"</s=
+pan>
+  <span class=3D"nx">WHITESPACE</span><span class=3D"p">@</span><span class=
+=3D"nd">26</span><span class=3D"p">..</span><span class=3D"mi">27</span> <s=
+pan class=3D"dl">"</span><span class=3D"s2"> </span><span class=3D"dl">"</s=
+pan>
+  <span class=3D"nx">BLOCK_STMT</span><span class=3D"p">@</span><span class=
+=3D"nd">27</span><span class=3D"p">..</span><span class=3D"mi">38</span>
+    <span class=3D"nx">L_CURLY</span><span class=3D"p">@</span><span class=
+=3D"nd">27</span><span class=3D"p">..</span><span class=3D"mi">28</span> <s=
+pan class=3D"dl">"</span><span class=3D"s2">{</span><span class=3D"dl">"</s=
+pan>
+    <span class=3D"nx">WHITESPACE</span><span class=3D"p">@</span><span cla=
+ss=3D"nd">28</span><span class=3D"p">..</span><span class=3D"mi">31</span> =
+<span class=3D"dl">"</span><span class=3D"se">\n</span><span class=3D"s2"> =
+ </span><span class=3D"dl">"</span>
+    <span class=3D"nx">COMMENT</span><span class=3D"p">@</span><span class=
+=3D"nd">31</span><span class=3D"p">..</span><span class=3D"mi">36</span> <s=
+pan class=3D"dl">"</span><span class=3D"s2">/* */</span><span class=3D"dl">=
+"</span>
+    <span class=3D"nx">WHITESPACE</span><span class=3D"p">@</span><span cla=
+ss=3D"nd">36</span><span class=3D"p">..</span><span class=3D"mi">37</span> =
+<span class=3D"dl">"</span><span class=3D"se">\n</span><span class=3D"dl">"=
+</span>
+    <span class=3D"nx">R_CURLY</span><span class=3D"p">@</span><span class=
+=3D"nd">37</span><span class=3D"p">..</span><span class=3D"mi">38</span> <s=
+pan class=3D"dl">"</span><span class=3D"s2">}</span><span class=3D"dl">"</s=
+pan>
+</code></pre></div></div>
+
+<p>Tokens:</p>
+
+<div class=3D"language-js highlighter-rouge"><div class=3D"highlight"><pre =
+class=3D"highlight"><code><span class=3D"p">[</span>
+    <span class=3D"nx">IF_KW</span><span class=3D"p">@</span><span class=3D=
+"nd">0</span><span class=3D"p">..</span><span class=3D"mi">2</span> <span c=
+lass=3D"dl">"</span><span class=3D"s2">if</span><span class=3D"dl">"</span>=
+<span class=3D"p">,</span>
+    <span class=3D"nx">WHITESPACE</span><span class=3D"p">@</span><span cla=
+ss=3D"nd">2</span><span class=3D"p">..</span><span class=3D"mi">3</span> <s=
+pan class=3D"dl">"</span><span class=3D"s2"> </span><span class=3D"dl">"</s=
+pan><span class=3D"p">,</span>
+    <span class=3D"nx">L_PAREN</span><span class=3D"p">@</span><span class=
+=3D"nd">3</span><span class=3D"p">..</span><span class=3D"mi">4</span> <spa=
+n class=3D"dl">"</span><span class=3D"s2">(</span><span class=3D"dl">"</spa=
+n><span class=3D"p">,</span>
+    <span class=3D"nx">TRUE_KW</span><span class=3D"p">@</span><span class=
+=3D"nd">4</span><span class=3D"p">..</span><span class=3D"mi">8</span> <spa=
+n class=3D"dl">"</span><span class=3D"s2">true</span><span class=3D"dl">"</=
+span><span class=3D"p">,</span>
+    <span class=3D"nx">R_PAREN</span><span class=3D"p">@</span><span class=
+=3D"nd">8</span><span class=3D"p">..</span><span class=3D"mi">9</span> <spa=
+n class=3D"dl">"</span><span class=3D"s2">)</span><span class=3D"dl">"</spa=
+n><span class=3D"p">,</span>
+    <span class=3D"nx">WHITESPACE</span><span class=3D"p">@</span><span cla=
+ss=3D"nd">9</span><span class=3D"p">..</span><span class=3D"mi">10</span> <=
+span class=3D"dl">"</span><span class=3D"s2"> </span><span class=3D"dl">"</=
+span><span class=3D"p">,</span>
+    <span class=3D"nx">L_CURLY</span><span class=3D"p">@</span><span class=
+=3D"nd">10</span><span class=3D"p">..</span><span class=3D"mi">11</span> <s=
+pan class=3D"dl">"</span><span class=3D"s2">{</span><span class=3D"dl">"</s=
+pan><span class=3D"p">,</span>
+    <span class=3D"nx">WHITESPACE</span><span class=3D"p">@</span><span cla=
+ss=3D"nd">11</span><span class=3D"p">..</span><span class=3D"mi">14</span> =
+<span class=3D"dl">"</span><span class=3D"se">\n</span><span class=3D"s2"> =
+ </span><span class=3D"dl">"</span><span class=3D"p">,</span>
+    <span class=3D"nx">COMMENT</span><span class=3D"p">@</span><span class=
+=3D"nd">14</span><span class=3D"p">..</span><span class=3D"mi">19</span> <s=
+pan class=3D"dl">"</span><span class=3D"s2">/* */</span><span class=3D"dl">=
+"</span><span class=3D"p">,</span>
+    <span class=3D"nx">WHITESPACE</span><span class=3D"p">@</span><span cla=
+ss=3D"nd">19</span><span class=3D"p">..</span><span class=3D"mi">20</span> =
+<span class=3D"dl">"</span><span class=3D"se">\n</span><span class=3D"dl">"=
+</span><span class=3D"p">,</span>
+    <span class=3D"nx">R_CURLY</span><span class=3D"p">@</span><span class=
+=3D"nd">20</span><span class=3D"p">..</span><span class=3D"mi">21</span> <s=
+pan class=3D"dl">"</span><span class=3D"s2">}</span><span class=3D"dl">"</s=
+pan><span class=3D"p">,</span>
+    <span class=3D"nx">WHITESPACE</span><span class=3D"p">@</span><span cla=
+ss=3D"nd">21</span><span class=3D"p">..</span><span class=3D"mi">22</span> =
+<span class=3D"dl">"</span><span class=3D"s2"> </span><span class=3D"dl">"<=
+/span><span class=3D"p">,</span>
+    <span class=3D"nx">ELSE_KW</span><span class=3D"p">@</span><span class=
+=3D"nd">22</span><span class=3D"p">..</span><span class=3D"mi">26</span> <s=
+pan class=3D"dl">"</span><span class=3D"s2">else</span><span class=3D"dl">"=
+</span><span class=3D"p">,</span>
+    <span class=3D"nx">WHITESPACE</span><span class=3D"p">@</span><span cla=
+ss=3D"nd">26</span><span class=3D"p">..</span><span class=3D"mi">27</span> =
+<span class=3D"dl">"</span><span class=3D"s2"> </span><span class=3D"dl">"<=
+/span><span class=3D"p">,</span>
+    <span class=3D"nx">L_CURLY</span><span class=3D"p">@</span><span class=
+=3D"nd">27</span><span class=3D"p">..</span><span class=3D"mi">28</span> <s=
+pan class=3D"dl">"</span><span class=3D"s2">{</span><span class=3D"dl">"</s=
+pan><span class=3D"p">,</span>
+    <span class=3D"nx">WHITESPACE</span><span class=3D"p">@</span><span cla=
+ss=3D"nd">28</span><span class=3D"p">..</span><span class=3D"mi">31</span> =
+<span class=3D"dl">"</span><span class=3D"se">\n</span><span class=3D"s2"> =
+ </span><span class=3D"dl">"</span><span class=3D"p">,</span>
+    <span class=3D"nx">COMMENT</span><span class=3D"p">@</span><span class=
+=3D"nd">31</span><span class=3D"p">..</span><span class=3D"mi">36</span> <s=
+pan class=3D"dl">"</span><span class=3D"s2">/* */</span><span class=3D"dl">=
+"</span><span class=3D"p">,</span>
+    <span class=3D"nx">WHITESPACE</span><span class=3D"p">@</span><span cla=
+ss=3D"nd">36</span><span class=3D"p">..</span><span class=3D"mi">37</span> =
+<span class=3D"dl">"</span><span class=3D"se">\n</span><span class=3D"dl">"=
+</span><span class=3D"p">,</span>
+    <span class=3D"nx">R_CURLY</span><span class=3D"p">@</span><span class=
+=3D"nd">37</span><span class=3D"p">..</span><span class=3D"mi">38</span> <s=
+pan class=3D"dl">"</span><span class=3D"s2">}</span><span class=3D"dl">"</s=
+pan><span class=3D"p">,</span>
+<span class=3D"p">]</span>
+</code></pre></div></div>
+
+<p>Text:</p>
+
+<div class=3D"language-js highlighter-rouge"><div class=3D"highlight"><pre =
+class=3D"highlight"><code><span class=3D"k">if</span> <span class=3D"p">(</=
+span><span class=3D"kc">true</span><span class=3D"p">)</span> <span class=
+=3D"p">{</span>
+  <span class=3D"cm">/* */</span>
+<span class=3D"p">}</span> <span class=3D"k">else</span> <span class=3D"p">=
+{</span>
+  <span class=3D"cm">/* */</span>
+<span class=3D"p">}</span>
+</code></pre></div></div>
+
+<p>What does this <code class=3D"language-plaintext highlighter-rouge">Type=
+d &lt;-&gt; Untyped &lt;-&gt; Tokens &lt;-&gt; Source code</code> layout al=
+low us to do? a lot. This is an incomplete list of the things this layout a=
+llows:</p>
+
+<ul>
+  <li>Parent/Ancestors/Descendants/Children/Siblings traversing</li>
+  <li>Bottom-up rule checking</li>
+  <li>Extremely cheap node/token cloning</li>
+  <li>Complete error recovery</li>
+  <li>Totally lossless syntax tree</li>
+  <li>Free typed to untyped conversion with no runtime typing</li>
+  <li>Lexical equality</li>
+  <li>Cheap syntax highlighting</li>
+  <li>No need for messy visitors</li>
+  <li>Incrementally reparsing source code</li>
+  <li>Sharing nodes across sub-analyzers (such as scope analysis) and sub-p=
+arsers (directive parsing)</li>
+  <li>Ability to catch nested errors without having to manually visit nodes=
+</li>
+  <li>Ability to check individual tokens in the tree easily and cheaply</li=
+>
+  <li>Parallelized node checking</li>
+  <li>Linting of syntactically incorrect source code</li>
+  <li>Syntactically complex error rendering (e.g. labelling individual toke=
+ns)</li>
+  <li>Ability to leverage untyped nodes for rule checking, which makes writ=
+ing rules more concise</li>
+  <li>Ability to write very complex rules relying on multiple distinct node=
+s</li>
+  <li>Requires no handling of whitespace in the parser itself</li>
+  <li>Allows for lossy and lossless parsing</li>
+</ul>
+
+<h2 id=3D"downsides">Downsides</h2>
+
+<p>This layout however has a few, mostly minor downsides:</p>
+
+<ul>
+  <li>Ast node fields are functions, not fields.</li>
+  <li>(Particular to rslint) all ast node fields are optional</li>
+  <li>Requires a lot of setup compared to struct ast nodes (see xtask/codeg=
+en)</li>
+  <li>Autofix and ast mutation in general is harder</li>
+</ul>
+
+<h1 id=3D"acknowledgements">Acknowledgements</h1>
+
+<p>Huge thanks to <a href=3D"https://github.com/matklad">matklad</a>, he is=
+ the original author of rowan and rust analyzer. Much of the code rslint=E2=
+=80=99s parser uses is taken from rust analyzer=E2=80=99s parser and codege=
+n, he has also answered way too many of my dumb questions on zulip :)</p>
+
+<h1 id=3D"further-reading">Further reading</h1>
+
+<ul>
+  <li>
+    <p><a href=3D"https://github.com/rust-analyzer/rust-analyzer/blob/maste=
+r/docs/dev/syntax.md">A more detailed explanation of rowan=E2=80=99s syntax=
+ implementation</a></p>
+  </li>
+  <li>
+    <p><a href=3D"https://github.com/RDambrosio016/RSLint/blob/dev/docs/dev=
+/syntax.md">RSLint=E2=80=99s dev docs on the syntax topic</a></p>
+  </li>
+  <li>
+    <p><a href=3D"https://github.com/RDambrosio016/RSLint/tree/dev/rslint_p=
+arser/src">rslint_parser</a></p>
+  </li>
+</ul>
+
+<p>If you found this blog post interesting, i suggest you check out <a href=
+=3D"https://github.com/RDambrosio016/RSLint/tree/dev">rslint</a>, and perha=
+ps contribute? =F0=9F=91=80</p>
+
+  </div>
+</article>
+
+      </div>
+    </main><footer class=3D"site-footer h-card">
+  <data class=3D"u-url" href=3D"/"></data>
+
+  <div class=3D"wrapper">
+
+    <h2 class=3D"footer-heading">RDambrosio</h2>
+
+    <div class=3D"footer-col-wrapper">
+      <div class=3D"footer-col footer-col-1">
+        <ul class=3D"contact-list">
+          <li class=3D"p-name">RDambrosio</li><li><a class=3D"u-email" href=
+=3D"mailto:rdambrosio016@gmail.com">rdambrosio016@gmail.com</a></li></ul>
+      </div>
+
+      <div class=3D"footer-col footer-col-2"><ul class=3D"social-media-list=
+"><li><a href=3D"https://github.com/RDambrosio016"><svg class=3D"svg-icon">=
+<use xlink:href=3D"/assets/minima-social-icons.svg#github"></use></svg> <sp=
+an class=3D"username">RDambrosio016</span></a></li></ul>
+</div>
+
+      <div class=3D"footer-col footer-col-3">
+        <p></p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+
+
+
+</body></html>
+------MultipartBoundary--BvmhPnNuPDsRWi8duyuB78O5cdfaIcBCbwkRkxQsjR----
+Content-Type: text/css
+Content-Transfer-Encoding: quoted-printable
+Content-Location: https://rdambrosio016.github.io/assets/main.css
+
+@charset "utf-8";
+
+body, h1, h2, h3, h4, h5, h6, p, blockquote, pre, hr, dl, dd, ol, ul, figur=
+e { margin: 0px; padding: 0px; }
+
+body { font-style: normal; font-variant: normal; font-size-adjust: none; fo=
+nt-optical-sizing: auto; font-variation-settings: normal; font-weight: 400;=
+ font-stretch: normal; font-size: 16px; line-height: 1.5; font-family: -app=
+le-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-s=
+erif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; color: rgb(=
+17, 17, 17); background-color: rgb(253, 253, 253); text-size-adjust: 100%; =
+font-feature-settings: "kern"; font-kerning: normal; display: flex; min-hei=
+ght: 100vh; flex-direction: column; }
+
+h1, h2, h3, h4, h5, h6, p, blockquote, pre, ul, ol, dl, figure, .highlight =
+{ margin-bottom: 15px; }
+
+main { display: block; }
+
+img { max-width: 100%; vertical-align: middle; }
+
+figure > img { display: block; }
+
+figcaption { font-size: 14px; }
+
+ul, ol { margin-left: 30px; }
+
+li > ul, li > ol { margin-bottom: 0px; }
+
+h1, h2, h3, h4, h5, h6 { font-weight: 400; }
+
+a { color: rgb(42, 122, 226); text-decoration: none; }
+
+a:visited { color: rgb(23, 86, 169); }
+
+a:hover { color: rgb(17, 17, 17); text-decoration: underline; }
+
+.social-media-list a:hover { text-decoration: none; }
+
+.social-media-list a:hover .username { text-decoration: underline; }
+
+blockquote { color: rgb(130, 130, 130); border-left: 4px solid rgb(232, 232=
+, 232); padding-left: 15px; font-size: 18px; letter-spacing: -1px; font-sty=
+le: italic; }
+
+blockquote > :last-child { margin-bottom: 0px; }
+
+pre, code { font-size: 15px; border: 1px solid rgb(232, 232, 232); border-r=
+adius: 3px; background-color: rgb(238, 238, 255); }
+
+code { padding: 1px 5px; }
+
+pre { padding: 8px 12px; overflow-x: auto; }
+
+pre > code { border: 0px; padding-right: 0px; padding-left: 0px; }
+
+.wrapper { max-width: calc(740px); margin-right: auto; margin-left: auto; p=
+adding-right: 30px; padding-left: 30px; }
+
+@media screen and (max-width: 800px) {
+  .wrapper { max-width: calc(770px); padding-right: 15px; padding-left: 15p=
+x; }
+}
+
+.wrapper::after, .footer-col-wrapper::after { content: ""; display: table; =
+clear: both; }
+
+.svg-icon { width: 16px; height: 16px; display: inline-block; fill: rgb(130=
+, 130, 130); padding-right: 5px; vertical-align: text-top; }
+
+.social-media-list li + li { padding-top: 5px; }
+
+table { margin-bottom: 30px; width: 100%; text-align: left; color: rgb(63, =
+63, 63); border-collapse: collapse; border: 1px solid rgb(232, 232, 232); }
+
+table tr:nth-child(2n) { background-color: rgb(247, 247, 247); }
+
+table th, table td { padding: 10px 15px; }
+
+table th { background-color: rgb(240, 240, 240); border-width: 1px; border-=
+style: solid; border-color: rgb(222, 222, 222) rgb(222, 222, 222) rgb(201, =
+201, 201); border-image: initial; }
+
+table td { border: 1px solid rgb(232, 232, 232); }
+
+.site-header { border-top: 5px solid rgb(66, 66, 66); border-bottom: 1px so=
+lid rgb(232, 232, 232); min-height: 55.95px; position: relative; }
+
+.site-title { font-size: 26px; font-weight: 300; line-height: 54px; letter-=
+spacing: -1px; margin-bottom: 0px; float: left; }
+
+.site-title, .site-title:visited { color: rgb(66, 66, 66); }
+
+.site-nav { float: right; line-height: 54px; }
+
+.site-nav .nav-trigger { display: none; }
+
+.site-nav .menu-icon { display: none; }
+
+.site-nav .page-link { color: rgb(17, 17, 17); line-height: 1.5; }
+
+.site-nav .page-link:not(:last-child) { margin-right: 20px; }
+
+@media screen and (max-width: 600px) {
+  .site-nav { position: absolute; top: 9px; right: 15px; background-color: =
+rgb(253, 253, 253); border: 1px solid rgb(232, 232, 232); border-radius: 5p=
+x; text-align: right; }
+  .site-nav label[for=3D"nav-trigger"] { display: block; float: right; widt=
+h: 36px; height: 36px; z-index: 2; cursor: pointer; }
+  .site-nav .menu-icon { display: block; float: right; width: 36px; height:=
+ 26px; line-height: 0; padding-top: 10px; text-align: center; }
+  .site-nav .menu-icon > svg { fill: rgb(66, 66, 66); }
+  .site-nav input ~ .trigger { clear: both; display: none; }
+  .site-nav input:checked ~ .trigger { display: block; padding-bottom: 5px;=
+ }
+  .site-nav .page-link { display: block; padding: 5px 10px; margin-left: 20=
+px; }
+  .site-nav .page-link:not(:last-child) { margin-right: 0px; }
+}
+
+.site-footer { border-top: 1px solid rgb(232, 232, 232); padding: 30px 0px;=
+ }
+
+.footer-heading { font-size: 18px; margin-bottom: 15px; }
+
+.contact-list, .social-media-list { list-style: none; margin-left: 0px; }
+
+.footer-col-wrapper { font-size: 15px; color: rgb(130, 130, 130); margin-le=
+ft: -15px; }
+
+.footer-col { float: left; margin-bottom: 15px; padding-left: 15px; }
+
+.footer-col-1 { width: calc(35% - 15px); }
+
+.footer-col-2 { width: calc(20% - 15px); }
+
+.footer-col-3 { width: calc(45% - 15px); }
+
+@media screen and (max-width: 800px) {
+  .footer-col-1, .footer-col-2 { width: calc(50% - 15px); }
+  .footer-col-3 { width: calc(100% - 15px); }
+}
+
+@media screen and (max-width: 600px) {
+  .footer-col { float: none; width: calc(100% - 15px); }
+}
+
+.page-content { padding: 30px 0px; flex: 1 1 0%; }
+
+.page-heading { font-size: 32px; }
+
+.post-list-heading { font-size: 28px; }
+
+.post-list { margin-left: 0px; list-style: none; }
+
+.post-list > li { margin-bottom: 30px; }
+
+.post-meta { font-size: 14px; color: rgb(130, 130, 130); }
+
+.post-link { display: block; font-size: 24px; }
+
+.post-header { margin-bottom: 30px; }
+
+.post-title { font-size: 42px; letter-spacing: -1px; line-height: 1; }
+
+@media screen and (max-width: 800px) {
+  .post-title { font-size: 36px; }
+}
+
+.post-content { margin-bottom: 30px; }
+
+.post-content h2 { font-size: 32px; }
+
+@media screen and (max-width: 800px) {
+  .post-content h2 { font-size: 28px; }
+}
+
+.post-content h3 { font-size: 26px; }
+
+@media screen and (max-width: 800px) {
+  .post-content h3 { font-size: 22px; }
+}
+
+.post-content h4 { font-size: 20px; }
+
+@media screen and (max-width: 800px) {
+  .post-content h4 { font-size: 18px; }
+}
+
+.highlight { background: rgb(255, 255, 255); }
+
+.highlighter-rouge .highlight { background: rgb(238, 238, 255); }
+
+.highlight .c { color: rgb(153, 153, 136); font-style: italic; }
+
+.highlight .err { color: rgb(166, 23, 23); background-color: rgb(227, 210, =
+210); }
+
+.highlight .k { font-weight: bold; }
+
+.highlight .o { font-weight: bold; }
+
+.highlight .cm { color: rgb(153, 153, 136); font-style: italic; }
+
+.highlight .cp { color: rgb(153, 153, 153); font-weight: bold; }
+
+.highlight .c1 { color: rgb(153, 153, 136); font-style: italic; }
+
+.highlight .cs { color: rgb(153, 153, 153); font-weight: bold; font-style: =
+italic; }
+
+.highlight .gd { color: rgb(0, 0, 0); background-color: rgb(255, 221, 221);=
+ }
+
+.highlight .gd .x { color: rgb(0, 0, 0); background-color: rgb(255, 170, 17=
+0); }
+
+.highlight .ge { font-style: italic; }
+
+.highlight .gr { color: rgb(170, 0, 0); }
+
+.highlight .gh { color: rgb(153, 153, 153); }
+
+.highlight .gi { color: rgb(0, 0, 0); background-color: rgb(221, 255, 221);=
+ }
+
+.highlight .gi .x { color: rgb(0, 0, 0); background-color: rgb(170, 255, 17=
+0); }
+
+.highlight .go { color: rgb(136, 136, 136); }
+
+.highlight .gp { color: rgb(85, 85, 85); }
+
+.highlight .gs { font-weight: bold; }
+
+.highlight .gu { color: rgb(170, 170, 170); }
+
+.highlight .gt { color: rgb(170, 0, 0); }
+
+.highlight .kc { font-weight: bold; }
+
+.highlight .kd { font-weight: bold; }
+
+.highlight .kp { font-weight: bold; }
+
+.highlight .kr { font-weight: bold; }
+
+.highlight .kt { color: rgb(68, 85, 136); font-weight: bold; }
+
+.highlight .m { color: rgb(0, 153, 153); }
+
+.highlight .s { color: rgb(221, 17, 68); }
+
+.highlight .na { color: teal; }
+
+.highlight .nb { color: rgb(0, 134, 179); }
+
+.highlight .nc { color: rgb(68, 85, 136); font-weight: bold; }
+
+.highlight .no { color: teal; }
+
+.highlight .ni { color: purple; }
+
+.highlight .ne { color: rgb(153, 0, 0); font-weight: bold; }
+
+.highlight .nf { color: rgb(153, 0, 0); font-weight: bold; }
+
+.highlight .nn { color: rgb(85, 85, 85); }
+
+.highlight .nt { color: navy; }
+
+.highlight .nv { color: teal; }
+
+.highlight .ow { font-weight: bold; }
+
+.highlight .w { color: rgb(187, 187, 187); }
+
+.highlight .mf { color: rgb(0, 153, 153); }
+
+.highlight .mh { color: rgb(0, 153, 153); }
+
+.highlight .mi { color: rgb(0, 153, 153); }
+
+.highlight .mo { color: rgb(0, 153, 153); }
+
+.highlight .sb { color: rgb(221, 17, 68); }
+
+.highlight .sc { color: rgb(221, 17, 68); }
+
+.highlight .sd { color: rgb(221, 17, 68); }
+
+.highlight .s2 { color: rgb(221, 17, 68); }
+
+.highlight .se { color: rgb(221, 17, 68); }
+
+.highlight .sh { color: rgb(221, 17, 68); }
+
+.highlight .si { color: rgb(221, 17, 68); }
+
+.highlight .sx { color: rgb(221, 17, 68); }
+
+.highlight .sr { color: rgb(0, 153, 38); }
+
+.highlight .s1 { color: rgb(221, 17, 68); }
+
+.highlight .ss { color: rgb(153, 0, 115); }
+
+.highlight .bp { color: rgb(153, 153, 153); }
+
+.highlight .vc { color: teal; }
+
+.highlight .vg { color: teal; }
+
+.highlight .vi { color: teal; }
+
+.highlight .il { color: rgb(0, 153, 153); }
+------MultipartBoundary--BvmhPnNuPDsRWi8duyuB78O5cdfaIcBCbwkRkxQsjR------

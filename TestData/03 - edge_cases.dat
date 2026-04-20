@@ -1,0 +1,55 @@
+#name
+GenericNoSpaceBeforeEquals
+#data
+unit U;
+interface
+type
+  TGen<T>= class end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="TGen"
+					ntTypeParams
+						ntTypeParam
+							ntType anName="T"
+					ntType anType="avClass"
+		ntImplementation
+
+
+#name
+NestedGenericNoSpaceBeforeEquals
+#data
+unit U;
+interface
+type
+  TGen<T: IComparable<T>>= class end;
+implementation
+end.
+#errors
+#document
+ntCompilationUnit
+	ntUnitDeclaration anName="U"
+		ntQualifiedIdentifier anName="U"
+		ntInterfaceSection
+			ntTypeSection
+				ntTypeDecl anName="TGen"
+					ntTypeParams
+						ntTypeParam
+							ntType anName="T"
+							ntConstraints
+								ntType
+									ntQualifiedIdentifier anName="IComparable"
+									ntTypeParams
+										ntTypeParam
+											ntType anName="T"
+					ntType anType="avClass"
+		ntImplementation
+
+
+

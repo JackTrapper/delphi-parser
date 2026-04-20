@@ -382,6 +382,7 @@ type
 
 
 		ptCompilerDirective,			// Compiler directive
+		ptDisabledText,				// Disabled code region (inside false {$IFDEF} branch); treated as trivia
 //		ptDefineDirect,				// '{$DEFINE xxx}'	compiler directive
 //		ptUndefDirect,					// '{$UNDEF}'			compiler directive
 //		ptIfDefDirect,					// '{$IFDEF xxx}'		compiler directive
@@ -577,7 +578,10 @@ const
 		ptSlashesComment,
 		ptCRLFCo
 	];
-
+{ NOTE: ptCompilerDirective and ptDisabledText are NOT in this set.
+		- the tokenizer emits directives as real tokens
+		- the preprocessor demotes them to trivia after evaluating conditional compilation
+}
 
 
 type
@@ -683,6 +687,9 @@ The following reserved words cannot be redefined or used as identifiers.
 
 
 		function ToString: string; override;
+
+		// Split >= into > and =
+		class procedure SplitGreaterThanEquals(Source: TSyntaxToken; out EqualsToken: TSyntaxToken);
 	end;
 
 	TDelphiTokenizer = class
@@ -696,9 +703,6 @@ The following reserved words cannot be redefined or used as identifiers.
 		FNextToken: TSyntaxToken;
 		FEofEmitted: Boolean;     // has EOF been emitted once by GetNextToken?
 		FPeeking: Boolean;        // true while PeekTokenKind is prefetching a token
-
-		//
-		FCompilerDirectives: TStrings;
 
 		function GetNextChar: WideChar;	// Get the next character from the stream. UEOF if at end of stream.
 		function Consume: WideChar;		// Consume the next character from the stream.
@@ -785,8 +789,6 @@ The following reserved words cannot be redefined or used as identifiers.
 		// Cough up the next token
 		function NextToken(out AToken: TSyntaxToken): Boolean;
 		function PeekTokenKind: TptTokenKind;
-
-		property CompilerDirectives: TStrings read FCompilerDirectives;
 
 		// This is how you do it. Fills list with TSyntaxToken objects
 		class procedure Tokenize(const SourceCode: string; const TargetList: TList);
@@ -1175,8 +1177,6 @@ end;
 constructor TDelphiTokenizer.Create(SourceStream: ISequentialStream; Encoding: Word);
 begin
 	inherited Create;
-
-	FCompilerDirectives := TStringList.Create;
 
 	FCurrentInputCharacter := UEOF;
 	FCurrentLine := 1;
@@ -1983,7 +1983,6 @@ begin
 	// If callers stop before draining, the tokenizer still owns that token.
 	FreeAndNil(FNextToken);
 	FreeAndNil(FStream);
-	FreeAndNil(FCompilerDirectives);
 
 	inherited;
 end;
@@ -2889,6 +2888,7 @@ begin
 	#13, #10: Result := True;
    ' ': Result := True;       // Space
 	'	': Result := True;		// Tab
+	#$FEFF: Result := True;	// UTF-8 BOM (U+FEFF) decoded to UTF-16
    else
 		Result := False;
 	end;
@@ -3132,6 +3132,49 @@ end;
 function TSyntaxToken.get_TrailingTrivia(I: Integer): TSyntaxToken;
 begin
    Result := FTrailingTrivia[I];
+end;
+
+class procedure TSyntaxToken.SplitGreaterThanEquals(Source: TSyntaxToken; out EqualsToken: TSyntaxToken);
+var
+	temp: TList<TSyntaxToken>;
+begin
+{
+	This helper function is called by the parser when it encounters the problematic syntax:
+	
+		TFoo<T: record> = class				// ptGreaterThan ptEquals
+		TFoo<T: record>= class				// ptGreaterThanEquals
+		              \_/
+
+	In one case the tokenizer sees: > =
+	In the other it sees:           >=
+
+
+	Split a single ">=" token into ">" + "=".
+	
+	[ptGreaterThanEquals] ==> [ptGreaterThan] + [ptEquals]
+
+	The source token is changed in-place to become ">" in order to keep it's leading trivia.
+	
+	A new "=" token is returned (out EqualsToken), and gets the trailing trivia 
+	from the original ">="  (e.g. the space before "class").
+
+
+}
+	
+	Assert(Source.FKind = ptGreaterThanEquals);
+
+	// Create "=" from the second character of ">="
+	EqualsToken := TSyntaxToken.Create(ptEquals, Source.Width, Source.FullWidth + 1, '=');
+
+	// Mutate ">="  →  ">"
+	Source.FKind := ptGreaterThan;
+	Source.Text := '>';
+	Source.ValueText := '>';
+
+	// Trailing trivia of ">="  (e.g. whitespace before "class") belongs after "=", not after ">"
+	temp := Source.FTrailingTrivia;
+	Source.FTrailingTrivia := EqualsToken.FTrailingTrivia;
+	EqualsToken.FTrailingTrivia := temp;
 end;
 
 function TSyntaxToken.ToString: string;

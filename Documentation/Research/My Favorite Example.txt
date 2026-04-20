@@ -1,0 +1,9 @@
+My favorite example:
+// From: https://comp.compilers.narkive.com/x5k5JSG1/bnf-notation-for-delphi-grammar
+// http://www.felix-colibri.com/papers/compilers/delphi_5_grammar/delphi_5_grammar.html
+
+case i of
+0: if a then b
+; //<----- illegal, optional or required?
+else c
+end;

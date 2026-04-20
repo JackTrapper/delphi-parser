@@ -1,24 +1,26 @@
 ﻿unit SemanticModel;
 
 (*
+The eventual goal:
+
 TCompilation
 │
 ├─ TSyntaxTree (one per source file)
-│    ├─ FNodeArena
-│    ├─ FTokenArena
-│    └─ Root: TSyntaxNode2
+	├─ FNodeArena
+	├─ FTokenArena
+	└─ Root: TSyntaxNode2
 │
 ├─ TSemanticModel (per SyntaxTree)
-│    ├─ SourceLocations
-│    ├─ Scopes
-│    ├─ Symbols
-│    ├─ Bindings
-│    ├─ Types
-│    ├─ Constants
-│    └─ ConversionTable
+│	├─ SourceLocations
+│	├─ Scopes
+│	├─ Symbols
+│	├─ Bindings
+│	├─ Types
+│	├─ Constants
+│	└─ ConversionTable
 │
 └─ TFlowAnalysis (per method or region)
-     └─ FlowTable
+	└─ FlowTable
 
 
 These are the tables:

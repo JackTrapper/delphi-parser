@@ -7,12 +7,12 @@ Sample Usage
 ============
 
 	var
-		tree: TSyntaxTree;
+		syntaxTree: TSyntaxTree;
 		tree: string;
 
-		root := TDelphiParser.ParseText(moCode.Text, '');
+		syntaxTree := TDelphiParser.ParseText(moCode.Text, '');
 
-		tree := TSyntaxNode2.DumpTree(tree.Root);
+		tree := TSyntaxNode2.DumpTree(syntaxTree.Root);
 
 
 Note: It is not an Abstract Syntax Tree (AST). 
@@ -611,6 +611,10 @@ type
 
 		procedure GetDefaultConditionalDirectives(TargetList: TStrings);
 
+		// Advances to the next token (which is also how FCurrentToken is set)
+		// Only used internally by EatToken, and EatTokenEx
+		procedure NextToken;
+
 		{
 			Eventually this will be deprecated to catch all the legal code paths, or maybe it's because i just missed something.
 			...it's a lot of conflicting grammer to sort through.
@@ -640,18 +644,14 @@ type
 
 		// The next token info
 		function PeekToken: TSyntaxToken; overload;
-		function PeekToken(n: Integer): TSyntaxToken; overload;
-		function PeekTokenKind:  TptTokenKind; // helper for --> PeekToken(1).TokenKind
-		function PeekTokenExID:  TptTokenKind; // helper for --> PeekToken(1).ExID
-
+		function PeekToken(n: Integer): TSyntaxToken; overload;  // 0:Current, 1:Next (aka PeekToken)
+		function PeekTokenKind:  TptTokenKind; // helper for --> PeekToken.TokenKind
+		function PeekTokenExID:  TptTokenKind; // helper for --> PeekToken.ExID
 
 		// Convenience: like Expect but without slot
-		procedure NextToken; // advances to the next token (which is also how FCurrentToken is set)
 		function EatToken: TSyntaxToken; overload; //
-		function EatToken(ExpectedTokenKind: TptTokenKind): TSyntaxToken; overload; // emits an error message if the CurrentToken kind is not Sym.
-
-		// Assertion utility routines. Moves to next token as long as current token is specified type
-		function EatTokenEx(    ExpectedTokenKind: TptTokenKind): TSyntaxToken;	// emits an error message if the CurrentToken ExID is not Sym.
+		function EatToken(const ExpectedTokenKind: TptTokenKind): TSyntaxToken; overload; // emits an error message if the CurrentToken kind is not Sym.
+		function EatTokenEx(const ExpectedTokenContentualKind: TptTokenKind): TSyntaxToken;	// emits an error message if the CurrentToken ExID is not Sym.
 
 		// Output an error message
 		function SynError(Error: string): TSyntaxNode2;
@@ -666,8 +666,10 @@ type
 		function ParseCore: TSyntaxTree; virtual; //as a nice way to split plumbing from grammer
 
 
-
-
+		property CurrentToken:               TSyntaxToken read get_CurrentToken;				// read-only
+		property CurrentTokenKind:           TptTokenKind read get_CurrentTokenKind;			// the CurrentToken.Kind
+		property CurrentTokenContentualKind: TptTokenKind read get_CurrentContentualKind;	// the CurrentToken.ContextualKind
+	protected
 		// ParseCore then turns around and calls one of:
 		function ParseUnit: TSyntaxNode2;						// e.g. unit Unit1;
 		function ParseProgramFile: TSyntaxNode2;				// e.g. program Program1;
@@ -959,10 +961,6 @@ type
 		function ParseNamedArgument: TSyntaxNode2;
 		function ParseAttributeArgumentName: TSyntaxNode2;
 		function ParseAttributeArgumentExpression: TSyntaxNode2;
-
-		property CurrentToken:             TSyntaxToken read get_CurrentToken;		// read-only
-		property CurrentTokenKind:         TptTokenKind read get_CurrentTokenKind;	// the CurrentToken.TokenKind
-		property CurrentTokenGenID:        TptTokenKind read get_CurrentContentualKind;	// ExID, or TokenID if ExID is empty
 	protected
 		function ParseProcedureDeclarationSection: TSyntaxNode2; deprecated 'Not used';
 	public
@@ -970,7 +968,7 @@ type
 		destructor Destroy; override;
 
 		// The main way it will be used
-		class function ParseText(const Text: UnicodeString; FilePath: string): TSyntaxTree;
+		class function ParseText(const Text: UnicodeString; FilePath: string=''): TSyntaxTree;
 
 		// Parse using the list of tokens. Note: the parser takes ownership of the tokens
 		function Parse(const Tokens: TList): TSyntaxTree;
@@ -1163,59 +1161,59 @@ ntPropertyDirective anKind=
 //		-> ';' DEFAULT
 		Result.Attributes[anKind] := 'isdefault';
 		Result.AddChild(EatToken(ptSemicolon));
-		if CurrentTokenGenID = ptDefault then
+		if CurrentTokenContentualKind = ptDefault then
 			Result.AddChild(EatTokenEx(ptDefault))
 		else
 			Result.AddChild(EatToken);
 	end
-	else if (CurrentTokenGenID = ptDefault) or IsDirectiveWord('default') then
+	else if (CurrentTokenContentualKind = ptDefault) or IsDirectiveWord('default') then
 	begin
 //		-> DEFAULT Expression
 		Result.Attributes[anKind] := 'default';
 		Result.AddChild(EatToken);
 		Result.AddChild(ParseExpression);
 	end
-	else if (CurrentTokenGenID = ptDispId) or IsDirectiveWord('dispid') then
+	else if (CurrentTokenContentualKind = ptDispId) or IsDirectiveWord('dispid') then
 	begin
 //		-> DISPID Expression
 		Result.Attributes[anKind] := 'dispid';
 		Result.AddChild(EatToken);
 		Result.AddChild(ParseExpression);
 	end
-	else if (CurrentTokenGenID = ptIndex) or IsDirectiveWord('index') then
+	else if (CurrentTokenContentualKind = ptIndex) or IsDirectiveWord('index') then
 	begin
 //		-> INDEX Expression
 		Result.Attributes[anKind] := 'index';
 		Result.AddChild(EatToken);
 		Result.AddChild(ParseExpression);
 	end
-	else if (CurrentTokenGenID = ptNoDefault) or IsDirectiveWord('nodefault') then
+	else if (CurrentTokenContentualKind = ptNoDefault) or IsDirectiveWord('nodefault') then
 	begin
 //		-> NODEFAULT
 		Result.Attributes[anKind] := 'nodefault';
 		Result.AddChild(EatToken);
 	end
-	else if (CurrentTokenGenID = ptRead) or IsDirectiveWord('read') then
+	else if (CurrentTokenContentualKind = ptRead) or IsDirectiveWord('read') then
 	begin
 //		-> READ Expression
 		Result.Attributes[anKind] := 'read';
 		Result.AddChild(EatTokenEx(ptRead));
 		Result.AddChild(ParseExpression);
 	end
-	else if (CurrentTokenGenID = ptReadOnly) or IsDirectiveWord('readonly') then
+	else if (CurrentTokenContentualKind = ptReadOnly) or IsDirectiveWord('readonly') then
 	begin
 //		-> READONLY
 		Result.Attributes[anKind] := 'readonly';
 		Result.AddChild(EatToken);
 	end
-	else if (CurrentTokenGenID = ptStored) or IsDirectiveWord('stored') then
+	else if (CurrentTokenContentualKind = ptStored) or IsDirectiveWord('stored') then
 	begin
 //		-> STORED Expression
 		Result.Attributes[anKind] := 'stored';
 		Result.AddChild(EatToken);
 		Result.AddChild(ParseExpression);
 	end
-	else if (CurrentTokenGenID = ptWrite) or IsDirectiveWord('write') then
+	else if (CurrentTokenContentualKind = ptWrite) or IsDirectiveWord('write') then
 	begin
 //		-> WRITE Expression
 		Result.Attributes[anKind] := 'write';
@@ -1223,13 +1221,13 @@ ntPropertyDirective anKind=
 		// Keep accessor parsing bounded so the terminating semicolon is preserved.
 		Result.AddChild(ParseExpression);
 	end
-	else if (CurrentTokenGenID = ptWriteOnly) or IsDirectiveWord('writeonly') then
+	else if (CurrentTokenContentualKind = ptWriteOnly) or IsDirectiveWord('writeonly') then
 	begin
 //		-> WRITEONLY
 		Result.Attributes[anKind] := 'writeonly';
 		Result.AddChild(EatToken);
 	end
-	else if (CurrentTokenGenID = ptImplements) or IsDirectiveWord('implements') then
+	else if (CurrentTokenContentualKind = ptImplements) or IsDirectiveWord('implements') then
 	begin
 //		-> IMPLEMENTS (QualifiedIdent [','])+
 		Result.Attributes[anKind] := 'implements';
@@ -1312,18 +1310,18 @@ end;
 
 {next two helpers validate expected tokens and recover with missing tokens at EOF}
 
-function TDelphiParser.EatTokenEx(ExpectedTokenKind: TptTokenKind): TSyntaxToken;
+function TDelphiParser.EatTokenEx(const ExpectedTokenContentualKind: TptTokenKind): TSyntaxToken;
 //var
 //	s: string;
 begin
 	// Expect the CurrentToken's ExID to be ExpectedTokenKind
-	if CurrentTokenGenID <> ExpectedTokenKind then
+	if CurrentTokenContentualKind <> ExpectedTokenContentualKind then
 	begin
 		//s := Format(SExpected, ['EX:' + TokenName(ExpectedTokenKind), TokenName(CurrentTokenGenID)]);
 		//DoMessage(s, CurrentToken.Width, CurrentToken.FullWidth);
 
 		// Roslyn-style recovery: synthesize the expected token and keep EOF in place.
-		Result := TSyntaxToken.Create(ExpectedTokenKind, CurrentToken.Width, CurrentToken.FullWidth, '');
+		Result := TSyntaxToken.Create(ExpectedTokenContentualKind, CurrentToken.Width, CurrentToken.FullWidth, '');
 		Result.IsMissing := True;
 
 		if CurrentToken.Kind <> ptEof then
@@ -2135,7 +2133,7 @@ For more information about Delphi grammars take a look at:
 	NextToken; // advance to the first token
 
 	// Check the file type directive
-	case CurrentTokenGenID of
+	case CurrentTokenContentualKind of
 	ptUnit:		node := ParseUnit;			// e.g. unit SimpleParser;
 	ptProgram:	node := ParseProgramFile;	// e.g. program SimpleParser;
 	ptPackage:	node := ParsePackage;		// e.g. package SimpleParser;
@@ -2206,7 +2204,7 @@ begin
 	Result := Self.ParseStream(stm, FilePath, encoding.CodePage);
 end;
 
-class function TDelphiParser.ParseText(const Text: UnicodeString; FilePath: string): TSyntaxTree;
+class function TDelphiParser.ParseText(const Text: UnicodeString; FilePath: string=''): TSyntaxTree;
 var
 	s: TStream;
 	stm: ISequentialStream;
@@ -2476,7 +2474,7 @@ ntCompilationUnit
 
 //	(PortabilityDirective)* ';'
 	// Portability directives
-	while (CurrentTokenGenID in [ptPlatform, ptLibrary, ptDeprecated, ptExperimental]) do
+	while (CurrentTokenContentualKind in [ptPlatform, ptLibrary, ptDeprecated, ptExperimental]) do
 	begin
 		Result.AddChild(ParsePortabilityDirective);
 	end;
@@ -2784,7 +2782,7 @@ Directive
 	if CurrentTokenKind = ptSemicolon then
 		Result.AddChild(EatToken(ptSemicolon));
 
-	case CurrentTokenGenID of
+	case CurrentTokenContentualKind of
 	ptExternal:
 		begin
 	 		//		-> [';'] EXTERNAL [Expression (ExportsSpecifier)*]
@@ -2823,7 +2821,7 @@ Directive
 	ptStdcall,			//		-> [';'] STDCALL
 	ptVarargs,			//		-> [';'] VARARGS
 	ptVirtual:			//		-> [';'] VIRTUAL
-		Result.AddChild(EatTokenEx(CurrentTokenGenID));
+		Result.AddChild(EatTokenEx(CurrentTokenContentualKind));
 	ptForward:			//		-> [';'] FORWARD
 		begin
 			Result.AddChild(EatTokenEx(ptForward));
@@ -2887,10 +2885,10 @@ But i still wonder if there might be something to having a:
 	ptSemiColon: Result.AddChild(EatToken(ptSemicolon));
 	else
 		begin
-			if CurrentTokenGenID <> ptName then
+			if CurrentTokenContentualKind <> ptName then
 				Result.AddChild(ParseSimpleExpression);
 
-			if CurrentTokenGenID = ptDelayed then
+			if CurrentTokenContentualKind = ptDelayed then
 				Result.AddChild(EatToken);
 
 			ExternalDirectiveTwo(Result);
@@ -2958,14 +2956,14 @@ begin
 }
 	while True do
 	begin
-		if CurrentTokenGenID = ptIndex then
+		if CurrentTokenContentualKind = ptIndex then
 			ParentNode.AddChild(ParseIndexSpecifier)
-		else if CurrentTokenGenID = ptName then
+		else if CurrentTokenContentualKind = ptName then
 		begin
 			ParentNode.AddChild(EatToken);
 			ParentNode.AddChild(ParseSimpleExpression);
 		end
-		else if CurrentTokenGenID = ptDelayed then
+		else if CurrentTokenContentualKind = ptDelayed then
 			ParentNode.AddChild(EatToken)
 		else
 			Break;
@@ -3384,10 +3382,10 @@ ntExcept
 }
 	Result := TSyntaxNode2.Create(ntExcept);
 
-	if CurrentTokenGenID = ptOn then
+	if CurrentTokenContentualKind = ptOn then
 	begin
 		// ExceptionItemList: one or more "on [Ident:] QualifiedIdent do Statement;"
-		while CurrentTokenGenID = ptOn do
+		while CurrentTokenContentualKind = ptOn do
 			Result.AddChild(ParseExceptionItem);
 
 		if CurrentTokenKind = ptElse then
@@ -3619,7 +3617,7 @@ RaiseStatement
            Result.AddChild(ParseExpression);
          end;
      end;
-     if CurrentTokenGenID = ptAt then
+     if CurrentTokenContentualKind = ptAt then
        Result.AddChild(ParseAtExpression);
 end;
 
@@ -3962,7 +3960,7 @@ Statement
 			or IsPossibleSimpleStatement;
 end; *)
 
-function TDelphiParser.EatToken(ExpectedTokenKind: TptTokenKind): TSyntaxToken;
+function TDelphiParser.EatToken(const ExpectedTokenKind: TptTokenKind): TSyntaxToken;
 var
 	t: TSyntaxToken;
 	s: string;
@@ -4294,7 +4292,7 @@ Particle											Backlinks: Atom
 		Result.AddChild(EatToken(ptString))
 	else if CurrentTokenKind = ptFile then
 		Result.AddChild(EatToken(ptFile))
-	else if CurrentTokenGenID in [ptProcedure, ptFunction] then
+	else if CurrentTokenContentualKind in [ptProcedure, ptFunction] then
 		Result.AddChild(ParseAnonymousMethod)
 	else
 		Result.AddChild(SynErrorFmt('Expected %s but found %s', ['Particle', CurrentToken.Text]));
@@ -4694,7 +4692,7 @@ ntIdent
 	while IsPossiblePortabilityDirective do
 		Result.AddChild(ParsePortabilityDirective);
 
-	case CurrentTokenGenID of
+	case CurrentTokenContentualKind of
 	ptAbsolute: Result.AddChild(ParseVarAbsolute);			// ABSOLUTE t1
 	ptEquals:	Result.AddChild(ParseVarEqual);				// = TypedConstant
 	end;
@@ -4924,8 +4922,8 @@ See also: https://docwiki.embarcadero.com/RADStudio/Athens/en/Fields_%28Delphi%2
 //	Visibility keywords (private/protected/public/published/strict) have TokenKind=ptIdentifier
 //	but are excluded via GenID so they correctly terminate the loop.
 	while (CurrentTokenKind = ptIdentifier)
-			and not (CurrentTokenGenID in [ptPrivate, ptProtected, ptPublic, ptPublished])
-			and not ((CurrentTokenGenID = ptStrict) and (PeekTokenExID in [ptPrivate, ptProtected])) do
+			and not (CurrentTokenContentualKind in [ptPrivate, ptProtected, ptPublic, ptPublished])
+			and not ((CurrentTokenContentualKind = ptStrict) and (PeekTokenExID in [ptPrivate, ptProtected])) do
 	begin
 		if PeekTokenKind = ptEquals then
 			Result.AddChild(ParseConstantDecl)		// permissive: N = 11;
@@ -5238,38 +5236,38 @@ Example
 	Result := TSyntaxNode2.Create(ntVisibilitySection);
 
 //	-> [Visibility]
-	if CurrentTokenGenID = ptPrivate then
+	if CurrentTokenContentualKind = ptPrivate then
 	begin
 		Result.AddChild(EatTokenEx(ptPrivate));
 		Result.Attributes[anVisibility] := 'private';
 	end
-	else if CurrentTokenGenID = ptProtected then
+	else if CurrentTokenContentualKind = ptProtected then
 	begin
 		Result.AddChild(EatTokenEx(ptProtected));
 		Result.Attributes[anVisibility] := 'protected';
 	end
-	else if CurrentTokenGenID = ptPublic then
+	else if CurrentTokenContentualKind = ptPublic then
 	begin
 		Result.AddChild(EatTokenEx(ptPublic));
 		Result.Attributes[anVisibility] := 'public';
 	end
-	else if CurrentTokenGenID = ptPublished then
+	else if CurrentTokenContentualKind = ptPublished then
 	begin
 		Result.AddChild(EatTokenEx(ptPublished));
 		Result.Attributes[anVisibility] := 'published';
 	end
-	else if CurrentTokenGenID = ptAutomated then
+	else if CurrentTokenContentualKind = ptAutomated then
 	begin
 		Result.AddChild(EatTokenEx(ptAutomated));
 		Result.Attributes[anVisibility] := 'automated';
 	end
-	else if (CurrentTokenGenID = ptStrict) and (PeekTokenExID = ptPrivate) then
+	else if (CurrentTokenContentualKind = ptStrict) and (PeekTokenExID = ptPrivate) then
 	begin
 		Result.AddChild(EatTokenEx(ptStrict));
 		Result.AddChild(EatTokenEx(ptPrivate));
 		Result.Attributes[anVisibility] := 'strict private';
 	end
-	else if (CurrentTokenGenID = ptStrict) and (PeekTokenExID = ptProtected) then
+	else if (CurrentTokenContentualKind = ptStrict) and (PeekTokenExID = ptProtected) then
 	begin
 		Result.AddChild(EatTokenEx(ptStrict));
 		Result.AddChild(EatTokenEx(ptProtected));
@@ -5544,7 +5542,7 @@ Example
 	Result.AddChild(EatToken(ptClass));
 
 //	[ABSTRACT | SEALED]				; Read optional modifieers
-	case CurrentTokenGenID of
+	case CurrentTokenContentualKind of
 	ptAbstract:
 		begin
 			Result.AddChild(EatToken(ptAbstract));
@@ -5753,7 +5751,7 @@ Returns:
 	end;
 
 //	-> [VAR | CONST | OUT]
-	case CurrentTokenGenID of
+	case CurrentTokenContentualKind of
 	ptVar: 	Result.AddChild(EatTokenEx(ptVar));
 	ptConst:	Result.AddChild(EatTokenEx(ptConst));
 	ptOut:	Result.AddChild(EatTokenEx(ptOut));
@@ -5899,7 +5897,7 @@ AnonymousMethod
 }
 	Result := TSyntaxNode2.Create(ntAnonymousMethod);
 
-	case CurrentTokenGenID of
+	case CurrentTokenContentualKind of
 	ptProcedure:
 		begin
 			Result.Attributes[anKind] := AttributeValueToStr(avProcedure);
@@ -5920,7 +5918,7 @@ AnonymousMethod
 	if CurrentTokenKind = ptOpenParen then
 		Result.AddChild(ParseParameterList);
 
-	if CurrentTokenGenID = ptFunction then
+	if CurrentTokenContentualKind = ptFunction then
 	begin
 		Result.AddChild(EatToken(ptColon));
 		Result.AddChild(ParseTypeId);
@@ -5942,7 +5940,7 @@ AnonymousMethodType
 	Result.AddChild(EatTokenEx(ptReference));
 	Result.AddChild(EatToken(ptTo));
 
-	case CurrentTokenGenID of
+	case CurrentTokenContentualKind of
 	ptProcedure:
 		begin
 			Result.Attributes[anKind] := AttributeValueToStr(avProcedure);
@@ -5963,7 +5961,7 @@ AnonymousMethodType
 	if CurrentTokenKind = ptOpenParen then
 		Result.AddChild(ParseParameterList);
 
-	if CurrentTokenGenID = ptFunction then
+	if CurrentTokenContentualKind = ptFunction then
 	begin
 		Result.AddChild(EatToken(ptColon));
 		Result.AddChild(ParseTypeId);
@@ -6200,7 +6198,7 @@ ntTypeDecl(@anName="TSpecial")
 	Result.AddChild(ParseType);
 
 	// Optional Lazarus/FPC record alignment suffix: "end align <const-expr>;"
-	if (CurrentTokenGenID = ptAlign) then
+	if (CurrentTokenContentualKind = ptAlign) then
 		Result.AddChild(ParseRecordAlign);
 
 	// PortabilityDirective* — only after the full <Type> branch
@@ -6279,7 +6277,7 @@ Returns:
 		Result := ParseStringType
 
 //	-> PROCEDURE
-	else if (CurrentTokenGenID = ptReference) and (PeekTokenKind = ptTo) then
+	else if (CurrentTokenContentualKind = ptReference) and (PeekTokenKind = ptTo) then
 		Result := ParseAnonymousMethodType
 
 //	-> PROCEDURE
@@ -6662,7 +6660,7 @@ MethodHeading
 	ptOperator:			Result := ParseOperatorMethodHeading;
 	ptIdentifier:
 		begin
-			if CurrentTokenGenID = ptOperator then
+			if CurrentTokenContentualKind = ptOperator then
 				Result := ParseOperatorMethodHeading
 			else
 				Result := SynError('Expected method type');
@@ -7102,7 +7100,7 @@ Directive
 	-> [';'] VIRTUAL
 	-> [';'] PortabilityDirective
 }
-	directiveType := CurrentTokenGenID;
+	directiveType := CurrentTokenContentualKind;
 
 	// the leading semicolon is optional
 	if CurrentTokenKind = ptSemicolon then
@@ -7156,7 +7154,7 @@ MethodHeading
 			((PeekTokenKind = ptIdentifier) and (PeekTokenExID = ptOperator))
 	else
 		Result := (CurrentTokenKind in [ptProcedure, ptFunction, ptConstructor, ptDestructor, ptOperator]) or
-			((CurrentTokenKind = ptIdentifier) and (CurrentTokenGenID = ptOperator));
+			((CurrentTokenKind = ptIdentifier) and (CurrentTokenContentualKind = ptOperator));
 end;
 
 function TDelphiParser.IsPossibleResStringSection: Boolean;
@@ -7366,9 +7364,9 @@ Visibility
 	-> AUTOMATED
 }
 	Result :=
-			(CurrentTokenGenID in [ptPrivate, ptProtected, ptPublic, ptPublished, ptAutomated])
+			(CurrentTokenContentualKind in [ptPrivate, ptProtected, ptPublic, ptPublished, ptAutomated])
 			or (
-				(CurrentTokenGenID = ptStrict)
+				(CurrentTokenContentualKind = ptStrict)
 				and
 				(PeekTokenExID in [ptPrivate, ptProtected])
 			);
@@ -7437,9 +7435,9 @@ from consuming the next visibility section's keyword as a field name.
 	begin
 		// Exclude visibility keywords - they start a new VisibilitySection, not content.
 		// These directives have TokenKind=ptIdentifier but GenID distinguishes them.
-		if CurrentTokenGenID in [ptPrivate, ptProtected, ptPublic, ptPublished, ptAutomated] then
+		if CurrentTokenContentualKind in [ptPrivate, ptProtected, ptPublic, ptPublished, ptAutomated] then
 			Result := False
-		else if (CurrentTokenGenID = ptStrict) and (PeekTokenExID in [ptPrivate, ptProtected]) then
+		else if (CurrentTokenContentualKind = ptStrict) and (PeekTokenExID in [ptPrivate, ptProtected]) then
 			Result := False
 		else
 			Result := True;
@@ -7860,9 +7858,9 @@ Examples
 	// Exclude them so the const loop terminates at the next visibility section.
 	if Result then
 	begin
-		if CurrentTokenGenID in [ptPrivate, ptProtected, ptPublic, ptPublished] then
+		if CurrentTokenContentualKind in [ptPrivate, ptProtected, ptPublic, ptPublished] then
 			Result := False
-		else if (CurrentTokenGenID = ptStrict) and (PeekTokenExID in [ptPrivate, ptProtected]) then
+		else if (CurrentTokenContentualKind = ptStrict) and (PeekTokenExID in [ptPrivate, ptProtected]) then
 			Result := False;
 	end;
 
@@ -8024,7 +8022,7 @@ ExportsSpecifier [^]
 	Result.AddChild(ParseIdent);
 
 //	(ExportsSpecifier)*
-	while CurrentTokenGenID in [ptIndex, ptName] do
+	while CurrentTokenContentualKind in [ptIndex, ptName] do
 	begin
 		Result.AddChild(EatToken());
 		Result.AddChild(ParseExpression);
@@ -8069,7 +8067,7 @@ RequiresClause
 ntRequires
 	ntQualifiedIdentifier
 }
-	Result := (CurrentTokenGenID = ptRequires);
+	Result := (CurrentTokenContentualKind = ptRequires);
 end;
 
 function TDelphiParser.ParseRequiresClause: TSyntaxNode2;
@@ -8243,7 +8241,7 @@ In the case of a procedure or function declaration, the hint directive should be
 separated from the rest of the declaration with a semicolon.
 
 }
-	if not (CurrentTokenGenID in [ptPlatform, ptDeprecated, ptLibrary, ptExperimental]) then
+	if not (CurrentTokenContentualKind in [ptPlatform, ptDeprecated, ptLibrary, ptExperimental]) then
 	begin
 		Result := SynErrorFmt('Expected %s but was %s', ['PortabilityDirective', CurrentToken.Text]);
 		Exit;
@@ -8251,7 +8249,7 @@ separated from the rest of the declaration with a semicolon.
 
 	Result := TSyntaxNode2.Create(ntPortabilityDirective);
 
-	case CurrentTokenGenID of
+	case CurrentTokenContentualKind of
 	ptPlatform:
 		begin
 			Result.AddChild(EatTokenEx(ptPlatform));
@@ -8293,7 +8291,7 @@ PortabilityDirective
 	-> library
 	-> experimental
 }
-	Result := (CurrentTokenGenID in [ptPlatform, ptDeprecated, ptLibrary, ptExperimental]);
+	Result := (CurrentTokenContentualKind in [ptPlatform, ptDeprecated, ptLibrary, ptExperimental]);
 end;
 
 function TDelphiParser.IsPossibleProperty: Boolean;
@@ -8357,7 +8355,7 @@ PropertyDirective
 		Exit;
 	end;
 
-	case CurrentTokenGenID of
+	case CurrentTokenContentualKind of
 	ptDefault,
 	ptDispid,
 	ptImplements,
@@ -8649,6 +8647,9 @@ end;
 
 function TDelphiParser.ParseAttributeList: TSyntaxNode2;
 begin
+{
+	[
+}
 	Result := ParseAttribute;
 
 	while CurrentToken.Kind = ptComma do
@@ -8660,6 +8661,15 @@ end;
 
 function TDelphiParser.ParseAttribute: TSyntaxNode2;
 begin
+{
+Attribute
+   -> AttributeName
+
+Sample Code
+-----------
+
+[]
+}
 	Result := TSyntaxNode2.Create(ntAttribute);
 
 	Result.AddChild(ParseAttributeName);

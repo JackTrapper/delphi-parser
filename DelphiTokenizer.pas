@@ -568,22 +568,6 @@ type
 
 
 
-const
-	TriviaTokenSet: set of TptTokenKind = [
-		ptSpace,
-		ptWhitespace,
-		ptCRLF,
-		ptAnsiComment,
-		ptBorComment,
-		ptSlashesComment,
-		ptCRLFCo
-	];
-{ NOTE: ptCompilerDirective and ptDisabledText are NOT in this set.
-		- the tokenizer emits directives as real tokens
-		- the preprocessor demotes them to trivia after evaluating conditional compilation
-}
-
-
 type
 	TInputStream = class;	// forward. Supplies a series of UtF-16 from an input ISequentialStream
 
@@ -1022,6 +1006,19 @@ begin
 end;
 
 function TokenKindIsTrivia(const ATokenKind: TptTokenKind): Boolean;
+const
+	TriviaTokenSet: set of TptTokenKind = [
+		ptSpace,
+		ptWhitespace,
+		ptCRLF,
+		ptAnsiComment,
+		ptBorComment,
+		ptSlashesComment,
+		ptCRLFCo
+	];
+{ NOTE: ptCompilerDirective and ptDisabledText are NOT in this set.
+		- the tokenizer emits directives as real tokens
+		- the preprocessor demotes them to trivia after evaluating conditional compilation}
 begin
 (*
 	// *** Trivia - Whitespace ***

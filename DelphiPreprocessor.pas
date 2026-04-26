@@ -22,7 +22,7 @@ evaluates conditional directives, and either returns the token	or swallows it
 Conditional defines
 -------------------
 
-The Pasers initializes the preprocessor with a set of conditional defines
+The Paser initializes the preprocessor with a set of conditional defines
 using the TPreprocessor.Defines property.
 
 The proprocessor then maintains an internal stack of conditional frames to track
@@ -36,11 +36,11 @@ https://sharplab.io/#v2:C4LghgzsA0AmIGoA+ABATARgLACgUGYACdQgYUIG9dCbiiUAWQgWQAoB
 ```cs
 using System;
 public class C {
-    public void M() {
-        #if false
-            int i = 2;
-        #endif
-    }
+	public void M() {
+		#if false
+			int i = 2;
+		#endif
+	}
 }
 ```
 

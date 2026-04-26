@@ -644,20 +644,23 @@ type
 
 		// The next token info
 		function PeekToken: TSyntaxToken; overload;
-		function PeekToken(n: Integer): TSyntaxToken; overload;  // 0:Current, 1:Next (aka PeekToken)
-		function PeekTokenKind:  TptTokenKind; // helper for --> PeekToken.TokenKind
-		function PeekTokenExID:  TptTokenKind; // helper for --> PeekToken.ExID
+		function PeekToken(n: Integer): TSyntaxToken; overload;	// 0:CurrentToken, 1:PeekToken, 2:...
+		function PeekTokenKind:  TptTokenKind; 						// helper for --> PeekToken.TokenKind
+		function PeekTokenExID:  TptTokenKind;							// helper for --> PeekToken.ExID
 
 		// Convenience: like Expect but without slot
-		function EatToken: TSyntaxToken; overload; //
-		function EatToken(const ExpectedTokenKind: TptTokenKind): TSyntaxToken; overload; // emits an error message if the CurrentToken kind is not Sym.
-		function EatTokenEx(const ExpectedTokenContentualKind: TptTokenKind): TSyntaxToken;	// emits an error message if the CurrentToken ExID is not Sym.
+		function EatToken: TSyntaxToken; overload;
+		function EatToken(const ExpectedTokenKind: TptTokenKind): TSyntaxToken; overload;   // eat, create an IsMissing token if it's not
+		function EatTokenEx(const ExpectedTokenContentualKind: TptTokenKind): TSyntaxToken;	// eat, create an IsMissing token if it's not
 
 		// Output an error message
 		function SynError(Error: string): TSyntaxNode2;
 		function SynErrorFmt(const Error: string; const Args: array of const): TSyntaxNode2;
 
-
+		property CurrentToken:               TSyntaxToken read get_CurrentToken;				// read-only
+		property CurrentTokenKind:           TptTokenKind read get_CurrentTokenKind;			// the CurrentToken.Kind
+		property CurrentTokenContentualKind: TptTokenKind read get_CurrentContentualKind;	// the CurrentToken.ContextualKind
+	protected
 		// ***********************************************************************
 		// Start of the production methods
 		// ***********************************************************************
@@ -665,11 +668,6 @@ type
 		// Main parsing function.
 		function ParseCore: TSyntaxTree; virtual; //as a nice way to split plumbing from grammer
 
-
-		property CurrentToken:               TSyntaxToken read get_CurrentToken;				// read-only
-		property CurrentTokenKind:           TptTokenKind read get_CurrentTokenKind;			// the CurrentToken.Kind
-		property CurrentTokenContentualKind: TptTokenKind read get_CurrentContentualKind;	// the CurrentToken.ContextualKind
-	protected
 		// ParseCore then turns around and calls one of:
 		function ParseUnit: TSyntaxNode2;						// e.g. unit Unit1;
 		function ParseProgramFile: TSyntaxNode2;				// e.g. program Program1;
@@ -1314,7 +1312,7 @@ function TDelphiParser.EatTokenEx(const ExpectedTokenContentualKind: TptTokenKin
 //var
 //	s: string;
 begin
-	// Expect the CurrentToken's ExID to be ExpectedTokenKind
+	// Expect the CurrentToken's ContextualKind to be ExpectedTokenContentualKind
 	if CurrentTokenContentualKind <> ExpectedTokenContentualKind then
 	begin
 		//s := Format(SExpected, ['EX:' + TokenName(ExpectedTokenKind), TokenName(CurrentTokenGenID)]);

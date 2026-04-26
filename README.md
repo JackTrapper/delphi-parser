@@ -226,22 +226,24 @@ The DelphiParser is a recursive descent parser, so the `IsPossibleXxx` method wi
 The parser has 3 ways to navigate tokens:
 
 1. Consume (Eat) the current token, return it, and advance to the next token
-	- `EatToken(ExpectedTokenKind): TSyntaxToken;`
-	- `EatToken(): TSyntaxToken;`
-	- `EatTokenEx(ExpectedTokenContentualKind): TSyntaxToken;`
+	- `EatToken(ExpectedTokenKind): TSyntaxToken;` *(eat, create an IsMissing token if it's not)*
+	- `EatTokenEx(ExpectedTokenContentualKind): TSyntaxToken;` *(eat, create an IsMissing token if it's not)*
+	- `EatToken(): TSyntaxToken;` *(TODO: remove)*
 2. Peeking ahead to future tokens:
 	- `PeekToken: TSyntaxToken;`
-	- `PeekToken(n: Integer): TSyntaxToken;`
-	- `PeekTokenKind: TptTokenKind;` *(helper for PeekToken(1).TokenKind)*
-	- `PeekTokenExID: TptTokenKind;` *(helper for PeekToken(1).ExID)*
+	- `PeekToken(n: Integer): TSyntaxToken;` *(0:CurrentToken, 1:PeekToken, 2:...)*
+	- `PeekTokenKind: TptTokenKind;` *(helper for PeekToken.TokenKind)*
+	- `PeekTokenExID: TptTokenKind;` *(helper for PeekToken.ExID)*
 3. Reading the current token
 	- `CurrentToken: TSyntaxToken`
 	- `CurrentTokenKind: TptTokenKind` *(helper for CurrentToken.TokenKind)*
 	- `CurrentTokenContentualKind: TptTokenKind` *(helper for CurrentToken.TokenContextualKind)*
 
-When the tokenizer has been configured, the main parser entry point is:
+The main parser entry point is:
 
 	function ParseCore: TSyntaxTree; virtual; //as a nice way to split plumbing from grammer
+
+This is what the descendant parsers will override to implement the actual grammer parsing, while the base class will provide all the plumbing for loading files, handling encodings, tokenizing, and providing the token navigation methods (EatToken, PeekToken, etc).
 
 ---
 
@@ -250,7 +252,7 @@ When the tokenizer has been configured, the main parser entry point is:
  	CheckFeatureAvailablity(node: TSyntaxNode, Feature: Integer);
  
  Is if a token or feature is being used, we call **CheckFeatureAvailability** to ensure it is supported. If not, an error node is added as a child to the specified node. So the parser doesn't pretend to be the older language. It tells you that what you're using isn't supported; it's an error. But the parser will happily understand it for you.
- 
+
 ---
 
 ### Eating
@@ -318,3 +320,4 @@ Calling **PeekToken** returns the next token:
 - Test the case of a program fragment (i.e. just some code), that they parser went haywire over
 - have the test harness look for `IsMissing` tokens and report them as syntax errors, with line/column info from the token
 - tokens are interned based on `Kind`, `Text`, `ContextualKind`, `Text`, `ValueText`, `Width`, `FullWidth`. But how does Roslyn handle trivia? Surely comments don't get interred with the tokens...
+- and look at all those TODOs...

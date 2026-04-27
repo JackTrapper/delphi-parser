@@ -45,7 +45,7 @@ var
 	begin
 		var text: string := token.ToString;
 
-Format('Token: %s (%d, %d) "%s"%s', [
+		Format('Token: %s (%d, %d) "%s"%s', [
 				TokenKindToStr(token.TokenKind), 	// ptKeyword
 				token.Line, token.Column,				// 39,29
 				token.Text,									// var
@@ -55,6 +55,12 @@ Format('Token: %s (%d, %d) "%s"%s', [
 
 	https://dotnetfiddle.net/Sh2ism
 
+Most of the tokenizing rules of Delphi are documented in:
+
+	- Fundamental Syntactic Elements (Delphi)
+	- https://docwiki.embarcadero.com/RADStudio/Sydney/en/Fundamental_Syntactic_Elements_(Delphi)
+   -
+
 
 Keywords
 ========
@@ -63,21 +69,20 @@ In Delphi, certain magic words are referred to as "keywords".
 
 Keywords are then broken down into two categories:
 
-- reserved words	(e.g. begin, end, case, for, if)
-- directives 		(e.g. public, strict, safecall)
+- reserved words	(e.g. begin, end, case, for, if)    Can never   be used as a ptIdentifier.
+- directives 		(e.g. public, strict, safecall)     Can mostly  be used as a ptIdentifier.
 
 
 
-	Keyword					Example		Token.Kind			Token.ContextualKind
-	===================	==========	================	====================
-	(reserved word)		'of'			ptOf					ptOf
-	(directive)				'out'			ptIdentifier		ptOut
-	(identifier)			'Contoso'	ptIdentifier		ptIdentifier
-
-	Token.ContextualKind is a helper function that will coalesce (DirectiveID|Kind)
+Keyword					Example		Token.Kind			Token.ContextualKind
+===================	==========	================	====================
+(reserved word)		'of'			ptOf					ptOf
+(directive)				'out'			ptIdentifier		ptOut
+(identifier)			'Contoso'	ptIdentifier		ptIdentifier
 
 
-1. Reserved words (e.g., begin, end, case, for, if, of)
+Reserved words (e.g., begin, end, case, for, if, of)
+====================================================
 
 	Reserved words are keywords that have a special meaning in the language and cannot be used as identifiers, e.g.:
 
@@ -87,44 +92,60 @@ Keywords are then broken down into two categories:
 		for   ==> ptFor
 		if		==> ptIf
 
-	See the ReservedWords[] constant array for the list of reserved words.
-	Can call TDelphiTokenizer.GetReservedTokenKind('of') that will return ptOf, or ptUnknown if it isn't a reserved word
+	See the const array ReservedWords[] for the list of reserved words.
 
-2. Directives (e.g., absolute, abstract, cdecl, out, ...)
+Can call TDelphiTokenizer.GetReservedTokenKind('of') that will return ptOf, or ptUnknown if it isn't a reserved word
 
-	Complier directives are similar to reserved words, except they can be reused as identifiers.
-	If it is being used as an identifier, it will instead have a TokenKind of ptIdentifier.
+Directives (e.g., absolute, abstract, cdecl, out, ...)
+======================================================
 
-	For example:
+Complier directives are similar to reserved words, except they **can** be reused as identifiers.
+
+Their TokenKind will be set to `ptIdentifier`.
+
+Anytime a directive keyword is used, it will have
+
+- tokenKind set to ptIdentifier
+- ContextualKind set to a specific directive keyword
+
+In other words:
+
+- Text:						"absolute"
+- Token.TokenKind:		ptIdentifier
+- token.ContextualKind:	ptAbsolute
+
+
+For example:
 
 		procedure DoIt(out s: string);	// "out" is a directive   (ptOut)
 		var out: Boolean;						// "out" is an identifier (ptIdentifier)
 
-	This means that the meaning of the keyword "out" depends on its context:
+This means that the meaning of the keyword "out" depends on its context:
 
-		- if "out" represents a directive, it will have TokenKind ptOut
-		- otherwise it will have a TokenKind of ptIdentifier
+- if "out" represents a directive, it will have TokenKind ptOut
+- otherwise it will have a TokenKind of ptIdentifier
 
-	This context is determined by the parser, and it can change based on how the keyword is used in the code.
+This context is determined by the parser, and it can change based on how the keyword is used in the code.
 
-	The tokenizer returns these directive tokens as ptIdentifier,
-	and the parser sets TSyntaxToken.ContextualKind to a particular ptXxxx directive
+The tokenizer returns these directive tokens as ptIdentifier,
+and the parser sets TSyntaxToken.ContextualKind to a particular ptXxxx directive
 
-	See the Directives[] constant array of the list of directives.
-	Call TDelphiParser.GetDirectiveTokenKind('out') to return ptOut if it is a directive, or ptUnkonwn if it isn't.
+See the Directives[] constant array of the list of directives.
+Call TDelphiParser.GetDirectiveTokenKind('out') to return ptOut if it is a directive, or ptUnkonwn if it isn't.
 
 
-3. Identifiers (e.g., FirstName, SaveToDatabase, TCustomer)
+Identifiers (e.g., FirstName, SaveToDatabase, TCustomer)
+========================================================
 
-	Identifiers are names given to entities in the code, such as variables, functions, and classes.
-	They are user-defined and can be any valid name that follows the naming rules of the language.
+Identifiers are names given to entities in the code, such as variables, functions, and classes.
+They are user-defined and can be any valid name that follows the naming rules of the language.
 
-	Examples:
+Examples:
 
-		MyVar: Integer;
-		AnotherVar: string;
+	MyVar: Integer;
+	AnotherVar: string;
 
-	Identifiers are not reserved or restricted in any way, and they can be used freely throughout the code.
+Identifiers are not reserved or restricted in any way, and they can be used freely throughout the code.
 
 
 Tokenization Examples
@@ -150,29 +171,17 @@ would return the tokens:
 - ptSemicolon		(Text: ';')				special single character symbol
 
 
-Issues
+Roadmap
 =======
 
-1. **Token Position Tracking** (Lines 678-679)
-   - Properties `StartOffset` and `TokenLength` are declared but NEVER populated
-   - No assignments found anywhere in codebase (`.StartOffset :=` or `.TokenLength :=`)
-   - **Action needed**: Populate these in `TSyntaxToken.Create()` or token creation methods
-
-2. **Compiler Directive Parsing** (Lines 652-659, 1670-1699)
-   - `TDirectiveData` structure defined but unused
-   - `DoCompilerDirective()` has TODO comment about parsing (line 1699)
-   - **Action needed**: Implement directive parsing to populate `TDirectiveData`
-
-3. **Keyword Lookup Performance** (Lines 1267-1273)
-   - Linear O(n) search through `ReservedWords` array
-   - No hash table or `TDictionary` implementation
-   - **Action needed**: Implement `TDictionary<string, TptTokenKind>` for O(1) lookup
-
-4. **Maximum Line Length** A line cannot be longer than 2260 characters.
+- Populate TokenLength as part of the immutable reusable token.
+- Perform compiler directive data parsing here in the tokenizer
+- conditional compilation is left to the preprocessor
+- change O(n) keyword lookup linear search to dictionary.
+- **Maximum Line Length** A line cannot be longer than 2260 characters.
       Error: F2069 Line too long (more than 1023 characters)
       Delphi 12.0 says 1023, but in reality it's 2260 characters.
-
-
+      Perhaps this can be another "FeatureID" flag, as line lengths grew over the years.
 
 }
 
@@ -196,18 +205,17 @@ type
 	TptTokenKind = (
 		ptUnknown,					// Dummy sentinel value
 		ptEof,						// This is the last token from the tokenizer
-//		ptError,						// Error token
 
 		// *** Reserved words (e.g., begin, end, case, for, if)
 		// Reserved words are keywords that have a special meaning in the language and cannot be used as identifiers.
 		// See the ReservedWords[] array for the list of reserved words
 		ptAbort,
 		ptAnd,
-		ptArray,
-		ptAs,
-		ptAsm,
-		ptBegin,
-		ptCase,
+		ptArray,						// array
+		ptAs,							// as
+		ptAsm,						// asm
+		ptBegin,						// begin
+		ptCase,						// case
 		ptClass,						// class
 		ptConst,
 		ptConstructor,
@@ -267,53 +275,59 @@ type
 		ptXor,
 
 		// *** Directives (e.g., absolute, abstract, cdecl, ...) ***
-		// Complier directives are similar to reserved words, except they can be reused as identifiers.
+		// Complier directives are similar to reserved words, except they CAN be reused as identifiers.
 		// See Directives[] constant array for the list of directives
-		ptAt,							// raise Exception.Create('Hello') at @SaveChanges; // https://stackoverflow.com/a/8951057/12597
+		ptAt,								// raise Exception.Create('Hello') at @SaveChanges; // https://stackoverflow.com/a/8951057/12597
 		ptAbsolute,
 
-		// directive tokens that apply to methods
-		ptAbstract,
+		ptRegister,		//calling conventions
+		ptPascal,
 		ptCDecl,
+		ptStdcall,
+		ptSafecall,
+		ptWinApi,		// winapi is an alias of stdcall
+
+		ptAbstract,
 		ptDynamic,
 		ptMessage,
 		ptOverride,
 		ptOverload,
-		ptPascal,
-		ptRegister,
 		ptReintroduce,
-		ptSafecall,
-		ptStdcall,
 		ptVirtual,
 		ptStatic,
-		ptInline,
+		ptInline,			// function AB(const A, B: Real): Real; inline;
 		ptFinal,
 		ptDispid,
 
 
 		ptAlign,						// TMyAlignedRecord = record Field1: Byte; Field2: Integer; end align 8;
-		ptAssembler,
 		ptAssembly,
 		ptAutomated,
 		ptContains,
 		ptDefault,
 		ptDelayed,
-		ptExport,
 		ptExternal,
-		ptFar,
+
+		ptNear,				// obsolete
+		ptFar,				// obsolete
+		ptResident,			// obsolete
+
+		ptAssembler,		// deprecated and have no meaning
+		ptExport,			// deprecated and have no meaning
+
+
 		ptForward,
 		ptHelper,
 		ptImplements,
 		ptIndex,
-		ptLocal,
-		ptNear,
+		ptLocal,				// was a Kylix directive and is ignored for Delphi for Win32.
+
 		ptNodefault,
 		ptOperator,				//Directive "operator"
 		ptOut,
 		ptPackage,
 
-		// Hinting directives
-		ptPlatform,
+		ptPlatform,				// Hinting directives
 		ptDeprecated,
 		//ptLibrary; but that's also the keyword that starts a library unit.
 		ptExperimental,
@@ -326,8 +340,7 @@ type
 		ptReadonly,
 		ptReference,
 		ptRequires,
-		ptResident,
-		ptSealed,
+		ptSealed,				// class directive with odd syntax: 'class sealed'. A sealed class cannot be extended or derived (like final in C++).
 		ptStored,
 		ptStrict,
 		ptUnsafe,
@@ -574,15 +587,15 @@ type
 	TInputStream = class;	// forward. Supplies a series of UtF-16 from an input ISequentialStream
 
 (*
-	Population rules in the lexer:
+Population rules in the lexer:
 
-	- classify { $ ...} and ( *$ ...* ) as ptDirective.
+ - classify { $ ...} and ( *$ ...* ) as ptCompilerDirective.
 
-	- extract Name (letters/underscores) case-insensitive; set Args := rest.trim.
+- extract Name (letters/underscores) case-insensitive; set Args := rest.trim.
 
-	- resolve short forms (A→ALIGN, I→INCLUDE) and fill Kind. unknown → dkUnknown.
+- resolve short forms (A→ALIGN, I→INCLUDE) and fill Kind. unknown → dkUnknown.
 
-	- leave $IF expression text in Args verbatim; don’t evaluate in the lexer.
+- leave $IF expression text in Args verbatim; don’t evaluate in the lexer.
 *)
 	TDirectiveKind = (
 			dkUnknown, dkDefine, dkUndef, dkIf, dkIfDef, dkIfNDef, dkElse, dkElseIf, dkEndIf, dkIfEnd,
@@ -626,7 +639,9 @@ The following reserved words cannot be redefined or used as identifiers.
 
 		And then you can just read the ExtendedID property, which will prefer ptSelf --> ptIdentifier
 }
-		FDirectiveID: TptTokenKind;			// DirectiveID. See constant Directives[]
+		FContextualKind: TptTokenKind;			// DirectiveID. See constant Directives[]
+
+		// For ptCompilerDirective
 		DirectiveDelimeter: TDirectiveDelimiter; // (ddBrace, ddParenStar)
 
 		// optional directive payload (only for TokenKind = ptDirective)
@@ -704,8 +719,8 @@ The following reserved words cannot be redefined or used as identifiers.
 		function IsWhitespaceCharacter(const ch: WideChar): Boolean;
 
 		// Detect the special keywords (e.g. reserved words, directives)
-		function GetReservedTokenKind( const Keyword: string): TptTokenKind; // GetReservedTokenKind
-		function GetDirectiveTokenKind(const Keyword: string): TptTokenKind;  // GetDirectiveTokenKind
+		function GetReservedTokenKind( const Keyword: string): TptTokenKind; // Get the tokenKind for the reserved word.  Returns ptUnknown if the Keyword is not a reserved word.
+		function GetDirectiveTokenKind(const Keyword: string): TptTokenKind; // get the tokenKind for the directive.      Returns ptUnknown if the Keyword is not a directive.
 
 		// String processing utilities
 		function ProcessStringEscapes(const rawString: string): string;
@@ -746,7 +761,7 @@ The following reserved words cannot be redefined or used as identifiers.
 		function DoBorComment(					const ch: WideChar): TSyntaxToken;	// ptBorComment				{    }
 		function DoSlashesComment(				const ch: WideChar): TSyntaxToken;	// ptSlashesComment			//
 
-		function DoCompilerDirective(			const ch: WideChar): TSyntaxToken;	// ptCompDirect				{$xxx xx}
+		function DoCompilerDirective(			const ch: WideChar): TSyntaxToken;	// ptCompilerDirective		{$xxx xx}
 
 		function DoReadIdentifier(				const ch: WideChar): TSyntaxToken;	// ptIdentifier				var, begin, firstname
 		function DoWhitespace(					const ch: WideChar): TSyntaxToken;  // ptWhitespace
@@ -853,13 +868,10 @@ The following reserved words cannot be redefined or used as identifiers.
 	end;
 
 
-
+//The following keywords are "reserved" words, that cannot be redefined or used as identifiers.
+//https://docwiki.embarcadero.com/RADStudio/Sydney/en/Fundamental_Syntactic_Elements_(Delphi)
 const
-	//The following keywords are "reserved" words, that cannot be redefined or used as identifiers.
-	ReservedWords: array[0..63] of record
-		keyword: string;
-		tokenType: TptTokenKind;
-	end = (
+	ReservedWords: array[0..63] of record keyword: string; tokenType: TptTokenKind; end = (
 		(keyword: 'and';					tokenType: ptAnd),
 		(keyword: 'array';				tokenType: ptArray),
 		(keyword: 'as';					tokenType: ptAs),
@@ -927,49 +939,50 @@ const
 	);
 
 
-	// Complier directives are similar to reserved words, except they can be reused as identifiers.
-	// Hence -- although it is inadvisable to do so -- you can define an identifier that looks exactly like a directive.
-	Directives: array[0..57] of record
-		directive: string;
-		tokenType: TptTokenKind;
-	end = (
-		(directive: 'at';					tokenType:ptAt),
+// Complier directives are similar to reserved words, except they can be reused as identifiers.
+// Hence -- although it is inadvisable to do so -- you can define an identifier that looks exactly like a directive.
+// https://docwiki.embarcadero.com/RADStudio/Sydney/en/Fundamental_Syntactic_Elements_(Delphi)
+const
+	Directives: array[0..58] of record directive: string; tokenType: TptTokenKind; end = (
+		(directive: 'at';					tokenType:ptAt),					// "at" not mentioned DocWiki. Used for `raise e as MethodName;`
 		(directive: 'absolute';			tokenType:ptAbsolute),
 		(directive: 'abstract';			tokenType:ptAbstract),
-		(directive: 'align';				tokenType:ptAlign),
-		(directive: 'assembler';		tokenType:ptAssembler),
-		(directive: 'assembly';			tokenType:ptAssembly),
+		(directive: 'align';				tokenType:ptAlign),				// "align" not mentioned in DocWiki
+		(directive: 'assembler';		tokenType:ptAssembler),			// assembler and export directives have no meaning. They exist only for the backward compatibility.
+		(directive: 'assembly';			tokenType:ptAssembly),			// "assembly" not mentioned in DocWiki
 		(directive: 'automated';		tokenType:ptAutomated),
 		(directive: 'CDecl';				tokenType:ptCDecl),
-		(directive: 'contains';			tokenType:ptContains),
+		(directive: 'contains';			tokenType:ptContains),			// package, when used as the first token, indicates a package target and enables package syntax. requires and contains are directives only in package syntax.
 		(directive: 'default';			tokenType:ptDefault),
 		(directive: 'delayed';			tokenType:ptDelayed),
 		(directive: 'dispid';			tokenType:ptDispid),
 		(directive: 'dynamic';			tokenType:ptDynamic),
-		(directive: 'export';			tokenType:ptExport),
+		(directive: 'export';			tokenType:ptExport),				// assembler and export directives have no meaning. They exist only for the backward compatibility.
 		(directive: 'external';			tokenType:ptExternal),
-		(directive: 'far';				tokenType:ptFar),
+		(directive: 'far';				tokenType:ptFar),					// far, near, and resident are obsolete.
 		(directive: 'final';				tokenType:ptFinal),
 		(directive: 'forward';			tokenType:ptForward),
-		(directive: 'helper';			tokenType:ptHelper),
+		(directive: 'helper';			tokenType:ptHelper),				// helper indicates "class helper for".
 		(directive: 'implements';		tokenType:ptImplements),
 		(directive: 'index';				tokenType:ptIndex),
-		(directive: 'local';				tokenType:ptLocal),
+		//inline is used directive-style at the end of procedure and function declaration to mark the procedure or function for inlining , but became a reserved word for Turbo Pascal.
+		//library is also a keyword when used as the first token in project source code; it indicates a DLL target. Otherwise, it marks a symbol so that it produces a library warning when used.
+		(directive: 'local';				tokenType:ptLocal),				// local was a Kylix directive and is ignored for Delphi for Win32.
 		(directive: 'message';			tokenType:ptMessage),
 		(directive: 'name';				tokenType:ptName),
-		(directive: 'near';				tokenType:ptNear),
+		(directive: 'near';				tokenType:ptNear),				// far, near, and resident are obsolete.
 		(directive: 'nodefault';		tokenType:ptNodefault),
-		(directive: 'on';					tokenType:ptOn),
-		(directive: 'operator';			tokenType:ptOperator),
+		(directive: 'on';					tokenType:ptOn),					// "on" not mentioned by DocWiki
+		(directive: 'operator';			tokenType:ptOperator),			// operator indicates class operator.
 		(directive: 'out';				tokenType:ptOut),
 		(directive: 'overload';			tokenType:ptOverload),
 		(directive: 'override';			tokenType:ptOverride),
-		(directive: 'package';			tokenType:ptPackage),
+		(directive: 'package';			tokenType:ptPackage),			//package, when used as the first token, indicates a package target and enables package syntax. requires and contains are directives only in package syntax.
 		(directive: 'pascal';			tokenType:ptPascal),
 
-		(directive: 'platform';			tokenType:ptPlatform),
-		(directive: 'deprecated';		tokenType:ptDeprecated),
-		(directive: 'experimental';	tokenType:ptExperimental),
+		(directive: 'platform';			tokenType:ptPlatform),			//platform, deprecated, experimental, and library are hinting (or warning) directives. These directives produce warnings at compile time.
+		(directive: 'deprecated';		tokenType:ptDeprecated),		//platform, deprecated, experimental, and library are hinting (or warning) directives. These directives produce warnings at compile time.
+		(directive: 'experimental';	tokenType:ptExperimental),		//platform, deprecated, experimental, and library are hinting (or warning) directives. These directives produce warnings at compile time.
 
 		(directive: 'private';			tokenType:ptPrivate),
 		(directive: 'protected';		tokenType:ptProtected),
@@ -977,13 +990,13 @@ const
 		(directive: 'published';		tokenType:ptPublished),
 		(directive: 'read';				tokenType:ptRead),
 		(directive: 'readonly';			tokenType:ptReadonly),
-		(directive: 'reference';		tokenType:ptReference),
+		(directive: 'reference';		tokenType:ptReference),			// reference indicates a reference to a function or procedure.
 		(directive: 'register';			tokenType:ptRegister),
-		(directive: 'reintroduce';		tokenType:ptReintroduce),
+		(directive: 'reintroduce';		tokenType:ptReintroduce),		// package, when used as the first token, indicates a package target and enables package syntax. requires and contains are directives only in package syntax.
 		(directive: 'requires';			tokenType:ptRequires),
-		(directive: 'resident';			tokenType:ptResident),
+		(directive: 'resident';			tokenType:ptResident),			// far, near, and resident are obsolete.
 		(directive: 'safecall';			tokenType:ptSafecall),
-		(directive: 'sealed';			tokenType:ptSealed),
+		(directive: 'sealed';			tokenType:ptSealed),				// sealed is a class directive with odd syntax: 'class sealed'. A sealed class cannot be extended or derived (like final in C++).
 		(directive: 'static';			tokenType:ptStatic),
 		(directive: 'stdcall';			tokenType:ptStdcall),
 		(directive: 'stored';			tokenType:ptStored),
@@ -991,11 +1004,25 @@ const
 		(directive: 'unsafe';			tokenType:ptUnsafe),
 		(directive: 'varargs';			tokenType:ptVarargs),
 		(directive: 'virtual';			tokenType:ptVirtual),
+		(directive: 'winapi';			tokenType:ptWinapi),				// winapi defines the default platform calling convention. For example, on Win32 winapi is the same as stdcall.
 		(directive: 'write';				tokenType:ptWrite),
 		(directive: 'writeonly';		tokenType:ptWriteonly)
 	);
 
+{
+TODO: Is inline a reserved word or a directive?
+Docwiki on the "inline" Directive:
 
+> inline is used directive-style at the end of procedure and function declaration
+> to mark the procedure or function for inlining ,
+> but became a reserved word for Turbo Pascal.
+
+Became a reserved word for Turbo Pascal? You mean it **was** a reserved word for Turbo Pascal?
+And now it's not? Now it's a regular old Directive?
+
+TODO: Check, because wtf
+
+}
 implementation
 
 uses
@@ -2065,31 +2092,43 @@ var
 	errorMsg: string;
 	startLine: Integer;
 	startColumn: Integer;
-	delimiter: TDirectiveDelimiter;
+	delimiter: TDirectiveDelimiter; // ddBraces vs bbParenStar
 begin
+
+// Directives come in one of two variations:
+//
+//       {$ifdef foo}...{$endif}
+//       (*$ifdef foo*)...(*$endif*)
+
 (*
-	ptCompDirect
+It is a block comment, where the first character is a $
 
-		Text:			{$foo bar}
-		ValueText:
-
-		Text:       (*$foo bar*﻿)
-
-	ptDirective
-
-		Text:			'{$IFDEF DEBUG}'
-		ValueText:	'IFDEF DEBUG' (optional, same as Name + ' ' + Args)
-
-		Directive^.Name: 	'IFDEF'
-		Directive^.Args:	'DEBUG'
-		Directive^.Kind"	dkIfDef
-		ShortForm: 			False
-
-
-	Attribute akDirectiveDelimeter
-			ddBrace
-			ddParenStar
+These correpond to two token types:
 *)
+
+//	ptCompilerDirectiveptCompDirect
+
+//		Text:			{$foo bar}
+//		ValueText:
+// 	DirectiveDelimeter: ddBraces
+
+//		Text:       "(*$foo bah*)"
+//		ValueText:
+// 	DirectiveDelimeter: ddParenStar
+
+//		Text:			'{$IFDEF DEBUG}'
+//		ValueText:	'IFDEF DEBUG' (optional, same as Name + ' ' + Args)
+// 	DirectiveDelimeter: ddBraces
+
+//		Directive^.Name: 	'IFDEF'
+//		Directive^.Args:	'DEBUG'
+//		Directive^.Kind"	dkIfDef
+//		ShortForm: 			False
+
+
+//	Attribute akDirectiveDelimeter
+//			ddBrace
+//			ddParenStar
 	hasError := False;
 	errorMsg := '';
 	startLine := FCurrentLine;
@@ -2170,16 +2209,17 @@ begin
 //	Result.ValueText := Should we do something to parse the compiler directive?
 
 (*
-		//The pre-processor (not yet written) is the one who will keep track of compiler directives.
-		//But surely we can do a *little* parsing? and parse out something?
+The pre-processor (not yet written) is the one who will keep track of compiler directives.
+But surely we can do a *little* parsing? and parse out something?
 
-		// The format of a compiler directive is:
-		//   {$DIRECTIVE_NAME optional arguments}
-		//
-		//    {$ENDIF}			==> name:ENDIF
-		//    {$ELSE}			==> name:ELSE
-		//    {$I+}				==> name:I, arg1:+
-		//    {$HINTS ON}		==> name:HINTS, arg1:ON
+The format of a compiler directive is:
+
+	{$DIRECTIVE_NAME optional arguments}
+
+	{$ENDIF}			==> name:ENDIF
+	{$ELSE}			==> name:ELSE
+	{$I+}				==> name:I, arg1:+
+	{$HINTS ON}		==> name:HINTS, arg1:ON
 *)
 end;
 
@@ -2415,7 +2455,7 @@ begin
 
 	// Populate the directive TokenKind if the identifier has the same name as a directive
 	if tokenKind = ptIdentifier then
-		Result.FDirectiveID := GetDirectiveTokenKind(s);
+		Result.FContextualKind := GetDirectiveTokenKind(s);
 end;
 
 function TDelphiTokenizer.DoCloseParen(const ch: WideChar): TSyntaxToken;
@@ -3073,7 +3113,7 @@ begin
 	Self.ErrorMessage := '';
 	Self.WarningMessage := '';
 	Self.IsMissing := False;
-	FDirectiveID := ptUnknown;
+	FContextualKind := ptUnknown;
 end;
 
 destructor TSyntaxToken.Destroy;
@@ -3112,8 +3152,8 @@ begin
 
 	https://docwiki.embarcadero.com/RADStudio/Sydney/en/Fundamental_Syntactic_Elements_(Delphi)
 }
-	if (Kind = ptIdentifier) and (FDirectiveID <> ptUnknown) then
-		Result := FDirectiveID
+	if (Kind = ptIdentifier) and (FContextualKind <> ptUnknown) then
+		Result := FContextualKind
 	else
 		Result := Self.Kind;
 end;

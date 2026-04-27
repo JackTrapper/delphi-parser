@@ -15,6 +15,7 @@ var
 	syntaxTree: TSyntaxTree;
 begin
 	syntaxTree := TDelphiParser.ParseText(SourceCode);
+	//WriteLn(TSytnaxNode2.DumpTree(syntaxTree.Root));
 end.	
 ```
 
@@ -320,6 +321,19 @@ Calling **PeekToken** returns the next token:
 **TODO:** I wonder if there is any performance benefit of having an actual `FCurrentToken` and `FPeekToken`. Right now it's just the current index (`FCurrent`) into a **TList** (`FTokens`). So an `FCurrentToken` and `FPeekToken` would allow a prefetch, or at the very least avoid a **TList** index lookup, and be a cache. Or, you know, it makes absolutely no difference. I dunno! Perhaps the savings is in the shuffle `FCurrentToken := FPeekToken`, and you save an indexed lookup. Long before we get there, we have to get string interning (sharing) working, token arena and dictionary lookup, node arena.
 
 ---
+
+# Preprocessor
+
+The tokenizer is designed to be able to use a sequential strem (read-only,forward-only), with the idea of
+saving memory and time. Let it stream tokens in, that way we don't scan them twice. The fact that the parser
+currently just collects all the tokens into a list first, and then enumerates them a 2nd time is an internal
+implementation details. The tokenizer at least it designed to stream in tokens.
+
+And so it is with the preprocessor. The goal of the preprocessor is to be able to demote tokens to trivia
+on the fly, so that the parser doesn't have to know about the preprocessor at all. 
+
+
+
 
 # Next Steps
 

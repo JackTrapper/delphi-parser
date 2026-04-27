@@ -3,7 +3,7 @@ unit DelphiPreprocessor;
 (*
 Conditional-compilation preprocessor.
 
-Pipeline position:   parser  <--  preprocessor  <--  tokenizer
+	parser  <--  preprocessor  <--  tokenizer
 
 Pull model: the preprocessor wraps a TDelphiTokenizer and exposes the same interface:
 
@@ -91,6 +91,7 @@ public class C {
 
 
 
+
 *)
 
 interface
@@ -156,7 +157,7 @@ destructor TDelphiPreprocessor.Destroy;
 begin
 	FreeAndNil(FStack);
 	FreeAndNil(FDefines);
-	// FTokenizer is NOT freed here — caller owns it
+	// FTokenizer is NOT freed here: caller owns it
 	inherited Destroy;
 end;
 
@@ -213,7 +214,7 @@ begin
 	if Length(s) < 3 then
 		Exit;
 
-	// Find the '$' — should be at position 2 for '{$' or position 3 for '(*$'
+	// Find the '$' - should be at position 2 for '{$' or position 3 for '(*$'
 	nameStart := Pos('$', s);
 	if nameStart = 0 then
 		Exit;

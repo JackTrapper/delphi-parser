@@ -136,40 +136,6 @@ ntUnitDeclaration
 	- To get “all tokens”, traverse the tree and collect leaf tokens.
 	- `FullSpan` of a node = span from the first token under it to the last.
 
-
-
-
-
-
-	Roslyn Lexer: https://github.com/dotnet/roslyn/blob/main/src/Compilers/CSharp/Portable/Parser/Lexer.cs#L2461
-
-
-Lexer
-├── Lex() [public]
-│   ├── LexTrivia() [private]
-│   │   ├── ScanWhitespace()
-│   │   ├── ScanSingleLineComment()
-│   │   ├── ScanMultiLineComment()
-│   │   ├── ScanDocumentationComment()
-│   │   └── ScanPreprocessorDirective()
-│   ├── ScanSyntaxToken() [private]
-│   │   ├── ScanIdentifierOrKeyword()
-│   │   ├── ScanNumericLiteral()
-│   │   ├── ScanStringLiteral()
-│   │   ├── ScanCharLiteral()
-│   │   ├── ScanInterpolatedStringLiteral()
-│   │   └── ScanOperatorOrPunctuation()
-│   ├── LexDirective() [private]
-│   │   └── ScanPreprocessorDirective()
-│   └── LexXmlToken() [private]
-│       ├── LexXmlElementTagToken()
-│       ├── LexXmlAttributeTextToken()
-│       ├── LexXmlCDataSectionTextToken()
-│       ├── LexXmlCommentTextToken()
-│       ├── LexXmlProcessingInstructionTextToken()
-│       └── LexXmlCrefOrNameToken()
-└── LexConflictMarker() [public]
-
 }
 
 interface

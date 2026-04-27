@@ -1,0 +1,53 @@
+#name
+F1027 Unit not found '%s' or binary equivalents (%s) (Delphi)
+
+#name
+F2039 Could not create output file '%s' (Delphi)
+
+#name
+F2040 Seek error on '%s' (Delphi)
+
+#name
+F2046 Out of memory (Delphi)
+
+#name
+F2047 Circular unit reference to '%s' (Delphi)
+
+#name
+F2048 Bad unit format - '%s' (Delphi)
+
+#name
+F2051 Unit %s was compiled with a different version of %s.%s (Delphi)
+
+#name
+F2063 Could not compile used unit '%s' (Delphi)
+
+#name
+F2069 Line too long (more than 1023 characters) (Delphi)
+
+#name
+F2084 Internal Error - %s%d (Delphi)
+
+#name
+F2087 System unit incompatible with trial version (Delphi)
+
+#name
+F2092 Program or unit '%s' recursively uses itself (Delphi)
+
+#name
+F2220 Could not compile package '%s' (Delphi)
+
+#name
+F2438 UCS-4 text encoding not supported. Convert to UCS-2 or UTF-8 (Delphi)
+
+#name
+F2446 Unit '%s' is compiled with unit '%s' in '%s' but different version '%s' found (Delphi)
+
+#name
+F2458 Cannot import metadata from Delphi 'library'. Use packages instead (Delphi)
+
+#name
+F2462 Framework %s does not support thread local variables (%s.%s) (Delphi)
+
+#name
+F2613 Unit '%s' not found. (Delphi)

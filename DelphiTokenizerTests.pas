@@ -389,7 +389,7 @@ var
 	function BuildUnitSource(const UnitName: string): string;
 	begin
 		{
-			unit ParserReuseFirstUnit;
+			unit %s;
 			interface
 			implementation
 			end;
@@ -802,11 +802,11 @@ begin
 	expectedPositions[0].TokenText := 'unit';
 	expectedPositions[0].ExpectedStartOffset := 0;
 	expectedPositions[0].ExpectedTokenLength := 4;
-	
+
 	expectedPositions[1].TokenText := 'Test';
 	expectedPositions[1].ExpectedStartOffset := 5;
 	expectedPositions[1].ExpectedTokenLength := 4;
-	
+
 	expectedPositions[2].TokenText := ';';
 	expectedPositions[2].ExpectedStartOffset := 9;
 	expectedPositions[2].ExpectedTokenLength := 1;
@@ -1144,33 +1144,33 @@ begin
 			if token.Kind = ptCompilerDirective then
 			begin
 				foundDirective := True;
-				
+
 				// Verify the error flag is set
 				if token.HasErrors then
 					CheckTrue(True, 'Unterminated compiler directive (line end) correctly has HasErrors=True')
 				else
 					CheckTrue(False, 'Unterminated compiler directive (line end) should have HasErrors=True, but got False');
-				
+
 				// Verify the error message mentions unterminated
-				CheckTrue(Pos('Unterminated', token.ErrorMessage) > 0, 
+				CheckTrue(Pos('Unterminated', token.ErrorMessage) > 0,
 					Format('Error message should mention "Unterminated". Got: "%s"', [token.ErrorMessage]));
-				
-				// Note: The detailed distinction (EOF vs line end) is in the LogFmt output, 
+
+				// Note: The detailed distinction (EOF vs line end) is in the LogFmt output,
 				// not in the token's ErrorMessage property
-				
+
 				// Verify IsMissing flag is set for parser recovery
 				if token.IsMissing then
 					CheckTrue(True, 'Unterminated compiler directive correctly has IsMissing=True for parser recovery')
 				else
 					CheckTrue(False, 'Unterminated compiler directive should have IsMissing=True for parser recovery');
-				
+
 				Break;
 			end;
 		end;
-		
-		CheckTrue(foundDirective, 
+
+		CheckTrue(foundDirective,
 			Format('Should have found compiler directive token with error.'#13#10'Debug:'#13#10'%s', [debugOutput]));
-		
+
 	finally
 		tokens.Free; // TObjectList automatically frees owned objects
 	end;
@@ -1185,16 +1185,16 @@ var
 	foundBegin, foundEnd, foundIf, foundThen: Boolean;
 begin
 	sourceCode := 'begin if x then end';
-	
+
 	tokens := TObjectList.Create(True); // owns objects
 	try
 		TDelphiTokenizer.Tokenize(sourceCode, tokens);
-		
+
 		foundBegin := False;
 		foundEnd := False;
 		foundIf := False;
 		foundThen := False;
-		
+
 		for i := 0 to tokens.Count - 1 do
 		begin
 			token := tokens[i] as TSyntaxToken;
@@ -1203,7 +1203,7 @@ begin
 			else if token.Kind = ptIf then foundIf := True
 			else if token.Kind = ptThen then foundThen := True;
 		end;
-		
+
 		CheckTrue(foundBegin, 'Should recognize "begin" as reserved word');
 		CheckTrue(foundEnd, 'Should recognize "end" as reserved word');
 		CheckTrue(foundIf, 'Should recognize "if" as reserved word');

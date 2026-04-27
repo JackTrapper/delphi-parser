@@ -1,0 +1,310 @@
+#name
+H2077 Value assigned to '%s' never used (Delphi) - 1 of 3
+#description
+https://docwiki.embarcadero.com/RADStudio/Athens/en/H2077_Value_assigned_to_%27%25s%27_never_used_(Delphi)
+The compiler gives this hint message if the value assigned to a variable is not used. If optimization is enabled, the assignment is eliminated.
+This can happen because either the variable is not used anymore, or because it is reassigned before it is used.
+#data
+program Produce;
+(*$HINTS ON*)
+
+procedure Simple;
+var
+  I: Integer;
+begin
+  I := 42;                (*<-- Hint message here*)
+end;
+#errors
+H2077 Value assigned to 'I' never used (Delphi)
+
+
+#name
+H2077 Value assigned to '%s' never used (Delphi) - 2 of 3
+#description
+The compiler gives this hint message if the value assigned to a variable is not used. If optimization is enabled, the assignment is eliminated.
+This can happen because either the variable is not used anymore, or because it is reassigned before it is used.
+#data
+procedure Propagate;
+var
+  I: Integer;
+  K: Integer;
+begin
+  I := 0;                 (*<-- Hint message here*)
+  Inc(I);                 (*<-- Hint message here*)
+  K := 42;
+  while K > 0 do begin
+    if Odd(K) then
+      Inc(I);             (*<-- Hint message here*)
+    Dec(K);
+  end;
+end;
+#errors
+H2077 Value assigned to 'I' never used (Delphi)
+
+#name
+H2077 Value assigned to '%s' never used (Delphi) - 3 of 3
+#description
+The compiler gives this hint message if the value assigned to a variable is not used. If optimization is enabled, the assignment is eliminated.
+This can happen because either the variable is not used anymore, or because it is reassigned before it is used.
+#data
+procedure TryFinally;
+var
+  I: Integer;
+begin
+  I := 0;                 (*<-- Hint message here*)
+  try
+    I := 42;
+  finally
+    Writeln('Reached finally');
+  end;
+  Writeln(I);             (*Will always write 42 - if an exception happened,
+          we wouldn't get here*)
+end;
+#errors
+H2077 Value assigned to 'I' never used (Delphi)
+
+begin
+end.
+
+
+
+#name
+H2135 FOR or WHILE loop executes zero times - deleted (Delphi)
+#description
+https://docwiki.embarcadero.com/RADStudio/Athens/en/H2135_FOR_or_WHILE_loop_executes_zero_times_-_deleted_(Delphi)
+The compiler has determined that the specified looping structure will not ever execute, so as an optimization it will remove it. 
+#data
+program Produce;
+(*$HINTS ON*)
+
+  var
+    i : Integer;
+
+begin
+  i := 0;
+  WHILE FALSE AND (i < 100) DO
+    INC(i);
+end.
+#errors
+H2135 FOR or WHILE loop executes zero times - deleted
+
+
+
+#name
+H2164 Variable '%s' is declared but never used in '%s' (Delphi)
+#data
+program Produce;
+(*$HINTS ON*)
+
+  procedure Local;
+    var i : Integer;
+  begin
+  end;
+
+begin
+end.
+#errors
+H2164 Variable 'i' is declared but never used in 'Local'
+
+
+#name
+H2219 Private symbol '%s' declared but never used (Delphi)
+#description
+https://docwiki.embarcadero.com/RADStudio/Athens/en/H2219_Private_symbol_%27%25s%27_declared_but_never_used_(Delphi)
+The symbol referenced appears in a private section of a class, but is never used by the class.
+It would be more memory efficient if you removed the unused private field from your class definition.
+#data
+program Produce;
+  type
+    Base = class
+    private
+      FVar : Integer;
+      procedure Init;
+    end;
+
+procedure Base.Init;
+begin
+end;
+
+begin
+end.
+#errors
+H2219 Private symbol 'FVar' declared but never used
+
+
+
+#name
+H2235 Package '%s' does not use or export '%s.%s' (Delphi)
+#description
+https://docwiki.embarcadero.com/RADStudio/Athens/en/H2235_Package_%27%25s%27_does_not_use_or_export_%27%25s.%25s%27_(Delphi)
+You have compiled a unit into a package which contains a symbol which does not appear in the interface section of the unit, nor is it referenced by any code in the unit. In effect, this code is dead code and could be removed from the unit without changing the semantics of your program.
+
+
+#name
+H2244 Pointer expression needs no Initialize/Finalize - need ^ operator? (Delphi)
+#description
+https://docwiki.embarcadero.com/RADStudio/Athens/en/H2244_Pointer_expression_needs_no_Initialize/Finalize_-_need_%5E_operator%3F_(Delphi)
+You have attempted to finalize a Pointer type.
+#data
+program Produce;
+
+  var
+    str : String;
+    pstr : PString;
+
+begin
+  str := 'Sharene';
+  pstr := @str;
+  Finalize(pstr);  (*note: do not attempt to use 'str' after this*)
+end.
+#errors
+H2244 Pointer expression needs no Initialize/Finalize - need ^ operator?
+
+
+
+#name
+H2365 Override method %s.%s should match case of ancestor %s.%s (Delphi)
+#description
+https://docwiki.embarcadero.com/RADStudio/Athens/en/H2365_Override_method_%25s.%25s_should_match_case_of_ancestor_%25s.%25s_(Delphi)
+When overriding a method, the best practice is to match the case of the ancestor method. 
+This prevents any downstream failure that would not be anticipated by a Delphi user, who expects case-insensitivity.
+#data
+type
+  TClass1 = class
+    procedure VirtualMethod; virtual; abstract;
+  end;
+ 
+  TClass2 = class(TClass1)
+    procedure virtualmethod; override; 
+  end;
+ 
+procedure TClass2.virtualmethod;
+begin
+end;
+#errors
+H2365 Override method TClass2.virtualmethod should match case of ancestor TClass1.VirtualMethod
+
+
+#name
+H2368 Visibility of property accessor method %s should match property %s.%s (Delphi)
+#description
+https://docwiki.embarcadero.com/RADStudio/Athens/en/H2368_Visibility_of_property_accessor_method_%25s_should_match_property_%25s.%25s_(Delphi)
+TODO: create example
+
+
+#name
+H2369 Property accessor %s should be %s (Delphi)
+#description
+https://docwiki.embarcadero.com/RADStudio/Athens/en/H2369_Property_accessor_%25s_should_be_%25s_(Delphi)
+TODO: create example
+
+
+#name
+H2384 CLS: overriding virtual method '%s.%s' visibility (%s) must match base class '%s' (%s) (Delphi)
+#documentation
+https://docwiki.embarcadero.com/RADStudio/Athens/en/H2384_CLS:_overriding_virtual_method_%27%25s.%25s%27_visibility_(%25s)_must_match_base_class_%27%25s%27_(%25s)_(Delphi)
+TODO: create example
+
+#name
+H2440 Inline method visibility is not lower or same visibility of accessing member '%s.%s' (Delphi)
+#documentation
+https://docwiki.embarcadero.com/RADStudio/Athens/en/H2440_Inline_method_visibility_is_not_lower_or_same_visibility_of_accessing_member_%27%25s.%25s%27_(Delphi)
+A member that is accessed within the body of an inline method must be accessible anywhere that the inline method is called.
+Therefore, the member must be at least as visible as the inline method.
+#data
+type
+   TFoo = class
+   private
+     PrivateMember: Integer;
+   public
+     function PublicFunc:Integer; inline;
+   end;
+
+function TFoo.PublicFunc:Integer;
+begin
+	Result := Self.PrivateMember;
+end;
+#errors
+H2440 Inline method visibility is not lower or same visibility of accessing member 'TFoo.PublicFunc'
+
+
+
+#name
+H2443 Inline function '%s' has not been expanded because unit '%s' is not specified in USES list (Delphi)
+#description
+https://docwiki.embarcadero.com/RADStudio/Athens/en/H2443_Inline_function_%27%25s%27_has_not_been_expanded_because_unit_%27%25s%27_is_not_specified_in_USES_list_(Delphi)
+This situation may occur if an inline function refers to a type in a unit that is not explicitly used by the function's unit.
+For example, this may happen if the function uses inherited to refer to methods inherited from a distant ancestor,
+and that ancestor's unit is not explicitly specified in the uses list of the function's unit.
+If the inline function's code is to be expanded,
+then the unit that calls the function must explicitly use the unit where the ancestor type is exposed.
+TODO: create example
+
+
+
+#name
+H2444 Inline function '%s' has not been expanded because accessing member '%s' is inaccessible (Delphi)
+#description
+https://docwiki.embarcadero.com/RADStudio/Athens/en/H2444_Inline_function_%27%25s%27_has_not_been_expanded_because_accessing_member_%27%25s%27_is_inaccessible_(Delphi)
+An inline function cannot be expanded when the inline function body refers to a restricted member 
+that is not accessible where the function is called.
+For example, if an inline function refers to a strict private field and this function 
+is called from outside the class (e.g. from a global procedure), 
+the field is not accessible at the call site and the inline function is not expanded.
+TODO: create example
+
+#name
+H2445 Inline function '%s' has not been expanded because its unit '%s' is specified in USES statement of IMPLEMENTATION section and current function is inline function or being inline function (Delphi)
+#description
+https://docwiki.embarcadero.com/RADStudio/Athens/en/H2445_Inline_function_%27%25s%27_has_not_been_expanded_because_its_unit_%27%25s%27_is_specified_in_USES_statement_of_IMPLEMENTATION_section_and_current_function_is_inline_function_or_being_inline_function
+Inline functions are not expanded between circularly dependent units.
+TODO: create example
+
+
+
+
+#name
+H2456 Inline function '%s' has not been expanded because contained unit '%s' uses compiling unit '%s' (Delphi)
+#description
+https://docwiki.embarcadero.com/RADStudio/Athens/en/H2456_Inline_function_%27%25s%27_has_not_been_expanded_because_contained_unit_%27%25s%27_uses_compiling_unit_%27%25s%27_(Delphi)
+This occurs when the function that needs to be inlined creates a circular unit reference to the current unit.
+TODO: create example
+
+
+
+#name
+H2457 Inline function '%s' has not been expanded because contained unit '%s' uses compiling unit '%s' indirectly (Delphi)
+#description
+https://docwiki.embarcadero.com/RADStudio/Athens/en/H2457_Inline_function_%27%25s%27_has_not_been_expanded_because_contained_unit_%27%25s%27_uses_compiling_unit_%27%25s%27_indirectly_(Delphi)
+This occurs when the inlined function indirectly contains a circular reference to the current compilation unit.
+TODO: create example
+
+
+
+#name
+H2505 'Self' is uninitialized. An inherited constructor must be called before entering a try block (Delphi)
+#description
+https://docwiki.embarcadero.com/RADStudio/Athens/en/H2505_%27Self%27_is_uninitialized._An_inherited_constructor_must_be_called_before_entering_a_try_block_(Delphi)
+A constructor must always call an inherited constructor before it may access or initialize any inherited class members 
+(such as specific exception handling). 
+The compiler generates an error if your constructor code does not call the inherited constructor
+(a valid situation in Delphi for Win32), but it is important to examine your constructors to make sure that 
+you do not access any inherited class fields, directly or indirectly, before the call to the inherited constructor.
+TODO: create example
+
+
+
+#name
+H2509 Identifier '%s' conflicts with type parameters of container type (Delphi)
+#description
+https://docwiki.embarcadero.com/RADStudio/Athens/en/H2509_Identifier_%27%25s%27_conflicts_with_type_parameters_of_container_type_(Delphi)
+This happens when using an element for a container that is not compatible with the type parameter of that container.
+TODO: create example
+
+#name
+H2596 '%s' (Delphi)
+#description
+https://docwiki.embarcadero.com/RADStudio/Athens/en/H2596_%27%25s%27_(Delphi)
+You get this hint if the external linker emits an error.
+This hint provides the list of arguments passed to the linker, so that you can identify which arguments are wrong.
+I don't believe we will have a test case for this; it's a linker error.

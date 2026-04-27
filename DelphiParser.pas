@@ -4676,7 +4676,10 @@ Example
 Tree
 ----
 
-ntIdent
+ntVariable
+	ntIdentifierList
+	#ptColon
+	ntType
 }
 
 	Result := TSyntaxNode2.Create(ntVariable);
@@ -6966,8 +6969,7 @@ ntVarSection                        ; var
 		ntIdentifierList
 			ntIdentifier anName="t1"
 			ntIdentifier anName="t2"
-		ntType ...
-	...
+		ntType anName="Int64"
 }
 	case CurrentTokenKind of
 	ptVar:
@@ -8379,12 +8381,19 @@ PropertyDirective
 end;
 
 function TDelphiParser.ParseScriptFile: TSyntaxNode2;
+const
+	DECL_START_TOKENS = [ptClass, ptConst, ptConstructor, ptDestructor, ptExports,
+		ptFunction, ptLabel, ptOperator, ptProcedure, ptResourceString, ptType,
+		ptThreadVar, ptVar];
+var
+	stmt: TSyntaxNode2;
 begin
-	{
-	}
-	// For script-style input, parse as a statement list by default.
-	// Fall back to declaration parsing only when the first token is a known
-	// declaration-start keyword.
+{
+Script mode accepts a mix of top-level declarations and executable statements.
+
+- Parse as a statement list by default.
+- Fall back to declaration parsing only when the first token is a known declaration-start keyword.
+}
 	if not (CurrentTokenKind in [ptClass, ptConst, ptConstructor, ptDestructor, ptExports,
 		ptFunction, ptLabel, ptOperator, ptProcedure, ptResourceString, ptType, ptThreadVar, ptVar]) then
 	begin
@@ -8414,7 +8423,19 @@ begin
 		ptVar:				Result.AddChild(ParseVarSection);
 		ptSemicolon:		Result.AddChild(EatToken);
 		else
-			Result.AddChild(SynErrorFmt(SE2029, ['Top-level declaration', CurrentToken.Text]));
+			begin
+				// Everything else is treated as executable script content.
+				stmt := ParseStatement;
+				if stmt.HasChildren then
+					Result.AddChild(stmt)
+				else
+				begin
+					stmt.Free;
+					if CurrentTokenKind in DECL_START_TOKENS then
+						Continue;
+					Result.AddChild(SynErrorFmt(SE2029, ['Top-level declaration or statement', CurrentToken.Text]));
+				end;
+			end;
 		end;
 	end;
 end;

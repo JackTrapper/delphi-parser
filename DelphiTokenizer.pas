@@ -172,6 +172,8 @@ Issues
       Error: F2069 Line too long (more than 1023 characters)
       Delphi 12.0 says 1023, but in reality it's 2260 characters.
 
+
+
 }
 
 

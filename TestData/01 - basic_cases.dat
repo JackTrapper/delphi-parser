@@ -7453,6 +7453,45 @@ ntCompilationUnit
 				ntParticle
 
 #name
+ParseScriptFile
+#data
+var
+	tree: TSyntaxTree;
+begin
+	tree := TDelphiParser.ParseText(sourceCode, '');
+	WriteLn(TSyntaxNode.DumpTree(tree.RootNode));
+end;
+#document
+ntCompilationUnit
+	ntStatementList
+		ntVarSection
+			ntVariable
+				ntIdentifierList
+					ntIdentifier anName="tree"
+				ntType anName="TSyntaxTree"
+		ntStatement
+			ntStatementList
+				ntStatement
+					ntAssign
+						ntParticle
+							ntIdentifier anName="tree"
+						ntParticle
+							ntIdentifier anName="TDelphiParser"
+							ntIdentifier anName="ParseText"
+							ntParticle
+								ntIdentifier anName="sourceCode"
+							ntParticle
+				ntStatement
+					ntParticle
+						ntIdentifier anName="WriteLn"
+						ntParticle
+							ntIdentifier anName="TSyntaxNode"
+							ntIdentifier anName="DumpTree"
+							ntParticle
+								ntIdentifier anName="tree"
+								ntIdentifier anName="RootNode"
+
+#name
 Empty case else generates empty ntCaseElse
 #data
 unit U;

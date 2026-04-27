@@ -1,0 +1,590 @@
+#name
+W1000 Symbol '%s' is deprecated (Delphi)
+#description
+https://docwiki.embarcadero.com/RADStudio/Athens/en/W1000_Symbol_%27%25s%27_is_deprecated_(Delphi)
+You are using the tagged symbol (using the 'deprecated hint directive) as no longer current and is 
+maintained for compatibility only. If possible, you should consider updating your source code to use another symbol.
+#data
+{$WARNINGS ON}
+{$WARN SYMBOL_DEPRECATED ON}
+var
+	A: integer deprecated 'Use the variable B instead';
+	B: integer;
+begin
+	// Warning: W1000 Symbol 'A' is deprecated: 'Use the variable B instead'
+	A := 42
+end.
+#errors
+W1000 Symbol 'A' is deprecated: 'Use the variable B instead'
+
+
+
+#name
+W1001 Symbol '%s' is specific to a library (Delphi)
+#description
+https://docwiki.embarcadero.com/RADStudio/Athens/en/W1001_Symbol_%27%25s%27_is_specific_to_a_library_(Delphi)
+The symbol is tagged (using the library hint directive) as one that may not be available in all libraries. If you are likely to use different libraries, it may cause a problem.
+TODO: create example
+
+
+
+#name
+W1002 Symbol '%s' is specific to a platform (Delphi)
+#description
+https://docwiki.embarcadero.com/RADStudio/Athens/en/W1002_Symbol_%27%25s%27_is_specific_to_a_platform_(Delphi)
+The symbol is tagged (using the platform hint directive) as one that might not be available on all platforms. If you are writing multi-device applications, the symbol might cause a problem.
+TODO: create example
+
+
+
+#name
+W1003 Symbol '%s' is experimental (Delphi)
+#description
+https://docwiki.embarcadero.com/RADStudio/Athens/en/W1003_Symbol_%27%25s%27_is_experimental_(Delphi)
+An "experimental" directive has been used on an identifier. "Experimental" indicates the presence of a class or unit that is incomplete or not fully tested.
+
+
+
+#name
+W1004 Unit '%s' is specific to a library (Delphi)
+#description
+https://docwiki.embarcadero.com/RADStudio/Athens/en/W1004_Unit_%27%25s%27_is_specific_to_a_library_(Delphi)
+The whole unit is tagged (using the library hint directive) as one that may not be available in all libraries. If you are likely to use different libraries, it may cause a problem.
+
+
+
+
+#name
+W1005 Unit '%s' is specific to a platform (Delphi)
+#description
+https://docwiki.embarcadero.com/RADStudio/Athens/en/W1005_Unit_%27%25s%27_is_specific_to_a_platform_(Delphi)
+The whole unit is tagged (using the platform hint directive) as one that contains material that might 
+not be available on all platforms. If you are writing multi-device applications, the unit might cause a problem. 
+For example, a unit that uses objects defined in OleAuto might be tagged using the PLATFORM directive
+TODO: create example
+
+
+#name
+W1006 Unit '%s' is deprecated (Delphi)
+#description
+https://docwiki.embarcadero.com/RADStudio/Athens/en/W1006_Unit_%27%25s%27_is_deprecated_(Delphi)
+The unit is tagged (using the deprecated hint directive) as no longer current and is maintained for compatibility only. You should consider updating your source code to use another unit, if possible.
+TODO: create example
+
+
+
+#name
+W1007 Unit '%s' is experimental (Delphi)
+#description
+https://docwiki.embarcadero.com/RADStudio/Athens/en/W1007_Unit_%27%25s%27_is_experimental_(Delphi)
+An "experimental" directive has been used on an identifier. "Experimental" indicates the presence of a class or unit that is incomplete or not fully tested.
+TODO: create example
+
+
+#name
+W1009 Redeclaration of '%s' hides a member in the base class (Delphi)
+#description
+https://docwiki.embarcadero.com/RADStudio/Athens/en/W1009_Redeclaration_of_%27%25s%27_hides_a_member_in_the_base_class_(Delphi)
+A property has been created in a class with the same name of a variable contained in one of the base classes. One possible, and not altogether apparent, reason for getting this error is that a new version of the base class hierarchy has been installed, and it contains new member variables which have names identical to your properties' names.
+(*$WARNINGS ON*)
+program Produce;
+
+  type
+    Base = class
+      v : integer;
+    end;
+
+    Derived = class (Base)
+      ch : char;
+      property v : char read ch write ch;
+    end;
+
+begin
+end.
+#errors
+W1009 Redeclaration of 'v' hides a member in the base class
+
+
+
+#name
+W1010 Method '%s' hides virtual method of base type '%s' (Delphi)
+#description
+https://docwiki.embarcadero.com/RADStudio/Athens/en/W1010_Method_%27%25s%27_hides_virtual_method_of_base_type_%27%25s%27_(Delphi)
+You have declared a method that has the same name as a virtual method in the base class. Your new method is not a virtual method; it will hide access to the base's method of the same name.
+#data
+program Produce;
+
+type
+  Base = class(TObject)
+    procedure VirtuMethod; virtual;
+    procedure VirtuMethod2; virtual;
+    procedure VirtuMethod3; virtual;
+  end;
+
+  Derived = class(Base)
+    procedure VirtuMethod;
+    procedure VirtuMethod2;
+    procedure VirtuMethod3;
+  end;
+ 
+procedure Base.VirtuMethod;
+begin
+
+end;
+ 
+procedure Base.VirtuMethod2;
+begin
+
+end;
+
+procedure Base.VirtuMethod3;
+begin
+
+end;
+
+procedure Derived.VirtuMethod;
+begin
+
+end;
+ 
+procedure Derived.VirtuMethod2;
+begin
+
+end;
+
+procedure Derived.VirtuMethod3;
+begin
+
+end;
+
+begin
+
+end.
+#errors
+W1010 Method '%s' hides virtual method of base type '%s'
+
+
+
+
+#name
+W1011 Text after final 'END.' - ignored by compiler (Delphi)
+#description
+https://docwiki.embarcadero.com/RADStudio/Athens/en/W1011_Text_after_final_%27END.%27_-_ignored_by_compiler_(Delphi)
+This warning is given when there is still source text after the final end and the period that constitutes the logical end of the program. Possibly the nesting of begin-end is inconsistent (there is one end too many somewhere). Check whether you intended the source text to be ignored by the compiler - maybe it is actually quite important.
+#data
+program Produce;
+
+begin
+end.
+
+Text here is ignored by Delphi 16-bit - Delphi 32-bit or Kylix gives a warning.
+
+	program Solve;
+
+begin
+end.
+#errors
+W1011 Text after final 'END.' - ignored by compiler
+
+
+#name
+W1013 Constant 0 converted to NIL (Delphi)
+#description
+https://docwiki.embarcadero.com/RADStudio/Athens/en/W1013_Constant_0_converted_to_NIL_(Delphi)
+The Delphi compiler now allows the constant 0 to be used in pointer expressions in place of NIL. This change was made to allow older code to still compile with changes that were made in the low-level RTL.
+#data
+program Produce;
+
+  procedure p0(p : Pointer);
+  begin
+  end;
+
+begin
+  p0(0);
+end.
+#errors
+W1013 Constant 0 converted to NIL
+
+
+
+#name
+W1014 String constant truncated to fit STRING%ld (Delphi)
+#description
+https://docwiki.embarcadero.com/RADStudio/Athens/en/W1014_String_constant_truncated_to_fit_STRING%25ld_(Delphi)
+A string constant is being assigned to a variable that is not large enough to contain the entire string. The compiler is alerting you to the fact that it is truncating the literal to fit into the variable.
+#data
+program Produce;
+(*$WARNINGS ON*)
+
+  const
+    Title = 'Super Galactic Invaders with Turbo Gungla Sticks';
+    Subtitle = 'Copyright (c) 2002 by Frank Haversham';
+
+  type
+    TitleString = String[25];
+    SubtitleString = String[18];
+
+
+  var
+    ProgramTitle : TitleString;
+    ProgramSubtitle : SubtitleString;
+
+begin
+  ProgramTitle := Title;
+  ProgramSubtitle := Subtitle;
+end.
+#errors
+W1014 String constant truncated to fit STRING25
+W1014 String constant truncated to fit STRING18
+
+
+
+#name
+W1015 FOR-Loop variable '%s' cannot be passed as var parameter (Delphi)
+#description
+https://docwiki.embarcadero.com/RADStudio/Athens/en/W1015_FOR-Loop_variable_%27%25s%27_cannot_be_passed_as_var_parameter_(Delphi)
+An attempt has been made to pass the control variable of a FOR-loop to a procedure or function which takes a var parameter. This is a warning because the procedure which receives the control variable is able to modify it, thereby changing the semantics of the FOR-loop which issued the call.
+#data
+program Produce;
+
+  procedure p1(var x : Integer);
+  begin
+  end;
+
+  procedure p0;
+    var
+      i : Integer;
+  begin
+    for i := 0 to 1000 do
+      p1(i);
+  end;
+
+begin
+end.
+#errors
+W1015 FOR-Loop variable 'i' cannot be passed as var parameter
+
+
+#name
+W1016 Typed constant '%s' passed as var parameter (Delphi)
+https://docwiki.embarcadero.com/RADStudio/Athens/en/W1016_Typed_constant_%27%25s%27_passed_as_var_parameter_(Delphi)
+This error message is reserved.
+
+
+
+
+#name
+W1017 Assignment to typed constant '%s' (Delphi)
+#description
+https://docwiki.embarcadero.com/RADStudio/Athens/en/W1017_Assignment_to_typed_constant_%27%25s%27_(Delphi)
+This warning message is currently unused.
+
+
+
+#name
+W1018 Case label outside of range of case expression (Delphi)
+#description
+https://docwiki.embarcadero.com/RADStudio/Athens/en/W1018_Case_label_outside_of_range_of_case_expression_(Delphi)
+You have provided a label inside a case statement that cannot be produced by the case statement control variable.
+#data
+program Produce;
+(*$WARNINGS ON*)
+
+  type
+    CompassPoints = (n, e, s, w, ne, se, sw, nw);
+    FourPoints = n..w;
+
+  var
+    TatesCompass : FourPoints;
+
+begin
+
+   TatesCompass := e;
+   case TatesCompass OF
+   n:    Writeln('North');
+   e:    Writeln('East');
+   s:    Writeln('West');
+   w:    Writeln('South');
+   ne:   Writeln('Northeast');
+   se:   Writeln('Southeast');
+   sw:   Writeln('Southwest');
+   nw:   Writeln('Northwest');
+   end;
+end.
+#errors
+W1018 Case label outside of range of case expression
+
+
+
+
+#name
+W1021 Comparison always evaluates to False (Delphi)
+#descripion
+https://docwiki.embarcadero.com/RADStudio/Athens/en/W1021_Comparison_always_evaluates_to_False_(Delphi)
+The compiler has determined that the expression will always be evaluated as false. This most often results from a boundary test against a specific variable type, such as an Integer against $80000000.
+
+In versions of the Delphi compiler prior to 12.0, the hexadecimal constant $80000000 would have been a negative Integer value, but with the introduction of the int64 type, this same constant now becomes a positive int64 type. As a result, comparisons of this constant against Integer variables will no longer behave as they once did.
+
+As this is a warning rather than an error, there is no standard method of addressing the problems: sometimes the warning can be ignored, sometimes the code must be rewritten.
+#data
+program Produce;
+
+  var
+    i : Integer;
+    c : Cardinal;
+
+begin
+  c := 0;
+  i := 0;
+  if c < 0 then
+    Writeln('false');
+
+  if i >= $80000000 then
+    Writeln('false');
+end.
+#errors
+W1021 Comparison always evaluates to False
+
+
+#name
+W1022 Comparison always evaluates to True (Delphi)
+
+
+
+#name
+W1023 Comparing signed and unsigned types - widened both operands (Delphi)
+
+
+
+#name
+W1024 Combining signed and unsigned types - widened both operands (Delphi)
+
+
+
+#name
+W1029 Duplicate %s '%s' with identical parameters will be inacessible from C++ (Delphi)
+
+
+
+#name
+W1031 Package '%s' will not be written to disk because -J option is enabled (Delphi)
+
+
+
+#name
+W1032 Exported package threadvar '%s.%s' cannot be used outside of this package (Delphi)
+
+
+
+#name
+W1034 $HPPEMIT '%s' ignored (Delphi)
+
+
+
+#name
+W1035 Return value of function '%s' might be undefined (Delphi)
+
+
+
+#name
+W1036 Variable '%s' might not have been initialized (Delphi)
+
+
+
+#name
+W1037 FOR-Loop variable '%s' may be undefined after loop (Delphi)
+
+
+
+#name
+W1039 No configuration files found (Delphi)
+
+
+
+#name
+W1040 Implicit use of Variants unit (Delphi)
+
+
+
+#name
+W1041 Error converting Unicode char to locale charset. String truncated. Is your LANG environment variable set correctly (Delphi)
+
+
+
+#name
+W1042 Error converting locale string '%s' to Unicode. String truncated. Is your LANG environment variable set correctly (Delphi)
+
+
+
+#name
+W1043 Imagebase $%X is not a multiple of 64k. Rounding down to $%X (Delphi)
+
+
+
+#name
+W1044 Suspicious typecast of %s to %s (Delphi)
+
+
+
+#name
+W1045 Property declaration references ancestor private '%s.%s' (Delphi)
+
+
+
+#name
+W1046 Unsafe type '%s%s%s' (Delphi)
+
+
+
+#name
+W1047 Unsafe code '%s' (Delphi)
+
+
+
+#name
+W1048 Unsafe typecast of '%s' to '%s' (Delphi)
+
+
+
+#name
+W1049 value '%s' for option %s was truncated (Delphi)
+
+
+
+#name
+W1050 WideChar reduced to byte char in set expressions (Delphi)
+
+
+
+#name
+W1051 Duplicate symbol names in namespace. Using '%s.%s' found in %s. Ignoring duplicate in %s (Delphi)
+
+
+
+#name
+W1055 Published caused RTTI ($M+) to be added to type '%s' (Delphi)
+
+
+
+#name
+W1057 Implicit string cast from '%s' to '%s' (Delphi)
+
+
+
+#name
+W1058 Implicit string cast with potential data loss from '%s' to '%s' (Delphi)
+
+
+
+#name
+W1059 Explicit string cast from '%s' to '%s' (Delphi)
+
+
+
+#name
+W1060 Explicit string cast with potential data loss from '%s' to '%s' (Delphi)
+
+
+
+#name
+W1061 Narrowing given WideChar constant ('%s') to AnsiChar lost information (Delphi)
+
+
+
+#name
+W1062 Narrowing given wide string constant lost information (Delphi)
+
+
+
+#name
+W1063 Widening given AnsiChar constant ('%s') to WideChar lost information (Delphi)
+
+
+
+#name
+W1064 Widening given AnsiString constant lost information (Delphi)
+
+
+
+#name
+W1066 Lost Extended floating point precision. Reduced to Double (Delphi)
+
+
+
+#name
+W1067 Unable to load DLL '%s' (Delphi)
+
+
+
+#name
+W1068 Modifying strings in place may not be supported in the future (Delphi)
+
+
+
+#name
+W1069 Feature will not be available in mobile Delphi compiler (Delphi)
+
+
+
+#name
+W1070 Use of untyped pointer can disrupt instance reference counts (Delphi)
+
+
+
+#name
+W1071 Implicit integer cast with potential data loss from '%s' to '%s' (Delphi)
+
+
+
+#name
+W1072 Implicit conversion may lose significant digits from '%s' to '%s' (Delphi)
+
+
+
+#name
+W1073 Combining signed type and unsigned 64-bit type - treated as an unsigned type (Delphi)
+
+
+
+#name
+W1074 Unknown Custom Attribute (Delphi)
+
+
+
+#name
+W1201 XML comment on '%s' has badly formed XML-'Whitespace is not allowed at this location.' (Delphi)
+
+
+
+#name
+W1202 XML comment on '%s' has badly formed XML- 'Reference to undefined entity '%s'' (Delphi)
+
+
+
+#name
+W1203 XML comment on '%s' has badly formed XML-'A name was started with an invalid character.' (Delphi)
+
+
+
+#name
+W1204 XML comment on '%s' has badly formed XML-'A name contained an invalid character.' (Delphi)
+
+
+
+#name
+W1205 XML comment on '%s' has badly formed XML-'The character '%c' was expected.' (Delphi)
+
+
+
+#name
+W1206 XML comment on '%s' has cref attribute '%s' that could not be resolved (Delphi)
+
+
+
+#name
+W1207 XML comment on '%s' has a param tag for '%s', but there is no parameter by that name (Delphi)
+
+
+
+#name
+W1208 Parameter '%s' has no matching param tag in the XML comment for '%s' (but other parameters do) (Delphi)

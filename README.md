@@ -324,7 +324,6 @@ Calling **PeekToken** returns the next token:
 # Next Steps
 
 - Implement the preprocessor, right now it is just a stub passthrough
-- Test the case of a program fragment (i.e. just some code), that they parser went haywire over
 - have the test harness look for `IsMissing` tokens and report them as syntax errors, with line/column info from the token
 - tokens are interned based on `Kind`, `Text`, `ContextualKind`, `Text`, `ValueText`, `Width`, `FullWidth`. But how does Roslyn handle trivia? Surely comments don't get interred with the tokens...
 - change the test case files to include tokens, and compare with #ptToken
@@ -345,7 +344,7 @@ Oh, and the biggest nightmare is the **Expression** grammer production.
 Idera, do you have a grammer internally? Can you please just release it? Unless Delphi has become like HTML5:
 
 - there is no grammer, just a parsing algorithm
-- conforming Pascal code is code that passing the parsing algorithm
+- conforming Pascal code is code that passes the parsing algorithm
 
 Hence [Pythia:](https://en.wikipedia.org/wiki/Pythia)
 

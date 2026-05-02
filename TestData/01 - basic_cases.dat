@@ -121,11 +121,9 @@ ntCompilationUnit
 								ntIdentifier anName="P"
 								ntType anName="Integer"
 								ntPropertyDirective anKind="read"
-									ntParticle
-										ntIdentifier anName="F"
+									ntIdentifier anName="F"
 								ntPropertyDirective anKind="write"
-									ntParticle
-										ntIdentifier anName="F"
+									ntIdentifier anName="F"
 		ntImplementation
 
 #name
@@ -160,11 +158,9 @@ ntCompilationUnit
 								ntIdentifier anName="P"
 								ntType anName="Integer"
 								ntPropertyDirective
-									ntParticle
-										ntIdentifier anName="F"
+									ntIdentifier anName="F"
 								ntPropertyDirective
-									ntParticle
-										ntIdentifier anName="F"
+									ntIdentifier anName="F"
 		ntImplementation
 
 #name
@@ -527,8 +523,8 @@ ntCompilationUnit
 			ntTypeSection
 				ntTypeDecl anName="TSub"
 					ntExpressionOrRange
-						ntParticle
-						ntParticle
+						ntLiteral
+						ntLiteral
 		ntImplementation
 
 #name
@@ -549,7 +545,7 @@ ntCompilationUnit
 			ntTypeSection
 				ntTypeDecl anName="TReal"
 					ntExpressionOrRange
-						ntParticle
+						ntLiteral
 		ntImplementation
 
 #name
@@ -570,7 +566,7 @@ ntCompilationUnit
 			ntTypeSection
 				ntTypeDecl anName="TOrd"
 					ntExpressionOrRange
-						ntParticle
+						ntLiteral
 		ntImplementation
 
 #name
@@ -797,7 +793,7 @@ ntCompilationUnit
 			ntTypeSection
 				ntTypeDecl anName="S10"
 					ntType
-						ntParticle
+						ntLiteral
 		ntImplementation
 
 #name
@@ -839,7 +835,7 @@ ntCompilationUnit
 			ntTypeSection
 				ntTypeDecl anName="TAlias"
 					ntExpressionOrRange
-						ntParticle
+						ntLiteral
 		ntImplementation
 
 #name
@@ -902,8 +898,8 @@ ntCompilationUnit
 					ntIdentifier anName="C"
 					ntType anType="array"
 						ntExpressionOrRange
-							ntParticle
-							ntParticle
+							ntLiteral
+							ntLiteral
 						ntType anName="Integer"
 					ntExpression anValueText="(1,2)"
 		ntImplementation
@@ -1542,11 +1538,9 @@ ntCompilationUnit
 								ntIdentifier anName="P"
 								ntType anName="Integer"
 								ntPropertyDirective
-									ntParticle
-										ntIdentifier anName="F"
+									ntIdentifier anName="F"
 								ntPropertyDirective
-									ntParticle
-										ntIdentifier anName="F"
+									ntIdentifier anName="F"
 		ntImplementation
 
 #name
@@ -1607,13 +1601,11 @@ ntCompilationUnit
 								ntIdentifier anName="P"
 								ntType anName="Integer"
 								ntPropertyDirective
-									ntParticle
+									ntLiteral
 								ntPropertyDirective
-									ntParticle
-										ntIdentifier anName="F"
+									ntIdentifier anName="F"
 								ntPropertyDirective
-									ntParticle
-										ntIdentifier anName="F"
+									ntIdentifier anName="F"
 		ntImplementation
 
 #name
@@ -1768,18 +1760,14 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntAssign
-							ntParticle
-								ntIdentifier anName="X"
+							ntIdentifier anName="X"
 							ntBinaryExpression
 								ntBinaryExpression
-									ntParticle
-										ntIdentifier anName="a"
+									ntIdentifier anName="a"
 									ntAdd
-									ntParticle
-										ntIdentifier anName="b"
+									ntIdentifier anName="b"
 								ntSub
-								ntParticle
-									ntIdentifier anName="c"
+								ntIdentifier anName="c"
 #name
 ParseStatements
 #data
@@ -1804,14 +1792,12 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntAssign
-							ntParticle
-								ntIdentifier anName="X"
-							ntParticle
+							ntIdentifier anName="X"
+							ntLiteral
 					ntStatement
 						ntAssign
-							ntParticle
-								ntIdentifier anName="Y"
-							ntParticle
+							ntIdentifier anName="Y"
+							ntLiteral
 #name
 ParseStatementList
 #data
@@ -1837,19 +1823,16 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntAssign
-							ntParticle
-								ntIdentifier anName="X"
-							ntParticle
+							ntIdentifier anName="X"
+							ntLiteral
 					ntStatement
 						ntAssign
-							ntParticle
-								ntIdentifier anName="Y"
-							ntParticle
+							ntIdentifier anName="Y"
+							ntLiteral
 					ntStatement
 						ntAssign
-							ntParticle
-								ntIdentifier anName="Z"
-							ntParticle
+							ntIdentifier anName="Z"
+							ntLiteral
 
 #name
 ParseSimpleStatement
@@ -1874,9 +1857,8 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntAssign
-							ntParticle
-								ntIdentifier anName="X"
-							ntParticle
+							ntIdentifier anName="X"
+							ntLiteral
 
 #name
 ParseStatementOrExpression
@@ -1902,7 +1884,7 @@ ntCompilationUnit
 					ntStatement
 						ntParticle
 							ntIdentifier anName="WriteLn"
-							ntParticle
+							ntLiteral
 #name
 ParseEmptyStatement
 #data
@@ -1949,14 +1931,12 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntIf
-							ntParticle
-								ntIdentifier anName="True"
+							ntIdentifier anName="True"
 							ntThen
 								ntStatement
 									ntAssign
-										ntParticle
-											ntIdentifier anName="X"
-										ntParticle
+										ntIdentifier anName="X"
+										ntLiteral
 
 #name
 ParseThenStatement
@@ -1982,14 +1962,12 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntIf
-							ntParticle
-								ntIdentifier anName="True"
+							ntIdentifier anName="True"
 							ntThen
 								ntStatement
 									ntAssign
-										ntParticle
-											ntIdentifier anName="X"
-										ntParticle
+										ntIdentifier anName="X"
+										ntLiteral
 
 #name
 ParseElseStatement
@@ -2017,20 +1995,17 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntIf
-							ntParticle
-								ntIdentifier anName="True"
+							ntIdentifier anName="True"
 							ntThen
 								ntStatement
 									ntAssign
-										ntParticle
-											ntIdentifier anName="X"
-										ntParticle
+										ntIdentifier anName="X"
+										ntLiteral
 							ntElse
 								ntStatement
 									ntAssign
-										ntParticle
-											ntIdentifier anName="X"
-										ntParticle
+										ntIdentifier anName="X"
+										ntLiteral
 
 #name
 ParseForStatement
@@ -2064,15 +2039,13 @@ ntCompilationUnit
 						ntFor
 							ntQualifiedIdentifier anName="I"
 							ntFrom
-								ntParticle
+								ntLiteral
 							ntTo
-								ntParticle
+								ntLiteral
 							ntStatement
 								ntAssign
-									ntParticle
-										ntIdentifier anName="X"
-									ntParticle
-										ntIdentifier anName="I"
+									ntIdentifier anName="X"
+									ntIdentifier anName="I"
 
 #name
 ParseForStatementTo
@@ -2106,15 +2079,13 @@ ntCompilationUnit
 						ntFor
 							ntQualifiedIdentifier anName="I"
 							ntFrom
-								ntParticle
+								ntLiteral
 							ntTo
-								ntParticle
+								ntLiteral
 							ntStatement
 								ntAssign
-									ntParticle
-										ntIdentifier anName="X"
-									ntParticle
-										ntIdentifier anName="I"
+									ntIdentifier anName="X"
+									ntIdentifier anName="I"
 
 #name
 ParseForStatementDownTo
@@ -2148,15 +2119,13 @@ ntCompilationUnit
 						ntFor
 							ntQualifiedIdentifier anName="I"
 							ntFrom
-								ntParticle
+								ntLiteral
 							ntDownTo
-								ntParticle
+								ntLiteral
 							ntStatement
 								ntAssign
-									ntParticle
-										ntIdentifier anName="X"
-									ntParticle
-										ntIdentifier anName="I"
+									ntIdentifier anName="X"
+									ntIdentifier anName="I"
 
 #name
 ParseForStatementFrom
@@ -2190,15 +2159,13 @@ ntCompilationUnit
 						ntFor
 							ntQualifiedIdentifier anName="I"
 							ntFrom
-								ntParticle
+								ntLiteral
 							ntTo
-								ntParticle
+								ntLiteral
 							ntStatement
 								ntAssign
-									ntParticle
-										ntIdentifier anName="X"
-									ntParticle
-										ntIdentifier anName="I"
+									ntIdentifier anName="X"
+									ntIdentifier anName="I"
 
 #name
 ParseForStatementIn
@@ -2232,14 +2199,11 @@ ntCompilationUnit
 						ntFor
 							ntQualifiedIdentifier anName="S"
 							ntIn
-								ntParticle
-									ntIdentifier anName="List"
+								ntIdentifier anName="List"
 							ntStatement
 								ntAssign
-									ntParticle
-										ntIdentifier anName="X"
-									ntParticle
-										ntIdentifier anName="S"
+									ntIdentifier anName="X"
+									ntIdentifier anName="S"
 
 #name
 ParseWhileStatement
@@ -2265,13 +2229,11 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntWhile
-							ntParticle
-								ntIdentifier anName="True"
+							ntIdentifier anName="True"
 							ntStatement
 								ntAssign
-									ntParticle
-										ntIdentifier anName="X"
-									ntParticle
+									ntIdentifier anName="X"
+									ntLiteral
 
 #name
 ParseRepeatStatement
@@ -2301,11 +2263,9 @@ ntCompilationUnit
 							ntStatementList
 								ntStatement
 									ntAssign
-										ntParticle
-											ntIdentifier anName="X"
-										ntParticle
-							ntParticle
-								ntIdentifier anName="True"
+										ntIdentifier anName="X"
+										ntLiteral
+							ntIdentifier anName="True"
 
 #name
 ParseCaseStatement
@@ -2333,28 +2293,25 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntCaseStatement
-							ntParticle
-								ntIdentifier anName="X"
+							ntIdentifier anName="X"
 							ntCaseSelector
 								ntCaseLabels
 									ntCaseLabel
 										ntExpression
-											ntParticle
+											ntLiteral
 								ntStatement
 									ntAssign
-										ntParticle
-											ntIdentifier anName="Y"
-										ntParticle
+										ntIdentifier anName="Y"
+										ntLiteral
 							ntCaseSelector
 								ntCaseLabels
 									ntCaseLabel
 										ntExpression
-											ntParticle
+											ntLiteral
 								ntStatement
 									ntAssign
-										ntParticle
-											ntIdentifier anName="Y"
-										ntParticle
+										ntIdentifier anName="Y"
+										ntLiteral
 
 #name
 ParseCaseSelector
@@ -2381,18 +2338,16 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntCaseStatement
-							ntParticle
-								ntIdentifier anName="X"
+							ntIdentifier anName="X"
 							ntCaseSelector
 								ntCaseLabels
 									ntCaseLabel
 										ntExpression
-											ntParticle
+											ntLiteral
 								ntStatement
 									ntAssign
-										ntParticle
-											ntIdentifier anName="Y"
-										ntParticle
+										ntIdentifier anName="Y"
+										ntLiteral
 
 #name
 ParseCaseLabel
@@ -2419,18 +2374,16 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntCaseStatement
-							ntParticle
-								ntIdentifier anName="X"
+							ntIdentifier anName="X"
 							ntCaseSelector
 								ntCaseLabels
 									ntCaseLabel
 										ntExpression
-											ntParticle
+											ntLiteral
 								ntStatement
 									ntAssign
-										ntParticle
-											ntIdentifier anName="Y"
-										ntParticle
+										ntIdentifier anName="Y"
+										ntLiteral
 
 #name
 ParseCaseLabelList
@@ -2457,24 +2410,22 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntCaseStatement
-							ntParticle
-								ntIdentifier anName="X"
+							ntIdentifier anName="X"
 							ntCaseSelector
 								ntCaseLabels
 									ntCaseLabel
 										ntExpression
-											ntParticle
+											ntLiteral
 									ntCaseLabel
 										ntExpression
-											ntParticle
+											ntLiteral
 									ntCaseLabel
 										ntExpression
-											ntParticle
+											ntLiteral
 								ntStatement
 									ntAssign
-										ntParticle
-											ntIdentifier anName="Y"
-										ntParticle
+										ntIdentifier anName="Y"
+										ntLiteral
 
 #name
 ParseTryStatement
@@ -2505,9 +2456,8 @@ ntCompilationUnit
 							ntStatementList
 								ntStatement
 									ntAssign
-										ntParticle
-											ntIdentifier anName="X"
-										ntParticle
+										ntIdentifier anName="X"
+										ntLiteral
 							ntExcept
 								ntStatementList
 
@@ -2541,16 +2491,14 @@ ntCompilationUnit
 							ntStatementList
 								ntStatement
 									ntAssign
-										ntParticle
-											ntIdentifier anName="X"
-										ntParticle
+										ntIdentifier anName="X"
+										ntLiteral
 							ntExcept
 								ntStatementList
 									ntStatement
 										ntAssign
-											ntParticle
-												ntIdentifier anName="Y"
-											ntParticle
+											ntIdentifier anName="Y"
+											ntLiteral
 
 #name
 ParseFinallyBlock
@@ -2582,16 +2530,14 @@ ntCompilationUnit
 							ntStatementList
 								ntStatement
 									ntAssign
-										ntParticle
-											ntIdentifier anName="X"
-										ntParticle
+										ntIdentifier anName="X"
+										ntLiteral
 							ntFinally
 								ntStatementList
 									ntStatement
 										ntAssign
-											ntParticle
-												ntIdentifier anName="Y"
-											ntParticle
+											ntIdentifier anName="Y"
+											ntLiteral
 
 #name
 ParseExceptionHandler
@@ -2624,18 +2570,16 @@ ntCompilationUnit
 							ntStatementList
 								ntStatement
 									ntAssign
-										ntParticle
-											ntIdentifier anName="X"
-										ntParticle
+										ntIdentifier anName="X"
+										ntLiteral
 							ntExcept
 								ntExceptionHandler
 									ntIdentifier anName="E"
 									ntQualifiedIdentifier anName="Exception"
 									ntStatement
 										ntAssign
-											ntParticle
-												ntIdentifier anName="Y"
-											ntParticle
+											ntIdentifier anName="Y"
+											ntLiteral
 
 #name
 ParseExceptionHandlerList
@@ -2670,26 +2614,23 @@ ntCompilationUnit
 							ntStatementList
 								ntStatement
 									ntAssign
-										ntParticle
-											ntIdentifier anName="X"
-										ntParticle
+										ntIdentifier anName="X"
+										ntLiteral
 							ntExcept
 								ntExceptionHandler
 									ntIdentifier anName="E"
 									ntQualifiedIdentifier anName="EInvalidOp"
 									ntStatement
 										ntAssign
-											ntParticle
-												ntIdentifier anName="Y"
-											ntParticle
+											ntIdentifier anName="Y"
+											ntLiteral
 								ntExceptionHandler
 									ntIdentifier anName="E"
 									ntQualifiedIdentifier anName="Exception"
 									ntStatement
 										ntAssign
-											ntParticle
-												ntIdentifier anName="Y"
-											ntParticle
+											ntIdentifier anName="Y"
+											ntLiteral
 
 #name
 ParseExceptionItem
@@ -2722,18 +2663,16 @@ ntCompilationUnit
 							ntStatementList
 								ntStatement
 									ntAssign
-										ntParticle
-											ntIdentifier anName="X"
-										ntParticle
+										ntIdentifier anName="X"
+										ntLiteral
 							ntExcept
 								ntExceptionHandler
 									ntIdentifier anName="E"
 									ntQualifiedIdentifier anName="Exception"
 									ntStatement
 										ntAssign
-											ntParticle
-												ntIdentifier anName="Y"
-											ntParticle
+											ntIdentifier anName="Y"
+											ntLiteral
 
 #name
 ParseExceptionVariable
@@ -2766,9 +2705,8 @@ ntCompilationUnit
 							ntStatementList
 								ntStatement
 									ntAssign
-										ntParticle
-											ntIdentifier anName="X"
-										ntParticle
+										ntIdentifier anName="X"
+										ntLiteral
 							ntExcept
 								ntExceptionHandler
 									ntIdentifier anName="E"
@@ -2810,9 +2748,8 @@ ntCompilationUnit
 							ntStatementList
 								ntStatement
 									ntAssign
-										ntParticle 
-											ntIdentifier anName="X"
-										ntParticle
+										ntIdentifier anName="X"
+										ntLiteral
 							ntExcept
 								ntExceptionHandler
 									ntIdentifier anName="E"
@@ -2848,9 +2785,8 @@ ntCompilationUnit
 							ntStatementList
 								ntStatement
 									ntAssign
-										ntParticle 
-											ntIdentifier anName="X"
-										ntParticle
+										ntIdentifier anName="X"
+										ntLiteral
 							ntExcept
 								ntExceptionHandler
 									ntQualifiedIdentifier anName="Exception"
@@ -2887,9 +2823,8 @@ ntCompilationUnit
 							ntStatementList
 								ntStatement
 									ntAssign
-										ntParticle 
-											ntIdentifier anName="X"
-										ntParticle
+										ntIdentifier anName="X"
+										ntLiteral
 							ntExcept
 								ntExceptionHandler
 									ntIdentifier anName="E"
@@ -2898,9 +2833,8 @@ ntCompilationUnit
 									ntStatementList
 										ntStatement
 											ntAssign
-												ntParticle 
-													ntIdentifier anName="Y"
-												ntParticle
+												ntIdentifier anName="Y"
+												ntLiteral
 
 #name
 ParseGotoStatement
@@ -2960,9 +2894,8 @@ ntCompilationUnit
 					ntStatement
 						ntLabel anName="L1"
 						ntAssign
-							ntParticle
-								ntIdentifier anName="X"
-							ntParticle
+							ntIdentifier anName="X"
+							ntLiteral
 
 #name
 ParseLabelDeclarationSection
@@ -3046,7 +2979,7 @@ ntCompilationUnit
 							ntParticle
 								ntIdentifier anName="Exception"
 								ntIdentifier anName="Create"
-								ntParticle
+								ntLiteral
 #name
 ParseWithStatement
 #data
@@ -3072,13 +3005,11 @@ ntCompilationUnit
 					ntStatement
 						ntWith
 							ntExpressionList
-								ntParticle
-									ntIdentifier anName="Obj"
+								ntIdentifier anName="Obj"
 							ntStatement
 								ntAssign
-									ntParticle
-										ntIdentifier anName="X"
-									ntParticle
+									ntIdentifier anName="X"
+									ntLiteral
 
 #name
 ParseWithExpressionList
@@ -3105,15 +3036,12 @@ ntCompilationUnit
 					ntStatement
 						ntWith
 							ntExpressionList
-								ntParticle
-									ntIdentifier anName="A"
-								ntParticle
-									ntIdentifier anName="B"
+								ntIdentifier anName="A"
+								ntIdentifier anName="B"
 							ntStatement
 								ntAssign
-									ntParticle
-										ntIdentifier anName="X"
-									ntParticle
+									ntIdentifier anName="X"
+									ntLiteral
 
 #name
 ParseInheritedStatement
@@ -3162,8 +3090,7 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntInherited
-							ntParticle
-								ntIdentifier anName="Create"
+							ntIdentifier anName="Create"
 
 #name
 ParseInlineVarDeclaration
@@ -3192,7 +3119,7 @@ ntCompilationUnit
 								ntIdentifierList
 									ntIdentifier anName="X"
 								ntAssign
-									ntParticle
+									ntLiteral
 
 #name
 ParseInlineVarSection
@@ -3222,7 +3149,7 @@ ntCompilationUnit
 									ntIdentifier anName="X"
 								ntType anName="Integer"
 								ntAssign
-									ntParticle
+									ntLiteral
 
 #name
 ParseInlineConstSection
@@ -3279,16 +3206,14 @@ ntCompilationUnit
 								ntIdentifierList
 									ntIdentifier anName="X"
 								ntAssign
-									ntParticle
+									ntLiteral
 					ntStatement
 						ntAssign
-							ntParticle
-								ntIdentifier anName="X"
+							ntIdentifier anName="X"
 							ntBinaryExpression
-								ntParticle
-									ntIdentifier anName="X"
+								ntIdentifier anName="X"
 								ntAdd
-								ntParticle
+								ntLiteral
 
 #name
 ParseFactor
@@ -3378,16 +3303,14 @@ ntCompilationUnit
 					ntStatement
 						ntIf
 							ntExpression
-								ntParticle
-									ntIdentifier anName="X"
+								ntIdentifier anName="X"
 								ntGreater
-								ntParticle
+								ntLiteral
 							ntThen
 								ntStatement
 									ntAssign
-										ntParticle
-											ntIdentifier anName="Y"
-										ntParticle
+										ntIdentifier anName="Y"
+										ntLiteral
 
 #name
 ParseNotOp
@@ -3414,14 +3337,12 @@ ntCompilationUnit
 					ntStatement
 						ntIf
 							ntUnaryOperator
-								ntParticle
-									ntIdentifier anName="Done"
+								ntIdentifier anName="Done"
 							ntThen
 								ntStatement
 									ntAssign
-										ntParticle
-											ntIdentifier anName="X"
-										ntParticle
+										ntIdentifier anName="X"
+										ntLiteral
 
 #name
 ParseUnaryMinus
@@ -3467,11 +3388,9 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntAssign
-							ntParticle
-								ntIdentifier anName="Ptr"
+							ntIdentifier anName="Ptr"
 							ntUnaryOperator
-								ntParticle
-									ntIdentifier anName="X"
+								ntIdentifier anName="X"
 
 #name
 ParseAsOp
@@ -3496,14 +3415,11 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntAssign
-							ntParticle
-								ntIdentifier anName="Y"
+							ntIdentifier anName="Y"
 							ntExpression
-								ntParticle
-									ntIdentifier anName="Obj"
+								ntIdentifier anName="Obj"
 								ntAs
-								ntParticle
-									ntIdentifier anName="TObject"
+								ntIdentifier anName="TObject"
 
 #name
 ParseDotOp
@@ -3528,8 +3444,7 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntAssign
-							ntParticle
-								ntIdentifier anName="X"
+							ntIdentifier anName="X"
 							ntParticle
 								ntIdentifier anName="Obj"
 								ntIdentifier anName="Value"
@@ -3557,11 +3472,10 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntAssign
-							ntParticle
-								ntIdentifier anName="X"
+							ntIdentifier anName="X"
 							ntParticle
 								ntIdentifier anName="Arr"
-								ntParticle
+								ntLiteral
 
 #name
 ParsePointerSymbol
@@ -3586,8 +3500,7 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntAssign
-							ntParticle
-								ntIdentifier anName="X"
+							ntIdentifier anName="X"
 							ntParticle
 								ntIdentifier anName="Ptr"
 
@@ -3615,9 +3528,9 @@ ntCompilationUnit
 					ntStatement
 						ntParticle
 							ntIdentifier anName="Foo"
-							ntParticle
-							ntParticle
-							ntParticle
+							ntLiteral
+							ntLiteral
+							ntLiteral
 
 #name
 ParseParameterExpression
@@ -3653,16 +3566,14 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntAssign
-							ntParticle
-								ntIdentifier anName="x"
-							ntParticle
+							ntIdentifier anName="x"
+							ntLiteral
 					ntStatement
 						ntParticle
 							ntIdentifier anName="WriteLn"
 							ntParameterExpression
-								ntParticle
-									ntIdentifier anName="x"
-								ntParticle
+								ntIdentifier anName="x"
+								ntLiteral
 
 #name
 ParseExpressionOrRange
@@ -3689,20 +3600,18 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntCaseStatement
-							ntParticle
-								ntIdentifier anName="X"
+							ntIdentifier anName="X"
 							ntCaseSelector
 								ntCaseLabels
 									ntCaseLabel
 										ntExpression
-											ntParticle
+											ntLiteral
 										ntExpression
-											ntParticle
+											ntLiteral
 								ntStatement
 									ntAssign
-										ntParticle
-											ntIdentifier anName="Y"
-										ntParticle
+										ntIdentifier anName="Y"
+										ntLiteral
 
 #name
 ParseDesignator
@@ -3727,10 +3636,8 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntAssign
-							ntParticle
-								ntIdentifier anName="X"
-							ntParticle
-								ntIdentifier anName="Y"
+							ntIdentifier anName="X"
+							ntIdentifier anName="Y"
 
 #name
 ParseVariable
@@ -3755,10 +3662,8 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntAssign
-							ntParticle
-								ntIdentifier anName="X"
-							ntParticle
-								ntIdentifier anName="Y"
+							ntIdentifier anName="X"
+							ntIdentifier anName="Y"
 
 #name
 ParseNumber
@@ -3804,9 +3709,8 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntAssign
-							ntParticle
-								ntIdentifier anName="X"
-							ntParticle
+							ntIdentifier anName="X"
+							ntLiteral
 
 #name
 ParseStringConst
@@ -3894,16 +3798,15 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntAssign
-							ntParticle
-								ntIdentifier anName="S"
+							ntIdentifier anName="S"
 							ntParticle
 								ntExpressionOrRange
 									ntExpressionOrRange
-										ntParticle
+										ntLiteral
 									ntExpressionOrRange
-										ntParticle
+										ntLiteral
 									ntExpressionOrRange
-										ntParticle
+										ntLiteral
 
 #name
 ParseSetElement
@@ -3928,12 +3831,11 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntAssign
-							ntParticle
-								ntIdentifier anName="S"
+							ntIdentifier anName="S"
 							ntParticle
 								ntExpressionOrRange
 									ntExpressionOrRange
-										ntParticle
+										ntLiteral
 
 #name
 ParseAtExpression
@@ -3958,11 +3860,9 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntRaise
-							ntParticle
-								ntIdentifier anName="E"
+							ntIdentifier anName="E"
 							ntAt
-								ntParticle
-									ntIdentifier anName="ReturnAddr"
+								ntIdentifier anName="ReturnAddr"
 
 #name
 ParseConstantExpression
@@ -4113,8 +4013,8 @@ ntCompilationUnit
 					ntIdentifier anName="A"
 					ntType anType="array"
 						ntExpressionOrRange
-							ntParticle
-							ntParticle
+							ntLiteral
+							ntLiteral
 						ntType anName="Integer"
 					ntExpression anValueText="(1,2)"
 		ntImplementation
@@ -4151,7 +4051,7 @@ ntCompilationUnit
 				ntConstant anName="Y" anValueText=")"
 					ntIdentifier anName="Y"
 					ntExpressionOrRange
-						ntParticle
+						ntLiteral
 					ntExpression anValueText=")"
 		ntImplementation
 
@@ -4714,9 +4614,8 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntAssign
-							ntParticle
-								ntIdentifier anName="Result"
-							ntParticle
+							ntIdentifier anName="Result"
+							ntLiteral
 
 #name
 ParseProcedureMethodName
@@ -4763,9 +4662,8 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntAssign
-							ntParticle
-								ntIdentifier anName="Result"
-							ntParticle
+							ntIdentifier anName="Result"
+							ntLiteral
 
 #name
 ParseObjectNameOfMethod
@@ -4831,9 +4729,8 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntAssign
-							ntParticle
-								ntIdentifier anName="Result"
-							ntParticle
+							ntIdentifier anName="Result"
+							ntLiteral
 
 #name
 ParseProcedureDeclarationSection
@@ -5014,11 +4911,9 @@ ntCompilationUnit
 								ntIdentifier anName="Value"
 								ntType anName="Integer"
 								ntPropertyDirective anKind="read"
-									ntParticle
-										ntIdentifier anName="FValue"
+									ntIdentifier anName="FValue"
 								ntPropertyDirective anKind="write"
-									ntParticle
-										ntIdentifier anName="FValue"
+									ntIdentifier anName="FValue"
 		ntImplementation
 
 #name
@@ -5065,8 +4960,7 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntAssign
-							ntParticle
-								ntIdentifier anName="Proc"
+							ntIdentifier anName="Proc"
 							ntParticle
 								ntAnonymousMethod anKind="avProcedure"
 									ntStatementList
@@ -5503,7 +5397,7 @@ ntCompilationUnit
 									ntParameterType
 										ntQualifiedIdentifier anName="TMessage"
 							ntHintDirective
-								ntParticle
+								ntLiteral
 		ntImplementation
 
 #name
@@ -5525,7 +5419,7 @@ ntCompilationUnit
 				ntQualifiedIdentifier anName="P"
 				ntHintDirective anExternal="avTrue"
 					ntExternal
-						ntParticle
+						ntLiteral
 
 #name
 ParseExternalDirectiveThree
@@ -5546,8 +5440,8 @@ ntCompilationUnit
 				ntQualifiedIdentifier anName="P"
 				ntHintDirective anExternal="avTrue"
 					ntExternal
-						ntParticle
-						ntParticle
+						ntLiteral
+						ntLiteral
 
 #name
 ParseAccessSpecifier
@@ -5581,11 +5475,9 @@ ntCompilationUnit
 								ntIdentifier anName="X"
 								ntType anName="Integer"
 								ntPropertyDirective anKind="read"
-									ntParticle
-										ntIdentifier anName="FX"
+									ntIdentifier anName="FX"
 								ntPropertyDirective anKind="write"
-									ntParticle
-										ntIdentifier anName="FX"
+									ntIdentifier anName="FX"
 		ntImplementation
 
 #name
@@ -5620,11 +5512,9 @@ ntCompilationUnit
 								ntIdentifier anName="X"
 								ntType anName="Integer"
 								ntPropertyDirective anKind="read"
-									ntParticle
-										ntIdentifier anName="FX"
+									ntIdentifier anName="FX"
 								ntPropertyDirective anKind="write"
-									ntParticle
-										ntIdentifier anName="FX"
+									ntIdentifier anName="FX"
 		ntImplementation
 
 #name
@@ -5656,11 +5546,9 @@ ntCompilationUnit
 									ntQualifiedIdentifier anName="Integer"
 							ntType
 							ntPropertyDirective anKind="read"
-								ntParticle
-									ntIdentifier anName="GetItem"
+								ntIdentifier anName="GetItem"
 							ntPropertyDirective anKind="write"
-								ntParticle
-									ntIdentifier anName="SetItem"
+								ntIdentifier anName="SetItem"
 		ntImplementation
 
 #name
@@ -5697,8 +5585,7 @@ ntCompilationUnit
 									ntQualifiedIdentifier anName="Integer"
 							ntType
 							ntPropertyDirective anKind="read"
-								ntParticle
-									ntIdentifier anName="GetItem"
+								ntIdentifier anName="GetItem"
 		ntImplementation
 
 #name
@@ -5730,8 +5617,7 @@ ntCompilationUnit
 									ntQualifiedIdentifier anName="Integer"
 							ntType
 							ntPropertyDirective anKind="read"
-								ntParticle
-									ntIdentifier anName="GetItem"
+								ntIdentifier anName="GetItem"
 							ntPropertyDirective anKind="isdefault"
 		ntImplementation
 
@@ -5767,8 +5653,7 @@ ntCompilationUnit
 								ntIdentifier anName="X"
 								ntType anName="Integer"
 								ntPropertyDirective anKind="read"
-									ntParticle
-										ntIdentifier anName="FX"
+									ntIdentifier anName="FX"
 		ntImplementation
 
 #name
@@ -5803,8 +5688,7 @@ ntCompilationUnit
 								ntIdentifier anName="X"
 								ntType anName="Integer"
 								ntPropertyDirective anKind="write"
-									ntParticle
-										ntIdentifier anName="FX"
+									ntIdentifier anName="FX"
 		ntImplementation
 
 #name
@@ -5839,11 +5723,9 @@ ntCompilationUnit
 								ntIdentifier anName="X"
 								ntType anName="Integer"
 								ntPropertyDirective anKind="read"
-									ntParticle
-										ntIdentifier anName="FX"
+									ntIdentifier anName="FX"
 								ntPropertyDirective anKind="stored"
-									ntParticle
-										ntIdentifier anName="True"
+									ntIdentifier anName="True"
 		ntImplementation
 
 #name
@@ -5878,10 +5760,9 @@ ntCompilationUnit
 								ntIdentifier anName="X"
 								ntType anName="Integer"
 								ntPropertyDirective anKind="read"
-									ntParticle
-										ntIdentifier anName="FX"
+									ntIdentifier anName="FX"
 								ntPropertyDirective anKind="default"
-									ntParticle
+									ntLiteral
 		ntImplementation
 
 #name
@@ -5920,11 +5801,9 @@ ntCompilationUnit
 								ntIdentifier anName="X"
 								ntType anName="Integer"
 								ntPropertyDirective anKind="read"
-									ntParticle
-										ntIdentifier anName="FX"
+									ntIdentifier anName="FX"
 								ntPropertyDirective anKind="stored"
-									ntParticle
-										ntIdentifier anName="IsStored"
+									ntIdentifier anName="IsStored"
 		ntImplementation
 
 #name
@@ -5959,8 +5838,7 @@ ntCompilationUnit
 								ntIdentifier anName="X"
 								ntType anName="Integer"
 								ntPropertyDirective anKind="read"
-									ntParticle
-										ntIdentifier anName="FX"
+									ntIdentifier anName="FX"
 								ntPropertyDirective anKind="nodefault"
 		ntImplementation
 
@@ -5998,8 +5876,7 @@ ntCompilationUnit
 								ntIdentifier anName="Foo"
 								ntType anName="IFoo"
 								ntPropertyDirective anKind="read"
-									ntParticle
-										ntIdentifier anName="FFoo"
+									ntIdentifier anName="FFoo"
 								ntPropertyDirective anKind="implements"
 									ntQualifiedIdentifier anName="IFoo"
 		ntImplementation
@@ -6028,7 +5905,7 @@ ntCompilationUnit
 							ntIdentifier anName="X"
 							ntType anName="Integer"
 							ntPropertyDirective anKind="dispid"
-								ntParticle
+								ntLiteral
 		ntImplementation
 
 #name
@@ -6050,8 +5927,8 @@ ntCompilationUnit
 				ntTypeDecl anName="TArr"
 					ntType anType="array"
 						ntExpressionOrRange
-							ntParticle
-							ntParticle
+							ntLiteral
+							ntLiteral
 						ntType anName="Integer"
 		ntImplementation
 
@@ -6200,7 +6077,7 @@ ntCompilationUnit
 						ntParticle
 							ntExpressionOrRange
 								ntExpressionOrRange
-									ntParticle
+									ntLiteral
 		ntImplementation
 
 #name
@@ -6426,8 +6303,7 @@ ntCompilationUnit
 						ntIdentifier anName="Y"
 					ntType anName="Integer"
 					ntAbsolute
-						ntParticle
-							ntIdentifier anName="X"
+						ntIdentifier anName="X"
 		ntImplementation
 
 #name
@@ -6615,7 +6491,7 @@ ntCompilationUnit
 								ntCaseLabels
 									ntCaseLabel
 										ntExpression
-											ntParticle
+											ntLiteral
 								ntFieldSection
 									ntField
 										ntName anName="X"
@@ -6624,7 +6500,7 @@ ntCompilationUnit
 								ntCaseLabels
 									ntCaseLabel
 										ntExpression
-											ntParticle
+											ntLiteral
 								ntFieldSection
 									ntField
 										ntName anName="Y"
@@ -6660,7 +6536,7 @@ ntCompilationUnit
 								ntCaseLabels
 									ntCaseLabel
 										ntExpression
-											ntParticle
+											ntLiteral
 								ntFieldSection
 									ntField
 										ntName anName="X"
@@ -6696,7 +6572,7 @@ ntCompilationUnit
 								ntCaseLabels
 									ntCaseLabel
 										ntExpression
-											ntParticle
+											ntLiteral
 								ntFieldSection
 									ntField
 										ntName anName="X"
@@ -6732,7 +6608,7 @@ ntCompilationUnit
 								ntCaseLabels
 									ntCaseLabel
 										ntExpression
-											ntParticle
+											ntLiteral
 								ntFieldSection
 									ntField
 										ntName anName="X"
@@ -6768,7 +6644,7 @@ ntCompilationUnit
 								ntCaseLabels
 									ntCaseLabel
 										ntExpression
-											ntParticle
+											ntLiteral
 								ntFieldSection
 									ntField
 										ntName anName="X"
@@ -6804,7 +6680,7 @@ ntCompilationUnit
 								ntCaseLabels
 									ntCaseLabel
 										ntExpression
-											ntParticle
+											ntLiteral
 								ntFieldSection
 									ntField
 										ntName anName="X"
@@ -6813,7 +6689,7 @@ ntCompilationUnit
 								ntCaseLabels
 									ntCaseLabel
 										ntExpression
-											ntParticle
+											ntLiteral
 								ntFieldSection
 									ntField
 										ntName anName="Y"
@@ -6845,7 +6721,7 @@ ntCompilationUnit
 							ntType anName="Integer"
 					ntAlignmentParam
 						ntExpression
-							ntParticle
+							ntLiteral
 		ntImplementation
 
 #name
@@ -6898,7 +6774,7 @@ ntCompilationUnit
 		ntExports
 			ntElement
 				ntIdentifier anName="Foo"
-				ntParticle
+				ntLiteral
 
 #name
 ParseRequiresClause
@@ -6995,7 +6871,7 @@ ntCompilationUnit
 			ntAttribute
 				ntParticle
 					ntIdentifier anName="AssemblyVersion"
-					ntParticle
+					ntLiteral
 		ntImplementation
 
 #name
@@ -7150,10 +7026,10 @@ ntCompilationUnit
 							ntArguments
 								ntPositionalArgument
 									ntValue
-										ntParticle
+										ntLiteral
 									ntPositionalArgument
 										ntValue
-											ntParticle
+											ntLiteral
 					ntType anType="avClass"
 		ntImplementation
 
@@ -7182,7 +7058,7 @@ ntCompilationUnit
 							ntArguments
 								ntPositionalArgument
 									ntValue
-										ntParticle
+										ntLiteral
 					ntType anType="avClass"
 		ntImplementation
 
@@ -7209,9 +7085,8 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntAssign
-							ntParticle
-								ntIdentifier anName="S"
-							ntParticle
+							ntIdentifier anName="S"
+							ntLiteral
 
 #name
 ParseAssemblerStatement
@@ -7430,13 +7305,11 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntWhile
-							ntParticle
-								ntIdentifier anName="True"
+							ntIdentifier anName="True"
 							ntStatement
 								ntAssign
-									ntParticle
-										ntIdentifier anName="X"
-									ntParticle
+									ntIdentifier anName="X"
+									ntLiteral
 
 #name
 ParseScriptFile
@@ -7448,9 +7321,8 @@ ntCompilationUnit
 	ntStatementList
 		ntStatement
 			ntAssign
-				ntParticle
-					ntIdentifier anName="A"
-				ntParticle
+				ntIdentifier anName="A"
+				ntLiteral
 
 #name
 ParseScriptFile
@@ -7473,14 +7345,12 @@ ntCompilationUnit
 			ntStatementList
 				ntStatement
 					ntAssign
-						ntParticle
-							ntIdentifier anName="tree"
+						ntIdentifier anName="tree"
 						ntParticle
 							ntIdentifier anName="TDelphiParser"
 							ntIdentifier anName="ParseText"
-							ntParticle
-								ntIdentifier anName="sourceCode"
-							ntParticle
+							ntIdentifier anName="sourceCode"
+							ntLiteral
 				ntStatement
 					ntParticle
 						ntIdentifier anName="WriteLn"
@@ -7516,18 +7386,16 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntCaseStatement
-							ntParticle
-								ntIdentifier anName="FErrorLevel"
+							ntIdentifier anName="FErrorLevel"
 							ntCaseSelector
 								ntCaseLabels
 									ntCaseLabel
 										ntExpression
-											ntParticle
+											ntLiteral
 								ntStatement
 									ntParticle
 										ntIdentifier anName="LogError"
-										ntParticle
-											ntIdentifier anName="s"
+										ntIdentifier anName="s"
 							ntCaseElse
 
 #name 
@@ -7543,23 +7411,19 @@ ntCompilationUnit
 	ntStatementList
 		ntStatement
 			ntCaseStatement
-				ntParticle
-					ntIdentifier anName="i"
+				ntIdentifier anName="i"
 				ntCaseSelector
 					ntCaseLabels
 						ntCaseLabel
 							ntExpression
-								ntParticle
+								ntLiteral
 					ntStatement
 						ntIf
-							ntParticle
-								ntIdentifier anName="a"
+							ntIdentifier anName="a"
 							ntThen
 								ntStatement
-									ntParticle
-										ntIdentifier anName="b"
+									ntIdentifier anName="b"
 				ntCaseElse
 					ntStatementList
 						ntStatement
-							ntParticle
-								ntIdentifier anName="c"
+							ntIdentifier anName="c"

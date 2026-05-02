@@ -589,17 +589,41 @@ type
 (*
 Population rules in the lexer:
 
- - classify { $ ...} and ( *$ ...* ) as ptCompilerDirective.
-
+- classify { $ ...} and ( *$ ...* ) as ptCompilerDirective.
 - extract Name (letters/underscores) case-insensitive; set Args := rest.trim.
-
 - resolve short forms (A→ALIGN, I→INCLUDE) and fill Kind. unknown → dkUnknown.
-
 - leave $IF expression text in Args verbatim; don’t evaluate in the lexer.
 *)
 	TDirectiveKind = (
-			dkUnknown, dkDefine, dkUndef, dkIf, dkIfDef, dkIfNDef, dkElse, dkElseIf, dkEndIf, dkIfEnd,
-			dkInclude, dkAlign, dkIfOpt, dkResource, dkScopedEnums, dkWarn, dkHints, dkRegion, dkEndRegion);
+			dkUnknown,
+
+			dkAlign,
+			dkAppType,
+			dkAssertions,
+			dkBooleanVal,
+			dkCodeAlign,
+
+			// Conditional compilation
+			dkIfDef,
+			dkIfNDef,
+			dkIf,
+			dkElseIf,
+			dkElse,
+			dkEndIf,
+			dkIfEnd,
+			dkIfOpt,
+
+			dkDefine,				// $DEFINE name
+			dkUndef,					// $UNDEF name
+
+			dkInclude,
+			dkResource,
+			dkScopedEnums,
+			dkWarn,
+			dkHints,
+			dkRegion,
+			dkEndRegion
+	);
 
 
 	TDirectiveData = record
@@ -773,7 +797,6 @@ The following reserved words cannot be redefined or used as identifiers.
 		procedure Log(const s: string);
 		procedure LogFmt(const s: string; const Args: array of const);
 		function GetPosXY: TPoint;
-//		procedure GetDefaultConditionalDirectives(TargetList: TStrings);
 	protected
 		function Peek(NumberOfCharactersAhead: Integer=1): WideChar;			// Peek at the next character from the stream.
 		function PeekNext: WideChar;		// Peek at the character after the next character from the stream.
@@ -798,45 +821,47 @@ The following reserved words cannot be redefined or used as identifiers.
 	end;
 
 
-	{
-	TInputStream
-	=================
-	Reads a forward-only byte stream as UTF-16 characters with support for peeking
-	and a small bounded lookahead buffer implemented on top of a UnicodeString.
+{
+TInputStream
+=================
 
-	Contract / API:
-	- Backing store: UnicodeString (1-based indexing).
-	- Active window semantics (no wrap-around):
-	  - FBufferPosition: 1-based index of the next character in the active window.
-	  - FBufferSize: number of valid lookahead characters starting at FBufferPosition.
-	  - When FBufferSize > 0: FBufferPosition + FBufferSize - 1 <= Length(FBuffer).
+Reads a forward-only byte stream as UTF-16 characters with support for peeking
+and a small bounded lookahead buffer implemented on top of a UnicodeString.
 
-	- Methods:
-	  - TryRead(out ch: WideChar): Boolean
-	    Returns the next UTF-16 character. If the active window is non-empty, it
-	    consumes from the buffer; otherwise it reads from the underlying stream.
-	    Returns False (and sets EOF) only after UEOF is actually consumed.
+# Contract / API:
 
-	  - Peek(k: Integer): WideChar
-	    k must be >= 1. Ensures the active window has at least k characters by
-	    appending at index FBufferPosition + FBufferSize (linear, no wrap). If the
-	    underlying stream ends during fill, returns UEOF. If appending would exceed
-	    Length(FBuffer), raises an exception indicating buffer capacity exceeded.
+- Backing store: UnicodeString (1-based indexing).
+- FBufferPosition: 1-based index of the next character in the active window.
+- FBufferSize: number of valid lookahead characters starting at FBufferPosition.
+- When FBufferSize > 0: FBufferPosition + FBufferSize - 1 <= Length(FBuffer).
 
-	  - Consume: WideChar (internal)
-	    Returns next buffered char, advances FBufferPosition, decreases FBufferSize.
-	    When FBufferSize reaches 0, resets FBufferPosition to 1.
+## Methods:
 
-	- Invariants:
-	  - FBufferPosition >= 1
-	  - FBufferSize >= 0
-	  - If FBufferSize = 0, the next buffered append will happen at index 1.
-	  - No wrap-around arithmetic is used for indexing.
+- TryRead(out ch: WideChar): Boolean
+		Returns the next UTF-16 character. If the active window is non-empty, it
+		consumes from the buffer; otherwise it reads from the underlying stream.
+		Returns False (and sets EOF) only after UEOF is actually consumed.
 
-	- Error modes:
-	  - Peek raises for k < 1.
-	  - Peek raises if ensuring k characters would exceed allocated capacity.
-	}
+- Peek(k: Integer): WideChar
+		k must be >= 1. Ensures the active window has at least k characters by
+		appending at index FBufferPosition + FBufferSize (linear, no wrap). If the
+		underlying stream ends during fill, returns UEOF. If appending would exceed
+		Length(FBuffer), raises an exception indicating buffer capacity exceeded.
+
+- Consume: WideChar (internal)
+		Returns next buffered char, advances FBufferPosition, decreases FBufferSize.
+		When FBufferSize reaches 0, resets FBufferPosition to 1.
+
+- Invariants:
+		- FBufferPosition >= 1
+		- FBufferSize >= 0
+		- If FBufferSize = 0, the next buffered append will happen at index 1.
+		- No wrap-around arithmetic is used for indexing.
+
+- Error modes:
+		- Peek raises for k < 1.
+		- Peek raises if ensuring k characters would exceed allocated capacity.
+}
 	TInputStream = class
 	private
 		FStream: ISequentialStream;
@@ -2100,14 +2125,12 @@ begin
 //       {$ifdef foo}...{$endif}
 //       (*$ifdef foo*)...(*$endif*)
 
-(*
-It is a block comment, where the first character is a $
 
-These correpond to two token types:
-*)
+//	It is a block comment, where the first character is a $
+
+//	These correpond to two token types:
 
 //	ptCompilerDirectiveptCompDirect
-
 //		Text:			{$foo bar}
 //		ValueText:
 // 	DirectiveDelimeter: ddBraces
@@ -2129,6 +2152,43 @@ These correpond to two token types:
 //	Attribute akDirectiveDelimeter
 //			ddBrace
 //			ddParenStar
+
+{
+Delphi has three varieties of compiler directives: switches, parameters, and conditional compilation.
+
+1. A switch is a Boolean flag: a feature can be enabled or disabled.
+
+2. A parameter provides information, such as a filename or stack size.
+
+3. Conditional compilation lets you define conditions and selectively compile parts
+of a source file depending on which conditions are set. Conditions are Boolean (set or not set).
+
+
+	TDirectiveKind = (
+			dkUnknown,
+			dkDefine,					$DEFINE Strict
+			dkUndef,						$UNDEF Strict
+			dkIf,
+			dkIfDef,
+			dkIfNDef,
+			dkElse,
+			dkElseIf,
+			dkEndIf,
+			dkIfEnd,
+			dkInclude,
+			dkAlign,
+			dkIfOpt,
+			dkResource,
+			dkScopedEnums,
+			dkWarn,
+			dkHints,
+			dkRegion,
+			dkEndRegion
+	);
+
+
+}
+
 	hasError := False;
 	errorMsg := '';
 	startLine := FCurrentLine;

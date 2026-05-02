@@ -21,10 +21,8 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntAssign
-							ntParticle
-								ntIdentifier anName="X"
-							ntParticle
-								ntIdentifier anName="Y"
+							ntIdentifier anName="X"
+							ntIdentifier anName="Y"
 
 #name
 Expression.LiteralNumeric
@@ -49,9 +47,8 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntAssign
-							ntParticle
-								ntIdentifier anName="X"
-							ntParticle							
+							ntIdentifier anName="X"
+							ntLiteral
 
 #name
 Expression.LiteralString
@@ -76,9 +73,8 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntAssign
-							ntParticle
-								ntIdentifier anName="X"
-							ntParticle
+							ntIdentifier anName="X"
+							ntLiteral
 
 #name
 Expression.NilLiteral
@@ -103,9 +99,8 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntAssign
-							ntParticle
-								ntIdentifier anName="X"
-							ntParticle
+							ntIdentifier anName="X"
+							ntLiteral
 
 #name
 Expression.Parenthesized
@@ -130,11 +125,9 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntAssign
+							ntIdentifier anName="X"
 							ntParticle
-								ntIdentifier anName="X"
-							ntParticle
-								ntParticle
-									ntIdentifier anName="Y"
+								ntIdentifier anName="Y"
 
 #name
 Expression.SetLiteralValues
@@ -159,16 +152,15 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntAssign
-							ntParticle
-								ntIdentifier anName="X"
+							ntIdentifier anName="X"
 							ntParticle
 								ntExpressionOrRange
 									ntExpressionOrRange
-										ntParticle
+										ntLiteral
 									ntExpressionOrRange
-										ntParticle
+										ntLiteral
 									ntExpressionOrRange
-										ntParticle
+										ntLiteral
 
 #name
 Expression.SetLiteralRange
@@ -193,13 +185,12 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntAssign
-							ntParticle
-								ntIdentifier anName="X"
+							ntIdentifier anName="X"
 							ntParticle
 								ntExpressionOrRange
 									ntExpressionOrRange
-										ntParticle
-										ntParticle
+										ntLiteral
+										ntLiteral
 
 #name
 Expression.UnaryNot
@@ -224,11 +215,9 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntAssign
-							ntParticle
-								ntIdentifier anName="X"
+							ntIdentifier anName="X"
 							ntUnaryOperator
-								ntParticle
-									ntIdentifier anName="Flag"
+								ntIdentifier anName="Flag"
 
 #name
 Expression.UnaryMinus
@@ -253,11 +242,9 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntAssign
-							ntParticle
-								ntIdentifier anName="X"
+							ntIdentifier anName="X"
 							ntUnaryOperator
-								ntParticle
-									ntIdentifier anName="N"
+								ntIdentifier anName="N"
 
 #name
 Expression.UnaryAddressOf
@@ -282,11 +269,9 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntAssign
-							ntParticle
-								ntIdentifier anName="X"
+							ntIdentifier anName="X"
 							ntUnaryOperator
-								ntParticle
-									ntIdentifier anName="Y"
+								ntIdentifier anName="Y"
 
 #name
 Expression.BinaryAddMultiply
@@ -311,18 +296,14 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntAssign
-							ntParticle
-								ntIdentifier anName="X"
+							ntIdentifier anName="X"
 							ntBinaryExpression
-								ntParticle
-									ntIdentifier anName="A"
+								ntIdentifier anName="A"
 								ntAdd
 								ntTerm
-									ntParticle
-										ntIdentifier anName="B"
+									ntIdentifier anName="B"
 									ntMul
-									ntParticle
-										ntIdentifier anName="C"
+									ntIdentifier anName="C"
 
 #name
 Expression.BinaryRelational
@@ -347,14 +328,11 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntAssign
-							ntParticle
-								ntIdentifier anName="X"
+							ntIdentifier anName="X"
 							ntExpression
-								ntParticle
-									ntIdentifier anName="A"
+								ntIdentifier anName="A"
 								ntGreaterEqual
-								ntParticle
-									ntIdentifier anName="B"
+								ntIdentifier anName="B"
 
 #name
 Expression.MemberAccess
@@ -379,8 +357,7 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntAssign
-							ntParticle
-								ntIdentifier anName="X"
+							ntIdentifier anName="X"
 							ntParticle
 								ntIdentifier anName="Obj"
 								ntIdentifier anName="Name"
@@ -408,14 +385,11 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntAssign
-							ntParticle
-								ntIdentifier anName="X"
+							ntIdentifier anName="X"
 							ntParticle
 								ntIdentifier anName="F"
-								ntParticle
-									ntIdentifier anName="A"
-								ntParticle
-									ntIdentifier anName="B"
+								ntIdentifier anName="A"
+								ntIdentifier anName="B"
 
 #name
 Expression.ElementAccess
@@ -440,12 +414,10 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntAssign
-							ntParticle
-								ntIdentifier anName="X"
+							ntIdentifier anName="X"
 							ntParticle
 								ntIdentifier anName="Arr"
-								ntParticle
-									ntIdentifier anName="I"
+								ntIdentifier anName="I"
 
 #name
 Expression.PointerDereference
@@ -470,8 +442,7 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntAssign
-							ntParticle
-								ntIdentifier anName="X"
+							ntIdentifier anName="X"
 							ntParticle
 								ntIdentifier anName="Ptr"
 
@@ -498,12 +469,9 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntAssign
-							ntParticle
-								ntIdentifier anName="X"
+							ntIdentifier anName="X"
 							ntParticle
 								ntIdentifier anName="F"
-								ntParticle
-									ntIdentifier anName="A"
-								ntParticle
-									ntIdentifier anName="I"
+								ntIdentifier anName="A"
+								ntIdentifier anName="I"
 								ntIdentifier anName="Name"

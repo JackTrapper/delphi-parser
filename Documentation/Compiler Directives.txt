@@ -1,0 +1,226 @@
+DelphiAST SimpleParser.Lexer.Types
+    ptCompDirect,
+	    ptDefineDirect,
+    ptElseDirect,
+    ptEndIfDirect,
+    ptIfDirect,
+    ptIfEndDirect,
+    ptElseIfDirect,
+    ptIfDefDirect,
+    ptIfNDefDirect,
+    ptIfOptDirect,
+    ptIncludeDirect,
+    ptResourceDirect,
+    ptScopedEnumsDirect,
+    ptUndefDirect,
+
+
+// https://docwiki.embarcadero.com/RADStudio/Sydney/en/Delphi_Compiler_Directives_(List)_Index
+
+//Switch
+//========
+dkAlign: // Align fields - https://docwiki.embarcadero.com/RADStudio/Sydney/en/Align_fields_(Delphi)
+	$A+,		$ALIGN ON
+	$A-,		$ALIGN OFF
+	$A1,		$ALIGN 1
+	$A2,		$ALIGN 2
+	$A4,		$ALIGN 4
+	$A8,		$ALIGN 8
+	$A16		$ALIGN 16
+
+dkAssertions: // Assert directives - https://docwiki.embarcadero.com/RADStudio/Sydney/en/Assert_directives_(Delphi)
+	$C+,		$ASSERTIONS ON
+	$C-,		$ASSERTIONS OFF
+
+dkBooleanVal: // Boolean short-circuit evaluation - https://docwiki.embarcadero.com/RADStudio/Sydney/en/Boolean_short-circuit_evaluation_(Delphi_compiler_directive)
+	$B+,		$BOOLEVAL ON
+	$B-		$BOOLEVAL OFF
+
+dkCodeAlign:	// Code align - https://docwiki.embarcadero.com/RADStudio/Sydney/en/Code_align_(Delphi)
+	$CODEALIGN n
+	$CODEALIGN 0
+	$CODEALIGN 1
+	$CODEALIGN 2
+	$CODEALIGN 4
+	$CODEALIGN 8
+	$CODEALIGN 16
+
+dkObjExportAll: // Export symbols - https://docwiki.embarcadero.com/RADStudio/Sydney/en/Export_symbols_(Delphi)
+	$ObjExportAll On
+	$ObjExportAll Off
+	// Default: Off
+	// Scope:   Global
+
+dkExtendedSyntax: // Extended syntax - https://docwiki.embarcadero.com/RADStudio/Sydney/en/Extended_syntax_(Delphi)
+	$X+,		$EXTENDEDSYNTAX ON
+	$X-		$EXTENDEDSYNTAX OFF
+	// Default ON
+	// Scope:  Global
+
+dkExtendedCompatibility: // Extended type compatibility - https://docwiki.embarcadero.com/RADStudio/Sydney/en/Extended_type_compatibility_(Delphi)
+	$EXTENDEDCOMPATIBILITY ON
+	$EXTENDEDCOMPATIBILITY OFF
+	// Default: OFF
+	// Scope:   Local
+
+dkExcessPrecision: // Floating point precision control - https://docwiki.embarcadero.com/RADStudio/Sydney/en/Floating_point_precision_control_(Delphi_for_x64)
+	$EXCESSPRECISION ON
+	$EXCESSPRECISION OFF
+	// Default: ON
+	// Scope:   Local
+
+dkHighCharUnicode: // HIGHCHARUNICODE directive - https://docwiki.embarcadero.com/RADStudio/Sydney/en/HIGHCHARUNICODE_directive_(Delphi)
+	$HIGHCHARUNICODE ON
+	$HIGHCHARUNICODE OFF
+	// Default: OFF
+	// Scope:   Local
+
+dkHints: // Hints - https://docwiki.embarcadero.com/RADStudio/Sydney/en/Hints_(Delphi)
+	$HINTS
+	// Default: ON
+	// Scope:   Local
+
+akImplicitBuild: // Implicit Build - https://docwiki.embarcadero.com/RADStudio/Sydney/en/Implicit_Build_(Delphi)
+	$IMPLICITBUILD ON
+	$IMPLICITBUILD OFF
+	Default: ON
+	Scope:   Global
+
+dkImportedData: // Imported data - https://docwiki.embarcadero.com/RADStudio/Sydney/en/Imported_data
+	$G+	$IMPORTEDDATA ON
+	$G-	$IMPORTEDDATA OFF
+	Default: ON
+	Scope:   Local
+
+
+dkIOChecks: // Input output checking - https://docwiki.embarcadero.com/RADStudio/Sydney/en/Input_output_checking_(Delphi)
+	$I+	$IOCHECKS ON
+	$I-	$IOCHECKS OFF
+	Default: ON
+	Scope:   Local
+
+
+dkLibPrefix: // Compiler directives for libraries or shared objects - https://docwiki.embarcadero.com/RADStudio/Sydney/en/Compiler_directives_for_libraries_or_shared_objects_(Delphi)
+	$LIBPREFIX 'string'
+	$LIBSUFFIX 'string'
+	$LIBVERSION 'string'
+	Default: 
+
+
+//Parameter
+//=========
+
+dpAppType:	// Application type - https://docwiki.embarcadero.com/RADStudio/Sydney/en/Application_type_(Delphi)
+	$APPTYPE GUI
+	$APPTYPE CONSOLE
+	Default: GUI
+	Scope:   Global
+
+dkExtension: // Executable extension - https://docwiki.embarcadero.com/RADStudio/Sydney/en/Executable_extension_(Delphi)
+	$E,$EXTENSION
+
+dkExternalSym: // External Symbols - https://docwiki.embarcadero.com/RADStudio/Sydney/en/External_Symbols_(Delphi)
+	$EXTERNALSYM [ 'typeNameInHpp' [ 'typeNameInHppUnion' ]]
+
+dkHppEmit: // HPP emit - https://docwiki.embarcadero.com/RADStudio/Sydney/en/HPP_emit_(Delphi)	
+	$HPPEMIT 'string'
+	
+dkImageBase: // Image base address - https://docwiki.embarcadero.com/RADStudio/Sydney/en/Image_base_address
+	$IMAGEBASE number
+	Default: $00400000
+	Scope:   Global
+
+dkInclude: // Include file - https://docwiki.embarcadero.com/RADStudio/Sydney/en/Include_file_(Delphi)
+	$I	filename
+	$INCLUDE filename
+	Default: n/a
+	Scope:   Local
+
+
+
+
+// Conditional compilation
+//========================
+$IFDEF																		// IFDEF directive (Delphi)
+$IFNDEF																		// IFNDEF directive (Delphi)
+$IF																			// IF directive (Delphi)
+$ELSEIF																		// ELSEIF (Delphi)
+$ELSE																			// ELSE (Delphi)
+$ENDIF																		// ENDIF directive (Delphi)
+$IFEND																		// IFEND directive (Delphi)
+
+$IFOPT																		// IFOPT directive (Delphi)
+
+dkDefine: // DEFINE directive - https://docwiki.embarcadero.com/RADStudio/Sydney/en/DEFINE_directive_(Delphi)
+	$DEFINE name						
+dkUndefine: // UNDEF directive - https://docwiki.embarcadero.com/RADStudio/Sydney/en/UNDEF_directive_(Delphi)
+	$UNDEF name
+
+dkDebugInfo: // Debug information - https://docwiki.embarcadero.com/RADStudio/Sydney/en/Debug_information_(Delphi)
+	$D+		$DEBUGINFO ON
+	$D-		$DEBUGINFO OFF
+
+dkDenyPackageUnit: // DENYPACKAGEUNIT directive - https://docwiki.embarcadero.com/RADStudio/Sydney/en/DENYPACKAGEUNIT_directive_(Delphi)
+	$DENYPACKAGEUNIT OFF|ON
+
+dkDescription: // Description  - https://docwiki.embarcadero.com/RADStudio/Sydney/en/Description_(Delphi)
+	$D 'text',	$DESCRIPTION 'text'
+
+dkDesignOnly: // DESIGNONLY directive - https://docwiki.embarcadero.com/RADStudio/Sydney/en/DESIGNONLY_directive_(Delphi)
+	$DESIGNONLY OFF|ON
+
+
+
+$LEGACYIFEND															// Legacy IFEND (Delphi)
+$L file,$LINK file													// Link object file (Delphi)
+$L+,$LOCALSYMBOLS														// Local symbol information (Delphi)
+$H,$LONGSTRINGS														// Long strings (Delphi)
+$M,$MINSTACKSIZE,$MAXSTACKSIZE									// Memory allocation sizes (Delphi)
+$MESSAGE																	// MESSAGE directive (Delphi)
+$METHODINFO																// METHODINFO directive (Delphi)
+$Z1, $MINENUMSIZE 1,													// Minimum enumeration size (Delphi)
+$Z2, $MINENUMSIZE 2,
+$Z4, $MINENUMSIZE 4									
+$NODEFINE [ 'typeNameInHpp' [ 'typeNameInHppUnion' ]]		// NODEFINE directive (Delphi)
+$NOINCLUDE																// NOINCLUDE (Delphi)
+$OBJTYPENAME typeIdent ['B|NtypeNameInObj']					// OBJTYPENAME directive (Delphi)
+$OLDTYPELAYOUT ON														// Old type layout (Delphi)
+$P,$OPENSTRINGS														// Open String Parameters (Delphi)
+$O,$OPTIMIZATION														// Optimization (Delphi)
+$Q,$OVERFLOWCHECKS													// Overflow checking (Delphi)
+$SetPEFlags,$SetPEOptFlags											// PE (portable executable) header flags (Delphi)
+$SETPEOSVERSION														// PE header operating system version
+$SETPESUBSYSVERSION													// PE header subsystem version
+$SETPEUSERVERSION														// PE header user version
+$U,$SAFEDIVIDE															// Pentium-safe FDIV operations (Delphi)
+$POINTERMATH															// Pointer Math (Delphi)
+$R,$RANGECHECKS														// Range checking
+$REALCOMPATIBILITY													// Real48 compatibility (Delphi)
+$REGION,$ENDREGION													// Regions
+$M,$RESOURCERESERVE													// Reserved address space for resources (Delphi, Linux)
+$R,$RESOURCE															// Resource file (Delphi)
+$RTTI INHERIT|EXPLICIT												// RTTI directive (Delphi)
+$RUNONLY																	// RUNONLY directive (Delphi)
+$M,$TYPEINFO															// Run-Time Type Information (Delphi)
+$SCOPEDENUMS															// Scoped Enums (Delphi)
+$W,$STACKFRAMES														// Stack frames (Delphi)
+$STRONGLINKTYPES														// Strong link types (Delphi)
+$Y,$REFERENCEINFO,DEFINITIONINFO									// Symbol declaration and cross-reference information (Delphi)
+$T,$TYPEDADDRESS														// Type-checked pointers (Delphi)
+$V,$VARSTRINGCHECKS													// Var-string checking (Delphi)
+$WARN																		// Warning messages (Delphi)
+$WARNINGS																// Warnings (Delphi)
+$WEAKPACKAGEUNIT														// Weak packaging
+$WEAKLINKRTTI															// WEAKLINKRTTI directive (Delphi)
+$J,$WRITEABLECONST													// Writeable typed constants (Delphi)
+$ZEROBASEDSTRINGS														// Zero-based strings (Delphi)
+
+
+
+
+
+
+
+
+
+

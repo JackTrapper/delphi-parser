@@ -1434,18 +1434,16 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntCaseStatement
-							ntParticle
-								ntIdentifier anName="FErrorLevel"
+							ntIdentifier anName="FErrorLevel"
 							ntCaseSelector
 								ntCaseLabels
 									ntCaseLabel
 										ntExpression
-											ntParticle
+											ntLiteral
 								ntStatement
 									ntParticle
 										ntIdentifier anName="LogError"
-										ntParticle
-											ntIdentifier anName="s"
+										ntIdentifier anName="s"
 							ntCaseElse
 ''';
 
@@ -1550,37 +1548,30 @@ ntCompilationUnit
 				ntStatementList
 					ntStatement
 						ntAssign
-							ntParticle
-								ntIdentifier anName="i"
-							ntParticle
+							ntIdentifier anName="i"
+							ntLiteral
 					ntStatement
 						ntAssign
-							ntParticle
-								ntIdentifier anName="b"
-							ntParticle
-								ntIdentifier anName="False"
+							ntIdentifier anName="b"
+							ntIdentifier anName="False"
 					ntStatement
 						ntCaseStatement
-							ntParticle
-								ntIdentifier anName="i"
+							ntIdentifier anName="i"
 							ntCaseSelector
 								ntCaseLabels
 									ntCaseLabel
 										ntExpression
-											ntParticle
+											ntLiteral
 								ntStatement
 									ntIf
-										ntParticle
-											ntIdentifier anName="b"
+										ntIdentifier anName="b"
 										ntThen
 											ntStatement
-												ntParticle
-													ntIdentifier anName="c"
+												ntIdentifier anName="c"
 							ntCaseElse
 								ntStatementList
 									ntStatement
-										ntParticle
-											ntIdentifier anName="c"
+										ntIdentifier anName="c"
 ''';
 
 	CompareSource(sourceCode, expectedTree, 'Test_CaseElseSemicolonHandling');

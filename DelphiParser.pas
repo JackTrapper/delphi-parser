@@ -4126,6 +4126,8 @@ UnaryOperator
 end;
 
 function TDelphiParser.ParseAtom: TSyntaxNode2;
+var
+	particle: TSyntaxNode2;
 begin
 {
 http://dgrok.excastle.com/Grammar.html#Atom
@@ -4144,6 +4146,13 @@ Atom											Backlinks: Factor
 	// Atom suffixes: member access, indexing, dereference, call
 	while CurrentTokenKind in [ptDot, ptOpenBracket, ptCaret, ptOpenParen] do
 	begin
+		if Result.NodeType <> ntParticle then
+		begin
+			particle := TSyntaxNode2.Create(ntParticle);
+			particle.AddChild(Result);
+			Result := particle;
+		end;
+
 		case CurrentTokenKind of
 		ptDot:
 			begin
@@ -4212,6 +4221,16 @@ UnaryOperator				Backlinks: Factor
 end;
 
 function TDelphiParser.ParseParticle: TSyntaxNode2;
+
+	function ParseLiteral: TSyntaxNode2;
+	var
+		literalToken: TSyntaxToken;
+	begin
+		Result := TSyntaxNode2.Create(ntLiteral);
+		literalToken := EatToken(CurrentTokenKind);
+		Result.AddChild(literalToken);
+	end;
+
 begin
 {
 http://dgrok.excastle.com/Grammar.html#Particle
@@ -4227,39 +4246,42 @@ Particle											Backlinks: Atom
 	-> FILE
 }
 
-{
-	TODO: Do not return ntParticle, but instead create a result based on the type
-}
-	Result := TSyntaxNode2.Create(ntParticle);
-
 	if CurrentTokenKind in [ptFloat, ptIntegerConst] then
-		Result.AddChild(EatToken(CurrentTokenKind))
+		Result := ParseLiteral
 	else if CurrentTokenKind in [ptStringLiteral] then
-		Result.AddChild(EatToken(ptStringLiteral))
+		Result := ParseLiteral
 	else if IsPossibleIdent then
-		Result.AddChild(ParseIdent)
+		Result := ParseIdent
 	else if CurrentTokenKind = ptNil then
-		Result.AddChild(EatToken(ptNil))
+		Result := ParseLiteral
 	else if CurrentTokenKind = ptOpenParen then
 	begin
+		Result := TSyntaxNode2.Create(ntParticle);
 		Result.AddChild(EatToken(ptOpenParen));
 		Result.AddChild(ParseExpression);
 		Result.AddChild(EatToken(ptCloseParen));
 	end
 	else if CurrentTokenKind = ptOpenBracket then
 	begin
+		Result := TSyntaxNode2.Create(ntParticle);
 		Result.AddChild(EatToken(ptOpenBracket));
 		Result.AddChild(ParseExpressionOrRangeList);
 		Result.AddChild(EatToken(ptCloseBracket));
 	end
 	else if CurrentTokenKind = ptString then
-		Result.AddChild(EatToken(ptString))
+		Result := ParseLiteral
 	else if CurrentTokenKind = ptFile then
-		Result.AddChild(EatToken(ptFile))
+		Result := ParseLiteral
 	else if CurrentTokenContentualKind in [ptProcedure, ptFunction] then
-		Result.AddChild(ParseAnonymousMethod)
+	begin
+		Result := TSyntaxNode2.Create(ntParticle);
+		Result.AddChild(ParseAnonymousMethod);
+	end
 	else
+	begin
+		Result := TSyntaxNode2.Create(ntParticle);
 		Result.AddChild(SynErrorFmt('Expected %s but found %s', ['Particle', CurrentToken.Text]));
+	end;
 end;
 
 function TDelphiParser.ParseAddOp: TSyntaxNode2;

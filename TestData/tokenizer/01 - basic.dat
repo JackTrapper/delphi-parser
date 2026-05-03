@@ -1,0 +1,522 @@
+#name
+Tokenize.Basic
+#description
+Tokenizing a minimal unit produces the expected keyword, identifier, and punctuation tokens.
+#code
+unit test;
+#errors
+#tokens
+ptUnit "unit"
+ptIdentifier "test"
+ptSemicolon ";"
+ptEof ""
+
+
+#name
+ReservedWords.Basic
+#description
+Well-known reserved words are recognised as their own distinct token kinds.
+#code
+begin if x then end
+#errors
+#tokens
+ptBegin "begin"
+ptIf "if"
+ptIdentifier "x"
+ptThen "then"
+ptEnd "end"
+ptEof ""
+
+
+#name
+Integer.Decimal
+#description
+Plain decimal integer literals.
+#code
+42 100 0
+#errors
+#tokens
+ptIntegerConst "42"
+ptIntegerConst "100"
+ptIntegerConst "0"
+ptEof ""
+
+
+#name
+Integer.Hexadecimal
+#description
+Hexadecimal integers are prefixed with $.
+#code
+$1F $ABCD $FF
+#errors
+#tokens
+ptIntegerConst "$1F"
+ptIntegerConst "$ABCD"
+ptIntegerConst "$FF"
+ptEof ""
+
+
+#name
+Integer.Binary
+#description
+Binary literals (Delphi 11+) are prefixed with %.
+#code
+%1010 %11110000
+#errors
+#tokens
+ptIntegerConst "%1010"
+ptIntegerConst "%11110000"
+ptEof ""
+
+
+#name
+Integer.DigitSeparator
+#description
+Underscores are allowed as digit separators (Delphi 11+) and are kept in the token text.
+#code
+144_00000619
+#errors
+#tokens
+ptIntegerConst "144_00000619"
+ptEof ""
+
+
+#name
+Integer.DigitSeparatorDecimal
+#description
+Multiple underscores within a decimal literal are each preserved in the token text.
+#code
+1_000 12_34_56
+#errors
+#tokens
+ptIntegerConst "1_000"
+ptIntegerConst "12_34_56"
+ptEof ""
+
+
+#name
+Integer.DigitSeparatorHex
+#description
+Underscores within hexadecimal literals are preserved.
+#code
+$FF_FF $AB_CD
+#errors
+#tokens
+ptIntegerConst "$FF_FF"
+ptIntegerConst "$AB_CD"
+ptEof ""
+
+
+#name
+Float.Basic
+#description
+Decimal point and exponent forms produce ptFloat tokens.
+#code
+3.14 2.5e10
+#errors
+#tokens
+ptFloat "3.14"
+ptFloat "2.5e10"
+ptEof ""
+
+
+#name
+Float.NoDigitsAfterDecimalMark
+#description
+A trailing dot ("1.") is a valid float literal with no fractional digits.
+#code
+1.
+#errors
+#tokens
+ptFloat "1."
+ptEof ""
+
+
+#name
+Float.NoDigitAfterExponentDecimalMark
+#description
+"42.e3" has no digits between the dot and the exponent — still a valid float.
+#code
+42.e3
+#errors
+#tokens
+ptFloat "42.e3"
+ptEof ""
+
+
+#name
+Float.ExponentLowercase
+#description
+Both lowercase 'e' and uppercase 'E' introduce the exponent part of a float.
+#code
+1e10 2E5
+#errors
+#tokens
+ptFloat "1e10"
+ptFloat "2E5"
+ptEof ""
+
+
+#name
+Float.ExponentSigns
+#description
+The exponent may carry an explicit sign (+ or -) immediately after E/e.
+#code
+1e+2 3e-4 5E+6 7E-8
+#errors
+#tokens
+ptFloat "1e+2"
+ptFloat "3e-4"
+ptFloat "5E+6"
+ptFloat "7E-8"
+ptEof ""
+
+
+#name
+Float.NoDigitsAfterExponent
+#description
+If there are no digits after E/e (and its optional sign) the e/E is not an exponent.
+The preceding digits tokenise as an integer; e/E and any sign become separate tokens.
+#code
+1e 2E+ 3e- 4eX
+#errors
+#tokens
+ptIntegerConst "1"
+ptIdentifier "e"
+ptIntegerConst "2"
+ptIdentifier "E"
+ptPlus "+"
+ptIntegerConst "3"
+ptIdentifier "e"
+ptMinus "-"
+ptIntegerConst "4"
+ptIdentifier "eX"
+ptEof ""
+
+
+#name
+Float.SignNotAfterExponent
+#description
+A '+' or '-' that does not immediately follow an E/e exponent is a separate operator token.
+#code
+1+-2
+#errors
+#tokens
+ptIntegerConst "1"
+ptPlus "+"
+ptMinus "-"
+ptIntegerConst "2"
+ptEof ""
+
+
+#name
+Number.DotVsRange
+#description
+".." is the range operator; a single "." after digits begins a float literal.
+Numbers adjacent to ".." must not have their dot absorbed into the range operator.
+#code
+1..2 3.14 .. 5.0..7
+#errors
+#tokens
+ptIntegerConst "1"
+ptDotDot ".."
+ptIntegerConst "2"
+ptFloat "3.14"
+ptDotDot ".."
+ptFloat "5.0"
+ptDotDot ".."
+ptIntegerConst "7"
+ptEof ""
+
+
+#name
+AsciiChar.Basic
+#description
+#n and #$nn sequences are ASCII char literals; each '#' sequence is its own ptAsciiChar token.
+#code
+#13#10 #$41
+#errors
+#tokens
+ptAsciiChar "#13"
+ptAsciiChar "#10"
+ptAsciiChar "#$41"
+ptEof ""
+
+
+#name
+Operators.MultiChar
+#description
+All multi-character operators are each tokenised as a single token.
+#code
+:= <= >= <> .. @@
+#errors
+#tokens
+ptAssign ":="
+ptLessThanEquals "<="
+ptGreaterThanEquals ">="
+ptNotEqual "<>"
+ptDotDot ".."
+ptDoubleAddressOp "@@"
+ptEof ""
+
+
+#name
+Operators.SingleChar
+#description
+Common single-character arithmetic and comparison operators.
+#code
++ - * / =
+#errors
+#tokens
+ptPlus "+"
+ptMinus "-"
+ptAsterisk "*"
+ptSlash "/"
+ptEquals "="
+ptEof ""
+
+
+#name
+String.Basic
+#description
+A well-formed string literal is tokenised as ptStringLiteral including the outer apostrophes.
+#code
+'Hello World'
+#errors
+#tokens
+ptStringLiteral "'Hello World'"
+ptEof ""
+
+
+#name
+String.EscapedQuotes
+#description
+Doubled apostrophes inside a string represent a single apostrophe character.
+The token text preserves them as written (two apostrophes).
+#code
+'He said, ''Hello!'' to me.'
+#errors
+#tokens
+ptStringLiteral "'He said, ''Hello!'' to me.'"
+ptEof ""
+
+
+#name
+String.UnterminatedByEOF
+#description
+A string that runs to end-of-file is an error; the token still gets a manufactured closing apostrophe.
+#code
+'Unterminated string
+#errors
+#tokens
+ptStringLiteral "'Unterminated string'" [ERROR: Unterminated string literal] [MISSING]
+ptEof ""
+
+
+#name
+String.UnterminatedByLineEnd
+#description
+A string terminated by a line break rather than EOF carries the E2052 error code.
+#code
+'UnterminatedString
+
+#errors
+#tokens
+ptStringLiteral "'UnterminatedString'" [ERROR: E2052 Unterminated string] [MISSING]
+ptEof ""
+
+
+#name
+Comment.Ansi
+#description
+ANSI-style (* ... *) comments become leading trivia on the next real token.
+A standalone comment attaches to the EOF token.
+#code
+(* This is an ANSI comment *)
+#errors
+#tokens
+ptEof ""
+	leading: ptAnsiComment "(* This is an ANSI comment *)"
+
+
+#name
+Comment.Borland
+#description
+Borland-style { ... } comments become leading trivia on the next real token.
+#code
+{ This is a Borland comment }
+#errors
+#tokens
+ptEof ""
+	leading: ptBorComment "{ This is a Borland comment }"
+
+
+#name
+Comment.Slash
+#description
+// line comments become leading trivia on the first token of the next line.
+#code
+// This is a slash comment
+begin end
+#errors
+#tokens
+ptBegin "begin"
+	leading: ptSlashesComment "// This is a slash comment"
+ptEnd "end"
+ptEof ""
+
+
+#name
+Trivia.SlashCommentAttachedToEOF
+#description
+When a // comment is the only content, it attaches as leading trivia to the EOF token.
+#code
+//his comment should be leading trivia attached to the EOF token
+#errors
+#tokens
+ptEof ""
+	leading: ptSlashesComment "//his comment should be leading trivia attached to the EOF token"
+
+
+#name
+Trivia.Whitespace
+#description
+Whitespace (spaces, CRLF) is trivia and does not appear as a main token.
+#code
+begin
+  end
+#errors
+#tokens
+ptBegin "begin"
+ptEnd "end"
+ptEof ""
+
+
+#name
+CompilerDirective.CurlyBrace
+#description
+{$...} compiler directives are real tokens (not trivia).
+#code
+{$IFDEF DEBUG}
+#errors
+#tokens
+ptCompilerDirective "{$IFDEF DEBUG}"
+ptEof ""
+
+
+#name
+CompilerDirective.ParenStar
+#description
+(*$...*) is an alternative delimiter form for compiler directives.
+#code
+(*$IFDEF DEBUG*)
+#errors
+#tokens
+ptCompilerDirective "(*$IFDEF DEBUG*)"
+ptEof ""
+
+
+#name
+CompilerDirective.UnterminatedByEOF
+#description
+A compiler directive that reaches end-of-file without a closing delimiter is an error.
+#code
+unit Test; {$IFDEF DEBUG
+#errors
+#tokens
+ptUnit "unit"
+ptIdentifier "Test"
+ptSemicolon ";"
+ptCompilerDirective "{$IFDEF DEBUG" [ERROR: Unterminated compiler directive] [MISSING]
+ptEof ""
+
+
+#name
+CompilerDirective.UnterminatedByLineEnd
+#description
+A compiler directive terminated by a line break (no closing delimiter) also raises an error.
+Parsing resumes on the next line.
+#code
+unit Test;
+{$IFDEF DEBUG
+begin end.
+#errors
+#tokens
+ptUnit "unit"
+ptIdentifier "Test"
+ptSemicolon ";"
+ptCompilerDirective "{$IFDEF DEBUG" [ERROR: Unterminated compiler directive] [MISSING]
+ptBegin "begin"
+ptEnd "end"
+ptDot "."
+ptEof ""
+
+
+#name
+Comment.AnsiUnterminatedByEOF
+#description
+An unterminated ANSI comment attaches to EOF as trivia with an error flag.
+#code
+(* unterminated
+#errors
+#tokens
+ptEof ""
+	leading: ptAnsiComment "(* unterminated" [ERROR: Unterminated ANSI comment] [MISSING]
+
+
+#name
+Comment.BorlandUnterminatedByEOF
+#description
+An unterminated Borland comment attaches to EOF as trivia with an error flag.
+#code
+{ unterminated
+#errors
+#tokens
+ptEof ""
+	leading: ptBorComment "{ unterminated" [ERROR: Unterminated Borland comment] [MISSING]
+
+
+#name
+Identifier.EscapedKeyword
+#description
+An ampersand before a reserved word turns it into a ptIdentifier.
+The ampersand is included in the token text.
+#code
+var &for: Integer; begin &for := 1; end.
+#errors
+#tokens
+ptVar "var"
+ptIdentifier "&for"
+ptColon ":"
+ptIdentifier "Integer"
+ptSemicolon ";"
+ptBegin "begin"
+ptIdentifier "&for"
+ptAssign ":="
+ptIntegerConst "1"
+ptSemicolon ";"
+ptEnd "end"
+ptDot "."
+ptEof ""
+
+
+#name
+Identifier.Unicode
+#description
+Unicode characters (e.g. accented letters) are valid in identifiers.
+#code
+unit Test; var café: string; begin end.
+#errors
+#tokens
+ptUnit "unit"
+ptIdentifier "Test"
+ptSemicolon ";"
+ptVar "var"
+ptIdentifier "café"
+ptColon ":"
+ptString "string"
+ptSemicolon ";"
+ptBegin "begin"
+ptEnd "end"
+ptDot "."
+ptEof ""

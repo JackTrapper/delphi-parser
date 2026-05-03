@@ -1547,7 +1547,7 @@ end;
 
 function TDelphiTokenizer.DoStringLiteral(const ch: WideChar): TSyntaxToken;
 var
-	s: string;
+	rawText, valueText: string;
 	nextChar: WideChar;
 	startLine, startColumn: Integer;
 	hasError, hasWarning: Boolean;
@@ -1565,7 +1565,8 @@ begin
 	- Length validation (warning)
 	- Proper escape sequence processing
 }
-	s := '';  // will contain the string content without leading/trailing apostrophe
+	rawText := '';    // source spelling without leading/trailing apostrophe
+	valueText := '';  // interpreted string content
 	startLine := FCurrentLine;
 	startColumn := FCurrentColumn;
 	hasError := False;
@@ -1586,7 +1587,8 @@ begin
 			end;
 
 			// The string is not ending, we're just inserting a literal apostrophe (')
-			s := s + Consume; // consume the second apostrophe
+			rawText := rawText + nextChar + Consume; // preserve both apostrophes
+			valueText := valueText + nextChar;
 		end
 		else if CharInSet(nextChar, [#13, #10]) then
 		begin
@@ -1606,7 +1608,9 @@ begin
 			lowSurrogate := Peek;
 			if IsValidSurrogatePair(nextChar, lowSurrogate) then
 			begin
-				s := s + nextChar + Consume; // consume both parts of surrogate pair
+				lowSurrogate := Consume;
+				rawText := rawText + nextChar + lowSurrogate; // consume both parts of surrogate pair
+				valueText := valueText + nextChar + lowSurrogate;
 			end
 			else
 			begin
@@ -1616,20 +1620,22 @@ begin
 					warningMsg := 'Invalid Unicode surrogate pair';
 				end;
 				LogFmt('Warning at line %d: Invalid Unicode surrogate pair', [startLine]);
-				s := s + nextChar; // include anyway for recovery
+				rawText := rawText + nextChar; // include anyway for recovery
+				valueText := valueText + nextChar;
 			end;
 		end
 		else
 		begin
 			// Normal character
-			s := s + nextChar;
+			rawText := rawText + nextChar;
+			valueText := valueText + nextChar;
 		end;
 
 		// Check string length limit
 		// Delphi 12.0+ raised it to unlimited.
 		if CompilerVersion < 36.0 then
 		begin
-			if Length(s) > 1023 then
+			if Length(rawText) > 1023 then
 			begin
 				if not hasWarning then
 				begin
@@ -1652,7 +1658,7 @@ begin
 	end;
 
 	// Create the token
-	Result := TSyntaxToken.Create(ptStringLiteral, startLine, startColumn, '''' + s + '''');
+	Result := TSyntaxToken.Create(ptStringLiteral, startLine, startColumn, '''' + rawText + '''');
 
 	// Set error/warning flags
 	Result.HasErrors := hasError;
@@ -1660,8 +1666,7 @@ begin
 	Result.ErrorMessage := errorMsg;
 	Result.WarningMessage := warningMsg;
 
-	// Process escape sequences for ValueText
-	Result.ValueText := ProcessStringEscapes(s);
+	Result.ValueText := valueText;
 
 	// Mark as missing if there was an error (for parser recovery)
 	if hasError then
@@ -2252,7 +2257,8 @@ of a source file depending on which conditions are set. Conditions are Boolean (
 	end
 	else
 	begin
-		s := s+Consume; //consume the }
+		if delimiter = ddBrace then
+			s := s+Consume; // consume the }
 	end;
 
 	Result := TSyntaxToken.Create(ptCompilerDirective, startLine, startColumn, s);
@@ -2825,7 +2831,7 @@ begin
 	begin
 		AToken := TSyntaxToken.Create(ptUnknown, FCurrentLine, FCurrentColumn, ch);
 		if IsDebuggerPresent then
-			raise ENotImplemented.CreateFmt('[TDelphiTokenizer.NextToken] Unknown character type U+%.4d (%s)', [Word(ch), ch]);
+			raise ENotImplemented.CreateFmt('[TDelphiTokenizer.NextToken] Unknown character type U+%.4x (%s)', [Word(ch), ch]);
 	end;
 
 	if AToken = nil then

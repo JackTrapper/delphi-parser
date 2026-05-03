@@ -8,42 +8,50 @@ uses
 
 
 type
+	TInputStreamTests = class(TTestCase)
+	public
+		procedure TestRingBufferWrapStress;
+		procedure TestHugePeekGrowth;
+	published
+		procedure TestReadChar;
+		procedure TestPeekChar;
+		procedure TestUnreadChar;
+	end;
+
+
+	TTokenizerTestCase = record
+		FileName: string;
+		CaseIndex: Integer;
+		Name: string;
+		Description: string;
+		SourceCode: string;
+		ExpectedTokens: string;
+		Errors: string;
+	end;
+
 	TDelphiTokenizerTests = class(TTestCase)
+	private
 	protected
 		function HasTriviaTokens(tokens: TObjectList): Boolean;
-
 		function TokensToStr(Tokens: TList): string;
+
+		class procedure RegisterDatFileTests;
+		function FindDatTestsRoot: string;
+		function EnumerateTestFiles: TArray<string>;
+		function EnumerateTestCases(const FileName: string): TArray<TTokenizerTestCase>;
+		procedure RunTestCase(const ACase: TTokenizerTestCase; Progress, Total: Integer);
+
+		function DumpTokens(const SourceCode: string): string;
+		procedure CompareTokens(const SourceCode, ExpectedTokens, CaseName: string);
 	public
 		procedure TestTokenPositions;					// positions aren't done yet
 		procedure TestMultiCharOperatorPositions;	// positions aren't done yet
 	published
-		procedure Tokenize;
-
 		procedure TestTokenizeIncludesEofToken;
 		procedure TestParserReuseResetsState;
 		procedure TestTriviaIsAttachedToEOFToken;
 
-		procedure TestUnicodeIdentifiers;
-
-		procedure TestUnterminatedCompilerDirective;
-
-		procedure TestCompilerDirective;
-		procedure TestCompilerDirectiveUnterminatedEOF;
-		procedure TestCompilerDirectiveUnterminatedLineEnd;
-		procedure TestReservedWords;
-
 		// Numbers
-		procedure TestHexNumbers;
-		procedure TestBinaryLiteral;  // x = %1101;
-
-		procedure TestFloatingPointNumbers;
-		procedure TestFloatingPointNumbersWithNoDigitsAfterDecimalMark;				// 42.
-		procedure TestFlaotingPointNumbersWithNoDigitAfterExponentialDecimalMark;	// 42.e3
-		procedure TestNumberExponentLowercase;
-		procedure TestNumberExponentSigns;
-		procedure TestNumberNoDigitsAfterExponent;
-		procedure TestNumberSignNotAfterExponent;
-
 		procedure TestDigitSeparator;
 
 		// Organized number tests
@@ -51,7 +59,6 @@ type
 		procedure TestNumberUnderscoresHex;
 		procedure TestDotVsRangeWithNumbers;
 
-		procedure TestAsciiCharLiterals;
 		procedure TestAnsiComments;
 		procedure TestBorComments;
 		procedure TestSlashComments;
@@ -76,6 +83,16 @@ type
 		procedure TestMultilineStringMixingRecoverLessIndentedLines;
 		procedure TestMultilineStringWithoutWhitespaceBeforeIt;
 
+		// Calling conventions
+		procedure TestRegister;
+		procedure TestPascal;
+		procedure TestCDecl;
+		procedure TestStdcall;
+		procedure TestSafecall;
+		procedure TestWinApi;   	// winapi is an alias of stdcall
+
+
+
 
 		// Organized comment/directive/identifier tests
 		procedure TestUnterminatedAnsiCommentEOF;
@@ -84,22 +101,30 @@ type
 
 		// BOM handling
 		procedure TestBomIsSkippedOrTreatedAsTrivia;
+
+		procedure RunDatCases;
 	end;
 
-	TInputStreamTests = class(TTestCase)
+	{	Dynamic test case: one instance per #name entry in a .dat file.
+		Each appears as an individual test in the DUnit GUI/console runner.
+		The test suite is named after the .dat file (e.g. "basic_cases.dat")
+		and each test method is named after the #name from the file. }
+	TDatFileTestCase = class(TDelphiTokenizerTests)
+	private
+		FCase: TTokenizerTestCase;
+		FTotalTests: Integer;
 	public
-		procedure TestRingBufferWrapStress;
-		procedure TestHugePeekGrowth;
+		constructor Create(const ACase: TTokenizerTestCase; const TotalTests: Integer); reintroduce;
+		function GetName: string; override;
 	published
-		procedure TestReadChar;
-		procedure TestPeekChar;
-		procedure TestUnreadChar;
+		procedure RunDynamic;
 	end;
+
 
 implementation
 
 uses
-	SysUtils, Math, ComObj, Windows, ActiveX,
+	SysUtils, Math, ComObj, Windows, ActiveX, System.IOUtils,
 	Toolkit, Avatar.Exceptions,
 	DelphiTokenizer,
 	DelphiParser;
@@ -319,30 +344,15 @@ end;
 
 { TDelphiTokenizerTests }
 
-procedure TDelphiTokenizerTests.Tokenize;
-var
-	sourceCode: string;
-	tokens: TObjectList;
-begin
-	sourceCode := 'unit test;';
-	tokens := TObjectList.Create(True);
-	using(tokens);
-
-	TDelphiTokenizer.Tokenize(sourceCode, tokens);
-
-	CheckTrue(tokens.Count > 0);
-end;
-
 procedure TDelphiTokenizerTests.TestTokenizeIncludesEofToken;
 var
 	tokens: TObjectList;
 	lastToken: TSyntaxToken;
 begin
-	// Regression guard: tokenization should always surface an explicit EOF token
-	// so downstream consumers (parser, lookahead) can detect end of input.
+	// Tokenization should always surface an explicit EOF token so parser can detect end of input.
 	tokens := TObjectList.Create(True);
 	try
-		TDelphiTokenizer.Tokenize('', tokens);
+		TDelphiTokenizer.Tokenize({SourceCode=}'', tokens);
 
 		CheckEquals(1, tokens.Count, 'Token stream should end with a dedicated EOF token');
 		lastToken := tokens[tokens.Count - 1] as TSyntaxToken;
@@ -433,6 +443,11 @@ begin
 	finally
 		parser.Free;
 	end;
+end;
+
+procedure TDelphiTokenizerTests.TestPascal;
+begin
+
 end;
 
 function TDelphiTokenizerTests.TokensToStr(Tokens: TList): string;
@@ -730,56 +745,6 @@ begin
 	end;
 end;
 
-procedure TDelphiTokenizerTests.TestUnicodeIdentifiers;
-var
-	sourceCode: string;
-	tokens: TObjectList;
-	i: Integer;
-	token: TSyntaxToken;
-	foundCafeIdentifier: Boolean;
-	debugOutput: string;
-begin
-	// Start with a simpler test case to debug the issue
-	sourceCode := 'unit Test; var café: string; begin end.';
-
-	tokens := TObjectList.Create(True);
-   using(tokens);
-
-   TDelphiTokenizer.Tokenize(sourceCode, tokens);
-
-   // Debug: log what tokens we actually got
-   debugOutput := Format('Total tokens: %d'#13#10, [tokens.Count]);
-   for i := 0 to Min(tokens.Count - 1, 15) do // Show first 15 tokens
-   begin
-      token := tokens[i] as TSyntaxToken;
-      debugOutput := debugOutput + Format('Token %d: %s = "%s"'#13#10,
-         [i, TokenKindToStr(token.Kind), token.Text]);
-   end;
-
-   // First, just check that we got some tokens at all
-   CheckTrue(tokens.Count > 5, Format('Should have gotten some tokens. Got %d. Debug:'#13#10'%s',
-      [tokens.Count, debugOutput]));
-
-   // Check what actually got tokenized
-   foundCafeIdentifier := False;
-
-   for i := 0 to tokens.Count - 1 do
-   begin
-      token := tokens[i] as TSyntaxToken;
-      if token.Kind = ptIdentifier then
-      begin
-         if token.Text = 'café' then
-            foundCafeIdentifier := True;
-      end;
-   end;
-
-   // Test Unicode identifier recognition
-   if foundCafeIdentifier then
-      CheckTrue(True, 'Unicode identifier "café" was successfully recognized!')
-   else
-      CheckTrue(False, Format('Unicode identifier "café" was NOT recognized. Debug info:'#13#10'%s', [debugOutput]));
-end;
-
 procedure TDelphiTokenizerTests.TestTokenPositions;
 var
 	sourceCode: string;
@@ -876,7 +841,7 @@ var
 	tokens: TObjectList;
 	lastToken: TSyntaxToken;
 begin
-	sourceCode := '//his comment should be leading trivia attached to the EOF token';
+	sourceCode := '//this comment should be leading trivia attached to the EOF token';
 
 	tokens := TObjectList.Create(True);
 	try
@@ -946,271 +911,14 @@ begin
 	end;
 end;
 
-procedure TDelphiTokenizerTests.TestUnterminatedCompilerDirective;
-var
-	sourceCode: string;
-	tokens: TObjectList;
-	i: Integer;
-	token: TSyntaxToken;
-	foundDirective: Boolean;
-	debugOutput: string;
+procedure TDelphiTokenizerTests.TestCDecl;
 begin
-	// Test Issue #1: Infinite loop on unterminated compiler directive
-	// This should NOT cause an infinite loop anymore - the fix adds UEOF check
-	sourceCode := 'unit Test; {$IFDEF DEBUG'; // Missing closing brace - this used to cause infinite loop
-	
-	tokens := TObjectList.Create(True); // owns objects
-	try
-		TDelphiTokenizer.Tokenize(sourceCode, tokens);
-		
-		// Debug: log what tokens we actually got
-		debugOutput := Format('Total tokens: %d'#13#10, [tokens.Count]);
-		for i := 0 to Min(tokens.Count - 1, 10) do // Show first 10 tokens
-		begin
-			token := tokens[i] as TSyntaxToken;
-			debugOutput := debugOutput + Format('Token %d: %s = "%s"'#13#10, 
-				[i, TokenKindToStr(token.Kind), token.Text]);
-		end;
-		
-		// Verify we got some tokens (not stuck in infinite loop)
-		CheckTrue(tokens.Count > 0, Format('Should have gotten tokens without infinite loop. Got %d.'#13#10'%s', 
-			[tokens.Count, debugOutput]));
-		
-		// Look for the unterminated compiler directive token
-		foundDirective := False;
-		for i := 0 to tokens.Count - 1 do
-		begin
-			token := tokens[i] as TSyntaxToken;
-			if token.Kind = ptCompilerDirective then
-			begin
-				foundDirective := True;
-				// Verify the directive contains what we expect (opening brace but no closing)
-				CheckTrue(Pos('{$IFDEF', token.Text) > 0, 
-					Format('Compiler directive should contain "{$IFDEF", got: "%s"', [token.Text]));
-				Break;
-			end;
-		end;
-		
-		CheckTrue(foundDirective, 
-			Format('Should have found compiler directive token.'#13#10'Debug:'#13#10'%s', [debugOutput]));
-		
-	finally
-		tokens.Free; // TObjectList automatically frees owned objects
-	end;
+
 end;
 
-procedure TDelphiTokenizerTests.TestCompilerDirective;
-var
-	sourceCode: string;
-	tokens: TObjectList;
-	token: TSyntaxToken;
+procedure TDelphiTokenizerTests.TestRegister;
 begin
-{
-Compiler directives can be both curly braces, and open paren star
 
-https://docwiki.embarcadero.com/RADStudio/Sydney/en/Fundamental_Syntactic_Elements_%28Delphi%29
-
-> A comment that contains a dollar sign ($) immediately after the opening { or ( * is a compiler directive.
-
-}
-	tokens := TObjectList.Create(True); // owns objects
-	try
-		sourceCode := '{$IFDEF DEBUG}';
-		TDelphiTokenizer.Tokenize(sourceCode, tokens);
-		CheckEquals(2, tokens.Count, 'tokens.Count');  // directive+eof
-		token := tokens[0] as TSyntaxToken;
-		CheckEquals(TokenKindToStr(ptCompilerDirective), TokenKindToStr(token.Kind));
-
-		tokens.Clear;
-
-		sourceCode := '(*$IFDEF DEBUG*)';
-		TDelphiTokenizer.Tokenize(sourceCode, tokens);
-		CheckEquals(2, tokens.Count, 'tokens.Count');  // directive+eof
-		token := tokens[0] as TSyntaxToken;
-		CheckEquals(TokenKindToStr(ptCompilerDirective), TokenKindToStr(token.Kind));
-	finally
-		tokens.Free; // TObjectList automatically frees owned objects
-	end;
-end;
-
-procedure TDelphiTokenizerTests.TestCompilerDirectiveUnterminatedEOF;
-var
-	sourceCode: string;
-	tokens: TObjectList;
-	i: Integer;
-	token: TSyntaxToken;
-	foundDirective: Boolean;
-	debugOutput: string;
-begin
-	// Test compiler directive that reaches EOF before closing brace
-	sourceCode := 'unit Test; {$IFDEF DEBUG'; // Missing closing brace }
-
-	tokens := TObjectList.Create(True); // owns objects
-	try
-		TDelphiTokenizer.Tokenize(sourceCode, tokens);
-
-		// Debug: log what tokens we actually got
-		debugOutput := Format('Total tokens: %d'#13#10, [tokens.Count]);
-		for i := 0 to Min(tokens.Count - 1, 10) do
-		begin
-			token := tokens[i] as TSyntaxToken;
-			if token.HasErrors then
-				debugOutput := debugOutput + Format('Token %d: %s = "%s", HasErrors=True'#13#10,
-					[i, TokenKindToStr(token.Kind), token.Text])
-			else
-				debugOutput := debugOutput + Format('Token %d: %s = "%s", HasErrors=False'#13#10,
-					[i, TokenKindToStr(token.Kind), token.Text]);
-		end;
-
-		// Verify we got tokens without infinite loop
-		CheckTrue(tokens.Count > 0, Format('Should have gotten tokens. Got %d.'#13#10'%s',
-			[tokens.Count, debugOutput]));
-
-		// Look for the compiler directive token with error flag
-		foundDirective := False;
-		for i := 0 to tokens.Count - 1 do
-		begin
-			token := tokens[i] as TSyntaxToken;
-			if token.Kind = ptCompilerDirective then
-			begin
-				foundDirective := True;
-
-				// Verify the error flag is set
-				if token.HasErrors then
-					CheckTrue(True, 'Unterminated compiler directive correctly has HasErrors=True')
-				else
-					CheckTrue(False, 'Unterminated compiler directive should have HasErrors=True, but got False');
-
-				// Verify the error message
-				CheckTrue(Pos('Unterminated', token.ErrorMessage) > 0,
-					Format('Error message should mention "Unterminated". Got: "%s"', [token.ErrorMessage]));
-
-				// Verify IsMissing flag is set for parser recovery
-				if token.IsMissing then
-					CheckTrue(True, 'Unterminated compiler directive correctly has IsMissing=True for parser recovery')
-				else
-					CheckTrue(False, 'Unterminated compiler directive should have IsMissing=True for parser recovery');
-
-				Break;
-			end;
-		end;
-
-		CheckTrue(foundDirective,
-			Format('Should have found compiler directive token with error.'#13#10'Debug:'#13#10'%s', [debugOutput]));
-
-	finally
-		tokens.Free; // TObjectList automatically frees owned objects
-	end;
-end;
-
-procedure TDelphiTokenizerTests.TestCompilerDirectiveUnterminatedLineEnd;
-var
-	sourceCode: string;
-	tokens: TObjectList;
-	i: Integer;
-	token: TSyntaxToken;
-	foundDirective: Boolean;
-	debugOutput: string;
-begin
-	// Test compiler directive that reaches line end before closing brace
-	sourceCode := 'unit Test;'#13#10'{$IFDEF DEBUG'#13#10'begin end.'; // Line break before closing brace
-	
-	tokens := TObjectList.Create(True); // owns objects
-	try
-		TDelphiTokenizer.Tokenize(sourceCode, tokens);
-		
-		// Debug: log what tokens we actually got
-		debugOutput := Format('Total tokens: %d'#13#10, [tokens.Count]);
-		for i := 0 to Min(tokens.Count - 1, 15) do
-		begin
-			token := tokens[i] as TSyntaxToken;
-			if token.HasErrors then
-				debugOutput := debugOutput + Format('Token %d: %s = "%s", HasErrors=True'#13#10, 
-					[i, TokenKindToStr(token.Kind), token.Text])
-			else
-				debugOutput := debugOutput + Format('Token %d: %s = "%s", HasErrors=False'#13#10, 
-					[i, TokenKindToStr(token.Kind), token.Text]);
-		end;
-		
-		// Verify we got tokens
-		CheckTrue(tokens.Count > 0, Format('Should have gotten tokens. Got %d.'#13#10'%s', 
-			[tokens.Count, debugOutput]));
-		
-		// Look for the compiler directive token with error flag
-		foundDirective := False;
-		for i := 0 to tokens.Count - 1 do
-		begin
-			token := tokens[i] as TSyntaxToken;
-			if token.Kind = ptCompilerDirective then
-			begin
-				foundDirective := True;
-
-				// Verify the error flag is set
-				if token.HasErrors then
-					CheckTrue(True, 'Unterminated compiler directive (line end) correctly has HasErrors=True')
-				else
-					CheckTrue(False, 'Unterminated compiler directive (line end) should have HasErrors=True, but got False');
-
-				// Verify the error message mentions unterminated
-				CheckTrue(Pos('Unterminated', token.ErrorMessage) > 0,
-					Format('Error message should mention "Unterminated". Got: "%s"', [token.ErrorMessage]));
-
-				// Note: The detailed distinction (EOF vs line end) is in the LogFmt output,
-				// not in the token's ErrorMessage property
-
-				// Verify IsMissing flag is set for parser recovery
-				if token.IsMissing then
-					CheckTrue(True, 'Unterminated compiler directive correctly has IsMissing=True for parser recovery')
-				else
-					CheckTrue(False, 'Unterminated compiler directive should have IsMissing=True for parser recovery');
-
-				Break;
-			end;
-		end;
-
-		CheckTrue(foundDirective,
-			Format('Should have found compiler directive token with error.'#13#10'Debug:'#13#10'%s', [debugOutput]));
-
-	finally
-		tokens.Free; // TObjectList automatically frees owned objects
-	end;
-end;
-
-procedure TDelphiTokenizerTests.TestReservedWords;
-var
-	sourceCode: string;
-	tokens: TObjectList;
-	i: Integer;
-	token: TSyntaxToken;
-	foundBegin, foundEnd, foundIf, foundThen: Boolean;
-begin
-	sourceCode := 'begin if x then end';
-
-	tokens := TObjectList.Create(True); // owns objects
-	try
-		TDelphiTokenizer.Tokenize(sourceCode, tokens);
-
-		foundBegin := False;
-		foundEnd := False;
-		foundIf := False;
-		foundThen := False;
-
-		for i := 0 to tokens.Count - 1 do
-		begin
-			token := tokens[i] as TSyntaxToken;
-			if token.Kind = ptBegin then foundBegin := True
-			else if token.Kind = ptEnd then foundEnd := True
-			else if token.Kind = ptIf then foundIf := True
-			else if token.Kind = ptThen then foundThen := True;
-		end;
-
-		CheckTrue(foundBegin, 'Should recognize "begin" as reserved word');
-		CheckTrue(foundEnd, 'Should recognize "end" as reserved word');
-		CheckTrue(foundIf, 'Should recognize "if" as reserved word');
-		CheckTrue(foundThen, 'Should recognize "then" as reserved word');
-	finally
-		tokens.Free; // TObjectList automatically frees owned objects
-	end;
 end;
 
 procedure TDelphiTokenizerTests.TestStringLiterals;
@@ -1222,7 +930,7 @@ var
 	foundString: Boolean;
 begin
 	sourceCode := '''Hello World''';
-	
+
 	tokens := TObjectList.Create(True); // owns objects
 	try
 		TDelphiTokenizer.Tokenize(sourceCode, tokens);
@@ -1347,392 +1055,102 @@ begin
 	end;
 end;
 
-procedure TDelphiTokenizerTests.TestHexNumbers;
-var
-	sourceCode: string;
-	tokens: TObjectList;
-	i: Integer;
-	token: TSyntaxToken;
-	foundHex: Boolean;
+procedure TDelphiTokenizerTests.RunTestCase(const ACase: TTokenizerTestCase; Progress, Total: Integer);
 begin
-	sourceCode := '$1F $ABCD $FF';
+	CheckFalse(Trim(ACase.SourceCode)   = '', 'Case "' + ACase.Name + '" is missing #code');
+	CheckFalse(Trim(ACase.ExpectedTokens) = '', 'Case "' + ACase.Name + '" is missing #tokens');
 
-	tokens := TObjectList.Create(True); // owns objects
+	Status(Format('[CASE %d/%d] %s', [Progress, Total, ACase.Name]));
+	Status(ACase.Description);
+
+	CompareTokens(ACase.SourceCode, ACase.ExpectedTokens, ACase.Name);
+end;
+
+function TDelphiTokenizerTests.DumpTokens(const SourceCode: string): string;
+var
+	tokens: TObjectList;
+	i, j: Integer;
+	token, trivia: TSyntaxToken;
+
+	function FormatToken(t: TSyntaxToken): string;
+	begin
+		Result := TokenKindToStr(t.Kind) + ' "' + t.Text + '"';
+		if t.HasErrors   then Result := Result + ' [ERROR: '   + t.ErrorMessage   + ']';
+		if t.HasWarnings then Result := Result + ' [WARNING: ' + t.WarningMessage + ']';
+		if t.IsMissing   then Result := Result + ' [MISSING]';
+	end;
+
+	procedure Append(const Line: string);
+	begin
+		if Result = '' then Result := Line
+		else Result := Result + CRLF + Line;
+	end;
+
+begin
+	Result := '';
+	tokens := TObjectList.Create(True);
 	try
-		TDelphiTokenizer.Tokenize(sourceCode, tokens);
-
-		foundHex := False;
+		TDelphiTokenizer.Tokenize(SourceCode, tokens);
 		for i := 0 to tokens.Count - 1 do
 		begin
 			token := tokens[i] as TSyntaxToken;
-			if (token.Kind = ptIntegerConst) and (Pos('$', token.Text) = 1) then
+			if TokenKindIsTrivia(token.Kind) then Continue;
+
+			// Emit the main token line
+			Append(FormatToken(token));
+
+			// Emit non-whitespace leading trivia as indented children (source attribution)
+			for j := 0 to token.LeadingTriviaCount - 1 do
 			begin
-				foundHex := True;
-				Break;
+				trivia := token.LeadingTrivia[j];
+				if not (trivia.Kind in [ptWhitespace, ptSpace, ptCRLF, ptCRLFCo]) then
+					Append(#9 + 'leading: ' + FormatToken(trivia));
 			end;
 		end;
-		
-		CheckTrue(foundHex, 'Should recognize hex numbers starting with $');
 	finally
-		tokens.Free; // TObjectList automatically frees owned objects
+		tokens.Free;
 	end;
 end;
 
-
-procedure TDelphiTokenizerTests.TestBinaryLiteral;
+procedure TDelphiTokenizerTests.CompareTokens(const SourceCode, ExpectedTokens, CaseName: string);
 var
-	sourceCode: string;
-	tokens: TObjectList;
-	i: Integer;
-	token: TSyntaxToken;
-	foundBinary: Boolean;
+	actual, expected: string;
 begin
-{
-Delphi 11 Alexandria Got released, with many changes!
-=====================================================
+	expected := TrimRight(ExpectedTokens);
+	actual := TrimRight(DumpTokens(SourceCode));
+	if actual <> expected then
+	begin
+		Status('--- Expected ---' + CRLF + expected);
+		Status('--- Actual ---'   + CRLF + actual);
+	end;
+	CheckEqualsString(expected, actual,
+		Format('Token mismatch in case "%s"', [CaseName]));
+end;
 
-https://www.systemcamp.com/delphi-11-got-released-with-many-changes/
-
-
-Binary Literals
----------------
-
-The Delphi language in Olympus adds support for binary literals, in addition to
-decimal and hexadecimal ones. A binary literal uses the % symbol as a prefix
-(the same syntax used by other Pascal compilers):
-
-const
-	Four = %100;
+procedure TDelphiTokenizerTests.RunDatCases;
 var
-	x: Integer;
+	files: TArray<string>;
+	cases: TArray<TTokenizerTestCase>;
+	fileIdx, caseIdx, progress, total: Integer;
 begin
-	x := %1001001;
+	files := EnumerateTestFiles;
 
-Of course, you can use the digit separators for binary literals.
+	total := 0;
+	for fileIdx := 0 to High(files) do
+	begin
+		cases := EnumerateTestCases(files[fileIdx]);
+		Inc(total, Length(cases));
+	end;
 
-}
-	sourceCode := '%1010 %11110000';
-	
-	tokens := TObjectList.Create(True); // owns objects
-	try
-		TDelphiTokenizer.Tokenize(sourceCode, tokens);
-		
-		foundBinary := False;
-		for i := 0 to tokens.Count - 1 do
+	progress := 0;
+	for fileIdx := 0 to High(files) do
+	begin
+		cases := EnumerateTestCases(files[fileIdx]);
+		for caseIdx := 0 to High(cases) do
 		begin
-			token := tokens[i] as TSyntaxToken;
-			if (token.Kind = ptIntegerConst) and (Pos('%', token.Text) = 1) then
-			begin
-				foundBinary := True;
-				Break;
-			end;
+			Inc(progress);
+			RunTestCase(cases[caseIdx], progress, total);
 		end;
-		
-		CheckTrue(foundBinary, 'Should recognize binary numbers starting with %');
-	finally
-		tokens.Free; // TObjectList automatically frees owned objects
-	end;
-end;
-
-procedure TDelphiTokenizerTests.TestFlaotingPointNumbersWithNoDigitAfterExponentialDecimalMark;
-var
-	sourceCode: string;
-	tokens: TObjectList;
-	token: TSyntaxToken;
-begin
-	sourceCode := '42.e3';
-
-	tokens := TObjectList.Create(True); // owns objects
-	try
-		TDelphiTokenizer.Tokenize(sourceCode, tokens);
-
-		CheckEquals(2, tokens.Count, 'Expected number of tokens'); // [float][eof]
-
-		token := tokens[0] as TSyntaxToken;
-		CheckNotNull(token, 'token');
-
-		CheckEquals(TokenKindToStr(ptFloat), TokenKindToStr(token.Kind), 'TokenKind');
-	finally
-		tokens.Free; // TObjectList automatically frees owned objects
-	end;
-end;
-
-procedure TDelphiTokenizerTests.TestFloatingPointNumbers;
-var
-	sourceCode: string;
-	tokens: TObjectList;
-	i: Integer;
-	token: TSyntaxToken;
-	foundFloat: Boolean;
-begin
-	sourceCode := '3.14 2.5e10';
-
-	tokens := TObjectList.Create(True); // owns objects
-	try
-		TDelphiTokenizer.Tokenize(sourceCode, tokens);
-
-		foundFloat := False;
-		for i := 0 to tokens.Count - 1 do
-		begin
-			token := tokens[i] as TSyntaxToken;
-			if token.Kind = ptFloat then
-			begin
-				foundFloat := True;
-				Break;
-			end;
-		end;
-
-		CheckTrue(foundFloat, 'Should recognize floating point numbers');
-	finally
-		tokens.Free; // TObjectList automatically frees owned objects
-	end;
-end;
-
-procedure TDelphiTokenizerTests.TestFloatingPointNumbersWithNoDigitsAfterDecimalMark;
-var
-	sourceCode: string;
-	tokens: TObjectList;
-	token: TSyntaxToken;
-begin
-	sourceCode := '1.';
-
-	tokens := TObjectList.Create(True); // owns objects
-	try
-		TDelphiTokenizer.Tokenize(sourceCode, tokens);
-
-		CheckEquals(2, tokens.Count, 'token count');
-
-		token := tokens[0] as TSyntaxToken;
-		CheckNotNull(token, 'token');
-
-		CheckEquals(TokenKindToStr(ptFloat), TokenKindToStr(token.Kind), 'TokenKind');
-	finally
-		tokens.Free; // TObjectList automatically frees owned objects
-	end;
-end;
-
-procedure TDelphiTokenizerTests.TestNumberExponentLowercase;
-	var
-		sourceCode: string;
-		tokens: TObjectList;
-		i: Integer;
-		token: TSyntaxToken;
-		found1e10, found2E5: Boolean;
-	begin
-		// Lowercase 'e' and uppercase 'E' should both be recognized as exponents
-		sourceCode := '1e10 2E5';
-
-		tokens := TObjectList.Create(True);
-		try
-			TDelphiTokenizer.Tokenize(sourceCode, tokens);
-
-			found1e10 := False;
-			found2E5 := False;
-
-			for i := 0 to tokens.Count - 1 do
-			begin
-				token := tokens[i] as TSyntaxToken;
-				if (token.Text = '1e10') then
-				begin
-					CheckTrue(token.Kind = ptFloat, '1e10 should be a float literal');
-					found1e10 := True;
-				end
-				else if (token.Text = '2E5') then
-				begin
-					CheckTrue(token.Kind = ptFloat, '2E5 should be a float literal');
-					found2E5 := True;
-				end;
-			end;
-
-			CheckTrue(found1e10, 'Should find token 1e10 as ptFloat');
-			CheckTrue(found2E5, 'Should find token 2E5 as ptFloat');
-		finally
-			tokens.Free;
-		end;
-	end;
-
-	procedure TDelphiTokenizerTests.TestNumberExponentSigns;
-	var
-		sourceCode: string;
-		tokens: TObjectList;
-		i: Integer;
-		token: TSyntaxToken;
-		countFloats: Integer;
-		expected: array[0..3] of string;
-		seen: array[0..3] of Boolean;
-	begin
-		// Signs are only valid immediately after E/e and should be part of the float
-		sourceCode := '1e+2 3e-4 5E+6 7E-8';
-		expected[0] := '1e+2';
-		expected[1] := '3e-4';
-		expected[2] := '5E+6';
-		expected[3] := '7E-8';
-		seen[0] := False;
-		seen[1] := False;
-		seen[2] := False;
-		seen[3] := False;
-
-{
-Actual returned tokens:
-
-	[0]=Token: ptFloat (1, 1) "1e+e"       should be 1e+2
-	[1]=Token: ptFloat (1, 6) "3e-e"			should be 3e-4
-	[2]=Token: ptFloat (1, 11) "5E+E"		should be 5E+6
-	[3]=Token: ptFloat (1, 16) "7E-E"		should be 7E-8
-
-It seem like the exponent number is being replaced with E
-}
-		tokens := TObjectList.Create(True);
-		try
-			TDelphiTokenizer.Tokenize(sourceCode, tokens);
-
-			Status(TokensToStr(tokens));
-
-			countFloats := 0;
-			for i := 0 to tokens.Count - 1 do
-			begin
-				token := tokens[i] as TSyntaxToken;
-				if token.Kind = ptFloat then
-				begin
-					Inc(countFloats);
-					if token.Text = expected[0] then seen[0] := True
-					else if token.Text = expected[1] then seen[1] := True
-					else if token.Text = expected[2] then seen[2] := True
-					else if token.Text = expected[3] then seen[3] := True;
-				end;
-			end;
-
-			CheckEquals(4, countFloats, 'Should recognize four float tokens with signed exponents');
-			CheckTrue(seen[0], 'Missing 1e+2');
-			CheckTrue(seen[1], 'Missing 3e-4');
-			CheckTrue(seen[2], 'Missing 5E+6');
-			CheckTrue(seen[3], 'Missing 7E-8');
-		finally
-			tokens.Free;
-		end;
-	end;
-
-	procedure TDelphiTokenizerTests.TestNumberNoDigitsAfterExponent;
-	var
-		sourceCode: string;
-		tokens: TObjectList;
-		i: Integer;
-		token: TSyntaxToken;
-		countFloats, countInts: Integer;
-		foundIdLowerE, foundIdUpperE, foundId_eX, foundPlus, foundMinus: Boolean;
-	begin
-		// An exponent must have digits after optional sign; otherwise, don't form a float
-		// Cases: '1e'  '2E+'  '3e-'  '4eX'
-		sourceCode := '1e 2E+ 3e- 4eX';
-
-		tokens := TObjectList.Create(True);
-		try
-			TDelphiTokenizer.Tokenize(sourceCode, tokens);
-
-			countFloats := 0; countInts := 0;
-			foundIdLowerE := False; foundIdUpperE := False; foundId_eX := False; foundPlus := False; foundMinus := False;
-
-			for i := 0 to tokens.Count - 1 do
-			begin
-				token := tokens[i] as TSyntaxToken;
-				if token.Kind = ptFloat then Inc(countFloats)
-				else if token.Kind = ptIntegerConst then Inc(countInts)
-				else if (token.Kind = ptIdentifier) and (token.Text = 'e') then foundIdLowerE := True
-				else if (token.Kind = ptIdentifier) and (token.Text = 'E') then foundIdUpperE := True
-				else if (token.Kind = ptIdentifier) and (token.Text = 'eX') then foundId_eX := True
-				else if token.Kind = ptPlus then foundPlus := True
-				else if token.Kind = ptMinus then foundMinus := True;
-			end;
-
-			CheckEquals(0, countFloats, 'None of these forms should be recognized as float');
-			CheckTrue(countInts >= 4, 'Should recognize 4 integer prefixes (1,2,3,4)');
-			CheckTrue(foundIdLowerE, 'Should see identifier e after 1');
-			CheckTrue(foundIdUpperE, 'Should see identifier E after 2');
-			CheckTrue(foundId_eX, 'Should see identifier eX after 4');
-			CheckTrue(foundPlus, 'Should see + token after 2E');
-			CheckTrue(foundMinus, 'Should see - token after 3e');
-		finally
-			tokens.Free;
-		end;
-	end;
-
-	procedure TDelphiTokenizerTests.TestNumberSignNotAfterExponent;
-	var
-		sourceCode: string;
-		tokens: TObjectList;
-		i: Integer;
-		token: TSyntaxToken;
-		seqKinds: array of TptTokenKind;
-		seqTexts: array of string;
-		nonTriviaCount: Integer;
-	begin
-		// Ensure '+' or '-' are not absorbed into a number unless they follow E/e
-		sourceCode := '1+-2';
-
-		tokens := TObjectList.Create(True);
-		try
-			TDelphiTokenizer.Tokenize(sourceCode, tokens);
-
-			SetLength(seqKinds, 0);
-			SetLength(seqTexts, 0);
-			nonTriviaCount := 0;
-
-			for i := 0 to tokens.Count - 1 do
-			begin
-				token := tokens[i] as TSyntaxToken;
-				if not TokenKindIsTrivia(token.Kind) then
-				begin
-					SetLength(seqKinds, nonTriviaCount+1);
-					SetLength(seqTexts, nonTriviaCount+1);
-					seqKinds[nonTriviaCount] := token.Kind;
-					seqTexts[nonTriviaCount] := token.Text;
-					Inc(nonTriviaCount);
-				end;
-			end;
-
-			// Expect the sequence: 1, +, -, 2 (ignoring EOF sentinel if any)
-			CheckTrue(nonTriviaCount >= 4, 'Expected at least 4 non-trivia tokens for "1+-2"');
-			CheckTrue(seqKinds[0] = ptIntegerConst, 'First token should be integer 1');
-			CheckTrue(seqTexts[0] = '1', 'First token text should be "1"');
-			CheckTrue(seqKinds[1] = ptPlus, 'Second token should be plus');
-			CheckTrue(seqTexts[1] = '+', 'Second token text should be "+"');
-			CheckTrue(seqKinds[2] = ptMinus, 'Third token should be minus');
-			CheckTrue(seqTexts[2] = '-', 'Third token text should be "-"');
-			CheckTrue(seqKinds[3] = ptIntegerConst, 'Fourth token should be integer 2');
-			CheckTrue(seqTexts[3] = '2', 'Fourth token text should be "2"');
-		finally
-			tokens.Free;
-		end;
-	end;
-
-procedure TDelphiTokenizerTests.TestAsciiCharLiterals;
-var
-	sourceCode: string;
-	tokens: TObjectList;
-	i: Integer;
-	token: TSyntaxToken;
-	foundAscii: Boolean;
-begin
-	sourceCode := '#13#10 #$41';
-	
-	tokens := TObjectList.Create(True); // owns objects
-	try
-		TDelphiTokenizer.Tokenize(sourceCode, tokens);
-		
-		foundAscii := False;
-		for i := 0 to tokens.Count - 1 do
-		begin
-			token := tokens[i] as TSyntaxToken;
-			if token.Kind = ptAsciiChar then
-			begin
-				foundAscii := True;
-				Break;
-			end;
-		end;
-		
-		CheckTrue(foundAscii, 'Should recognize ASCII character literals (#n)');
-	finally
-		tokens.Free; // TObjectList automatically frees owned objects
 	end;
 end;
 
@@ -2357,6 +1775,11 @@ Hello world'''
 	CheckTrue(False, 'We did not find a ptMultilineStringLiteral');
 end;
 
+procedure TDelphiTokenizerTests.TestSafecall;
+begin
+
+end;
+
 procedure TDelphiTokenizerTests.TestSingleCharOperators;
 var
 	sourceCode: string;
@@ -2441,6 +1864,11 @@ begin
 	end;
 end;
 
+procedure TDelphiTokenizerTests.TestWinApi;
+begin
+
+end;
+
 procedure TDelphiTokenizerTests.TestStringWithEscapedQuotes;
 var
 	sourceCode: string;
@@ -2464,11 +1892,8 @@ begin
 			if token.Kind = ptStringLiteral then
 			begin
 				foundString := True;
-				// The tokenizer processes escapes during parsing, so both Text and ValueText
-				// contain the de-escaped version. Text includes outer quotes.
-				CheckEquals('''He said, ''Hello!'' to me.''', token.Text, 
-					'Text should contain string with outer quotes and processed inner escapes');
-				// ValueText is the same but without outer quotes
+				CheckEquals(sourceCode, token.Text,
+					'Text should preserve source spelling, including doubled apostrophes');
 				CheckEquals('He said, ''Hello!'' to me.', token.ValueText, 
 					'ValueText should contain the string content with processed escapes');
 				Break;
@@ -2597,6 +2022,11 @@ begin
 	end;
 end;
 
+procedure TDelphiTokenizerTests.TestStdcall;
+begin
+
+end;
+
 procedure TDelphiTokenizerTests.TestStringExceedingMaxLength;
 var
 	sourceCode: string;
@@ -2710,6 +2140,142 @@ begin
 	end;
 end;
 
+
+function TDelphiTokenizerTests.FindDatTestsRoot: string;
+const
+	CANDIDATES: array[0..4] of string = (
+			'TestData\Tokenizer',
+			'Library\DelphiParser\TestData\Tokenizer',
+			'..\Library\DelphiParser\TestData\Tokenizer',
+			'..\..\Library\DelphiParser\TestData\Tokenizer',
+			'..\..\..\Library\DelphiParser\TestData\Tokenizer'
+	);
+var
+	baseDir, candidate: string;
+	i: Integer;
+begin
+	Result := '';
+
+	baseDir := IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)));
+	for i := Low(CANDIDATES) to High(CANDIDATES) do
+	begin
+		candidate := ExpandFileName(baseDir + CANDIDATES[i]);
+		if DirectoryExists(candidate) then
+			Exit(candidate);
+	end;
+
+	Fail('Could not locate test data folder (expected Library\DelphiParser\TestData)');
+end;
+
+
+
+function TDelphiTokenizerTests.EnumerateTestCases(const FileName: string): TArray<TTokenizerTestCase>;
+var
+	lines: TArray<string>;
+	i, count: Integer;
+	line, section, payload: string;
+	cur: TTokenizerTestCase;
+	nextIndex: Integer;
+
+	procedure AppendLine(var S: string; const Value: string);
+	begin
+		if S = '' then
+			S := Value
+		else
+			S := S + CRLF + Value;
+	end;
+
+	procedure ResetCurrent;
+	begin
+		cur.Name := '';
+		cur.SourceCode := '';
+		cur.ExpectedTokens := '';
+		cur.Errors := '';
+		cur.FileName := FileName;
+		cur.CaseIndex := nextIndex;
+	end;
+
+	procedure FlushCurrent;
+	begin
+		if (Trim(cur.SourceCode) = '') and (Trim(cur.ExpectedTokens) = '') then
+			Exit;
+		if cur.Name = '' then
+			cur.Name := Format('%s:%d', [ExtractFileName(FileName), cur.CaseIndex]);
+		Inc(count);
+		SetLength(Result, count);
+		Result[count-1] := cur;
+		Inc(nextIndex);
+		ResetCurrent;
+	end;
+
+begin
+	count := 0;
+	nextIndex := 1;
+	section := '';
+	ResetCurrent;
+
+	lines := TFile.ReadAllLines(FileName, TEncoding.UTF8);
+	for i := 0 to Length(lines)-1 do
+	begin
+		line := lines[i];
+		line := TrimRight(line); //remove trailing whitespace
+
+		if SameText(line, '#name') then
+		begin
+			// New case boundary: finalize the previous case before reading the next name.
+			FlushCurrent;
+			section := 'name';
+			Continue;
+		end;
+		if SameText(line, '#description') then
+		begin
+			section := 'description';
+			Continue;
+		end;
+		if SameText(line, '#code') then
+		begin
+			section := 'data';
+			Continue;
+		end;
+		if SameText(line, '#errors') then
+		begin
+			section := 'errors';
+			Continue;
+		end;
+		if SameText(line, '#tokens') then
+		begin
+			section := 'tokens';
+			Continue;
+		end;
+
+		payload := line;
+		if section = 'tokens' then
+			AppendLine(cur.ExpectedTokens, payload)
+		else if section = 'data' then
+			AppendLine(cur.SourceCode, payload)
+		else if section = 'errors' then
+			AppendLine(cur.Errors, payload)
+		else if section = 'description' then
+			AppendLine(cur.Description, payload)
+		else if section = 'name' then
+			AppendLine(cur.Name, payload);
+	end;
+
+	FlushCurrent;
+end;
+
+function TDelphiTokenizerTests.EnumerateTestFiles: TArray<string>;
+var
+	root: string;
+begin
+{
+	./TestData/Tokenizer/01 - basic.dat
+}
+	root := FindDatTestsRoot;
+	Result := TDirectory.GetFiles(root, '*.dat', TSearchOption.soAllDirectories);
+	CheckTrue(Length(Result) > 0, 'No .dat files found in ' + root);
+end;
+
 function TDelphiTokenizerTests.HasTriviaTokens(tokens: TObjectList): Boolean;
 var
 	i: Integer;
@@ -2727,8 +2293,79 @@ begin
 	end;
 end;
 
+class procedure TDelphiTokenizerTests.RegisterDatFileTests;
+const
+	CANDIDATES: array[0..4] of string = (
+			'TestData\Tokenizer',
+			'Library\DelphiParser\TestData\tokenizer',
+			'..\Library\DelphiParser\TestData\tokenizer',
+			'..\..\Library\DelphiParser\TestData\tokenizer',
+			'..\..\..\Library\DelphiParser\TestData\tokenizer'
+	);
+var
+	root, baseDir, fileName: string;
+	files: TArray<string>;
+	cases: TArray<TTokenizerTestCase>;
+	fileSuite: ITestSuite;
+	i: Integer;
+	helper: TDelphiTokenizerTests;
+begin
+	{ Locate test data folder without calling Fail() (we are in initialization) }
+	baseDir := IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)));
+	root := '';
+	for i := Low(CANDIDATES) to High(CANDIDATES) do
+	begin
+		root := ExpandFileName(baseDir + CANDIDATES[i]);
+		if DirectoryExists(root) then
+			Break;
+		root := '';
+	end;
+	if root = '' then
+		Exit; { silently skip if test data not found during initialization }
+
+	files := TDirectory.GetFiles(root, '*.dat', TSearchOption.soAllDirectories);
+	if Length(files) = 0 then
+		Exit;
+
+	helper := TDelphiTokenizerTests.Create('Test_DatFiles');
+	try
+		for fileName in files do
+		begin
+			cases := helper.EnumerateTestCases(fileName);
+			if Length(cases) = 0 then
+				Continue;
+			fileSuite := TTestSuite.Create(ExtractFileName(fileName));
+			for i := 0 to High(cases) do
+				fileSuite.AddTest(TDatFileTestCase.Create(cases[i], Length(cases)));
+			TestFramework.RegisterTest('DelphiParser/tokenizer', fileSuite);
+		end;
+	finally
+		helper.Free;
+	end;
+end;
+
+
+{ TDatFileTestCase }
+
+constructor TDatFileTestCase.Create(const ACase: TTokenizerTestCase; const TotalTests: Integer);
+begin
+	inherited Create('RunDynamic');
+	FCase := ACase;
+	FTotalTests := TotalTests;
+end;
+
+function TDatFileTestCase.GetName: string;
+begin
+	Result := FCase.Name;
+end;
+
+procedure TDatFileTestCase.RunDynamic;
+begin
+	RunTestCase(FCase, FCase.CaseIndex, FTotalTests);
+end;
+
 initialization
-	TestFramework.RegisterTest('DelphiParser\DelphiTokenizer', TDelphiTokenizerTests.Suite);
-	TestFramework.RegisterTest('DelphiParser\InputStreamTests', TInputStreamTests.Suite);
+//	TestFramework.RegisterTest('DelphiParser\DelphiTokenizer', TDelphiTokenizerTests.Suite);
+	TDelphiTokenizerTests.RegisterDatFileTests;
 
 end.

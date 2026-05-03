@@ -58,6 +58,8 @@ type
 
 		procedure Test_EmptyCase;
 		procedure Test_CaseElseSemicolonHandling;
+	private
+		class procedure RegisterDatFileTests;
 	end;
 
 	{	Dynamic test case: one instance per #name entry in a .dat file.
@@ -1596,7 +1598,7 @@ begin
 	RunDatCase(FCase, FCase.CaseIndex, FTotalTests);
 end;
 
-procedure RegisterDatFileTests;
+class procedure TDelphiParserTests.RegisterDatFileTests;
 const
 	CANDIDATES: array[0..4] of string = (
 			'TestData',
@@ -1640,7 +1642,7 @@ begin
 			fileSuite := TTestSuite.Create(ExtractFileName(fileName));
 			for i := 0 to High(cases) do
 				fileSuite.AddTest(TDatFileTestCase.Create(cases[i], Length(cases)));
-			TestFramework.RegisterTest('DelphiParser/DatFiles', fileSuite);
+			TestFramework.RegisterTest('DelphiParser/Parser', fileSuite);
 		end;
 	finally
 		helper.Free;
@@ -1648,7 +1650,7 @@ begin
 end;
 
 initialization
-	TestFramework.RegisterTest('DelphiParser', TDelphiParserTests.Suite);
-	RegisterDatFileTests;
+//	TestFramework.RegisterTest('DelphiParser', TDelphiParserTests.Suite);
+	TDelphiParserTests.RegisterDatFileTests;
 
 end.

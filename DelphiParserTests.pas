@@ -8,13 +8,13 @@ uses
 
 type
 	TDatParserCase = record
+		FileName: string;
+		CaseIndex: Integer;
 		Name: string;
 		Description: string;
 		SourceCode: string;
 		ExpectedTree: string;
 		Errors: string;
-		FileName: string;
-		CaseIndex: Integer;
 	end;
 
 	TDelphiParserTests = class(TTestCase)
@@ -26,6 +26,7 @@ type
 		function CompareTrees(expected, actual: TSyntaxNode2): Boolean;
 		function CompareNodes(expected, actual: TSyntaxNode2): Boolean;
 
+		class procedure RegisterDatFileTests;
 		function FindDatTestsRoot: string;
 
 		function EnumerateDatFiles: TArray<string>;
@@ -58,8 +59,6 @@ type
 
 		procedure Test_EmptyCase;
 		procedure Test_CaseElseSemicolonHandling;
-	private
-		class procedure RegisterDatFileTests;
 	end;
 
 	{	Dynamic test case: one instance per #name entry in a .dat file.
@@ -76,7 +75,6 @@ type
 	published
 		procedure RunDynamic;
 	end;
-
 
 
 implementation
@@ -1239,7 +1237,7 @@ begin
 	CheckFalse(ok, 'Expected TryExpectedToTree to fail for unterminated quote');
 	CheckEquals(E_INVALIDARG, hr);
 	CheckTrue(Pos('Unterminated', msg) > 0, 'Message should indicate unterminated quote');
-end; 
+end;
 
 procedure TDelphiParserTests.Test_ExpectedToTree_LineWithoutNt_Raises;
 var
@@ -1654,3 +1652,4 @@ initialization
 	TDelphiParserTests.RegisterDatFileTests;
 
 end.
+

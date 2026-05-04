@@ -520,3 +520,276 @@ ptBegin "begin"
 ptEnd "end"
 ptDot "."
 ptEof ""
+
+
+#name
+CallingConventions.Register
+#code
+procedure Foo; register;
+#tokens
+ptProcedure "procedure"
+ptIdentifier "Foo"
+ptSemicolon ";"
+ptRegister "register"
+ptSemicolon ";"
+ptEof ""
+
+#name
+CallingConventions.Pascal
+#code
+procedure Foo; pascal;
+#tokens
+ptProcedure "procedure"
+ptIdentifier "Foo"
+ptSemicolon ";"
+ptPascal "pascal"
+ptSemicolon ";"
+ptEof ""
+
+#name
+CallingConventions.CDecl
+#code
+procedure Foo; cdecl;
+#tokens
+ptProcedure "procedure"
+ptIdentifier "Foo"
+ptSemicolon ";"
+ptCDecl "cdecl"
+ptSemicolon ";"
+ptEof ""
+
+
+#name
+CallingConventions.StdCall
+#code
+procedure Foo; stdcall;
+#tokens
+ptProcedure "procedure"
+ptIdentifier "Foo"
+ptSemicolon ";"
+ptStdcall "stdcall"
+ptSemicolon ";"
+ptEof ""
+
+
+#name
+CallingConventions.Safecall
+#code
+procedure Foo; safecall;
+#tokens
+ptProcedure "procedure"
+ptIdentifier "Foo"
+ptSemicolon ";"
+ptSafecall "safecall"
+ptSemicolon ";"
+ptEof ""
+
+
+#name
+CallingConventions.WinApi
+#description
+winapi is an alias of stdcall
+#code
+procedure Foo; winapi;
+#tokens
+ptProcedure "procedure"
+ptIdentifier "Foo"
+ptSemicolon ";"
+ptWinApi "winapi"
+ptSemicolon ";"
+ptEof ""
+
+
+#name
+MultilineString.Basic
+#description
+Triple-quoted multiline strings strip the closing delimiter indentation from ValueText.
+Multiline string indentation and formatting logic are used very specifically.
+A multiline string treats a leading white space this way:
+
+- The closing ''' needs to be in a line of its own, not at the end of the last line of the string itself.
+- The indentation of the closing ''' determines the base indentation of the entire string.
+- Each blank space before that indentation level is removed in the final string for each of the lines.
+- None of the lines can be less indented than the base indentation (the closing '''). This is a compiler error, showing also as Error Insight.
+- The last newline before the closing ''' is omitted. If you want to have a final new line, you should add an empty line at the end.
+#code
+'''
+			The quick brown fox jumps
+			over the lazy dog.
+			'''
+#tokens
+ptMultilineStringLiteral "'''\r\n\t\t\tThe quick brown fox jumps\r\n\t\t\tover the lazy dog.\r\n\t\t\t'''"
+ptEof ""
+#values
+ptMultilineStringLiteral "The quick brown fox jumps\r\nover the lazy dog."
+
+#name
+MultilineString.HtmlIndentation
+#description
+Nested indentation beyond the closing delimiter indentation is preserved in ValueText.
+#code
+'''
+			<UL>
+				<LI>Item 1</LI>
+				<LI>Item 2</LI>
+				<LI>Item 3</LI>
+				<LI>Item 4</LI>
+			</UL>
+			'''
+#tokens
+ptMultilineStringLiteral "'''\r\n\t\t\t<UL>\r\n\t\t\t\t<LI>Item 1</LI>\r\n\t\t\t\t<LI>Item 2</LI>\r\n\t\t\t\t<LI>Item 3</LI>\r\n\t\t\t\t<LI>Item 4</LI>\r\n\t\t\t</UL>\r\n\t\t\t'''"
+ptEof ""
+#values
+ptMultilineStringLiteral "<UL>\r\n\t<LI>Item 1</LI>\r\n\t<LI>Item 2</LI>\r\n\t<LI>Item 3</LI>\r\n\t<LI>Item 4</LI>\r\n</UL>"
+
+
+#name
+MultilineString.JsonIndentation
+#description
+JSON content
+#code
+'''
+			[
+				{"id" : "1", "name" : "Large"},
+				{"id" : "2", "name" : "Medium"},
+				{"id" : "2", "name" : "Small"}
+			]
+			'''
+#tokens
+ptMultilineStringLiteral "'''\r\n\t\t\t[\r\n\t\t\t\t{\"id\" : \"1\", \"name\" : \"Large\"},\r\n\t\t\t\t{\"id\" : \"2\", \"name\" : \"Medium\"},\r\n\t\t\t\t{\"id\" : \"2\", \"name\" : \"Small\"}\r\n\t\t\t]\r\n\t\t\t'''"
+ptEof ""
+
+#name
+MultilineString.SqlContent
+#description
+SQL content with embedded single quotes
+#code
+'''
+			SELECT *
+			FROM Customers
+			WHERE Department = 'R&D'
+			ORDER BY Name;
+			'''
+#tokens
+ptMultilineStringLiteral "'''\r\n\t\t\tSELECT *\r\n\t\t\tFROM Customers\r\n\t\t\tWHERE Department = 'R&D'\r\n\t\t\tORDER BY Name;\r\n\t\t\t'''"
+ptEof ""
+
+
+
+#name
+MultilineString.FiveQuoteDelimiter
+#description
+Five-quote delimiters allow triple apostrophes to appear inside the multiline string content.
+#code
+'''''
+		some text
+		and now '''
+		some more text
+		'''''
+#tokens
+ptMultilineStringLiteral "'''''\r\n\t\tsome text\r\n\t\tand now '''\r\n\t\tsome more text\r\n\t\t'''''"
+ptEof ""
+#values
+ptMultilineStringLiteral "some text\r\nand now '''\r\nsome more text"
+
+#name
+MultilineString.SpacesAndTabs
+#description
+A consistent mixed tab/space indentation prefix is accepted and stripped from ValueText.
+#code
+'''
+	      The quick brown fox jumps
+	      over the lazy dog.
+	      '''
+#tokens
+ptMultilineStringLiteral "'''\r\n\t      The quick brown fox jumps\r\n\t      over the lazy dog.\r\n\t      '''"
+ptEof ""
+#values
+ptMultilineStringLiteral "The quick brown fox jumps\r\nover the lazy dog."
+
+#name
+MultilineString.MixingSpacesAndTabsIncorrectly
+#description
+Changing the indentation character sequence reports E2657 but still recovers ValueText.
+#code
+'''
+			The quick brown fox jumps
+		   over the lazy dog.
+			'''
+#tokens
+ptMultilineStringLiteral "'''\r\n\t\t\tThe quick brown fox jumps\r\n\t\t   over the lazy dog.\r\n\t\t\t'''" [ERROR: E2657 Inconsistent indent characters] [MISSING]
+ptEof ""
+#values
+ptMultilineStringLiteral "The quick brown fox jumps\r\n  over the lazy dog."
+
+
+#name
+MultilineString.Spaces
+#description
+A consistent mixed tab/space indentation prefix is accepted and stripped from ValueText.
+#code
+'''
+         The quick brown fox jumps
+         over the lazy dog.
+         '''
+#tokens
+ptMultilineStringLiteral "'''\r\n         The quick brown fox jumps\r\n         over the lazy dog.\r\n         '''"
+ptEof ""
+
+
+
+#name
+MultilineString.MixingRecoverLessIndentedLines
+#description
+A line indented less than the closing delimiter reports E2657 and strips what indentation it has.
+#code
+'''
+			The quick brown fox jumps
+		over the lazy dog.
+			'''
+#tokens
+ptMultilineStringLiteral "'''\r\n\t\t\tThe quick brown fox jumps\r\n\t\tover the lazy dog.\r\n\t\t\t'''" [ERROR: E2657 Inconsistent indent characters] [MISSING]
+ptEof ""
+#values
+ptMultilineStringLiteral "The quick brown fox jumps\r\nover the lazy dog."
+#errors
+E2657 Inconsistent indent characters
+
+
+
+#name
+MultilineString.WithoutWhitespaceBeforeIt
+#description
+Closing quotes must appear on their own line; trailing content before them reports E2658.
+#code
+'''
+Hello world'''
+#tokens
+ptMultilineStringLiteral "'''\r\nHello world'''" [ERROR: E2658 There should be no non-whitespace characters before the closing quotes of the text block] [MISSING]
+ptEof ""
+#values
+ptMultilineStringLiteral "\r\nHello world"
+
+
+#name
+MultilineString.WithoutWhitespaceBeforeIt
+#description
+If you have code like:
+
+var s: string = '''
+Hello world'''
+
+that is not valid, as the closing ''' must be on its own line:
+
+> E2658 There should be no non-whitespace characters before the closing quotes of the text block
+#code
+var s: string := '''
+Hello world'''
+#tokens
+ptVar "var"
+ptIdentifier "s"
+ptColon ":"
+ptString "string"
+ptAssign ":="
+ptMultilineStringLiteral "'''\r\nHello world'''" [ERROR: E2658 There should be no non-whitespace characters before the closing quotes of the text block] [MISSING]
+ptEof ""

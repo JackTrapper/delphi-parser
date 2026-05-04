@@ -175,8 +175,7 @@ Roadmap
 =======
 
 - Populate TokenLength as part of the immutable reusable token.
-- Perform compiler directive data parsing here in the tokenizer
-- conditional compilation is left to the preprocessor
+- conditional compilation is left to the parser
 - change O(n) keyword lookup linear search to dictionary.
 - **Maximum Line Length** A line cannot be longer than 2260 characters.
       Error: F2069 Line too long (more than 1023 characters)
@@ -397,7 +396,7 @@ type
 
 
 		ptCompilerDirective,			// Compiler directive
-		ptDisabledText,				// Disabled code region (inside false {$IFDEF} branch); treated as trivia
+//		ptDisabledText,				// Disabled code region (inside false {$IFDEF} branch); treated as trivia
 //		ptDefineDirect,				// '{$DEFINE xxx}'	compiler directive
 //		ptUndefDirect,					// '{$UNDEF}'			compiler directive
 //		ptIfDefDirect,					// '{$IFDEF xxx}'		compiler directive
@@ -747,7 +746,6 @@ The following reserved words cannot be redefined or used as identifiers.
 		function GetDirectiveTokenKind(const Keyword: string): TptTokenKind; // get the tokenKind for the directive.      Returns ptUnknown if the Keyword is not a directive.
 
 		// String processing utilities
-		function ProcessStringEscapes(const rawString: string): string;
 		function IsValidSurrogatePair(highSurrogate, lowSurrogate: WideChar): Boolean;
 	private
 		function DoDoubleAddressOp(			const ch: WideChar): TSyntaxToken;	// ptDoubleAddressOp			@@
@@ -1352,18 +1350,6 @@ begin
 			Exit;
 		end;
 	end;
-end;
-
-function TDelphiTokenizer.ProcessStringEscapes(const rawString: string): string;
-begin
-{
-	Process escape sequences in a Delphi string literal.
-	Currently handles: '' -> ' (double apostrophe becomes single)
-	Future: Could handle other escape sequences if needed
-}
-	Result := rawString;
-	// Handle double apostrophe escape sequence
-	Result := StringReplace(Result, '''''', '''', [rfReplaceAll]);
 end;
 
 function TDelphiTokenizer.IsValidSurrogatePair(highSurrogate, lowSurrogate: WideChar): Boolean;

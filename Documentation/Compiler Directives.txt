@@ -1,6 +1,6 @@
 DelphiAST SimpleParser.Lexer.Types
     ptCompDirect,
-	    ptDefineDirect,
+    ptDefineDirect,
     ptElseDirect,
     ptEndIfDirect,
     ptIfDirect,
@@ -17,8 +17,31 @@ DelphiAST SimpleParser.Lexer.Types
 
 // https://docwiki.embarcadero.com/RADStudio/Sydney/en/Delphi_Compiler_Directives_(List)_Index
 
-//Switch
-//========
+
+// Conditional compilation
+//========================
+
+$IFDEF																		// IFDEF directive (Delphi)
+$IFNDEF																		// IFNDEF directive (Delphi)
+$IF																			// IF directive (Delphi)
+$ELSEIF																		// ELSEIF (Delphi)
+$ELSE																			// ELSE (Delphi)
+$ENDIF																		// ENDIF directive (Delphi)
+$IFEND																		// IFEND directive (Delphi)
+$IFOPT																		// IFOPT directive (Delphi)
+$LEGACYIFEND																// Legacy IFEND (Delphi)
+
+dkDefine: // DEFINE directive - https://docwiki.embarcadero.com/RADStudio/Sydney/en/DEFINE_directive_(Delphi)
+	$DEFINE name
+	
+dkUndefine: // UNDEF directive - https://docwiki.embarcadero.com/RADStudio/Sydney/en/UNDEF_directive_(Delphi)
+	$UNDEF name
+
+
+
+Switchs
+========
+
 dkAlign: // Align fields - https://docwiki.embarcadero.com/RADStudio/Sydney/en/Align_fields_(Delphi)
 	$A+,		$ALIGN ON
 	$A-,		$ALIGN OFF
@@ -27,14 +50,36 @@ dkAlign: // Align fields - https://docwiki.embarcadero.com/RADStudio/Sydney/en/A
 	$A4,		$ALIGN 4
 	$A8,		$ALIGN 8
 	$A16		$ALIGN 16
+	// Default:	$ALIGN 8
+	// Scope:	Local
+
+dkAllowBind: // ALLOWBIND - https://docwiki.embarcadero.com/RADStudio/Athens/en/ALLOWBIND
+	$ALLOWBIND ON
+	$ALLOWBIND OFF
+	Type:		Switch
+	Default:	OFF
+	Scope:	Global
+
+dkAllowIsolation: // ALLOWISOLATION - https://docwiki.embarcadero.com/RADStudio/Athens/en/ALLOWISOLATION
+	$ALLOWISOLATION ON
+	$ALLOWISOLATION OFF
+	Type:		Switch
+	Default:	ON
+	Scope:	Global
 
 dkAssertions: // Assert directives - https://docwiki.embarcadero.com/RADStudio/Sydney/en/Assert_directives_(Delphi)
 	$C+,		$ASSERTIONS ON
 	$C-,		$ASSERTIONS OFF
+	Type:		Switch
+	Default:	ON
+	Scope:	Local
 
 dkBooleanVal: // Boolean short-circuit evaluation - https://docwiki.embarcadero.com/RADStudio/Sydney/en/Boolean_short-circuit_evaluation_(Delphi_compiler_directive)
 	$B+,		$BOOLEVAL ON
 	$B-		$BOOLEVAL OFF
+	Type:		Switch
+	Default:	OFF
+	Scope:	Local
 
 dkCodeAlign:	// Code align - https://docwiki.embarcadero.com/RADStudio/Sydney/en/Code_align_(Delphi)
 	$CODEALIGN n
@@ -44,6 +89,9 @@ dkCodeAlign:	// Code align - https://docwiki.embarcadero.com/RADStudio/Sydney/en
 	$CODEALIGN 4
 	$CODEALIGN 8
 	$CODEALIGN 16
+	Type:			Switch
+	Default:		0
+	Scope:		Local
 
 dkObjExportAll: // Export symbols - https://docwiki.embarcadero.com/RADStudio/Sydney/en/Export_symbols_(Delphi)
 	$ObjExportAll On
@@ -80,17 +128,6 @@ dkHints: // Hints - https://docwiki.embarcadero.com/RADStudio/Sydney/en/Hints_(D
 	// Default: ON
 	// Scope:   Local
 
-akImplicitBuild: // Implicit Build - https://docwiki.embarcadero.com/RADStudio/Sydney/en/Implicit_Build_(Delphi)
-	$IMPLICITBUILD ON
-	$IMPLICITBUILD OFF
-	Default: ON
-	Scope:   Global
-
-dkImportedData: // Imported data - https://docwiki.embarcadero.com/RADStudio/Sydney/en/Imported_data
-	$G+	$IMPORTEDDATA ON
-	$G-	$IMPORTEDDATA OFF
-	Default: ON
-	Scope:   Local
 
 
 dkIOChecks: // Input output checking - https://docwiki.embarcadero.com/RADStudio/Sydney/en/Input_output_checking_(Delphi)
@@ -106,6 +143,74 @@ dkLibPrefix: // Compiler directives for libraries or shared objects - https://do
 	$LIBVERSION 'string'
 	Default: 
 
+dkDebugInfo: // Debug information - https://docwiki.embarcadero.com/RADStudio/Sydney/en/Debug_information_(Delphi)
+	$D+		$DEBUGINFO ON
+	$D-		$DEBUGINFO OFF
+	Default:	ON
+	Scope:	Global
+
+dkLocalSymbols: // Local symbol information - https://docwiki.embarcadero.com/RADStudio/Sydney/en/Local_symbol_information_(Delphi)
+	$L+		$LOCALSYMBOLS ON
+	$L-		$LOCALSYMBOLS OFF
+	Type:		Switch
+	Default:	ON
+	Scope:	Global
+
+
+
+
+
+Package-specific Compiler Directives (Switches)
+====================================
+
+akImplicitBuild: // Implicit Build - https://docwiki.embarcadero.com/RADStudio/Sydney/en/Implicit_Build_(Delphi)
+	$IMPLICITBUILD ON
+	$IMPLICITBUILD OFF
+	Type:		Switch
+	Default: ON
+	Scope:   Global
+
+dkImportedData: // Imported data - https://docwiki.embarcadero.com/RADStudio/Sydney/en/Imported_data
+	$G+	$IMPORTEDDATA ON
+	$G-	$IMPORTEDDATA OFF
+	Type:		Switch
+	Default: ON
+	Scope:   Local
+
+
+dkWeakPackageUnit: // Weak packaging - https://docwiki.embarcadero.com/RADStudio/Sydney/en/Weak_packaging
+	$WEAKPACKAGEUNIT ON
+	$WEAKPACKAGEUNIT OFF
+	Type:		Switch
+	Scope:	Local
+	Default:	OFF
+
+
+dkDenyPackageUnit: // DENYPACKAGEUNIT directive - https://docwiki.embarcadero.com/RADStudio/Sydney/en/DENYPACKAGEUNIT_directive_(Delphi)
+	$DENYPACKAGEUNIT ON
+	$DENYPACKAGEUNIT OFF
+	Type:		Switch
+	Default:	OFF
+	Scope:	Local
+
+
+dkDesignOnly: // DESIGNONLY directive - https://docwiki.embarcadero.com/RADStudio/Sydney/en/DESIGNONLY_directive_(Delphi)
+	$DESIGNONLY ON	
+	$DESIGNONLY OFF
+	Type:		Switch
+	Default:	OFF
+	Scope:	Local
+
+
+dkRunOnly: // RUNONLY directive - https://docwiki.embarcadero.com/RADStudio/Sydney/en/RUNONLY_directive_(Delphi)
+	$RUNONLY ON
+	$RUNONLY OFF
+	Type:		Switch
+	Default:	OFF	
+	Scope:	Local
+
+
+
 
 //Parameter
 //=========
@@ -113,11 +218,14 @@ dkLibPrefix: // Compiler directives for libraries or shared objects - https://do
 dpAppType:	// Application type - https://docwiki.embarcadero.com/RADStudio/Sydney/en/Application_type_(Delphi)
 	$APPTYPE GUI
 	$APPTYPE CONSOLE
+	Type:		Parameter
 	Default: GUI
 	Scope:   Global
 
 dkExtension: // Executable extension - https://docwiki.embarcadero.com/RADStudio/Sydney/en/Executable_extension_(Delphi)
 	$E,$EXTENSION
+	Type:		Parameter
+	Scope:	n/a
 
 dkExternalSym: // External Symbols - https://docwiki.embarcadero.com/RADStudio/Sydney/en/External_Symbols_(Delphi)
 	$EXTERNALSYM [ 'typeNameInHpp' [ 'typeNameInHppUnion' ]]
@@ -136,56 +244,62 @@ dkInclude: // Include file - https://docwiki.embarcadero.com/RADStudio/Sydney/en
 	Default: n/a
 	Scope:   Local
 
-
-
-
-// Conditional compilation
-//========================
-$IFDEF																		// IFDEF directive (Delphi)
-$IFNDEF																		// IFNDEF directive (Delphi)
-$IF																			// IF directive (Delphi)
-$ELSEIF																		// ELSEIF (Delphi)
-$ELSE																			// ELSE (Delphi)
-$ENDIF																		// ENDIF directive (Delphi)
-$IFEND																		// IFEND directive (Delphi)
-
-$IFOPT																		// IFOPT directive (Delphi)
-
-dkDefine: // DEFINE directive - https://docwiki.embarcadero.com/RADStudio/Sydney/en/DEFINE_directive_(Delphi)
-	$DEFINE name						
-dkUndefine: // UNDEF directive - https://docwiki.embarcadero.com/RADStudio/Sydney/en/UNDEF_directive_(Delphi)
-	$UNDEF name
-
-dkDebugInfo: // Debug information - https://docwiki.embarcadero.com/RADStudio/Sydney/en/Debug_information_(Delphi)
-	$D+		$DEBUGINFO ON
-	$D-		$DEBUGINFO OFF
-
-dkDenyPackageUnit: // DENYPACKAGEUNIT directive - https://docwiki.embarcadero.com/RADStudio/Sydney/en/DENYPACKAGEUNIT_directive_(Delphi)
-	$DENYPACKAGEUNIT OFF|ON
-
 dkDescription: // Description  - https://docwiki.embarcadero.com/RADStudio/Sydney/en/Description_(Delphi)
 	$D 'text',	$DESCRIPTION 'text'
+	Scope:	Global
 
-dkDesignOnly: // DESIGNONLY directive - https://docwiki.embarcadero.com/RADStudio/Sydney/en/DESIGNONLY_directive_(Delphi)
-	$DESIGNONLY OFF|ON
+dkMinEnumSize: // Minimum enumeration size - https://docwiki.embarcadero.com/RADStudio/Sydney/en/Minimum_enumeration_size_(Delphi)
+	$Z1, $MINENUMSIZE 1
+	$Z2, $MINENUMSIZE 2
+	$Z4, $MINENUMSIZE 4
+	Type:			Parameter
+	Default:		1
+	Scope:		Local
 
 
+dkLink: // Link object file - https://docwiki.embarcadero.com/RADStudio/Athens/en/Link_object_file_(Delphi)
+	$L file	$LINK file
+	Type:			Parameter
+	Scope:		Local
 
-$LEGACYIFEND															// Legacy IFEND (Delphi)
-$L file,$LINK file													// Link object file (Delphi)
-$L+,$LOCALSYMBOLS														// Local symbol information (Delphi)
-$H,$LONGSTRINGS														// Long strings (Delphi)
-$M,$MINSTACKSIZE,$MAXSTACKSIZE									// Memory allocation sizes (Delphi)
-$MESSAGE																	// MESSAGE directive (Delphi)
-$METHODINFO																// METHODINFO directive (Delphi)
-$Z1, $MINENUMSIZE 1,													// Minimum enumeration size (Delphi)
-$Z2, $MINENUMSIZE 2,
-$Z4, $MINENUMSIZE 4									
+
+dkLongStrings: // Long strings - https://docwiki.embarcadero.com/RADStudio/Athens/en/Long_strings_(Delphi)
+	$H+	$LONGSTRINGS ON
+	$H-	$LONGSTRINGS OFF
+	Type:			Switch
+	Default:		ON
+	Scope:		Local
+
+dkMemoryAllocationSize: // Memory allocation sizes - https://docwiki.embarcadero.com/RADStudio/Athens/en/Memory_allocation_sizes_(Delphi)
+	$M minstacksize,maxstacksize
+	$MINSTACKSIZE number
+	$MAXSTACKSIZE number
+	Type:			Parameter
+	Default:		$M 16384,1048576
+	Scope:		Global
+
+dkMessage: // MESSAGE directive - https://docwiki.embarcadero.com/RADStudio/Athens/en/MESSAGE_directive_(Delphi)
+	$MESSAGE 'Boo!'							emits a hint
+	$Message Hint 'Feed the cats'			emits a hint
+	$messaGe Warn 'Looks like rain.'		emits a warning
+	$Message Error 'Not implemented'		emits an error, continues compiling
+	$Message Fatal 'Bang.  Yer dead.'	emits an error, terminates compiler
+
+dkMethodInfo: //METHODINFO directive -  https://docwiki.embarcadero.com/RADStudio/Athens/en/METHODINFO_directive_(Delphi)
+	$METHODINFO ON
+	$METHODINFO OFF
+	Type:			Switch
+	Default:		OFF
+	Scope:		Local
+
+
 $NODEFINE [ 'typeNameInHpp' [ 'typeNameInHppUnion' ]]		// NODEFINE directive (Delphi)
 $NOINCLUDE																// NOINCLUDE (Delphi)
 $OBJTYPENAME typeIdent ['B|NtypeNameInObj']					// OBJTYPENAME directive (Delphi)
 $OLDTYPELAYOUT ON														// Old type layout (Delphi)
 $P,$OPENSTRINGS														// Open String Parameters (Delphi)
+
+
 $O,$OPTIMIZATION														// Optimization (Delphi)
 $Q,$OVERFLOWCHECKS													// Overflow checking (Delphi)
 $SetPEFlags,$SetPEOptFlags											// PE (portable executable) header flags (Delphi)
@@ -200,7 +314,6 @@ $REGION,$ENDREGION													// Regions
 $M,$RESOURCERESERVE													// Reserved address space for resources (Delphi, Linux)
 $R,$RESOURCE															// Resource file (Delphi)
 $RTTI INHERIT|EXPLICIT												// RTTI directive (Delphi)
-$RUNONLY																	// RUNONLY directive (Delphi)
 $M,$TYPEINFO															// Run-Time Type Information (Delphi)
 $SCOPEDENUMS															// Scoped Enums (Delphi)
 $W,$STACKFRAMES														// Stack frames (Delphi)
@@ -210,7 +323,6 @@ $T,$TYPEDADDRESS														// Type-checked pointers (Delphi)
 $V,$VARSTRINGCHECKS													// Var-string checking (Delphi)
 $WARN																		// Warning messages (Delphi)
 $WARNINGS																// Warnings (Delphi)
-$WEAKPACKAGEUNIT														// Weak packaging
 $WEAKLINKRTTI															// WEAKLINKRTTI directive (Delphi)
 $J,$WRITEABLECONST													// Writeable typed constants (Delphi)
 $ZEROBASEDSTRINGS														// Zero-based strings (Delphi)

@@ -585,54 +585,6 @@ type
 type
 	TInputStream = class;	// forward. Supplies a series of UtF-16 from an input ISequentialStream
 
-(*
-Population rules in the lexer:
-
-- classify { $ ...} and ( *$ ...* ) as ptCompilerDirective.
-- extract Name (letters/underscores) case-insensitive; set Args := rest.trim.
-- resolve short forms (A→ALIGN, I→INCLUDE) and fill Kind. unknown → dkUnknown.
-- leave $IF expression text in Args verbatim; don’t evaluate in the lexer.
-*)
-	TDirectiveKind = (
-			dkUnknown,
-
-			dkAlign,
-			dkAppType,
-			dkAssertions,
-			dkBooleanVal,
-			dkCodeAlign,
-
-			// Conditional compilation
-			dkIfDef,
-			dkIfNDef,
-			dkIf,
-			dkElseIf,
-			dkElse,
-			dkEndIf,
-			dkIfEnd,
-			dkIfOpt,
-
-			dkDefine,				// $DEFINE name
-			dkUndef,					// $UNDEF name
-
-			dkInclude,
-			dkResource,
-			dkScopedEnums,
-			dkWarn,
-			dkHints,
-			dkRegion,
-			dkEndRegion
-	);
-
-
-	TDirectiveData = record
-		Raw: string;            // same as Text (kept for convenience)
-		Name: string;           // first word after '$' (normalized upper)
-		Args: string;           // trimmed remainder after Name (verbatim)
-		Kind: TDirectiveKind;   // convenience enum resolved by the lexer
-		ShortForm: Boolean;     // e.g. $A for $ALIGN, $I for $INCLUDE
-	end;
-	PDirectiveData = ^TDirectiveData;
 
 	TDirectiveDelimiter = (ddBrace, ddParenStar);
 
@@ -667,10 +619,6 @@ The following reserved words cannot be redefined or used as identifiers.
 		// For ptCompilerDirective
 		DirectiveDelimeter: TDirectiveDelimiter; // (ddBrace, ddParenStar)
 
-		// optional directive payload (only for TokenKind = ptDirective)
-//		Directive: PDirectiveData; // nil unless a directive
-
-
 		function get_ContextualKind: TptTokenKind;
 		function get_LeadingTriviaCount: Integer;
 		function get_LeadingTrivia(I: Integer): TSyntaxToken;
@@ -702,7 +650,6 @@ The following reserved words cannot be redefined or used as identifiers.
 
 		/// <summary>If Kind is an identifier that can also be a directive, will return a TokenKind that represents that directive (e.g. ptAbsolute)</summary>
 		property ContextualKind: TptTokenKind read get_ContextualKind;
-
 
 		property LeadingTriviaCount: Integer read get_LeadingTriviaCount;
 		property LeadingTrivia[n: Integer]: TSyntaxToken read get_LeadingTrivia;
@@ -2110,49 +2057,42 @@ var
 	startColumn: Integer;
 	delimiter: TDirectiveDelimiter; // ddBraces vs bbParenStar
 begin
-
-// Directives come in one of two variations:
-//
-//       {$ifdef foo}...{$endif}
-//       (*$ifdef foo*)...(*$endif*)
-
-
-//	It is a block comment, where the first character is a $
-
-//	These correpond to two token types:
-
-//	ptCompilerDirectiveptCompDirect
-//		Text:			{$foo bar}
-//		ValueText:
-// 	DirectiveDelimeter: ddBraces
-
-//		Text:       "(*$foo bah*)"
-//		ValueText:
-// 	DirectiveDelimeter: ddParenStar
-
-//		Text:			'{$IFDEF DEBUG}'
-//		ValueText:	'IFDEF DEBUG' (optional, same as Name + ' ' + Args)
-// 	DirectiveDelimeter: ddBraces
-
-//		Directive^.Name: 	'IFDEF'
-//		Directive^.Args:	'DEBUG'
-//		Directive^.Kind"	dkIfDef
-//		ShortForm: 			False
-
-
-//	Attribute akDirectiveDelimeter
-//			ddBrace
-//			ddParenStar
-
 {
+	Directives come in one of two variations:
+}
+
+//		ddBraces:			{$ifdef foo}    ...  {$endif}
+//		ddParenStar:		(*$ifdef foo*)  ...  (*$endif*)
+
+(*
+It is a block comment, where the first character is a $
+
+These correpond to two token types:
+
+	ptCompilerDirective
+		Text:						{$foo bar}
+		ValueText:				foo bar
+		DirectiveDelimeter:	ddBraces
+
+		Text:						(*$foo bah* )
+		ValueText:				foo bar
+		DirectiveDelimeter:	ddParenStar
+
+		Text:						{$IFDEF DEBUG}
+		ValueText:				IFDEF DEBUG (optional, same as Name + ' ' + Args)
+		DirectiveDelimeter:	ddBraces
+
+	Attribute akDirectiveDelimeter
+			ddBrace
+			ddParenStar
+
+
 Delphi has three varieties of compiler directives: switches, parameters, and conditional compilation.
 
 1. A switch is a Boolean flag: a feature can be enabled or disabled.
-
 2. A parameter provides information, such as a filename or stack size.
-
-3. Conditional compilation lets you define conditions and selectively compile parts
-of a source file depending on which conditions are set. Conditions are Boolean (set or not set).
+3. Conditional compilation lets you define conditions and selectively compile parts of a source file
+		depending on which conditions are set. Conditions are Boolean (set or not set).
 
 
 	TDirectiveKind = (
@@ -2177,21 +2117,25 @@ of a source file depending on which conditions are set. Conditions are Boolean (
 			dkEndRegion
 	);
 
-
-}
-
+*)
 	hasError := False;
 	errorMsg := '';
 	startLine := FCurrentLine;
 	startColumn := FCurrentColumn;
 
+{
+We're here to read a compiler directive. It's going to start with either:
+
+- ddBrace:			{$
+- ddParenStar:		(*$
+}
 	case ch of
 	'{':
 		begin
 			s := ch; // opening brace
 			delimiter := ddBrace;
 
-			// Keep reading until we reach the closing }
+			// Keep reading until we reach the closing brace "}"
 			nextChar := Peek;
 			while (nextChar <> '}') and (nextChar <> UEOF) and not CharInSet(nextChar, [#13, #10]) do
 			begin
@@ -2224,7 +2168,7 @@ of a source file depending on which conditions are set. Conditions are Boolean (
 			end;
 		end;
 	else
-		raise Exception.Create('DoCompilerDirective expects $ or (');
+		raise Exception.Create('DoCompilerDirective expects {$ or (*$');
 	end;
 
 	// Check for unterminated compiler directive (reached EOF)
@@ -2244,7 +2188,7 @@ of a source file depending on which conditions are set. Conditions are Boolean (
 	else
 	begin
 		if delimiter = ddBrace then
-			s := s+Consume; // consume the }
+			s := s+Consume; // consume the closing brace }
 	end;
 
 	Result := TSyntaxToken.Create(ptCompilerDirective, startLine, startColumn, s);

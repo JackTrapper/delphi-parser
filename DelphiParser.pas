@@ -1438,7 +1438,7 @@ begin
 	https://docwiki.embarcadero.com/RADStudio/Athens/en/Compiler_Versions
 }
 {$IFDEF VER360}
-	Add('VER360'); //	Delphi 12.0 Athens / C++Builder 12.0 Athens	23.0	290	36.0
+	Add('VER360'); //	Delphi 12.0 Athens / C++Builder 12.0 Athens		Product Version: 23.0, Package Version: 290, CompilerVersion=36.0
 {$ENDIF}
 
 {$IFDEF VER350}
